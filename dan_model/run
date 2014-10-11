@@ -1,0 +1,2 @@
+
+./main.py -c ./input-SENSORY-full.dev -B 1000 -L 0.0001 -a 20 -e 0.01 -l ./lexicon-SENSORY.all -t .70 -v vocab -d 0 -o ./RESULTS/ -x 2 -s cos

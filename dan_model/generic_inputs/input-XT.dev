@@ -1,0 +1,1215 @@
+1-----
+SENTENCE: her:DET slim:ADJ straight:ADJ mild:ADJ thing:N
+SEM_REP: ,female,definite,article,substantiality,small,size,property,physical,object,attribute,straight,property,physical,object,configuration,attribute,property,ease,attribute,abstraction,thing_f0,thing_f1,thingf_2
+1-----
+SENTENCE: one:DET stiff:ADJ rich:ADJ brief:ADJ thing:N
+SEM_REP: ,singular,positive,determiner,definite,property,pliable,physical,object,negative,flat,consistency,attribute,property,monetary,attribute,abstraction,temporal-relation,property,negative,length,fast,event,attribute,thing_f0,thing_f1,thingf_2
+1-----
+SENTENCE: these:DET sure:ADJ clear:ADJ brief:ADJ thing:N
+SEM_REP: ,plural,determiner,definite,psychological_feature,property,life_form,confident,attribute,psychological_feature,property,ease,cognition,attribute,abstraction,temporal-relation,property,negative,length,fast,event,attribute,thing_f0,thing_f1,thingf_2
+1-----
+SENTENCE: our:DET sole:ADJ moot:ADJ blond:ADJ thing:N
+SEM_REP: ,reflexive,pronoun,possessive,relative-quantity,property,one,attribute,property,negative,importance,attribute,abstraction,yellow,property,physical,life_form,hue,hair,female,color,attribute,thing_f0,thing_f1,thingf_2
+1-----
+SENTENCE: another:DET smart:ADJ lush:ADJ sure:ADJ thing:N
+SEM_REP: ,positive,indefinite,determiner,smart,psychological_feature,property,life_form,attribute,sense,property,physical,lush,attribute,psychological_feature,property,life_form,confident,attribute,thing_f0,thing_f1,thingf_2
+1-----
+SENTENCE: many:DET slim:ADJ low:ADJ drab:ADJ animal:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,substantiality,small,size,property,physical,object,attribute,substantiality,property,physical,negative,length,horizontal,attribute,1d,property,outlook,negative,bad,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2
+1-----
+SENTENCE: both:DET damp:ADJ buff:ADJ huge:ADJ animal:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,wet,property,physical,consistency,bad,attribute,strength,slang,property,physical,life_form,attribute,substantiality,size,property,physical,object,large,high_intensity,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2
+1-----
+SENTENCE: that:DET gruff:ADJ dear:ADJ south:ADJ animal:N
+SEM_REP: ,singular,determiner,definite,psychological_feature,property,pleasant,negative,life_form,glib,bad,attribute,psychological_feature,property,life_form,attribute,attachment,vertical,spacial-relationship,relation,property,direction,attribute,absolute-direction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2
+1-----
+SENTENCE: these:DET free:ADJ black:ADJ big:ADJ animal:N
+SEM_REP: ,plural,determiner,definite,property,negative,cost,attribute,abstraction,property,hue,color,black,attribute,substantiality,size,property,physical,object,low_intensity,large,informal,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2
+1-----
+SENTENCE: which:DET big:ADJ fond:ADJ brave:ADJ animal:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,substantiality,size,property,physical,object,low_intensity,large,informal,attribute,property,life_form,attribute,attachment,psychological_feature,property,life_form,confident,commence_action,brave,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2
+1-----
+SENTENCE: all:DET odd:ADJ nice:ADJ new:ADJ animal:N
+SEM_REP: ,positive,plural,determiner,definite,unusual,property,attribute,abstraction,quality,property,attribute,abstraction,temporal-relation,property,new,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2
+1-----
+SENTENCE: more:DET worst:ADJ sheer:ADJ shy:ADJ animal:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,quality,property,negative,high_intensity,bad,attribute,abstraction,property,extreme,attribute,abstraction,quiet,psychological_feature,property,negative,life_form,direct,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2
+1-----
+SENTENCE: an:DET scant:ADJ fair:ADJ non:ADJ animal:N
+SEM_REP: ,singular,indefinite,determiner,article,property,negative,frequency,attribute,abstraction,property,fair,attribute,abstraction,relative-quantity,property,none,negative,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2
+1-----
+SENTENCE: its:DET loose:ADJ lewd:ADJ drunk:ADJ animal:N
+SEM_REP: ,singular,possessive,determiner,definite,tight,property,physical,object,negative,configuration,attribute,sexual,psychological_feature,property,life_form,bad,attribute,psychological_feature,property,life_form,attribute,alcohol,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2
+1-----
+SENTENCE: our:DET prone:ADJ harsh:ADJ young:ADJ animal:N
+SEM_REP: ,reflexive,pronoun,possessive,psychological_feature,property,life_form,commence_action,attribute,property,pleasant,negative,ease,bad,attribute,abstraction,temporal-relation,property,new,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2
+1-----
+SENTENCE: another:DET brief:ADJ pink:ADJ fond:ADJ dog:N
+SEM_REP: ,positive,indefinite,determiner,temporal-relation,property,negative,length,fast,event,attribute,white,red,property,hue,color,attribute,property,life_form,attribute,attachment,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2
+1-----
+SENTENCE: some:DET dire:ADJ dumb:ADJ broad:ADJ dog:N
+SEM_REP: ,positive,plural,indefinite,determiner,property,outlook,negative,bad,attribute,abstraction,smart,psychological_feature,property,negative,life_form,bad,attribute,substantiality,property,physical,object,length,attribute,1d,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2
+1-----
+SENTENCE: all:DET gaunt:ADJ prim:ADJ grim:ADJ dog:N
+SEM_REP: ,positive,plural,determiner,definite,thin,property,physical,life_form,bad,attribute,property,clean,attribute,abstraction,property,outlook,negative,bad,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2
+1-----
+SENTENCE: all:DET least:ADJ false:ADJ buff:ADJ dog:N
+SEM_REP: ,positive,plural,determiner,definite,relative-quantity,relation,post,positive,negative,determiner,truth,property,negative,attribute,abstraction,strength,slang,property,physical,life_form,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2
+1-----
+SENTENCE: this:DET smart:ADJ broke:ADJ warm:ADJ dog:N
+SEM_REP: ,singular,determiner,definite,smart,psychological_feature,property,life_form,attribute,working,property,physical,negative,bad,attribute,abstraction,temperature,property,physical,object,low_intensity,hot,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2
+1-----
+SENTENCE: his:DET bare:ADJ quick:ADJ blind:ADJ dog:N
+SEM_REP: ,pronoun,possessive,male,property,physical,negative,clothing,attribute,temporal-relation,speed,property,negative,low_intensity,length,fast,event,attribute,see,property,physical,negative,life_form,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2
+1-----
+SENTENCE: a:DET rear:ADJ wrong:ADJ moist:ADJ dog:N
+SEM_REP: ,singular,indefinite,determiner,article,spacial-relationship,relation,property,attribute,truth,property,negative,attribute,abstraction,wet,property,physical,object,consistency,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2
+1-----
+SENTENCE: another:DET strict:ADJ stout:ADJ suave:ADJ dog:N
+SEM_REP: ,positive,indefinite,determiner,property,care,attribute,abstraction,strong,property,physical,object,consistency,attribute,speech_act,psychological_feature,property,life_form,confident,attribute,adept,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2
+1-----
+SENTENCE: two:DET fast:ADJ proud:ADJ could:ADJ dog:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,temporal-relation,speed,property,negative,length,high_intensity,fast,event,attribute,psychological_feature,property,life_form,confident,attribute,state,potential,effect,commence_action,action,ability,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2
+1-----
+SENTENCE: that:DET young:ADJ nude:ADJ same:ADJ dog:N
+SEM_REP: ,singular,determiner,definite,temporal-relation,property,new,attribute,property,physical,negative,life_form,human,clothing,attribute,post,identity,determiner,definite,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2
+1-----
+SENTENCE: an:DET trite:ADJ bare:ADJ rid:ADJ dog:N
+SEM_REP: ,singular,indefinite,determiner,article,property,negative,importance,attribute,archaic,abstraction,property,physical,negative,clothing,attribute,property,physical,negative,full,configuration,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2
+1-----
+SENTENCE: each:DET rash:ADJ staid:ADJ loose:ADJ dog:N
+SEM_REP: ,singular,indefinite,determiner,psychological_feature,property,negative,life_form,careful,attribute,strong,property,physical,object,consistency,attribute,tight,property,physical,object,negative,configuration,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2
+1-----
+SENTENCE: any:DET dark:ADJ vile:ADJ worth:ADJ dog:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,property,negative,lightness,color,attribute,sense,property,pleasant,physical,object,negative,formal,bad,attribute,relation,property,monetary,cost,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2
+1-----
+SENTENCE: that:DET bare:ADJ tame:ADJ swank:ADJ dog:N
+SEM_REP: ,singular,determiner,definite,property,physical,negative,clothing,attribute,psychological_feature,property,pleasant,ease,attribute,animal,quality,property,monetary,cost,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2
+1-----
+SENTENCE: both:DET should:ADJ trite:ADJ drab:ADJ dog:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,obligatory,low_intensity,effect,action,property,negative,importance,attribute,archaic,abstraction,property,outlook,negative,bad,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2
+1-----
+SENTENCE: many:DET neat:ADJ pale:ADJ glum:ADJ dalmatian:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,property,clean,attribute,abstraction,state,property,negative,color,attribute,sad,psychological_feature,property,life_form,feeling,emotion,bad,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2,dalmatian_f0,dalmatian_f1,dalmatianf_2
+1-----
+SENTENCE: my:DET scarce:ADJ sane:ADJ stern:ADJ dalmatian:N
+SEM_REP: ,self,pronoun,possessive,property,negative,frequency,attribute,abstraction,sturdy,psychological_feature,property,life_form,attribute,sturdy,psychological_feature,property,life_form,direct,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2,dalmatian_f0,dalmatian_f1,dalmatianf_2
+1-----
+SENTENCE: another:DET could:ADJ old:ADJ vile:ADJ dalmatian:N
+SEM_REP: ,positive,indefinite,determiner,state,potential,effect,commence_action,action,ability,temporal-relation,property,past,new,negative,attribute,sense,property,pleasant,physical,object,negative,formal,bad,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2,dalmatian_f0,dalmatian_f1,dalmatianf_2
+1-----
+SENTENCE: which:DET fierce:ADJ loose:ADJ sly:ADJ dalmatian:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,psychological_feature,property,life_form,confident,commence_action,brave,attribute,anger,tight,property,physical,object,negative,configuration,attribute,psychological_feature,property,negative,life_form,direct,bad,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2,dalmatian_f0,dalmatian_f1,dalmatianf_2
+1-----
+SENTENCE: their:DET suave:ADJ bland:ADJ near:ADJ dalmatian:N
+SEM_REP: ,pronoun,possessive,3rd_person,speech_act,psychological_feature,property,life_form,confident,attribute,adept,taste,sense,property,physical,object,negative,bad,attribute,spacial-relation,relation,proximity,negative,length,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2,dalmatian_f0,dalmatian_f1,dalmatianf_2
+1-----
+SENTENCE: much:DET hoarse:ADJ apt:ADJ slick:ADJ poodle:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,speak,property,physical,negative,low_intensity,life_form,attribute,psychological_feature,property,life_form,commence_action,attribute,texture,smooth,property,physical,object,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2,poodle_f0,poodle_f1,poodlef_2
+1-----
+SENTENCE: your:DET thin:ADJ non:ADJ limp:ADJ poodle:N
+SEM_REP: ,pronoun,possessive,2nd_person,thin,property,physical,life_form,attribute,relative-quantity,property,none,negative,attribute,tight,property,physical,object,negative,configuration,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2,poodle_f0,poodle_f1,poodlef_2
+1-----
+SENTENCE: which:DET gray:ADJ south:ADJ sure:ADJ poodle:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,white,property,hue,color,black,attribute,vertical,spacial-relationship,relation,property,direction,attribute,absolute-direction,psychological_feature,property,life_form,confident,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2,poodle_f0,poodle_f1,poodlef_2
+1-----
+SENTENCE: two:DET such:ADJ shrill:ADJ svelte:ADJ poodle:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,such,quantity,property,attribute,speech_act,psychological_feature,property,pleasant,negative,life_form,attribute,uncommon,thin,property,physical,life_form,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2,poodle_f0,poodle_f1,poodlef_2
+1-----
+SENTENCE: no:DET north:ADJ dank:ADJ brisk:ADJ poodle:N
+SEM_REP: ,relation,post,nil,negative,determiner,absolute-quantity,vertical,up,spacial-relationship,relation,property,direction,attribute,absolute-direction,wet,property,physical,decay,consistency,bad,attribute,temperature,property,physical,low_intensity,cold,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2,poodle_f0,poodle_f1,poodlef_2
+1-----
+SENTENCE: both:DET vague:ADJ rash:ADJ moot:ADJ pug:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,property,clarity,attribute,abstraction,psychological_feature,property,negative,life_form,careful,attribute,property,negative,importance,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2,pug_f0,pug_f1,pugf_2
+1-----
+SENTENCE: its:DET queer:ADJ rude:ADJ mild:ADJ pug:N
+SEM_REP: ,singular,possessive,determiner,definite,unusual,property,attribute,abstraction,speech_act,psychological_feature,property,pleasant,negative,life_form,bad,attribute,property,ease,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2,pug_f0,pug_f1,pugf_2
+1-----
+SENTENCE: much:DET wry:ADJ dire:ADJ null:ADJ pug:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,psychological_feature,property,negative,life_form,direct,attribute,property,outlook,negative,bad,attribute,abstraction,relative-quantity,property,none,negative,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2,pug_f0,pug_f1,pugf_2
+1-----
+SENTENCE: their:DET thin:ADJ big:ADJ sly:ADJ pug:N
+SEM_REP: ,pronoun,possessive,3rd_person,thin,property,physical,life_form,attribute,substantiality,size,property,physical,object,low_intensity,large,informal,attribute,psychological_feature,property,negative,life_form,direct,bad,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2,pug_f0,pug_f1,pugf_2
+1-----
+SENTENCE: five:DET bleak:ADJ plump:ADJ gauche:ADJ pug:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,property,outlook,negative,bad,attribute,abstraction,thin,property,physical,negative,life_form,attribute,psychological_feature,property,pleasant,negative,life_form,bad,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,dog_f0,dog_f1,dogf_2,pug_f0,pug_f1,pugf_2
+1-----
+SENTENCE: a:DET vast:ADJ blunt:ADJ cute:ADJ cat:N
+SEM_REP: ,singular,indefinite,determiner,article,substantiality,property,physical,object,length,high_intensity,attribute,1d,sharp,property,physical,object,negative,configuration,attribute,property,physical,life_form,attribute,attractive,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2
+1-----
+SENTENCE: her:DET pale:ADJ wrong:ADJ real:ADJ cat:N
+SEM_REP: ,female,definite,article,state,property,negative,color,attribute,truth,property,negative,attribute,abstraction,truth,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2
+1-----
+SENTENCE: this:DET dour:ADJ neat:ADJ dark:ADJ cat:N
+SEM_REP: ,singular,determiner,definite,psychological_feature,property,outlook,negative,life_form,bad,attribute,property,clean,attribute,abstraction,property,negative,lightness,color,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2
+1-----
+SENTENCE: most:DET ole:ADJ through:ADJ brave:ADJ cat:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,temporal-relation,property,past,new,negative,attribute,archaic,spacial-relationship,relation,location,psychological_feature,property,life_form,confident,commence_action,brave,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2
+1-----
+SENTENCE: few:DET east:ADJ mild:ADJ trite:ADJ cat:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,spacial-relationship,right,relation,property,direction,attribute,absolute-direction,property,ease,attribute,abstraction,property,negative,importance,attribute,archaic,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2
+1-----
+SENTENCE: his:DET rash:ADJ hind:ADJ huge:ADJ cat:N
+SEM_REP: ,pronoun,possessive,male,psychological_feature,property,negative,life_form,careful,attribute,spacial-relationship,relation,property,horizontal,direction,behind,attribute,substantiality,size,property,physical,object,large,high_intensity,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2
+1-----
+SENTENCE: more:DET false:ADJ crass:ADJ safe:ADJ cat:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,truth,property,negative,attribute,abstraction,psychological_feature,property,pleasant,negative,life_form,bad,attribute,safe,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2
+1-----
+SENTENCE: our:DET smug:ADJ fat:ADJ cheap:ADJ cat:N
+SEM_REP: ,reflexive,pronoun,possessive,psychological_feature,property,life_form,confident,bad,attribute,thin,property,physical,negative,life_form,bad,attribute,property,negative,cost,bad,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2
+1-----
+SENTENCE: the:DET slow:ADJ smug:ADJ sheer:ADJ cat:N
+SEM_REP: ,singular,determiner,definite,temporal-relation,slow,property,length,event,attribute,psychological_feature,property,life_form,confident,bad,attribute,property,extreme,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2
+1-----
+SENTENCE: one:DET sharp:ADJ west:ADJ blind:ADJ cat:N
+SEM_REP: ,singular,positive,determiner,definite,sharp,property,physical,object,configuration,attribute,spacial-relationship,relation,property,direction,attribute,absolute-direction,see,property,physical,negative,life_form,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2
+1-----
+SENTENCE: her:DET tall:ADJ crude:ADJ lone:ADJ cat:N
+SEM_REP: ,female,definite,article,vertical,substantiality,property,physical,object,length,attribute,1d,quality,property,negative,bad,attribute,abstraction,psychological_feature,property,negative,life_form,attribute,attachment,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2
+1-----
+SENTENCE: the:DET last:ADJ buff:ADJ rife:ADJ cat:N
+SEM_REP: ,singular,determiner,definite,temporal-relation,relation,post,past,negative,determiner,strength,slang,property,physical,life_form,attribute,quality,property,negative,infestation,clean,bad,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2
+1-----
+SENTENCE: any:DET bold:ADJ deaf:ADJ fond:ADJ cat:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,psychological_feature,property,loud,life_form,confident,commence_action,brave,attribute,property,physical,negative,life_form,hear,attribute,property,life_form,attribute,attachment,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2
+1-----
+SENTENCE: these:DET staid:ADJ dead:ADJ shy:ADJ cat:N
+SEM_REP: ,plural,determiner,definite,strong,property,physical,object,consistency,attribute,property,physical,life_form,dead,attribute,quiet,psychological_feature,property,negative,life_form,direct,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2
+1-----
+SENTENCE: his:DET chaste:ADJ staid:ADJ far:ADJ cat:N
+SEM_REP: ,pronoun,possessive,male,sexual,psychological_feature,property,negative,life_form,attribute,strong,property,physical,object,consistency,attribute,spacial-relation,relation,proximity,length,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2
+1-----
+SENTENCE: another:DET green:ADJ fond:ADJ still:ADJ manx:N
+SEM_REP: ,positive,indefinite,determiner,property,hue,green,color,attribute,property,life_form,attribute,attachment,temporal-relation,relative-quantity,relation,now,indefinite,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2,manx_f0,manx_f1,manxf_2
+1-----
+SENTENCE: any:DET grand:ADJ staid:ADJ worst:ADJ manx:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,quality,property,attribute,archaic,abstraction,strong,property,physical,object,consistency,attribute,quality,property,negative,high_intensity,bad,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2,manx_f0,manx_f1,manxf_2
+1-----
+SENTENCE: its:DET beige:ADJ fast:ADJ stray:ADJ manx:N
+SEM_REP: ,singular,possessive,determiner,definite,yellow,white,property,hue,color,attribute,temporal-relation,speed,property,negative,length,high_intensity,fast,event,attribute,property,negative,importance,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2,manx_f0,manx_f1,manxf_2
+1-----
+SENTENCE: a:DET brisk:ADJ gay:ADJ fake:ADJ manx:N
+SEM_REP: ,singular,indefinite,determiner,article,temperature,property,physical,low_intensity,cold,attribute,psychological_feature,property,life_form,happy,attribute,truth,property,negative,bad,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2,manx_f0,manx_f1,manxf_2
+1-----
+SENTENCE: two:DET prone:ADJ dour:ADJ staunch:ADJ manx:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,psychological_feature,property,life_form,commence_action,attribute,psychological_feature,property,outlook,negative,life_form,bad,attribute,sturdy,psychological_feature,property,life_form,direct,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2,manx_f0,manx_f1,manxf_2
+1-----
+SENTENCE: these:DET rich:ADJ fair:ADJ round:ADJ tabby:N
+SEM_REP: ,plural,determiner,definite,property,monetary,attribute,abstraction,property,fair,attribute,abstraction,property,physical,object,negative,flat,configuration,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2,tabby_f0,tabby_f1,tabbyf_2
+1-----
+SENTENCE: much:DET through:ADJ buff:ADJ right:ADJ tabby:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,spacial-relationship,relation,location,strength,slang,property,physical,life_form,attribute,spacial-relationship,right,relative_direction,relation,property,horizontal,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2,tabby_f0,tabby_f1,tabbyf_2
+1-----
+SENTENCE: more:DET vain:ADJ scant:ADJ sad:ADJ tabby:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,psychological_feature,property,life_form,confident,bad,attribute,property,negative,frequency,attribute,abstraction,sad,psychological_feature,property,life_form,feeling,emotion,bad,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2,tabby_f0,tabby_f1,tabbyf_2
+1-----
+SENTENCE: other:DET mid:ADJ broad:ADJ stale:ADJ tabby:N
+SEM_REP: ,positive,determiner,definite,spacial-relationship,relation,property,between,attribute,substantiality,property,physical,object,length,attribute,1d,property,physical,object,negative,fresh,edible,bad,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2,tabby_f0,tabby_f1,tabbyf_2
+1-----
+SENTENCE: which:DET dull:ADJ mauve:ADJ sole:ADJ tabby:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,sharp,property,physical,object,negative,configuration,bad,attribute,red,property,hue,color,blue,attribute,relative-quantity,property,one,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2,tabby_f0,tabby_f1,tabbyf_2
+1-----
+SENTENCE: this:DET sleek:ADJ real:ADJ stern:ADJ siamese:N
+SEM_REP: ,singular,determiner,definite,texture,smooth,property,physical,object,attribute,truth,property,attribute,abstraction,sturdy,psychological_feature,property,life_form,direct,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2,siamese_f0,siamese_f1,siamesef_2
+1-----
+SENTENCE: a:DET vain:ADJ raw:ADJ great:ADJ siamese:N
+SEM_REP: ,singular,indefinite,determiner,article,psychological_feature,property,life_form,confident,bad,attribute,property,physical,object,negative,edible,cooked,attribute,quality,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2,siamese_f0,siamese_f1,siamesef_2
+1-----
+SENTENCE: most:DET staid:ADJ through:ADJ crisp:ADJ siamese:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,strong,property,physical,object,consistency,attribute,spacial-relationship,relation,location,property,pliable,physical,object,negative,consistency,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2,siamese_f0,siamese_f1,siamesef_2
+1-----
+SENTENCE: five:DET calm:ADJ deaf:ADJ pert:ADJ siamese:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,psychological_feature,property,life_form,confident,attribute,property,physical,negative,life_form,hear,attribute,psychological_feature,property,life_form,direct,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2,siamese_f0,siamese_f1,siamesef_2
+1-----
+SENTENCE: five:DET scarce:ADJ stale:ADJ lone:ADJ siamese:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,property,negative,frequency,attribute,abstraction,property,physical,object,negative,fresh,edible,bad,attribute,psychological_feature,property,negative,life_form,attribute,attachment,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,cat_f0,cat_f1,catf_2,siamese_f0,siamese_f1,siamesef_2
+1-----
+SENTENCE: no:DET moist:ADJ large:ADJ sane:ADJ fish:N
+SEM_REP: ,relation,post,nil,negative,determiner,absolute-quantity,wet,property,physical,object,consistency,attribute,substantiality,size,property,physical,object,large,attribute,sturdy,psychological_feature,property,life_form,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2
+1-----
+SENTENCE: other:DET bald:ADJ sad:ADJ wee:ADJ fish:N
+SEM_REP: ,positive,determiner,definite,property,physical,negative,life_form,hair,attribute,sad,psychological_feature,property,life_form,feeling,emotion,bad,attribute,substantiality,small,size,property,physical,object,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2
+1-----
+SENTENCE: an:DET worth:ADJ close:ADJ low:ADJ fish:N
+SEM_REP: ,singular,indefinite,determiner,article,relation,property,monetary,cost,attribute,abstraction,spacial-relation,relation,proximity,negative,length,substantiality,property,physical,negative,length,horizontal,attribute,1d,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2
+1-----
+SENTENCE: which:DET sheer:ADJ same:ADJ rough:ADJ fish:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,property,extreme,attribute,abstraction,post,identity,determiner,definite,texture,smooth,property,physical,object,negative,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2
+1-----
+SENTENCE: this:DET blonde:ADJ drab:ADJ near:ADJ fish:N
+SEM_REP: ,singular,determiner,definite,yellow,property,physical,life_form,hue,hair,color,attribute,property,outlook,negative,bad,attribute,abstraction,spacial-relation,relation,proximity,negative,length,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2
+1-----
+SENTENCE: five:DET stout:ADJ brown:ADJ moist:ADJ fish:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,strong,property,physical,object,consistency,attribute,yellow,red,property,hue,color,blue,attribute,wet,property,physical,object,consistency,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2
+1-----
+SENTENCE: our:DET sharp:ADJ wont:ADJ tense:ADJ fish:N
+SEM_REP: ,reflexive,pronoun,possessive,sharp,property,physical,object,configuration,attribute,psychological_feature,property,life_form,commence_action,attribute,tight,property,physical,object,configuration,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2
+1-----
+SENTENCE: my:DET blunt:ADJ free:ADJ mad:ADJ fish:N
+SEM_REP: ,self,pronoun,possessive,sharp,property,physical,object,negative,configuration,attribute,property,negative,cost,attribute,abstraction,psychological_feature,property,life_form,feeling,emotion,bad,attribute,anger,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2
+1-----
+SENTENCE: another:DET tight:ADJ fast:ADJ pink:ADJ fish:N
+SEM_REP: ,positive,indefinite,determiner,tight,property,physical,object,configuration,attribute,temporal-relation,speed,property,negative,length,high_intensity,fast,event,attribute,white,red,property,hue,color,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2
+1-----
+SENTENCE: most:DET stern:ADJ strong:ADJ big:ADJ fish:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,sturdy,psychological_feature,property,life_form,direct,attribute,strength,property,physical,life_form,attribute,substantiality,size,property,physical,object,low_intensity,large,informal,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2
+1-----
+SENTENCE: two:DET swift:ADJ rash:ADJ dour:ADJ fish:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,temporal-relation,property,length,good,fast,event,attribute,psychological_feature,property,negative,life_form,careful,attribute,psychological_feature,property,outlook,negative,life_form,bad,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2
+1-----
+SENTENCE: her:DET mild:ADJ such:ADJ fast:ADJ fish:N
+SEM_REP: ,female,definite,article,property,ease,attribute,abstraction,such,quantity,property,attribute,temporal-relation,speed,property,negative,length,high_intensity,fast,event,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2
+1-----
+SENTENCE: a:DET same:ADJ brave:ADJ east:ADJ fish:N
+SEM_REP: ,singular,indefinite,determiner,article,post,identity,determiner,definite,psychological_feature,property,life_form,confident,commence_action,brave,attribute,spacial-relationship,right,relation,property,direction,attribute,absolute-direction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2
+1-----
+SENTENCE: few:DET wont:ADJ raw:ADJ steep:ADJ fish:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,psychological_feature,property,life_form,commence_action,attribute,property,physical,object,negative,edible,cooked,attribute,property,physical,object,negative,flat,configuration,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2
+1-----
+SENTENCE: much:DET blithe:ADJ worst:ADJ dour:ADJ fish:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,psychological_feature,property,negative,life_form,happy,feeling,attribute,quality,property,negative,high_intensity,bad,attribute,abstraction,psychological_feature,property,outlook,negative,life_form,bad,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2
+1-----
+SENTENCE: much:DET nuts:ADJ free:ADJ coy:ADJ flounder:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,psychological_feature,property,negative,life_form,healthy,bad,attribute,property,negative,cost,attribute,abstraction,psychological_feature,property,negative,life_form,direct,bad,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2,flounder_f0,flounder_f1,flounderf_2
+1-----
+SENTENCE: an:DET prone:ADJ cheap:ADJ swank:ADJ flounder:N
+SEM_REP: ,singular,indefinite,determiner,article,psychological_feature,property,life_form,commence_action,attribute,property,negative,cost,bad,attribute,abstraction,quality,property,monetary,cost,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2,flounder_f0,flounder_f1,flounderf_2
+1-----
+SENTENCE: few:DET lithe:ADJ left:ADJ crass:ADJ flounder:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,property,physical,move,life_form,healthy,attribute,spacial-relationship,relative_direction,relation,property,horizontal,attribute,psychological_feature,property,pleasant,negative,life_form,bad,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2,flounder_f0,flounder_f1,flounderf_2
+1-----
+SENTENCE: a:DET long:ADJ large:ADJ odd:ADJ flounder:N
+SEM_REP: ,singular,indefinite,determiner,article,substantiality,property,physical,object,length,attribute,1d,substantiality,size,property,physical,object,large,attribute,unusual,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2,flounder_f0,flounder_f1,flounderf_2
+1-----
+SENTENCE: each:DET lone:ADJ straight:ADJ stark:ADJ flounder:N
+SEM_REP: ,singular,indefinite,determiner,psychological_feature,property,negative,life_form,attribute,attachment,straight,property,physical,object,configuration,attribute,uncommon,property,importance,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2,flounder_f0,flounder_f1,flounderf_2
+1-----
+SENTENCE: a:DET rare:ADJ blue:ADJ free:ADJ shark:N
+SEM_REP: ,singular,indefinite,determiner,article,property,negative,frequency,attribute,abstraction,property,hue,color,blue,attribute,property,negative,cost,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2,shark_f0,shark_f1,sharkf_2
+1-----
+SENTENCE: much:DET mild:ADJ brief:ADJ north:ADJ shark:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,ease,attribute,abstraction,temporal-relation,property,negative,length,fast,event,attribute,vertical,up,spacial-relationship,relation,property,direction,attribute,absolute-direction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2,shark_f0,shark_f1,sharkf_2
+1-----
+SENTENCE: some:DET low:ADJ daft:ADJ bright:ADJ shark:N
+SEM_REP: ,positive,plural,indefinite,determiner,substantiality,property,physical,negative,length,horizontal,attribute,1d,smart,psychological_feature,property,negative,life_form,bad,attribute,property,lightness,high_intensity,color,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2,shark_f0,shark_f1,sharkf_2
+1-----
+SENTENCE: more:DET chic:ADJ sleek:ADJ brave:ADJ shark:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,fashionability,attribute,abstraction,texture,smooth,property,physical,object,attribute,psychological_feature,property,life_form,confident,commence_action,brave,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2,shark_f0,shark_f1,sharkf_2
+1-----
+SENTENCE: which:DET raw:ADJ east:ADJ gross:ADJ shark:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,property,physical,object,negative,edible,cooked,attribute,spacial-relationship,right,relation,property,direction,attribute,absolute-direction,slang,sense,property,pleasant,physical,object,negative,bad,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2,shark_f0,shark_f1,sharkf_2
+1-----
+SENTENCE: much:DET snug:ADJ gauche:ADJ stiff:ADJ salmon:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,tight,property,physical,object,good,configuration,attribute,psychological_feature,property,pleasant,negative,life_form,bad,attribute,property,pliable,physical,object,negative,flat,consistency,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2,salmon_f0,salmon_f1,salmonf_2
+1-----
+SENTENCE: much:DET lithe:ADJ next:ADJ fond:ADJ salmon:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,physical,move,life_form,healthy,attribute,temporal-relation,relation,post,determiner,association,property,life_form,attribute,attachment,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2,salmon_f0,salmon_f1,salmonf_2
+1-----
+SENTENCE: these:DET slow:ADJ bland:ADJ grim:ADJ salmon:N
+SEM_REP: ,plural,determiner,definite,temporal-relation,slow,property,length,event,attribute,taste,sense,property,physical,object,negative,bad,attribute,property,outlook,negative,bad,attribute,abstraction,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2,salmon_f0,salmon_f1,salmonf_2
+1-----
+SENTENCE: our:DET staunch:ADJ sheer:ADJ blunt:ADJ salmon:N
+SEM_REP: ,reflexive,pronoun,possessive,sturdy,psychological_feature,property,life_form,direct,attribute,property,extreme,attribute,abstraction,sharp,property,physical,object,negative,configuration,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2,salmon_f0,salmon_f1,salmonf_2
+1-----
+SENTENCE: their:DET hind:ADJ straight:ADJ left:ADJ salmon:N
+SEM_REP: ,pronoun,possessive,3rd_person,spacial-relationship,relation,property,horizontal,direction,behind,attribute,straight,property,physical,object,configuration,attribute,spacial-relationship,relative_direction,relation,property,horizontal,attribute,thing_f0,thing_f1,thingf_2,animal_f0,animal_f1,animalf_2,fish_f0,fish_f1,fishf_2,salmon_f0,salmon_f1,salmonf_2
+1-----
+SENTENCE: your:DET sane:ADJ must:ADJ drab:ADJ furniture:N
+SEM_REP: ,pronoun,possessive,2nd_person,sturdy,psychological_feature,property,life_form,attribute,obligatory,high_intensity,effect,action,property,outlook,negative,bad,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2
+1-----
+SENTENCE: those:DET east:ADJ lone:ADJ fast:ADJ furniture:N
+SEM_REP: ,plural,determiner,definite,spacial-relationship,right,relation,property,direction,attribute,absolute-direction,psychological_feature,property,negative,life_form,attribute,attachment,temporal-relation,speed,property,negative,length,high_intensity,fast,event,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2
+1-----
+SENTENCE: his:DET brisk:ADJ could:ADJ safe:ADJ furniture:N
+SEM_REP: ,pronoun,possessive,male,temperature,property,physical,low_intensity,cold,attribute,state,potential,effect,commence_action,action,ability,safe,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2
+1-----
+SENTENCE: an:DET svelte:ADJ rude:ADJ drunk:ADJ furniture:N
+SEM_REP: ,singular,indefinite,determiner,article,uncommon,thin,property,physical,life_form,attribute,speech_act,psychological_feature,property,pleasant,negative,life_form,bad,attribute,psychological_feature,property,life_form,attribute,alcohol,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2
+1-----
+SENTENCE: your:DET glum:ADJ loud:ADJ last:ADJ furniture:N
+SEM_REP: ,pronoun,possessive,2nd_person,sad,psychological_feature,property,life_form,feeling,emotion,bad,attribute,sense,property,physical,noise,attribute,temporal-relation,relation,post,past,negative,determiner,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2
+1-----
+SENTENCE: some:DET hot:ADJ loose:ADJ glib:ADJ furniture:N
+SEM_REP: ,positive,plural,indefinite,determiner,temperature,property,physical,hot,attribute,tight,property,physical,object,negative,configuration,attribute,psychological_feature,property,life_form,direct,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2
+1-----
+SENTENCE: two:DET great:ADJ wide:ADJ swift:ADJ furniture:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,quality,property,attribute,abstraction,substantiality,property,physical,object,length,horizontal,attribute,1d,temporal-relation,property,length,good,fast,event,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2
+1-----
+SENTENCE: each:DET hind:ADJ safe:ADJ last:ADJ furniture:N
+SEM_REP: ,singular,indefinite,determiner,spacial-relationship,relation,property,horizontal,direction,behind,attribute,safe,property,attribute,abstraction,temporal-relation,relation,post,past,negative,determiner,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2
+1-----
+SENTENCE: some:DET blond:ADJ dear:ADJ free:ADJ furniture:N
+SEM_REP: ,positive,plural,indefinite,determiner,yellow,property,physical,life_form,hue,hair,female,color,attribute,psychological_feature,property,life_form,attribute,attachment,property,negative,cost,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2
+1-----
+SENTENCE: these:DET would:ADJ smooth:ADJ old:ADJ furniture:N
+SEM_REP: ,plural,determiner,definite,state,potential,effect,commence_action,action,ability,texture,smooth,property,physical,object,attribute,temporal-relation,property,past,new,negative,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2
+1-----
+SENTENCE: no:DET smart:ADJ sole:ADJ would:ADJ chair:N
+SEM_REP: ,relation,post,nil,negative,determiner,absolute-quantity,smart,psychological_feature,property,life_form,attribute,relative-quantity,property,one,attribute,state,potential,effect,commence_action,action,ability,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2
+1-----
+SENTENCE: my:DET pert:ADJ smart:ADJ bland:ADJ chair:N
+SEM_REP: ,self,pronoun,possessive,psychological_feature,property,life_form,direct,attribute,smart,psychological_feature,property,life_form,attribute,taste,sense,property,physical,object,negative,bad,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2
+1-----
+SENTENCE: those:DET great:ADJ deep:ADJ nice:ADJ chair:N
+SEM_REP: ,plural,determiner,definite,quality,property,attribute,abstraction,substantiality,property,physical,depth,attribute,quality,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2
+1-----
+SENTENCE: its:DET bright:ADJ pink:ADJ fresh:ADJ chair:N
+SEM_REP: ,singular,possessive,determiner,definite,property,lightness,high_intensity,color,attribute,white,red,property,hue,color,attribute,taste,sense,property,physical,object,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2
+1-----
+SENTENCE: all:DET sad:ADJ still:ADJ wild:ADJ chair:N
+SEM_REP: ,positive,plural,determiner,definite,sad,psychological_feature,property,life_form,feeling,emotion,bad,attribute,temporal-relation,relative-quantity,relation,now,indefinite,psychological_feature,property,pleasant,negative,ease,attribute,animal,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2
+1-----
+SENTENCE: each:DET meek:ADJ just:ADJ rear:ADJ chair:N
+SEM_REP: ,singular,indefinite,determiner,psychological_feature,property,life_form,fear,commence_action,bad,attribute,property,formal,fair,attribute,abstraction,spacial-relationship,relation,property,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2
+1-----
+SENTENCE: any:DET blunt:ADJ mad:ADJ large:ADJ chair:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,sharp,property,physical,object,negative,configuration,attribute,psychological_feature,property,life_form,feeling,emotion,bad,attribute,anger,substantiality,size,property,physical,object,large,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2
+1-----
+SENTENCE: its:DET numb:ADJ plain:ADJ full:ADJ chair:N
+SEM_REP: ,singular,possessive,determiner,definite,psychological_feature,property,negative,life_form,feeling,attribute,sense,property,physical,negative,lush,attribute,property,physical,object,full,configuration,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2
+1-----
+SENTENCE: both:DET deaf:ADJ dank:ADJ north:ADJ chair:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,property,physical,negative,life_form,hear,attribute,wet,property,physical,decay,consistency,bad,attribute,vertical,up,spacial-relationship,relation,property,direction,attribute,absolute-direction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2
+1-----
+SENTENCE: two:DET ripe:ADJ swift:ADJ through:ADJ chair:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,property,physical,object,negative,fresh,edible,attribute,temporal-relation,property,length,good,fast,event,attribute,spacial-relationship,relation,location,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2
+1-----
+SENTENCE: your:DET pure:ADJ suave:ADJ sleek:ADJ chair:N
+SEM_REP: ,pronoun,possessive,2nd_person,pure,property,physical,consistency,attribute,speech_act,psychological_feature,property,life_form,confident,attribute,adept,texture,smooth,property,physical,object,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2
+1-----
+SENTENCE: few:DET dim:ADJ rash:ADJ coarse:ADJ chair:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,property,negative,lightness,color,attribute,psychological_feature,property,negative,life_form,careful,attribute,texture,smooth,property,physical,object,negative,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2
+1-----
+SENTENCE: five:DET dim:ADJ pink:ADJ late:ADJ chair:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,property,negative,lightness,color,attribute,white,red,property,hue,color,attribute,temporal-relation,relation,property,past,negative,attribute,association,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2
+1-----
+SENTENCE: these:DET thin:ADJ old:ADJ stray:ADJ chair:N
+SEM_REP: ,plural,determiner,definite,thin,property,physical,life_form,attribute,temporal-relation,property,past,new,negative,attribute,property,negative,importance,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2
+1-----
+SENTENCE: much:DET tense:ADJ limp:ADJ dense:ADJ chair:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,tight,property,physical,object,configuration,attribute,tight,property,physical,object,negative,configuration,attribute,smart,psychological_feature,property,negative,life_form,bad,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2
+1-----
+SENTENCE: many:DET weird:ADJ pert:ADJ round:ADJ swivel-chair:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,unusual,property,attribute,abstraction,psychological_feature,property,life_form,direct,attribute,property,physical,object,negative,flat,configuration,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2,swivel-chair_f0,swivel-chair_f1,swivel-chairf_2
+1-----
+SENTENCE: which:DET chaste:ADJ well:ADJ tart:ADJ swivel-chair:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,sexual,psychological_feature,property,negative,life_form,attribute,quality,property,good,formal,attribute,abstraction,taste,sweet,sense,property,physical,object,negative,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2,swivel-chair_f0,swivel-chair_f1,swivel-chairf_2
+1-----
+SENTENCE: your:DET rid:ADJ mere:ADJ blind:ADJ swivel-chair:N
+SEM_REP: ,pronoun,possessive,2nd_person,property,physical,negative,full,configuration,attribute,property,negative,importance,attribute,abstraction,see,property,physical,negative,life_form,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2,swivel-chair_f0,swivel-chair_f1,swivel-chairf_2
+1-----
+SENTENCE: another:DET nuts:ADJ free:ADJ next:ADJ swivel-chair:N
+SEM_REP: ,positive,indefinite,determiner,psychological_feature,property,negative,life_form,healthy,bad,attribute,property,negative,cost,attribute,abstraction,temporal-relation,relation,post,determiner,association,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2,swivel-chair_f0,swivel-chair_f1,swivel-chairf_2
+1-----
+SENTENCE: any:DET sheer:ADJ lame:ADJ thin:ADJ swivel-chair:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,property,extreme,attribute,abstraction,strength,property,physical,negative,life_form,bad,attribute,thin,property,physical,life_form,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2,swivel-chair_f0,swivel-chair_f1,swivel-chairf_2
+1-----
+SENTENCE: these:DET broke:ADJ blond:ADJ late:ADJ rocking-chair:N
+SEM_REP: ,plural,determiner,definite,working,property,physical,negative,bad,attribute,abstraction,yellow,property,physical,life_form,hue,hair,female,color,attribute,temporal-relation,relation,property,past,negative,attribute,association,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2,rocking-chair_f0,rocking-chair_f1,rocking-chairf_2
+1-----
+SENTENCE: another:DET through:ADJ neat:ADJ wrong:ADJ rocking-chair:N
+SEM_REP: ,positive,indefinite,determiner,spacial-relationship,relation,location,property,clean,attribute,abstraction,truth,property,negative,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2,rocking-chair_f0,rocking-chair_f1,rocking-chairf_2
+1-----
+SENTENCE: those:DET rear:ADJ rid:ADJ crisp:ADJ rocking-chair:N
+SEM_REP: ,plural,determiner,definite,spacial-relationship,relation,property,attribute,property,physical,negative,full,configuration,attribute,property,pliable,physical,object,negative,consistency,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2,rocking-chair_f0,rocking-chair_f1,rocking-chairf_2
+1-----
+SENTENCE: some:DET first:ADJ hoarse:ADJ rife:ADJ rocking-chair:N
+SEM_REP: ,positive,plural,indefinite,determiner,temporal-relation,relation,post,positive,determiner,speak,property,physical,negative,low_intensity,life_form,attribute,quality,property,negative,infestation,clean,bad,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2,rocking-chair_f0,rocking-chair_f1,rocking-chairf_2
+1-----
+SENTENCE: an:DET swift:ADJ posh:ADJ steep:ADJ rocking-chair:N
+SEM_REP: ,singular,indefinite,determiner,article,temporal-relation,property,length,good,fast,event,attribute,quality,property,monetary,cost,attribute,abstraction,property,physical,object,negative,flat,configuration,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2,rocking-chair_f0,rocking-chair_f1,rocking-chairf_2
+1-----
+SENTENCE: many:DET thin:ADJ dense:ADJ suave:ADJ high-chair:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,thin,property,physical,life_form,attribute,smart,psychological_feature,property,negative,life_form,bad,attribute,speech_act,psychological_feature,property,life_form,confident,attribute,adept,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2,high-chair_f0,high-chair_f1,high-chairf_2
+1-----
+SENTENCE: those:DET loose:ADJ rife:ADJ worst:ADJ high-chair:N
+SEM_REP: ,plural,determiner,definite,tight,property,physical,object,negative,configuration,attribute,quality,property,negative,infestation,clean,bad,attribute,quality,property,negative,high_intensity,bad,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2,high-chair_f0,high-chair_f1,high-chairf_2
+1-----
+SENTENCE: each:DET round:ADJ north:ADJ should:ADJ high-chair:N
+SEM_REP: ,singular,indefinite,determiner,property,physical,object,negative,flat,configuration,attribute,vertical,up,spacial-relationship,relation,property,direction,attribute,absolute-direction,obligatory,low_intensity,effect,action,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2,high-chair_f0,high-chair_f1,high-chairf_2
+1-----
+SENTENCE: the:DET weird:ADJ coarse:ADJ smooth:ADJ high-chair:N
+SEM_REP: ,singular,determiner,definite,unusual,property,attribute,abstraction,texture,smooth,property,physical,object,negative,attribute,texture,smooth,property,physical,object,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2,high-chair_f0,high-chair_f1,high-chairf_2
+1-----
+SENTENCE: many:DET just:ADJ such:ADJ deft:ADJ high-chair:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,property,formal,fair,attribute,abstraction,such,quantity,property,attribute,psychological_feature,property,life_form,attribute,adept,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,chair_f0,chair_f1,chairf_2,high-chair_f0,high-chair_f1,high-chairf_2
+1-----
+SENTENCE: an:DET sheer:ADJ faint:ADJ safe:ADJ bed:N
+SEM_REP: ,singular,indefinite,determiner,article,property,extreme,attribute,abstraction,sturdy,psychological_feature,property,negative,life_form,attribute,safe,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2
+1-----
+SENTENCE: five:DET glib:ADJ late:ADJ far:ADJ bed:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,psychological_feature,property,life_form,direct,attribute,temporal-relation,relation,property,past,negative,attribute,association,spacial-relation,relation,proximity,length,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2
+1-----
+SENTENCE: your:DET gruff:ADJ blond:ADJ flat:ADJ bed:N
+SEM_REP: ,pronoun,possessive,2nd_person,psychological_feature,property,pleasant,negative,life_form,glib,bad,attribute,yellow,property,physical,life_form,hue,hair,female,color,attribute,property,physical,object,flat,configuration,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2
+1-----
+SENTENCE: your:DET fond:ADJ limp:ADJ fake:ADJ bed:N
+SEM_REP: ,pronoun,possessive,2nd_person,property,life_form,attribute,attachment,tight,property,physical,object,negative,configuration,attribute,truth,property,negative,bad,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2
+1-----
+SENTENCE: their:DET gauche:ADJ long:ADJ short:ADJ bed:N
+SEM_REP: ,pronoun,possessive,3rd_person,psychological_feature,property,pleasant,negative,life_form,bad,attribute,substantiality,property,physical,object,length,attribute,1d,substantiality,property,physical,object,negative,length,attribute,1d,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2
+1-----
+SENTENCE: five:DET rude:ADJ fourth:ADJ low:ADJ bed:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,speech_act,psychological_feature,property,pleasant,negative,life_form,bad,attribute,relation,post,positive,number,four,determiner,absolute-quantity,substantiality,property,physical,negative,length,horizontal,attribute,1d,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2
+1-----
+SENTENCE: my:DET rare:ADJ rife:ADJ wont:ADJ bed:N
+SEM_REP: ,self,pronoun,possessive,property,negative,frequency,attribute,abstraction,quality,property,negative,infestation,clean,bad,attribute,psychological_feature,property,life_form,commence_action,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2
+1-----
+SENTENCE: those:DET bad:ADJ gay:ADJ huge:ADJ bed:N
+SEM_REP: ,plural,determiner,definite,quality,property,negative,bad,attribute,abstraction,psychological_feature,property,life_form,happy,attribute,substantiality,size,property,physical,object,large,high_intensity,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2
+1-----
+SENTENCE: an:DET ole:ADJ wee:ADJ rife:ADJ bed:N
+SEM_REP: ,singular,indefinite,determiner,article,temporal-relation,property,past,new,negative,attribute,archaic,substantiality,small,size,property,physical,object,attribute,quality,property,negative,infestation,clean,bad,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2
+1-----
+SENTENCE: its:DET rough:ADJ glum:ADJ long:ADJ bed:N
+SEM_REP: ,singular,possessive,determiner,definite,texture,smooth,property,physical,object,negative,attribute,sad,psychological_feature,property,life_form,feeling,emotion,bad,attribute,substantiality,property,physical,object,length,attribute,1d,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2
+1-----
+SENTENCE: those:DET poor:ADJ rid:ADJ strong:ADJ bed:N
+SEM_REP: ,plural,determiner,definite,property,negative,monetary,attribute,abstraction,property,physical,negative,full,configuration,attribute,strength,property,physical,life_form,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2
+1-----
+SENTENCE: all:DET tough:ADJ lithe:ADJ numb:ADJ bed:N
+SEM_REP: ,positive,plural,determiner,definite,strong,property,physical,object,dense,consistency,attribute,property,physical,move,life_form,healthy,attribute,psychological_feature,property,negative,life_form,feeling,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2
+1-----
+SENTENCE: this:DET strange:ADJ gray:ADJ lame:ADJ bed:N
+SEM_REP: ,singular,determiner,definite,unusual,property,attribute,abstraction,white,property,hue,color,black,attribute,strength,property,physical,negative,life_form,bad,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2
+1-----
+SENTENCE: her:DET scant:ADJ steep:ADJ dear:ADJ bed:N
+SEM_REP: ,female,definite,article,property,negative,frequency,attribute,abstraction,property,physical,object,negative,flat,configuration,attribute,psychological_feature,property,life_form,attribute,attachment,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2
+1-----
+SENTENCE: which:DET fourth:ADJ moist:ADJ terse:ADJ bed:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,relation,post,positive,number,four,determiner,absolute-quantity,wet,property,physical,object,consistency,attribute,speech_act,psychological_feature,property,pleasant,negative,life_form,bad,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2
+1-----
+SENTENCE: your:DET back:ADJ quick:ADJ swank:ADJ four-poster:N
+SEM_REP: ,pronoun,possessive,2nd_person,spacial-relationship,relative_direction,relation,negative,horizontal,direction,temporal-relation,speed,property,negative,low_intensity,length,fast,event,attribute,quality,property,monetary,cost,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2,four-poster_f0,four-poster_f1,four-posterf_2
+1-----
+SENTENCE: its:DET poor:ADJ pale:ADJ bright:ADJ four-poster:N
+SEM_REP: ,singular,possessive,determiner,definite,property,negative,monetary,attribute,abstraction,state,property,negative,color,attribute,property,lightness,high_intensity,color,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2,four-poster_f0,four-poster_f1,four-posterf_2
+1-----
+SENTENCE: another:DET glib:ADJ mild:ADJ smart:ADJ four-poster:N
+SEM_REP: ,positive,indefinite,determiner,psychological_feature,property,life_form,direct,attribute,property,ease,attribute,abstraction,smart,psychological_feature,property,life_form,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2,four-poster_f0,four-poster_f1,four-posterf_2
+1-----
+SENTENCE: no:DET late:ADJ gray:ADJ thin:ADJ four-poster:N
+SEM_REP: ,relation,post,nil,negative,determiner,absolute-quantity,temporal-relation,relation,property,past,negative,attribute,association,white,property,hue,color,black,attribute,thin,property,physical,life_form,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2,four-poster_f0,four-poster_f1,four-posterf_2
+1-----
+SENTENCE: our:DET wise:ADJ prim:ADJ fine:ADJ four-poster:N
+SEM_REP: ,reflexive,pronoun,possessive,smart,psychological_feature,property,life_form,attribute,property,clean,attribute,abstraction,quality,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2,four-poster_f0,four-poster_f1,four-posterf_2
+1-----
+SENTENCE: my:DET bleak:ADJ soft:ADJ stark:ADJ waterbed:N
+SEM_REP: ,self,pronoun,possessive,property,outlook,negative,bad,attribute,abstraction,texture,soft,property,physical,object,attribute,uncommon,property,importance,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2,waterbed_f0,waterbed_f1,waterbedf_2
+1-----
+SENTENCE: one:DET curt:ADJ glib:ADJ wrong:ADJ waterbed:N
+SEM_REP: ,singular,positive,determiner,definite,speech_act,psychological_feature,property,pleasant,negative,life_form,bad,attribute,psychological_feature,property,life_form,direct,attribute,truth,property,negative,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2,waterbed_f0,waterbed_f1,waterbedf_2
+1-----
+SENTENCE: these:DET wee:ADJ bland:ADJ blue:ADJ waterbed:N
+SEM_REP: ,plural,determiner,definite,substantiality,small,size,property,physical,object,attribute,taste,sense,property,physical,object,negative,bad,attribute,property,hue,color,blue,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2,waterbed_f0,waterbed_f1,waterbedf_2
+1-----
+SENTENCE: my:DET shrewd:ADJ pert:ADJ black:ADJ waterbed:N
+SEM_REP: ,self,pronoun,possessive,psychological_feature,property,monetary,life_form,attribute,attending,psychological_feature,property,life_form,direct,attribute,property,hue,color,black,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2,waterbed_f0,waterbed_f1,waterbedf_2
+1-----
+SENTENCE: his:DET safe:ADJ late:ADJ done:ADJ waterbed:N
+SEM_REP: ,pronoun,possessive,male,safe,property,attribute,abstraction,temporal-relation,relation,property,past,negative,attribute,association,state,potential,negative,commence_action,action,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2,waterbed_f0,waterbed_f1,waterbedf_2
+1-----
+SENTENCE: your:DET wont:ADJ sleek:ADJ bare:ADJ trundle-bed:N
+SEM_REP: ,pronoun,possessive,2nd_person,psychological_feature,property,life_form,commence_action,attribute,texture,smooth,property,physical,object,attribute,property,physical,negative,clothing,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2,trundle-bed_f0,trundle-bed_f1,trundle-bedf_2
+1-----
+SENTENCE: other:DET great:ADJ dim:ADJ swift:ADJ trundle-bed:N
+SEM_REP: ,positive,determiner,definite,quality,property,attribute,abstraction,property,negative,lightness,color,attribute,temporal-relation,property,length,good,fast,event,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2,trundle-bed_f0,trundle-bed_f1,trundle-bedf_2
+1-----
+SENTENCE: five:DET damp:ADJ vague:ADJ weak:ADJ trundle-bed:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,wet,property,physical,consistency,bad,attribute,property,clarity,attribute,abstraction,strength,property,physical,negative,life_form,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2,trundle-bed_f0,trundle-bed_f1,trundle-bedf_2
+1-----
+SENTENCE: any:DET stale:ADJ good:ADJ worth:ADJ trundle-bed:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,property,physical,object,negative,fresh,edible,bad,attribute,quality,property,good,attribute,abstraction,relation,property,monetary,cost,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2,trundle-bed_f0,trundle-bed_f1,trundle-bedf_2
+1-----
+SENTENCE: her:DET scarce:ADJ suave:ADJ strange:ADJ trundle-bed:N
+SEM_REP: ,female,definite,article,property,negative,frequency,attribute,abstraction,speech_act,psychological_feature,property,life_form,confident,attribute,adept,unusual,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,bed_f0,bed_f1,bedf_2,trundle-bed_f0,trundle-bed_f1,trundle-bedf_2
+1-----
+SENTENCE: two:DET raw:ADJ hoarse:ADJ bare:ADJ table:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,property,physical,object,negative,edible,cooked,attribute,speak,property,physical,negative,low_intensity,life_form,attribute,property,physical,negative,clothing,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2
+1-----
+SENTENCE: each:DET mild:ADJ dour:ADJ flat:ADJ table:N
+SEM_REP: ,singular,indefinite,determiner,property,ease,attribute,abstraction,psychological_feature,property,outlook,negative,life_form,bad,attribute,property,physical,object,flat,configuration,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2
+1-----
+SENTENCE: most:DET rife:ADJ dire:ADJ bad:ADJ table:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,quality,property,negative,infestation,clean,bad,attribute,property,outlook,negative,bad,attribute,abstraction,quality,property,negative,bad,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2
+1-----
+SENTENCE: all:DET limp:ADJ just:ADJ sweet:ADJ table:N
+SEM_REP: ,positive,plural,determiner,definite,tight,property,physical,object,negative,configuration,attribute,property,formal,fair,attribute,abstraction,taste,sweet,sense,property,physical,object,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2
+1-----
+SENTENCE: five:DET dank:ADJ brash:ADJ green:ADJ table:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,wet,property,physical,decay,consistency,bad,attribute,psychological_feature,property,life_form,confident,commence_action,brave,bad,attribute,property,hue,green,color,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2
+1-----
+SENTENCE: any:DET blue:ADJ sad:ADJ quick:ADJ table:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,property,hue,color,blue,attribute,sad,psychological_feature,property,life_form,feeling,emotion,bad,attribute,temporal-relation,speed,property,negative,low_intensity,length,fast,event,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2
+1-----
+SENTENCE: this:DET queer:ADJ lone:ADJ sole:ADJ table:N
+SEM_REP: ,singular,determiner,definite,unusual,property,attribute,abstraction,psychological_feature,property,negative,life_form,attribute,attachment,relative-quantity,property,one,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2
+1-----
+SENTENCE: our:DET east:ADJ grand:ADJ best:ADJ table:N
+SEM_REP: ,reflexive,pronoun,possessive,spacial-relationship,right,relation,property,direction,attribute,absolute-direction,quality,property,attribute,archaic,abstraction,quality,property,high_intensity,good,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2
+1-----
+SENTENCE: her:DET near:ADJ blunt:ADJ black:ADJ table:N
+SEM_REP: ,female,definite,article,spacial-relation,relation,proximity,negative,length,sharp,property,physical,object,negative,configuration,attribute,property,hue,color,black,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2
+1-----
+SENTENCE: all:DET rare:ADJ cold:ADJ scant:ADJ table:N
+SEM_REP: ,positive,plural,determiner,definite,property,negative,frequency,attribute,abstraction,temperature,property,physical,cold,attribute,property,negative,frequency,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2
+1-----
+SENTENCE: many:DET coarse:ADJ vain:ADJ stark:ADJ table:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,texture,smooth,property,physical,object,negative,attribute,psychological_feature,property,life_form,confident,bad,attribute,uncommon,property,importance,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2
+1-----
+SENTENCE: its:DET back:ADJ left:ADJ sore:ADJ table:N
+SEM_REP: ,singular,possessive,determiner,definite,spacial-relationship,relative_direction,relation,negative,horizontal,direction,spacial-relationship,relative_direction,relation,property,horizontal,attribute,property,physical,negative,low_intensity,life_form,healthy,bad,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2
+1-----
+SENTENCE: more:DET hind:ADJ swift:ADJ glib:ADJ table:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,spacial-relationship,relation,property,horizontal,direction,behind,attribute,temporal-relation,property,length,good,fast,event,attribute,psychological_feature,property,life_form,direct,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2
+1-----
+SENTENCE: both:DET deft:ADJ slick:ADJ crisp:ADJ table:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,psychological_feature,property,life_form,attribute,adept,texture,smooth,property,physical,object,attribute,property,pliable,physical,object,negative,consistency,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2
+1-----
+SENTENCE: all:DET dire:ADJ flat:ADJ hoarse:ADJ table:N
+SEM_REP: ,positive,plural,determiner,definite,property,outlook,negative,bad,attribute,abstraction,property,physical,object,flat,configuration,attribute,speak,property,physical,negative,low_intensity,life_form,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2
+1-----
+SENTENCE: many:DET fair:ADJ free:ADJ drab:ADJ kitchen-table:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,property,fair,attribute,abstraction,property,negative,cost,attribute,abstraction,property,outlook,negative,bad,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2,kitchen-table_f0,kitchen-table_f1,kitchen-tablef_2
+1-----
+SENTENCE: their:DET loud:ADJ smug:ADJ fierce:ADJ kitchen-table:N
+SEM_REP: ,pronoun,possessive,3rd_person,sense,property,physical,noise,attribute,psychological_feature,property,life_form,confident,bad,attribute,psychological_feature,property,life_form,confident,commence_action,brave,attribute,anger,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2,kitchen-table_f0,kitchen-table_f1,kitchen-tablef_2
+1-----
+SENTENCE: that:DET dumb:ADJ damp:ADJ gray:ADJ kitchen-table:N
+SEM_REP: ,singular,determiner,definite,smart,psychological_feature,property,negative,life_form,bad,attribute,wet,property,physical,consistency,bad,attribute,white,property,hue,color,black,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2,kitchen-table_f0,kitchen-table_f1,kitchen-tablef_2
+1-----
+SENTENCE: an:DET sweet:ADJ mad:ADJ vague:ADJ kitchen-table:N
+SEM_REP: ,singular,indefinite,determiner,article,taste,sweet,sense,property,physical,object,attribute,psychological_feature,property,life_form,feeling,emotion,bad,attribute,anger,property,clarity,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2,kitchen-table_f0,kitchen-table_f1,kitchen-tablef_2
+1-----
+SENTENCE: most:DET vain:ADJ real:ADJ rife:ADJ kitchen-table:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,psychological_feature,property,life_form,confident,bad,attribute,truth,property,attribute,abstraction,quality,property,negative,infestation,clean,bad,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2,kitchen-table_f0,kitchen-table_f1,kitchen-tablef_2
+1-----
+SENTENCE: those:DET vast:ADJ mauve:ADJ ought:ADJ card-table:N
+SEM_REP: ,plural,determiner,definite,substantiality,property,physical,object,length,high_intensity,attribute,1d,red,property,hue,color,blue,attribute,obligatory,low_intensity,effect,action,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2,card-table_f0,card-table_f1,card-tablef_2
+1-----
+SENTENCE: more:DET limp:ADJ wise:ADJ tame:ADJ card-table:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,tight,property,physical,object,negative,configuration,attribute,smart,psychological_feature,property,life_form,attribute,psychological_feature,property,pleasant,ease,attribute,animal,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2,card-table_f0,card-table_f1,card-tablef_2
+1-----
+SENTENCE: all:DET fake:ADJ smart:ADJ close:ADJ card-table:N
+SEM_REP: ,positive,plural,determiner,definite,truth,property,negative,bad,attribute,abstraction,smart,psychological_feature,property,life_form,attribute,spacial-relation,relation,proximity,negative,length,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2,card-table_f0,card-table_f1,card-tablef_2
+1-----
+SENTENCE: two:DET sharp:ADJ dumb:ADJ red:ADJ card-table:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,sharp,property,physical,object,configuration,attribute,smart,psychological_feature,property,negative,life_form,bad,attribute,red,property,hue,color,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2,card-table_f0,card-table_f1,card-tablef_2
+1-----
+SENTENCE: that:DET harsh:ADJ nude:ADJ daft:ADJ card-table:N
+SEM_REP: ,singular,determiner,definite,property,pleasant,negative,ease,bad,attribute,abstraction,property,physical,negative,life_form,human,clothing,attribute,smart,psychological_feature,property,negative,life_form,bad,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2,card-table_f0,card-table_f1,card-tablef_2
+1-----
+SENTENCE: five:DET right:ADJ dumb:ADJ weird:ADJ coffee-table:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,spacial-relationship,right,relative_direction,relation,property,horizontal,attribute,smart,psychological_feature,property,negative,life_form,bad,attribute,unusual,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2,coffee-table_f0,coffee-table_f1,coffee-tablef_2
+1-----
+SENTENCE: an:DET straight:ADJ dire:ADJ new:ADJ coffee-table:N
+SEM_REP: ,singular,indefinite,determiner,article,straight,property,physical,object,configuration,attribute,property,outlook,negative,bad,attribute,abstraction,temporal-relation,property,new,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2,coffee-table_f0,coffee-table_f1,coffee-tablef_2
+1-----
+SENTENCE: few:DET stiff:ADJ straight:ADJ rich:ADJ coffee-table:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,property,pliable,physical,object,negative,flat,consistency,attribute,straight,property,physical,object,configuration,attribute,property,monetary,attribute,abstraction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2,coffee-table_f0,coffee-table_f1,coffee-tablef_2
+1-----
+SENTENCE: my:DET large:ADJ stiff:ADJ west:ADJ coffee-table:N
+SEM_REP: ,self,pronoun,possessive,substantiality,size,property,physical,object,large,attribute,property,pliable,physical,object,negative,flat,consistency,attribute,spacial-relationship,relation,property,direction,attribute,absolute-direction,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2,coffee-table_f0,coffee-table_f1,coffee-tablef_2
+1-----
+SENTENCE: their:DET brown:ADJ slow:ADJ vile:ADJ coffee-table:N
+SEM_REP: ,pronoun,possessive,3rd_person,yellow,red,property,hue,color,blue,attribute,temporal-relation,slow,property,length,event,attribute,sense,property,pleasant,physical,object,negative,formal,bad,attribute,thing_f0,thing_f1,thingf_2,furniture_f0,furniture_f1,furnituref_2,table_f0,table_f1,tablef_2,coffee-table_f0,coffee-table_f1,coffee-tablef_2
+1-----
+SENTENCE: one:DET smart:ADJ slight:ADJ queer:ADJ fruit:N
+SEM_REP: ,singular,positive,determiner,definite,smart,psychological_feature,property,life_form,attribute,substantiality,small,size,property,physical,object,attribute,unusual,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2
+1-----
+SENTENCE: each:DET back:ADJ frail:ADJ stale:ADJ fruit:N
+SEM_REP: ,singular,indefinite,determiner,spacial-relationship,relative_direction,relation,negative,horizontal,direction,sturdy,psychological_feature,property,negative,life_form,bad,attribute,property,physical,object,negative,fresh,edible,bad,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2
+1-----
+SENTENCE: many:DET swank:ADJ suave:ADJ young:ADJ fruit:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,quality,property,monetary,cost,attribute,abstraction,speech_act,psychological_feature,property,life_form,confident,attribute,adept,temporal-relation,property,new,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2
+1-----
+SENTENCE: five:DET shy:ADJ near:ADJ pink:ADJ fruit:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,quiet,psychological_feature,property,negative,life_form,direct,attribute,spacial-relation,relation,proximity,negative,length,white,red,property,hue,color,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2
+1-----
+SENTENCE: much:DET glib:ADJ sharp:ADJ wise:ADJ fruit:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,psychological_feature,property,life_form,direct,attribute,sharp,property,physical,object,configuration,attribute,smart,psychological_feature,property,life_form,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2
+1-----
+SENTENCE: your:DET young:ADJ gross:ADJ vague:ADJ fruit:N
+SEM_REP: ,pronoun,possessive,2nd_person,temporal-relation,property,new,attribute,slang,sense,property,pleasant,physical,object,negative,bad,attribute,property,clarity,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2
+1-----
+SENTENCE: few:DET smug:ADJ young:ADJ damp:ADJ fruit:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,psychological_feature,property,life_form,confident,bad,attribute,temporal-relation,property,new,attribute,wet,property,physical,consistency,bad,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2
+1-----
+SENTENCE: two:DET blank:ADJ tart:ADJ hind:ADJ fruit:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,property,negative,color,attribute,taste,sweet,sense,property,physical,object,negative,attribute,spacial-relationship,relation,property,horizontal,direction,behind,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2
+1-----
+SENTENCE: his:DET tall:ADJ false:ADJ suave:ADJ fruit:N
+SEM_REP: ,pronoun,possessive,male,vertical,substantiality,property,physical,object,length,attribute,1d,truth,property,negative,attribute,abstraction,speech_act,psychological_feature,property,life_form,confident,attribute,adept,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2
+1-----
+SENTENCE: all:DET fourth:ADJ loose:ADJ worth:ADJ fruit:N
+SEM_REP: ,positive,plural,determiner,definite,relation,post,positive,number,four,determiner,absolute-quantity,tight,property,physical,object,negative,configuration,attribute,relation,property,monetary,cost,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2
+1-----
+SENTENCE: more:DET stark:ADJ frank:ADJ staid:ADJ berry:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,uncommon,property,importance,attribute,abstraction,psychological_feature,property,life_form,direct,attribute,strong,property,physical,object,consistency,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2
+1-----
+SENTENCE: other:DET mauve:ADJ real:ADJ coarse:ADJ berry:N
+SEM_REP: ,positive,determiner,definite,red,property,hue,color,blue,attribute,truth,property,attribute,abstraction,texture,smooth,property,physical,object,negative,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2
+1-----
+SENTENCE: more:DET coarse:ADJ stray:ADJ swank:ADJ berry:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,texture,smooth,property,physical,object,negative,attribute,property,negative,importance,attribute,abstraction,quality,property,monetary,cost,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2
+1-----
+SENTENCE: few:DET brown:ADJ lithe:ADJ apt:ADJ berry:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,yellow,red,property,hue,color,blue,attribute,property,physical,move,life_form,healthy,attribute,psychological_feature,property,life_form,commence_action,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2
+1-----
+SENTENCE: many:DET thin:ADJ plump:ADJ mild:ADJ berry:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,thin,property,physical,life_form,attribute,thin,property,physical,negative,life_form,attribute,property,ease,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2
+1-----
+SENTENCE: five:DET hoarse:ADJ faint:ADJ frank:ADJ berry:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,speak,property,physical,negative,low_intensity,life_form,attribute,sturdy,psychological_feature,property,negative,life_form,attribute,psychological_feature,property,life_form,direct,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2
+1-----
+SENTENCE: those:DET numb:ADJ done:ADJ quaint:ADJ berry:N
+SEM_REP: ,plural,determiner,definite,psychological_feature,property,negative,life_form,feeling,attribute,state,potential,negative,commence_action,action,property,pleasant,historic,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2
+1-----
+SENTENCE: this:DET bad:ADJ wan:ADJ shy:ADJ berry:N
+SEM_REP: ,singular,determiner,definite,quality,property,negative,bad,attribute,abstraction,small,size,property,attribute,abstraction,quiet,psychological_feature,property,negative,life_form,direct,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2
+1-----
+SENTENCE: the:DET least:ADJ done:ADJ whole:ADJ berry:N
+SEM_REP: ,singular,determiner,definite,relative-quantity,relation,post,positive,negative,determiner,state,potential,negative,commence_action,action,property,physical,full,configuration,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2
+1-----
+SENTENCE: two:DET bland:ADJ thick:ADJ south:ADJ berry:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,taste,sense,property,physical,object,negative,bad,attribute,property,physical,object,dense,consistency,attribute,vertical,spacial-relationship,relation,property,direction,attribute,absolute-direction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2
+1-----
+SENTENCE: no:DET keen:ADJ broad:ADJ mild:ADJ berry:N
+SEM_REP: ,relation,post,nil,negative,determiner,absolute-quantity,smart,psychological_feature,property,life_form,attribute,substantiality,property,physical,object,length,attribute,1d,property,ease,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2
+1-----
+SENTENCE: five:DET rough:ADJ brash:ADJ chic:ADJ berry:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,texture,smooth,property,physical,object,negative,attribute,psychological_feature,property,life_form,confident,commence_action,brave,bad,attribute,property,fashionability,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2
+1-----
+SENTENCE: its:DET done:ADJ hind:ADJ less:ADJ berry:N
+SEM_REP: ,singular,possessive,determiner,definite,state,potential,negative,commence_action,action,spacial-relationship,relation,property,horizontal,direction,behind,attribute,relative-quantity,relation,post,negative,determiner,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2
+1-----
+SENTENCE: five:DET stale:ADJ mauve:ADJ queer:ADJ berry:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,property,physical,object,negative,fresh,edible,bad,attribute,red,property,hue,color,blue,attribute,unusual,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2
+1-----
+SENTENCE: their:DET prime:ADJ vain:ADJ sole:ADJ berry:N
+SEM_REP: ,pronoun,possessive,3rd_person,property,outlook,importance,attribute,abstraction,psychological_feature,property,life_form,confident,bad,attribute,relative-quantity,property,one,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2
+1-----
+SENTENCE: most:DET fair:ADJ wee:ADJ swift:ADJ raspberry:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,fair,attribute,abstraction,substantiality,small,size,property,physical,object,attribute,temporal-relation,property,length,good,fast,event,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2,raspberry_f0,raspberry_f1,raspberryf_2
+1-----
+SENTENCE: any:DET just:ADJ plain:ADJ chic:ADJ raspberry:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,property,formal,fair,attribute,abstraction,sense,property,physical,negative,lush,attribute,property,fashionability,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2,raspberry_f0,raspberry_f1,raspberryf_2
+1-----
+SENTENCE: more:DET fierce:ADJ nuts:ADJ suave:ADJ raspberry:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,psychological_feature,property,life_form,confident,commence_action,brave,attribute,anger,psychological_feature,property,negative,life_form,healthy,bad,attribute,speech_act,psychological_feature,property,life_form,confident,attribute,adept,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2,raspberry_f0,raspberry_f1,raspberryf_2
+1-----
+SENTENCE: the:DET flat:ADJ worst:ADJ must:ADJ raspberry:N
+SEM_REP: ,singular,determiner,definite,property,physical,object,flat,configuration,attribute,quality,property,negative,high_intensity,bad,attribute,abstraction,obligatory,high_intensity,effect,action,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2,raspberry_f0,raspberry_f1,raspberryf_2
+1-----
+SENTENCE: one:DET damp:ADJ plain:ADJ gay:ADJ raspberry:N
+SEM_REP: ,singular,positive,determiner,definite,wet,property,physical,consistency,bad,attribute,sense,property,physical,negative,lush,attribute,psychological_feature,property,life_form,happy,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2,raspberry_f0,raspberry_f1,raspberryf_2
+1-----
+SENTENCE: those:DET would:ADJ stiff:ADJ dead:ADJ blueberry:N
+SEM_REP: ,plural,determiner,definite,state,potential,effect,commence_action,action,ability,property,pliable,physical,object,negative,flat,consistency,attribute,property,physical,life_form,dead,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2,blueberry_f0,blueberry_f1,blueberryf_2
+1-----
+SENTENCE: those:DET daft:ADJ wild:ADJ young:ADJ blueberry:N
+SEM_REP: ,plural,determiner,definite,smart,psychological_feature,property,negative,life_form,bad,attribute,psychological_feature,property,pleasant,negative,ease,attribute,animal,temporal-relation,property,new,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2,blueberry_f0,blueberry_f1,blueberryf_2
+1-----
+SENTENCE: many:DET poor:ADJ hot:ADJ null:ADJ blueberry:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,property,negative,monetary,attribute,abstraction,temperature,property,physical,hot,attribute,relative-quantity,property,none,negative,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2,blueberry_f0,blueberry_f1,blueberryf_2
+1-----
+SENTENCE: each:DET blind:ADJ far:ADJ young:ADJ blueberry:N
+SEM_REP: ,singular,indefinite,determiner,see,property,physical,negative,life_form,attribute,spacial-relation,relation,proximity,length,temporal-relation,property,new,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2,blueberry_f0,blueberry_f1,blueberryf_2
+1-----
+SENTENCE: some:DET harsh:ADJ sparse:ADJ slight:ADJ blueberry:N
+SEM_REP: ,positive,plural,indefinite,determiner,property,pleasant,negative,ease,bad,attribute,abstraction,sense,property,physical,negative,lush,attribute,substantiality,small,size,property,physical,object,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2,blueberry_f0,blueberry_f1,blueberryf_2
+1-----
+SENTENCE: the:DET fair:ADJ coy:ADJ prime:ADJ strawberry:N
+SEM_REP: ,singular,determiner,definite,property,fair,attribute,abstraction,psychological_feature,property,negative,life_form,direct,bad,attribute,property,outlook,importance,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2,strawberry_f0,strawberry_f1,strawberryf_2
+1-----
+SENTENCE: both:DET bad:ADJ stiff:ADJ tight:ADJ strawberry:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,quality,property,negative,bad,attribute,abstraction,property,pliable,physical,object,negative,flat,consistency,attribute,tight,property,physical,object,configuration,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2,strawberry_f0,strawberry_f1,strawberryf_2
+1-----
+SENTENCE: most:DET crisp:ADJ pink:ADJ keen:ADJ strawberry:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,pliable,physical,object,negative,consistency,attribute,white,red,property,hue,color,attribute,smart,psychological_feature,property,life_form,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2,strawberry_f0,strawberry_f1,strawberryf_2
+1-----
+SENTENCE: that:DET lithe:ADJ terse:ADJ shrewd:ADJ strawberry:N
+SEM_REP: ,singular,determiner,definite,property,physical,move,life_form,healthy,attribute,speech_act,psychological_feature,property,pleasant,negative,life_form,bad,attribute,psychological_feature,property,monetary,life_form,attribute,attending,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2,strawberry_f0,strawberry_f1,strawberryf_2
+1-----
+SENTENCE: two:DET small:ADJ dense:ADJ fat:ADJ strawberry:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,substantiality,small,size,property,physical,object,attribute,smart,psychological_feature,property,negative,life_form,bad,attribute,thin,property,physical,negative,life_form,bad,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,berry_f0,berry_f1,berryf_2,strawberry_f0,strawberry_f1,strawberryf_2
+1-----
+SENTENCE: my:DET fast:ADJ great:ADJ nuts:ADJ melon:N
+SEM_REP: ,self,pronoun,possessive,temporal-relation,speed,property,negative,length,high_intensity,fast,event,attribute,quality,property,attribute,abstraction,psychological_feature,property,negative,life_form,healthy,bad,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2
+1-----
+SENTENCE: these:DET harsh:ADJ back:ADJ round:ADJ melon:N
+SEM_REP: ,plural,determiner,definite,property,pleasant,negative,ease,bad,attribute,abstraction,spacial-relationship,relative_direction,relation,negative,horizontal,direction,property,physical,object,negative,flat,configuration,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2
+1-----
+SENTENCE: two:DET keen:ADJ deep:ADJ wont:ADJ melon:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,smart,psychological_feature,property,life_form,attribute,substantiality,property,physical,depth,attribute,psychological_feature,property,life_form,commence_action,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2
+1-----
+SENTENCE: his:DET worst:ADJ damp:ADJ non:ADJ melon:N
+SEM_REP: ,pronoun,possessive,male,quality,property,negative,high_intensity,bad,attribute,abstraction,wet,property,physical,consistency,bad,attribute,relative-quantity,property,none,negative,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2
+1-----
+SENTENCE: no:DET clear:ADJ ole:ADJ lithe:ADJ melon:N
+SEM_REP: ,relation,post,nil,negative,determiner,absolute-quantity,psychological_feature,property,ease,cognition,attribute,abstraction,temporal-relation,property,past,new,negative,attribute,archaic,property,physical,move,life_form,healthy,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2
+1-----
+SENTENCE: this:DET stark:ADJ hind:ADJ true:ADJ melon:N
+SEM_REP: ,singular,determiner,definite,uncommon,property,importance,attribute,abstraction,spacial-relationship,relation,property,horizontal,direction,behind,attribute,truth,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2
+1-----
+SENTENCE: their:DET tense:ADJ apt:ADJ suave:ADJ melon:N
+SEM_REP: ,pronoun,possessive,3rd_person,tight,property,physical,object,configuration,attribute,psychological_feature,property,life_form,commence_action,attribute,speech_act,psychological_feature,property,life_form,confident,attribute,adept,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2
+1-----
+SENTENCE: both:DET mad:ADJ best:ADJ weird:ADJ melon:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,psychological_feature,property,life_form,feeling,emotion,bad,attribute,anger,quality,property,high_intensity,good,attribute,abstraction,unusual,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2
+1-----
+SENTENCE: no:DET brash:ADJ moist:ADJ loud:ADJ melon:N
+SEM_REP: ,relation,post,nil,negative,determiner,absolute-quantity,psychological_feature,property,life_form,confident,commence_action,brave,bad,attribute,wet,property,physical,object,consistency,attribute,sense,property,physical,noise,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2
+1-----
+SENTENCE: five:DET lewd:ADJ proud:ADJ safe:ADJ melon:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,sexual,psychological_feature,property,life_form,bad,attribute,psychological_feature,property,life_form,confident,attribute,safe,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2
+1-----
+SENTENCE: some:DET clad:ADJ mad:ADJ moot:ADJ melon:N
+SEM_REP: ,positive,plural,indefinite,determiner,property,physical,life_form,clothing,attribute,psychological_feature,property,life_form,feeling,emotion,bad,attribute,anger,property,negative,importance,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2
+1-----
+SENTENCE: my:DET prim:ADJ done:ADJ daft:ADJ melon:N
+SEM_REP: ,self,pronoun,possessive,property,clean,attribute,abstraction,state,potential,negative,commence_action,action,smart,psychological_feature,property,negative,life_form,bad,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2
+1-----
+SENTENCE: few:DET glad:ADJ new:ADJ meek:ADJ melon:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,psychological_feature,property,life_form,happy,attribute,temporal-relation,property,new,attribute,psychological_feature,property,life_form,fear,commence_action,bad,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2
+1-----
+SENTENCE: two:DET brief:ADJ gilt:ADJ strict:ADJ melon:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,temporal-relation,property,negative,length,fast,event,attribute,property,physical,object,configuration,coated,attribute,property,care,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2
+1-----
+SENTENCE: this:DET wide:ADJ old:ADJ grim:ADJ melon:N
+SEM_REP: ,singular,determiner,definite,substantiality,property,physical,object,length,horizontal,attribute,1d,temporal-relation,property,past,new,negative,attribute,property,outlook,negative,bad,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2
+1-----
+SENTENCE: that:DET strong:ADJ harsh:ADJ next:ADJ honeydew:N
+SEM_REP: ,singular,determiner,definite,strength,property,physical,life_form,attribute,property,pleasant,negative,ease,bad,attribute,abstraction,temporal-relation,relation,post,determiner,association,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2,honeydew_f0,honeydew_f1,honeydewf_2
+1-----
+SENTENCE: her:DET old:ADJ hind:ADJ deep:ADJ honeydew:N
+SEM_REP: ,female,definite,article,temporal-relation,property,past,new,negative,attribute,spacial-relationship,relation,property,horizontal,direction,behind,attribute,substantiality,property,physical,depth,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2,honeydew_f0,honeydew_f1,honeydewf_2
+1-----
+SENTENCE: some:DET wet:ADJ prim:ADJ true:ADJ honeydew:N
+SEM_REP: ,positive,plural,indefinite,determiner,wet,property,physical,consistency,attribute,property,clean,attribute,abstraction,truth,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2,honeydew_f0,honeydew_f1,honeydewf_2
+1-----
+SENTENCE: an:DET snug:ADJ lone:ADJ slick:ADJ honeydew:N
+SEM_REP: ,singular,indefinite,determiner,article,tight,property,physical,object,good,configuration,attribute,psychological_feature,property,negative,life_form,attribute,attachment,texture,smooth,property,physical,object,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2,honeydew_f0,honeydew_f1,honeydewf_2
+1-----
+SENTENCE: each:DET deep:ADJ nude:ADJ glib:ADJ honeydew:N
+SEM_REP: ,singular,indefinite,determiner,substantiality,property,physical,depth,attribute,property,physical,negative,life_form,human,clothing,attribute,psychological_feature,property,life_form,direct,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2,honeydew_f0,honeydew_f1,honeydewf_2
+1-----
+SENTENCE: two:DET through:ADJ blond:ADJ wide:ADJ cantelope:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,spacial-relationship,relation,location,yellow,property,physical,life_form,hue,hair,female,color,attribute,substantiality,property,physical,object,length,horizontal,attribute,1d,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2,cantelope_f0,cantelope_f1,cantelopef_2
+1-----
+SENTENCE: their:DET wont:ADJ wan:ADJ wet:ADJ cantelope:N
+SEM_REP: ,pronoun,possessive,3rd_person,psychological_feature,property,life_form,commence_action,attribute,small,size,property,attribute,abstraction,wet,property,physical,consistency,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2,cantelope_f0,cantelope_f1,cantelopef_2
+1-----
+SENTENCE: two:DET fake:ADJ sane:ADJ cute:ADJ cantelope:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,truth,property,negative,bad,attribute,abstraction,sturdy,psychological_feature,property,life_form,attribute,property,physical,life_form,attribute,attractive,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2,cantelope_f0,cantelope_f1,cantelopef_2
+1-----
+SENTENCE: the:DET true:ADJ swank:ADJ real:ADJ cantelope:N
+SEM_REP: ,singular,determiner,definite,truth,property,attribute,abstraction,quality,property,monetary,cost,attribute,abstraction,truth,property,attribute,abstraction,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2,cantelope_f0,cantelope_f1,cantelopef_2
+1-----
+SENTENCE: all:DET dire:ADJ left:ADJ slow:ADJ cantelope:N
+SEM_REP: ,positive,plural,determiner,definite,property,outlook,negative,bad,attribute,abstraction,spacial-relationship,relative_direction,relation,property,horizontal,attribute,temporal-relation,slow,property,length,event,attribute,thing_f0,thing_f1,thingf_2,fruit_f0,fruit_f1,fruitf_2,melon_f0,melon_f1,melonf_2,cantelope_f0,cantelope_f1,cantelopef_2
+1-----
+SENTENCE: her:DET tall:ADJ fond:ADJ sole:ADJ             honeydew:N
+SEM_REP: ,female,definite,article,vertical,substantiality,property,physical,object,length,attribute,1d,property,life_form,attribute,attachment,relative-quantity,property,one,attribute,honeydew_f0,honeydew_f1,honeydewf_2
+1-----
+SENTENCE: few:DET loose:ADJ scant:ADJ numb:ADJ             honeydew:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,tight,property,physical,object,negative,configuration,attribute,property,negative,frequency,attribute,abstraction,psychological_feature,property,negative,life_form,feeling,attribute,honeydew_f0,honeydew_f1,honeydewf_2
+1-----
+SENTENCE: other:DET swift:ADJ smart:ADJ fresh:ADJ             honeydew:N
+SEM_REP: ,positive,determiner,definite,temporal-relation,property,length,good,fast,event,attribute,smart,psychological_feature,property,life_form,attribute,taste,sense,property,physical,object,attribute,honeydew_f0,honeydew_f1,honeydewf_2
+1-----
+SENTENCE: all:DET large:ADJ mere:ADJ gross:ADJ             honeydew:N
+SEM_REP: ,positive,plural,determiner,definite,substantiality,size,property,physical,object,large,attribute,property,negative,importance,attribute,abstraction,slang,sense,property,pleasant,physical,object,negative,bad,attribute,honeydew_f0,honeydew_f1,honeydewf_2
+1-----
+SENTENCE: her:DET prim:ADJ blond:ADJ dim:ADJ             honeydew:N
+SEM_REP: ,female,definite,article,property,clean,attribute,abstraction,yellow,property,physical,life_form,hue,hair,female,color,attribute,property,negative,lightness,color,attribute,honeydew_f0,honeydew_f1,honeydewf_2
+1-----
+SENTENCE: any:DET curt:ADJ fine:ADJ fierce:ADJ apple:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,speech_act,psychological_feature,property,pleasant,negative,life_form,bad,attribute,quality,property,attribute,abstraction,psychological_feature,property,life_form,confident,commence_action,brave,attribute,anger,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2
+1-----
+SENTENCE: one:DET scant:ADJ sleek:ADJ sly:ADJ apple:N
+SEM_REP: ,singular,positive,determiner,definite,property,negative,frequency,attribute,abstraction,texture,smooth,property,physical,object,attribute,psychological_feature,property,negative,life_form,direct,bad,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2
+1-----
+SENTENCE: its:DET great:ADJ vague:ADJ swift:ADJ apple:N
+SEM_REP: ,singular,possessive,determiner,definite,quality,property,attribute,abstraction,property,clarity,attribute,abstraction,temporal-relation,property,length,good,fast,event,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2
+1-----
+SENTENCE: their:DET grand:ADJ steep:ADJ sane:ADJ apple:N
+SEM_REP: ,pronoun,possessive,3rd_person,quality,property,attribute,archaic,abstraction,property,physical,object,negative,flat,configuration,attribute,sturdy,psychological_feature,property,life_form,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2
+1-----
+SENTENCE: more:DET blonde:ADJ sweet:ADJ ripe:ADJ apple:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,yellow,property,physical,life_form,hue,hair,color,attribute,taste,sweet,sense,property,physical,object,attribute,property,physical,object,negative,fresh,edible,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2
+1-----
+SENTENCE: their:DET dark:ADJ close:ADJ rife:ADJ apple:N
+SEM_REP: ,pronoun,possessive,3rd_person,property,negative,lightness,color,attribute,spacial-relation,relation,proximity,negative,length,quality,property,negative,infestation,clean,bad,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2
+1-----
+SENTENCE: some:DET dank:ADJ high:ADJ lame:ADJ apple:N
+SEM_REP: ,positive,plural,indefinite,determiner,wet,property,physical,decay,consistency,bad,attribute,vertical,up,spacial-relationship,relation,property,direction,attribute,strength,property,physical,negative,life_form,bad,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2
+1-----
+SENTENCE: another:DET worth:ADJ blond:ADJ stark:ADJ apple:N
+SEM_REP: ,positive,indefinite,determiner,relation,property,monetary,cost,attribute,abstraction,yellow,property,physical,life_form,hue,hair,female,color,attribute,uncommon,property,importance,attribute,abstraction,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2
+1-----
+SENTENCE: my:DET stiff:ADJ smart:ADJ rare:ADJ apple:N
+SEM_REP: ,self,pronoun,possessive,property,pliable,physical,object,negative,flat,consistency,attribute,smart,psychological_feature,property,life_form,attribute,property,negative,frequency,attribute,abstraction,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2
+1-----
+SENTENCE: any:DET pink:ADJ fourth:ADJ dense:ADJ apple:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,white,red,property,hue,color,attribute,relation,post,positive,number,four,determiner,absolute-quantity,smart,psychological_feature,property,negative,life_form,bad,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2
+1-----
+SENTENCE: each:DET lithe:ADJ prim:ADJ vile:ADJ apple:N
+SEM_REP: ,singular,indefinite,determiner,property,physical,move,life_form,healthy,attribute,property,clean,attribute,abstraction,sense,property,pleasant,physical,object,negative,formal,bad,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2
+1-----
+SENTENCE: this:DET rare:ADJ left:ADJ thick:ADJ apple:N
+SEM_REP: ,singular,determiner,definite,property,negative,frequency,attribute,abstraction,spacial-relationship,relative_direction,relation,property,horizontal,attribute,property,physical,object,dense,consistency,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2
+1-----
+SENTENCE: some:DET free:ADJ whole:ADJ pert:ADJ apple:N
+SEM_REP: ,positive,plural,indefinite,determiner,property,negative,cost,attribute,abstraction,property,physical,full,configuration,attribute,psychological_feature,property,life_form,direct,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2
+1-----
+SENTENCE: more:DET loud:ADJ blind:ADJ smart:ADJ apple:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,sense,property,physical,noise,attribute,see,property,physical,negative,life_form,attribute,smart,psychological_feature,property,life_form,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2
+1-----
+SENTENCE: his:DET done:ADJ dark:ADJ stern:ADJ apple:N
+SEM_REP: ,pronoun,possessive,male,state,potential,negative,commence_action,action,property,negative,lightness,color,attribute,sturdy,psychological_feature,property,life_form,direct,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2
+1-----
+SENTENCE: more:DET curt:ADJ shrewd:ADJ gauche:ADJ McIntosh:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,speech_act,psychological_feature,property,pleasant,negative,life_form,bad,attribute,psychological_feature,property,monetary,life_form,attribute,attending,psychological_feature,property,pleasant,negative,life_form,bad,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2,mcintosh_f0,mcintosh_f1,mcintoshf_2
+1-----
+SENTENCE: any:DET hind:ADJ prone:ADJ glib:ADJ McIntosh:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,spacial-relationship,relation,property,horizontal,direction,behind,attribute,psychological_feature,property,life_form,commence_action,attribute,psychological_feature,property,life_form,direct,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2,mcintosh_f0,mcintosh_f1,mcintoshf_2
+1-----
+SENTENCE: those:DET next:ADJ black:ADJ close:ADJ McIntosh:N
+SEM_REP: ,plural,determiner,definite,temporal-relation,relation,post,determiner,association,property,hue,color,black,attribute,spacial-relation,relation,proximity,negative,length,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2,mcintosh_f0,mcintosh_f1,mcintoshf_2
+1-----
+SENTENCE: two:DET stiff:ADJ non:ADJ dour:ADJ McIntosh:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,property,pliable,physical,object,negative,flat,consistency,attribute,relative-quantity,property,none,negative,attribute,psychological_feature,property,outlook,negative,life_form,bad,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2,mcintosh_f0,mcintosh_f1,mcintoshf_2
+1-----
+SENTENCE: more:DET wild:ADJ brief:ADJ tense:ADJ McIntosh:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,psychological_feature,property,pleasant,negative,ease,attribute,animal,temporal-relation,property,negative,length,fast,event,attribute,tight,property,physical,object,configuration,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2,mcintosh_f0,mcintosh_f1,mcintoshf_2
+1-----
+SENTENCE: her:DET stale:ADJ smug:ADJ large:ADJ Granny-Smith:N
+SEM_REP: ,female,definite,article,property,physical,object,negative,fresh,edible,bad,attribute,psychological_feature,property,life_form,confident,bad,attribute,substantiality,size,property,physical,object,large,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2,granny-smith_f0,granny-smith_f1,granny-smithf_2
+1-----
+SENTENCE: this:DET just:ADJ apt:ADJ pink:ADJ Granny-Smith:N
+SEM_REP: ,singular,determiner,definite,property,formal,fair,attribute,abstraction,psychological_feature,property,life_form,commence_action,attribute,white,red,property,hue,color,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2,granny-smith_f0,granny-smith_f1,granny-smithf_2
+1-----
+SENTENCE: each:DET mauve:ADJ staid:ADJ deaf:ADJ Granny-Smith:N
+SEM_REP: ,singular,indefinite,determiner,red,property,hue,color,blue,attribute,strong,property,physical,object,consistency,attribute,property,physical,negative,life_form,hear,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2,granny-smith_f0,granny-smith_f1,granny-smithf_2
+1-----
+SENTENCE: some:DET mauve:ADJ moist:ADJ bold:ADJ Granny-Smith:N
+SEM_REP: ,positive,plural,indefinite,determiner,red,property,hue,color,blue,attribute,wet,property,physical,object,consistency,attribute,psychological_feature,property,loud,life_form,confident,commence_action,brave,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2,granny-smith_f0,granny-smith_f1,granny-smithf_2
+1-----
+SENTENCE: any:DET less:ADJ wrong:ADJ sly:ADJ Granny-Smith:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,relative-quantity,relation,post,negative,determiner,truth,property,negative,attribute,abstraction,psychological_feature,property,negative,life_form,direct,bad,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2,granny-smith_f0,granny-smith_f1,granny-smithf_2
+1-----
+SENTENCE: no:DET wan:ADJ real:ADJ warm:ADJ Golden-Delicious:N
+SEM_REP: ,relation,post,nil,negative,determiner,absolute-quantity,small,size,property,attribute,abstraction,truth,property,attribute,abstraction,temperature,property,physical,object,low_intensity,hot,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2,golden-delicious_f0,golden-delicious_f1,golden-deliciousf_2
+1-----
+SENTENCE: this:DET prim:ADJ nice:ADJ cheap:ADJ Golden-Delicious:N
+SEM_REP: ,singular,determiner,definite,property,clean,attribute,abstraction,quality,property,attribute,abstraction,property,negative,cost,bad,attribute,abstraction,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2,golden-delicious_f0,golden-delicious_f1,golden-deliciousf_2
+1-----
+SENTENCE: most:DET last:ADJ dear:ADJ huge:ADJ Golden-Delicious:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,temporal-relation,relation,post,past,negative,determiner,psychological_feature,property,life_form,attribute,attachment,substantiality,size,property,physical,object,large,high_intensity,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2,golden-delicious_f0,golden-delicious_f1,golden-deliciousf_2
+1-----
+SENTENCE: few:DET crude:ADJ done:ADJ bright:ADJ Golden-Delicious:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,quality,property,negative,bad,attribute,abstraction,state,potential,negative,commence_action,action,property,lightness,high_intensity,color,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2,golden-delicious_f0,golden-delicious_f1,golden-deliciousf_2
+1-----
+SENTENCE: each:DET huge:ADJ gray:ADJ sure:ADJ Golden-Delicious:N
+SEM_REP: ,singular,indefinite,determiner,substantiality,size,property,physical,object,large,high_intensity,attribute,white,property,hue,color,black,attribute,psychological_feature,property,life_form,confident,attribute,honeydew_f0,honeydew_f1,honeydewf_2,apple_f0,apple_f1,applef_2,golden-delicious_f0,golden-delicious_f1,golden-deliciousf_2
+1-----
+SENTENCE: the:DET rare:ADJ sharp:ADJ close:ADJ vehicle:N
+SEM_REP: ,singular,determiner,definite,property,negative,frequency,attribute,abstraction,sharp,property,physical,object,configuration,attribute,spacial-relation,relation,proximity,negative,length,vehicle_f0,vehicle_f1,vehiclef_2
+1-----
+SENTENCE: few:DET gross:ADJ smooth:ADJ dead:ADJ vehicle:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,slang,sense,property,pleasant,physical,object,negative,bad,attribute,texture,smooth,property,physical,object,attribute,property,physical,life_form,dead,attribute,vehicle_f0,vehicle_f1,vehiclef_2
+1-----
+SENTENCE: which:DET chaste:ADJ staunch:ADJ flat:ADJ vehicle:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,sexual,psychological_feature,property,negative,life_form,attribute,sturdy,psychological_feature,property,life_form,direct,attribute,property,physical,object,flat,configuration,attribute,vehicle_f0,vehicle_f1,vehiclef_2
+1-----
+SENTENCE: this:DET calm:ADJ moot:ADJ white:ADJ vehicle:N
+SEM_REP: ,singular,determiner,definite,psychological_feature,property,life_form,confident,attribute,property,negative,importance,attribute,abstraction,white,property,hue,color,attribute,vehicle_f0,vehicle_f1,vehiclef_2
+1-----
+SENTENCE: another:DET dank:ADJ would:ADJ first:ADJ vehicle:N
+SEM_REP: ,positive,indefinite,determiner,wet,property,physical,decay,consistency,bad,attribute,state,potential,effect,commence_action,action,ability,temporal-relation,relation,post,positive,determiner,vehicle_f0,vehicle_f1,vehiclef_2
+1-----
+SENTENCE: his:DET huge:ADJ smooth:ADJ east:ADJ vehicle:N
+SEM_REP: ,pronoun,possessive,male,substantiality,size,property,physical,object,large,high_intensity,attribute,texture,smooth,property,physical,object,attribute,spacial-relationship,right,relation,property,direction,attribute,absolute-direction,vehicle_f0,vehicle_f1,vehiclef_2
+1-----
+SENTENCE: all:DET sparse:ADJ quaint:ADJ dour:ADJ vehicle:N
+SEM_REP: ,positive,plural,determiner,definite,sense,property,physical,negative,lush,attribute,property,pleasant,historic,attribute,abstraction,psychological_feature,property,outlook,negative,life_form,bad,attribute,vehicle_f0,vehicle_f1,vehiclef_2
+1-----
+SENTENCE: its:DET vast:ADJ high:ADJ huge:ADJ vehicle:N
+SEM_REP: ,singular,possessive,determiner,definite,substantiality,property,physical,object,length,high_intensity,attribute,1d,vertical,up,spacial-relationship,relation,property,direction,attribute,substantiality,size,property,physical,object,large,high_intensity,attribute,vehicle_f0,vehicle_f1,vehiclef_2
+1-----
+SENTENCE: their:DET rich:ADJ nude:ADJ scarce:ADJ vehicle:N
+SEM_REP: ,pronoun,possessive,3rd_person,property,monetary,attribute,abstraction,property,physical,negative,life_form,human,clothing,attribute,property,negative,frequency,attribute,abstraction,vehicle_f0,vehicle_f1,vehiclef_2
+1-----
+SENTENCE: two:DET sharp:ADJ blithe:ADJ sick:ADJ vehicle:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,sharp,property,physical,object,configuration,attribute,psychological_feature,property,negative,life_form,happy,feeling,attribute,property,physical,negative,life_form,healthy,bad,attribute,vehicle_f0,vehicle_f1,vehiclef_2
+1-----
+SENTENCE: its:DET ripe:ADJ strong:ADJ thin:ADJ boat:N
+SEM_REP: ,singular,possessive,determiner,definite,property,physical,object,negative,fresh,edible,attribute,strength,property,physical,life_form,attribute,thin,property,physical,life_form,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2
+1-----
+SENTENCE: their:DET mauve:ADJ wise:ADJ less:ADJ boat:N
+SEM_REP: ,pronoun,possessive,3rd_person,red,property,hue,color,blue,attribute,smart,psychological_feature,property,life_form,attribute,relative-quantity,relation,post,negative,determiner,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2
+1-----
+SENTENCE: his:DET bare:ADJ beige:ADJ lush:ADJ boat:N
+SEM_REP: ,pronoun,possessive,male,property,physical,negative,clothing,attribute,yellow,white,property,hue,color,attribute,sense,property,physical,lush,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2
+1-----
+SENTENCE: one:DET daft:ADJ cheap:ADJ bad:ADJ boat:N
+SEM_REP: ,singular,positive,determiner,definite,smart,psychological_feature,property,negative,life_form,bad,attribute,property,negative,cost,bad,attribute,abstraction,quality,property,negative,bad,attribute,abstraction,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2
+1-----
+SENTENCE: each:DET tense:ADJ sweet:ADJ tame:ADJ boat:N
+SEM_REP: ,singular,indefinite,determiner,tight,property,physical,object,configuration,attribute,taste,sweet,sense,property,physical,object,attribute,psychological_feature,property,pleasant,ease,attribute,animal,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2
+1-----
+SENTENCE: the:DET cute:ADJ right:ADJ left:ADJ boat:N
+SEM_REP: ,singular,determiner,definite,property,physical,life_form,attribute,attractive,spacial-relationship,right,relative_direction,relation,property,horizontal,attribute,spacial-relationship,relative_direction,relation,property,horizontal,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2
+1-----
+SENTENCE: its:DET loose:ADJ terse:ADJ sad:ADJ boat:N
+SEM_REP: ,singular,possessive,determiner,definite,tight,property,physical,object,negative,configuration,attribute,speech_act,psychological_feature,property,pleasant,negative,life_form,bad,attribute,sad,psychological_feature,property,life_form,feeling,emotion,bad,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2
+1-----
+SENTENCE: much:DET chic:ADJ sly:ADJ huge:ADJ boat:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,fashionability,attribute,abstraction,psychological_feature,property,negative,life_form,direct,bad,attribute,substantiality,size,property,physical,object,large,high_intensity,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2
+1-----
+SENTENCE: which:DET bland:ADJ rude:ADJ bad:ADJ boat:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,taste,sense,property,physical,object,negative,bad,attribute,speech_act,psychological_feature,property,pleasant,negative,life_form,bad,attribute,quality,property,negative,bad,attribute,abstraction,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2
+1-----
+SENTENCE: my:DET would:ADJ glib:ADJ coy:ADJ boat:N
+SEM_REP: ,self,pronoun,possessive,state,potential,effect,commence_action,action,ability,psychological_feature,property,life_form,direct,attribute,psychological_feature,property,negative,life_form,direct,bad,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2
+1-----
+SENTENCE: the:DET deep:ADJ damp:ADJ bright:ADJ boat:N
+SEM_REP: ,singular,determiner,definite,substantiality,property,physical,depth,attribute,wet,property,physical,consistency,bad,attribute,property,lightness,high_intensity,color,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2
+1-----
+SENTENCE: many:DET loud:ADJ glum:ADJ strange:ADJ boat:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,sense,property,physical,noise,attribute,sad,psychological_feature,property,life_form,feeling,emotion,bad,attribute,unusual,property,attribute,abstraction,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2
+1-----
+SENTENCE: their:DET worth:ADJ poor:ADJ pale:ADJ boat:N
+SEM_REP: ,pronoun,possessive,3rd_person,relation,property,monetary,cost,attribute,abstraction,property,negative,monetary,attribute,abstraction,state,property,negative,color,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2
+1-----
+SENTENCE: the:DET left:ADJ black:ADJ fresh:ADJ boat:N
+SEM_REP: ,singular,determiner,definite,spacial-relationship,relative_direction,relation,property,horizontal,attribute,property,hue,color,black,attribute,taste,sense,property,physical,object,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2
+1-----
+SENTENCE: the:DET raw:ADJ worth:ADJ white:ADJ boat:N
+SEM_REP: ,singular,determiner,definite,property,physical,object,negative,edible,cooked,attribute,relation,property,monetary,cost,attribute,abstraction,white,property,hue,color,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2
+1-----
+SENTENCE: any:DET fierce:ADJ fresh:ADJ damp:ADJ motorboat:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,psychological_feature,property,life_form,confident,commence_action,brave,attribute,anger,taste,sense,property,physical,object,attribute,wet,property,physical,consistency,bad,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2,motorboat_f0,motorboat_f1,motorboatf_2
+1-----
+SENTENCE: my:DET same:ADJ bare:ADJ deep:ADJ motorboat:N
+SEM_REP: ,self,pronoun,possessive,post,identity,determiner,definite,property,physical,negative,clothing,attribute,substantiality,property,physical,depth,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2,motorboat_f0,motorboat_f1,motorboatf_2
+1-----
+SENTENCE: all:DET soft:ADJ wee:ADJ blithe:ADJ motorboat:N
+SEM_REP: ,positive,plural,determiner,definite,texture,soft,property,physical,object,attribute,substantiality,small,size,property,physical,object,attribute,psychological_feature,property,negative,life_form,happy,feeling,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2,motorboat_f0,motorboat_f1,motorboatf_2
+1-----
+SENTENCE: one:DET staunch:ADJ ill:ADJ plump:ADJ motorboat:N
+SEM_REP: ,singular,positive,determiner,definite,sturdy,psychological_feature,property,life_form,direct,attribute,property,physical,negative,life_form,healthy,bad,attribute,thin,property,physical,negative,life_form,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2,motorboat_f0,motorboat_f1,motorboatf_2
+1-----
+SENTENCE: her:DET deep:ADJ posh:ADJ gauche:ADJ motorboat:N
+SEM_REP: ,female,definite,article,substantiality,property,physical,depth,attribute,quality,property,monetary,cost,attribute,abstraction,psychological_feature,property,pleasant,negative,life_form,bad,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2,motorboat_f0,motorboat_f1,motorboatf_2
+1-----
+SENTENCE: my:DET moist:ADJ limp:ADJ loose:ADJ sailboat:N
+SEM_REP: ,self,pronoun,possessive,wet,property,physical,object,consistency,attribute,tight,property,physical,object,negative,configuration,attribute,tight,property,physical,object,negative,configuration,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2,sailboat_f0,sailboat_f1,sailboatf_2
+1-----
+SENTENCE: each:DET clear:ADJ blunt:ADJ wan:ADJ sailboat:N
+SEM_REP: ,singular,indefinite,determiner,psychological_feature,property,ease,cognition,attribute,abstraction,sharp,property,physical,object,negative,configuration,attribute,small,size,property,attribute,abstraction,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2,sailboat_f0,sailboat_f1,sailboatf_2
+1-----
+SENTENCE: a:DET green:ADJ thin:ADJ rife:ADJ sailboat:N
+SEM_REP: ,singular,indefinite,determiner,article,property,hue,green,color,attribute,thin,property,physical,life_form,attribute,quality,property,negative,infestation,clean,bad,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2,sailboat_f0,sailboat_f1,sailboatf_2
+1-----
+SENTENCE: many:DET crisp:ADJ keen:ADJ late:ADJ sailboat:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,property,pliable,physical,object,negative,consistency,attribute,smart,psychological_feature,property,life_form,attribute,temporal-relation,relation,property,past,negative,attribute,association,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2,sailboat_f0,sailboat_f1,sailboatf_2
+1-----
+SENTENCE: each:DET prim:ADJ coarse:ADJ gray:ADJ sailboat:N
+SEM_REP: ,singular,indefinite,determiner,property,clean,attribute,abstraction,texture,smooth,property,physical,object,negative,attribute,white,property,hue,color,black,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2,sailboat_f0,sailboat_f1,sailboatf_2
+1-----
+SENTENCE: which:DET svelte:ADJ stern:ADJ keen:ADJ tugboat:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,uncommon,thin,property,physical,life_form,attribute,sturdy,psychological_feature,property,life_form,direct,attribute,smart,psychological_feature,property,life_form,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2,tugboat_f0,tugboat_f1,tugboatf_2
+1-----
+SENTENCE: few:DET long:ADJ numb:ADJ blonde:ADJ tugboat:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,substantiality,property,physical,object,length,attribute,1d,psychological_feature,property,negative,life_form,feeling,attribute,yellow,property,physical,life_form,hue,hair,color,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2,tugboat_f0,tugboat_f1,tugboatf_2
+1-----
+SENTENCE: much:DET loose:ADJ odd:ADJ mute:ADJ tugboat:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,tight,property,physical,object,negative,configuration,attribute,unusual,property,attribute,abstraction,speak,property,physical,negative,life_form,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2,tugboat_f0,tugboat_f1,tugboatf_2
+1-----
+SENTENCE: their:DET chic:ADJ back:ADJ deft:ADJ tugboat:N
+SEM_REP: ,pronoun,possessive,3rd_person,property,fashionability,attribute,abstraction,spacial-relationship,relative_direction,relation,negative,horizontal,direction,psychological_feature,property,life_form,attribute,adept,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2,tugboat_f0,tugboat_f1,tugboatf_2
+1-----
+SENTENCE: few:DET pert:ADJ dumb:ADJ frail:ADJ tugboat:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,psychological_feature,property,life_form,direct,attribute,smart,psychological_feature,property,negative,life_form,bad,attribute,sturdy,psychological_feature,property,negative,life_form,bad,attribute,vehicle_f0,vehicle_f1,vehiclef_2,boat_f0,boat_f1,boatf_2,tugboat_f0,tugboat_f1,tugboatf_2
+1-----
+SENTENCE: one:DET rear:ADJ west:ADJ tall:ADJ truck:N
+SEM_REP: ,singular,positive,determiner,definite,spacial-relationship,relation,property,attribute,spacial-relationship,relation,property,direction,attribute,absolute-direction,vertical,substantiality,property,physical,object,length,attribute,1d,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2
+1-----
+SENTENCE: five:DET dull:ADJ could:ADJ shrill:ADJ truck:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,sharp,property,physical,object,negative,configuration,bad,attribute,state,potential,effect,commence_action,action,ability,speech_act,psychological_feature,property,pleasant,negative,life_form,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2
+1-----
+SENTENCE: five:DET dead:ADJ big:ADJ fine:ADJ truck:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,property,physical,life_form,dead,attribute,substantiality,size,property,physical,object,low_intensity,large,informal,attribute,quality,property,attribute,abstraction,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2
+1-----
+SENTENCE: more:DET green:ADJ vile:ADJ apt:ADJ truck:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,hue,green,color,attribute,sense,property,pleasant,physical,object,negative,formal,bad,attribute,psychological_feature,property,life_form,commence_action,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2
+1-----
+SENTENCE: other:DET drunk:ADJ good:ADJ ole:ADJ truck:N
+SEM_REP: ,positive,determiner,definite,psychological_feature,property,life_form,attribute,alcohol,quality,property,good,attribute,abstraction,temporal-relation,property,past,new,negative,attribute,archaic,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2
+1-----
+SENTENCE: these:DET lithe:ADJ chaste:ADJ tight:ADJ truck:N
+SEM_REP: ,plural,determiner,definite,property,physical,move,life_form,healthy,attribute,sexual,psychological_feature,property,negative,life_form,attribute,tight,property,physical,object,configuration,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2
+1-----
+SENTENCE: which:DET fourth:ADJ mad:ADJ fourth:ADJ truck:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,relation,post,positive,number,four,determiner,absolute-quantity,psychological_feature,property,life_form,feeling,emotion,bad,attribute,anger,relation,post,positive,number,four,determiner,absolute-quantity,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2
+1-----
+SENTENCE: a:DET dank:ADJ damp:ADJ loud:ADJ truck:N
+SEM_REP: ,singular,indefinite,determiner,article,wet,property,physical,decay,consistency,bad,attribute,wet,property,physical,consistency,bad,attribute,sense,property,physical,noise,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2
+1-----
+SENTENCE: much:DET fresh:ADJ steep:ADJ first:ADJ truck:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,taste,sense,property,physical,object,attribute,property,physical,object,negative,flat,configuration,attribute,temporal-relation,relation,post,positive,determiner,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2
+1-----
+SENTENCE: these:DET big:ADJ rid:ADJ broad:ADJ truck:N
+SEM_REP: ,plural,determiner,definite,substantiality,size,property,physical,object,low_intensity,large,informal,attribute,property,physical,negative,full,configuration,attribute,substantiality,property,physical,object,length,attribute,1d,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2
+1-----
+SENTENCE: this:DET moot:ADJ glum:ADJ trite:ADJ truck:N
+SEM_REP: ,singular,determiner,definite,property,negative,importance,attribute,abstraction,sad,psychological_feature,property,life_form,feeling,emotion,bad,attribute,property,negative,importance,attribute,archaic,abstraction,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2
+1-----
+SENTENCE: both:DET false:ADJ near:ADJ black:ADJ truck:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,truth,property,negative,attribute,abstraction,spacial-relation,relation,proximity,negative,length,property,hue,color,black,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2
+1-----
+SENTENCE: many:DET blonde:ADJ full:ADJ daft:ADJ truck:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,yellow,property,physical,life_form,hue,hair,color,attribute,property,physical,object,full,configuration,attribute,smart,psychological_feature,property,negative,life_form,bad,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2
+1-----
+SENTENCE: one:DET huge:ADJ loose:ADJ vile:ADJ truck:N
+SEM_REP: ,singular,positive,determiner,definite,substantiality,size,property,physical,object,large,high_intensity,attribute,tight,property,physical,object,negative,configuration,attribute,sense,property,pleasant,physical,object,negative,formal,bad,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2
+1-----
+SENTENCE: some:DET rich:ADJ dour:ADJ nude:ADJ truck:N
+SEM_REP: ,positive,plural,indefinite,determiner,property,monetary,attribute,abstraction,psychological_feature,property,outlook,negative,life_form,bad,attribute,property,physical,negative,life_form,human,clothing,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2
+1-----
+SENTENCE: an:DET cold:ADJ west:ADJ sure:ADJ semitrailer:N
+SEM_REP: ,singular,indefinite,determiner,article,temperature,property,physical,cold,attribute,spacial-relationship,relation,property,direction,attribute,absolute-direction,psychological_feature,property,life_form,confident,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2,semitrailer_f0,semitrailer_f1,semitrailerf_2
+1-----
+SENTENCE: which:DET ripe:ADJ gauche:ADJ hind:ADJ semitrailer:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,property,physical,object,negative,fresh,edible,attribute,psychological_feature,property,pleasant,negative,life_form,bad,attribute,spacial-relationship,relation,property,horizontal,direction,behind,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2,semitrailer_f0,semitrailer_f1,semitrailerf_2
+1-----
+SENTENCE: any:DET safe:ADJ raw:ADJ quick:ADJ semitrailer:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,safe,property,attribute,abstraction,property,physical,object,negative,edible,cooked,attribute,temporal-relation,speed,property,negative,low_intensity,length,fast,event,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2,semitrailer_f0,semitrailer_f1,semitrailerf_2
+1-----
+SENTENCE: two:DET next:ADJ bald:ADJ flat:ADJ semitrailer:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,temporal-relation,relation,post,determiner,association,property,physical,negative,life_form,hair,attribute,property,physical,object,flat,configuration,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2,semitrailer_f0,semitrailer_f1,semitrailerf_2
+1-----
+SENTENCE: two:DET limp:ADJ large:ADJ cute:ADJ semitrailer:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,tight,property,physical,object,negative,configuration,attribute,substantiality,size,property,physical,object,large,attribute,property,physical,life_form,attribute,attractive,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2,semitrailer_f0,semitrailer_f1,semitrailerf_2
+1-----
+SENTENCE: a:DET green:ADJ short:ADJ fine:ADJ fire-truck:N
+SEM_REP: ,singular,indefinite,determiner,article,property,hue,green,color,attribute,substantiality,property,physical,object,negative,length,attribute,1d,quality,property,attribute,abstraction,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2,fire-truck_f0,fire-truck_f1,fire-truckf_2
+1-----
+SENTENCE: another:DET pert:ADJ raw:ADJ long:ADJ fire-truck:N
+SEM_REP: ,positive,indefinite,determiner,psychological_feature,property,life_form,direct,attribute,property,physical,object,negative,edible,cooked,attribute,substantiality,property,physical,object,length,attribute,1d,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2,fire-truck_f0,fire-truck_f1,fire-truckf_2
+1-----
+SENTENCE: one:DET loath:ADJ prim:ADJ smooth:ADJ fire-truck:N
+SEM_REP: ,singular,positive,determiner,definite,psychological_feature,property,life_form,feeling,fear,commence_action,attribute,property,clean,attribute,abstraction,texture,smooth,property,physical,object,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2,fire-truck_f0,fire-truck_f1,fire-truckf_2
+1-----
+SENTENCE: two:DET white:ADJ old:ADJ blunt:ADJ fire-truck:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,white,property,hue,color,attribute,temporal-relation,property,past,new,negative,attribute,sharp,property,physical,object,negative,configuration,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2,fire-truck_f0,fire-truck_f1,fire-truckf_2
+1-----
+SENTENCE: its:DET long:ADJ daft:ADJ green:ADJ fire-truck:N
+SEM_REP: ,singular,possessive,determiner,definite,substantiality,property,physical,object,length,attribute,1d,smart,psychological_feature,property,negative,life_form,bad,attribute,property,hue,green,color,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2,fire-truck_f0,fire-truck_f1,fire-truckf_2
+1-----
+SENTENCE: this:DET faint:ADJ strange:ADJ broad:ADJ tow-truck:N
+SEM_REP: ,singular,determiner,definite,sturdy,psychological_feature,property,negative,life_form,attribute,unusual,property,attribute,abstraction,substantiality,property,physical,object,length,attribute,1d,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2,tow-truck_f0,tow-truck_f1,tow-truckf_2
+1-----
+SENTENCE: its:DET lame:ADJ sheer:ADJ tight:ADJ tow-truck:N
+SEM_REP: ,singular,possessive,determiner,definite,strength,property,physical,negative,life_form,bad,attribute,property,extreme,attribute,abstraction,tight,property,physical,object,configuration,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2,tow-truck_f0,tow-truck_f1,tow-truckf_2
+1-----
+SENTENCE: this:DET safe:ADJ fourth:ADJ dear:ADJ tow-truck:N
+SEM_REP: ,singular,determiner,definite,safe,property,attribute,abstraction,relation,post,positive,number,four,determiner,absolute-quantity,psychological_feature,property,life_form,attribute,attachment,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2,tow-truck_f0,tow-truck_f1,tow-truckf_2
+1-----
+SENTENCE: many:DET shrewd:ADJ dim:ADJ gauche:ADJ tow-truck:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,psychological_feature,property,monetary,life_form,attribute,attending,property,negative,lightness,color,attribute,psychological_feature,property,pleasant,negative,life_form,bad,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2,tow-truck_f0,tow-truck_f1,tow-truckf_2
+1-----
+SENTENCE: few:DET warm:ADJ numb:ADJ vain:ADJ tow-truck:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,temperature,property,physical,object,low_intensity,hot,attribute,psychological_feature,property,negative,life_form,feeling,attribute,psychological_feature,property,life_form,confident,bad,attribute,vehicle_f0,vehicle_f1,vehiclef_2,truck_f0,truck_f1,truckf_2,tow-truck_f0,tow-truck_f1,tow-truckf_2
+1-----
+SENTENCE: five:DET just:ADJ sheer:ADJ would:ADJ airplane:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,property,formal,fair,attribute,abstraction,property,extreme,attribute,abstraction,state,potential,effect,commence_action,action,ability,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2
+1-----
+SENTENCE: each:DET pale:ADJ real:ADJ stray:ADJ airplane:N
+SEM_REP: ,singular,indefinite,determiner,state,property,negative,color,attribute,truth,property,attribute,abstraction,property,negative,importance,attribute,abstraction,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2
+1-----
+SENTENCE: any:DET real:ADJ clad:ADJ dim:ADJ airplane:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,truth,property,attribute,abstraction,property,physical,life_form,clothing,attribute,property,negative,lightness,color,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2
+1-----
+SENTENCE: a:DET black:ADJ gilt:ADJ blank:ADJ airplane:N
+SEM_REP: ,singular,indefinite,determiner,article,property,hue,color,black,attribute,property,physical,object,configuration,coated,attribute,property,negative,color,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2
+1-----
+SENTENCE: no:DET small:ADJ ill:ADJ pure:ADJ airplane:N
+SEM_REP: ,relation,post,nil,negative,determiner,absolute-quantity,substantiality,small,size,property,physical,object,attribute,property,physical,negative,life_form,healthy,bad,attribute,pure,property,physical,consistency,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2
+1-----
+SENTENCE: more:DET crude:ADJ wild:ADJ worth:ADJ airplane:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,quality,property,negative,bad,attribute,abstraction,psychological_feature,property,pleasant,negative,ease,attribute,animal,relation,property,monetary,cost,attribute,abstraction,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2
+1-----
+SENTENCE: all:DET right:ADJ hoarse:ADJ crisp:ADJ airplane:N
+SEM_REP: ,positive,plural,determiner,definite,spacial-relationship,right,relative_direction,relation,property,horizontal,attribute,speak,property,physical,negative,low_intensity,life_form,attribute,property,pliable,physical,object,negative,consistency,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2
+1-----
+SENTENCE: the:DET wont:ADJ sharp:ADJ ought:ADJ airplane:N
+SEM_REP: ,singular,determiner,definite,psychological_feature,property,life_form,commence_action,attribute,sharp,property,physical,object,configuration,attribute,obligatory,low_intensity,effect,action,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2
+1-----
+SENTENCE: all:DET red:ADJ suave:ADJ fond:ADJ airplane:N
+SEM_REP: ,positive,plural,determiner,definite,red,property,hue,color,attribute,speech_act,psychological_feature,property,life_form,confident,attribute,adept,property,life_form,attribute,attachment,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2
+1-----
+SENTENCE: more:DET clad:ADJ frank:ADJ worth:ADJ airplane:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,physical,life_form,clothing,attribute,psychological_feature,property,life_form,direct,attribute,relation,property,monetary,cost,attribute,abstraction,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2
+1-----
+SENTENCE: each:DET loath:ADJ nuts:ADJ ole:ADJ airplane:N
+SEM_REP: ,singular,indefinite,determiner,psychological_feature,property,life_form,feeling,fear,commence_action,attribute,psychological_feature,property,negative,life_form,healthy,bad,attribute,temporal-relation,property,past,new,negative,attribute,archaic,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2
+1-----
+SENTENCE: my:DET cheap:ADJ low:ADJ dead:ADJ airplane:N
+SEM_REP: ,self,pronoun,possessive,property,negative,cost,bad,attribute,abstraction,substantiality,property,physical,negative,length,horizontal,attribute,1d,property,physical,life_form,dead,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2
+1-----
+SENTENCE: those:DET bright:ADJ short:ADJ right:ADJ airplane:N
+SEM_REP: ,plural,determiner,definite,property,lightness,high_intensity,color,attribute,substantiality,property,physical,object,negative,length,attribute,1d,spacial-relationship,right,relative_direction,relation,property,horizontal,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2
+1-----
+SENTENCE: your:DET warm:ADJ staunch:ADJ just:ADJ airplane:N
+SEM_REP: ,pronoun,possessive,2nd_person,temperature,property,physical,object,low_intensity,hot,attribute,sturdy,psychological_feature,property,life_form,direct,attribute,property,formal,fair,attribute,abstraction,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2
+1-----
+SENTENCE: my:DET bland:ADJ sparse:ADJ grim:ADJ airplane:N
+SEM_REP: ,self,pronoun,possessive,taste,sense,property,physical,object,negative,bad,attribute,sense,property,physical,negative,lush,attribute,property,outlook,negative,bad,attribute,abstraction,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2
+1-----
+SENTENCE: a:DET red:ADJ scant:ADJ lax:ADJ airliner:N
+SEM_REP: ,singular,indefinite,determiner,article,red,property,hue,color,attribute,property,negative,frequency,attribute,abstraction,tight,property,physical,object,negative,configuration,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2,airliner_f0,airliner_f1,airlinerf_2
+1-----
+SENTENCE: their:DET scant:ADJ chic:ADJ great:ADJ airliner:N
+SEM_REP: ,pronoun,possessive,3rd_person,property,negative,frequency,attribute,abstraction,property,fashionability,attribute,abstraction,quality,property,attribute,abstraction,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2,airliner_f0,airliner_f1,airlinerf_2
+1-----
+SENTENCE: which:DET sad:ADJ poor:ADJ huge:ADJ airliner:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,sad,psychological_feature,property,life_form,feeling,emotion,bad,attribute,property,negative,monetary,attribute,abstraction,substantiality,size,property,physical,object,large,high_intensity,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2,airliner_f0,airliner_f1,airlinerf_2
+1-----
+SENTENCE: more:DET same:ADJ stale:ADJ white:ADJ airliner:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,post,identity,determiner,definite,property,physical,object,negative,fresh,edible,bad,attribute,white,property,hue,color,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2,airliner_f0,airliner_f1,airlinerf_2
+1-----
+SENTENCE: that:DET glad:ADJ soft:ADJ last:ADJ airliner:N
+SEM_REP: ,singular,determiner,definite,psychological_feature,property,life_form,happy,attribute,texture,soft,property,physical,object,attribute,temporal-relation,relation,post,past,negative,determiner,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2,airliner_f0,airliner_f1,airlinerf_2
+1-----
+SENTENCE: many:DET gray:ADJ moot:ADJ wise:ADJ fighter-jet:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,white,property,hue,color,black,attribute,property,negative,importance,attribute,abstraction,smart,psychological_feature,property,life_form,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2,fighter-jet_f0,fighter-jet_f1,fighter-jetf_2
+1-----
+SENTENCE: these:DET posh:ADJ stark:ADJ bare:ADJ fighter-jet:N
+SEM_REP: ,plural,determiner,definite,quality,property,monetary,cost,attribute,abstraction,uncommon,property,importance,attribute,abstraction,property,physical,negative,clothing,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2,fighter-jet_f0,fighter-jet_f1,fighter-jetf_2
+1-----
+SENTENCE: its:DET far:ADJ smart:ADJ swift:ADJ fighter-jet:N
+SEM_REP: ,singular,possessive,determiner,definite,spacial-relation,relation,proximity,length,smart,psychological_feature,property,life_form,attribute,temporal-relation,property,length,good,fast,event,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2,fighter-jet_f0,fighter-jet_f1,fighter-jetf_2
+1-----
+SENTENCE: five:DET straight:ADJ best:ADJ full:ADJ fighter-jet:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,straight,property,physical,object,configuration,attribute,quality,property,high_intensity,good,attribute,abstraction,property,physical,object,full,configuration,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2,fighter-jet_f0,fighter-jet_f1,fighter-jetf_2
+1-----
+SENTENCE: some:DET taut:ADJ mute:ADJ ought:ADJ fighter-jet:N
+SEM_REP: ,positive,plural,indefinite,determiner,tight,property,physical,object,configuration,attribute,speak,property,physical,negative,life_form,attribute,obligatory,low_intensity,effect,action,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2,fighter-jet_f0,fighter-jet_f1,fighter-jetf_2
+1-----
+SENTENCE: five:DET tall:ADJ sad:ADJ rough:ADJ seaplane:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,vertical,substantiality,property,physical,object,length,attribute,1d,sad,psychological_feature,property,life_form,feeling,emotion,bad,attribute,texture,smooth,property,physical,object,negative,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2,seaplane_f0,seaplane_f1,seaplanef_2
+1-----
+SENTENCE: other:DET prime:ADJ loose:ADJ vast:ADJ seaplane:N
+SEM_REP: ,positive,determiner,definite,property,outlook,importance,attribute,abstraction,tight,property,physical,object,negative,configuration,attribute,substantiality,property,physical,object,length,high_intensity,attribute,1d,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2,seaplane_f0,seaplane_f1,seaplanef_2
+1-----
+SENTENCE: two:DET swift:ADJ lax:ADJ nuts:ADJ seaplane:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,temporal-relation,property,length,good,fast,event,attribute,tight,property,physical,object,negative,configuration,attribute,psychological_feature,property,negative,life_form,healthy,bad,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2,seaplane_f0,seaplane_f1,seaplanef_2
+1-----
+SENTENCE: their:DET pale:ADJ gaunt:ADJ svelte:ADJ seaplane:N
+SEM_REP: ,pronoun,possessive,3rd_person,state,property,negative,color,attribute,thin,property,physical,life_form,bad,attribute,uncommon,thin,property,physical,life_form,attribute,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2,seaplane_f0,seaplane_f1,seaplanef_2
+1-----
+SENTENCE: this:DET nude:ADJ full:ADJ great:ADJ seaplane:N
+SEM_REP: ,singular,determiner,definite,property,physical,negative,life_form,human,clothing,attribute,property,physical,object,full,configuration,attribute,quality,property,attribute,abstraction,vehicle_f0,vehicle_f1,vehiclef_2,airplane_f0,airplane_f1,airplanef_2,seaplane_f0,seaplane_f1,seaplanef_2

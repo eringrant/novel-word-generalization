@@ -1,0 +1,600 @@
+1-----
+SENTENCE: much:DET quaint:ADJ flounder:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,pleasant,historic,attribute,abstraction,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,flounder_f0,flounder_f1,flounder_f2,color39,pose24,size38
+1-----
+SENTENCE: all:DET dull:ADJ boat:N
+SEM_REP: ,positive,plural,determiner,definite,sharp,property,physical,object,negative,configuration,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color6,pose9,size4
+1-----
+SENTENCE: much:DET prime:ADJ truck:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,outlook,importance,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color13,pose2,size6
+1-----
+SENTENCE: any:DET poor:ADJ truck:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,property,negative,monetary,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color24,pose22,size20
+1-----
+SENTENCE: some:DET queer:ADJ truck:N
+SEM_REP: ,positive,plural,indefinite,determiner,unusual,property,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color38,pose19,size5
+1-----
+SENTENCE: some:DET sharp:ADJ truck:N
+SEM_REP: ,positive,plural,indefinite,determiner,sharp,property,physical,object,configuration,attribute,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color25,pose9,size22
+1-----
+SENTENCE: other:DET weird:ADJ poodle:N
+SEM_REP: ,positive,determiner,definite,unusual,property,attribute,abstraction,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,poodle_f0,poodle_f1,poodle_f2,color9,pose9,size23
+1-----
+SENTENCE: no:DET late:ADJ fish:N
+SEM_REP: ,relation,post,nil,negative,determiner,absolute-quantity,temporal-relation,relation,property,past,negative,attribute,association,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,color6,pose13,size37
+1-----
+SENTENCE: all:DET tight:ADJ seaplane:N
+SEM_REP: ,positive,plural,determiner,definite,tight,property,physical,object,configuration,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,seaplane_f0,seaplane_f1,seaplane_f2,color25,pose19,size39
+1-----
+SENTENCE: that:DET hind:ADJ fish:N
+SEM_REP: ,singular,determiner,definite,spacial-relationship,relation,property,horizontal,direction,behind,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,color8,pose36,size10
+1-----
+SENTENCE: the:DET tough:ADJ animal:N
+SEM_REP: ,singular,determiner,definite,strong,property,physical,object,dense,consistency,attribute,animal_f0,animal_f1,animal_f2,color19,pose11,size15
+1-----
+SENTENCE: my:DET less:ADJ cat:N
+SEM_REP: ,self,pronoun,possessive,relative-quantity,relation,post,negative,determiner,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,color35,pose0,size7
+1-----
+SENTENCE: other:DET hard:ADJ fish:N
+SEM_REP: ,positive,determiner,definite,property,negative,ease,bad,attribute,abstraction,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,color11,pose27,size8
+1-----
+SENTENCE: your:DET rife:ADJ sailboat:N
+SEM_REP: ,pronoun,possessive,2nd_person,quality,property,negative,infestation,clean,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,sailboat_f0,sailboat_f1,sailboat_f2,color20,pose12,size25
+1-----
+SENTENCE: your:DET terse:ADJ shark:N
+SEM_REP: ,pronoun,possessive,2nd_person,speech_act,psychological_feature,property,pleasant,negative,life_form,bad,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,shark_f0,shark_f1,shark_f2,color6,pose34,size20
+1-----
+SENTENCE: that:DET keen:ADJ airplane:N
+SEM_REP: ,singular,determiner,definite,smart,psychological_feature,property,life_form,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,color35,pose20,size11
+1-----
+SENTENCE: those:DET dull:ADJ truck:N
+SEM_REP: ,plural,determiner,definite,sharp,property,physical,object,negative,configuration,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color5,pose33,size17
+1-----
+SENTENCE: five:DET mere:ADJ flounder:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,property,negative,importance,attribute,abstraction,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,flounder_f0,flounder_f1,flounder_f2,color14,pose18,size6
+1-----
+SENTENCE: which:DET sharp:ADJ boat:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,sharp,property,physical,object,configuration,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color13,pose4,size1
+1-----
+SENTENCE: many:DET fair:ADJ dog:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,property,fair,attribute,abstraction,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,color33,pose33,size26
+1-----
+SENTENCE: other:DET tall:ADJ seaplane:N
+SEM_REP: ,positive,determiner,definite,vertical,substantiality,property,physical,object,length,attribute,1d,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,seaplane_f0,seaplane_f1,seaplane_f2,color5,pose9,size27
+1-----
+SENTENCE: most:DET cute:ADJ tabby:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,physical,life_form,attribute,attractive,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,tabby_f0,tabby_f1,tabby_f2,color31,pose24,size39
+1-----
+SENTENCE: these:DET frank:ADJ fire-truck:N
+SEM_REP: ,plural,determiner,definite,psychological_feature,property,life_form,direct,attribute,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,fire-truck_f0,fire-truck_f1,fire-truck_f2,color11,pose13,size22
+1-----
+SENTENCE: much:DET south:ADJ fighter-jet:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,vertical,spacial-relationship,relation,property,direction,attribute,absolute-direction,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,fighter-jet_f0,fighter-jet_f1,fighter-jet_f2,color30,pose3,size22
+1-----
+SENTENCE: some:DET tough:ADJ dog:N
+SEM_REP: ,positive,plural,indefinite,determiner,strong,property,physical,object,dense,consistency,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,color11,pose12,size1
+1-----
+SENTENCE: your:DET mauve:ADJ vehicle:N
+SEM_REP: ,pronoun,possessive,2nd_person,red,property,hue,color,blue,attribute,vehicle_f0,vehicle_f1,vehicle_f2,color31,pose14,size39
+1-----
+SENTENCE: our:DET cute:ADJ animal:N
+SEM_REP: ,reflexive,pronoun,possessive,property,physical,life_form,attribute,attractive,animal_f0,animal_f1,animal_f2,color12,pose33,size29
+1-----
+SENTENCE: an:DET blank:ADJ fire-truck:N
+SEM_REP: ,singular,indefinite,determiner,article,property,negative,color,attribute,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,fire-truck_f0,fire-truck_f1,fire-truck_f2,color34,pose16,size33
+1-----
+SENTENCE: their:DET lewd:ADJ dog:N
+SEM_REP: ,pronoun,possessive,3rd_person,sexual,psychological_feature,property,life_form,bad,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,color8,pose33,size15
+1-----
+SENTENCE: those:DET ill:ADJ fish:N
+SEM_REP: ,plural,determiner,definite,property,physical,negative,life_form,healthy,bad,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,color0,pose23,size9
+1-----
+SENTENCE: many:DET prime:ADJ salmon:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,property,outlook,importance,attribute,abstraction,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,salmon_f0,salmon_f1,salmon_f2,color10,pose3,size19
+1-----
+SENTENCE: her:DET whole:ADJ dog:N
+SEM_REP: ,female,definite,article,property,physical,full,configuration,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,color2,pose1,size31
+1-----
+SENTENCE: those:DET weak:ADJ sailboat:N
+SEM_REP: ,plural,determiner,definite,strength,property,physical,negative,life_form,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,sailboat_f0,sailboat_f1,sailboat_f2,color7,pose12,size10
+1-----
+SENTENCE: most:DET first:ADJ cat:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,temporal-relation,relation,post,positive,determiner,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,color29,pose17,size27
+1-----
+SENTENCE: my:DET tough:ADJ pug:N
+SEM_REP: ,self,pronoun,possessive,strong,property,physical,object,dense,consistency,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,pug_f0,pug_f1,pug_f2,color22,pose23,size4
+1-----
+SENTENCE: any:DET sane:ADJ shark:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,sturdy,psychological_feature,property,life_form,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,shark_f0,shark_f1,shark_f2,color34,pose35,size5
+1-----
+SENTENCE: two:DET brash:ADJ vehicle:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,psychological_feature,property,life_form,confident,commence_action,brave,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,color38,pose27,size15
+1-----
+SENTENCE: another:DET hind:ADJ boat:N
+SEM_REP: ,positive,indefinite,determiner,spacial-relationship,relation,property,horizontal,direction,behind,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color15,pose17,size0
+1-----
+SENTENCE: many:DET fond:ADJ dalmatian:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,property,life_form,attribute,attachment,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,dalmatian_f0,dalmatian_f1,dalmatian_f2,color34,pose25,size23
+1-----
+SENTENCE: other:DET staid:ADJ dalmatian:N
+SEM_REP: ,positive,determiner,definite,strong,property,physical,object,consistency,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,dalmatian_f0,dalmatian_f1,dalmatian_f2,color10,pose3,size16
+1-----
+SENTENCE: other:DET stale:ADJ dog:N
+SEM_REP: ,positive,determiner,definite,property,physical,object,negative,fresh,edible,bad,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,color17,pose7,size12
+1-----
+SENTENCE: a:DET gray:ADJ fighter-jet:N
+SEM_REP: ,singular,indefinite,determiner,article,white,property,hue,color,black,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,fighter-jet_f0,fighter-jet_f1,fighter-jet_f2,color11,pose10,size9
+1-----
+SENTENCE: one:DET poor:ADJ poodle:N
+SEM_REP: ,singular,positive,determiner,definite,property,negative,monetary,attribute,abstraction,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,poodle_f0,poodle_f1,poodle_f2,color28,pose8,size23
+1-----
+SENTENCE: my:DET mere:ADJ manx:N
+SEM_REP: ,self,pronoun,possessive,property,negative,importance,attribute,abstraction,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,manx_f0,manx_f1,manx_f2,color0,pose8,size16
+1-----
+SENTENCE: his:DET plain:ADJ dog:N
+SEM_REP: ,pronoun,possessive,male,sense,property,physical,negative,lush,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,color33,pose19,size36
+1-----
+SENTENCE: a:DET wide:ADJ cat:N
+SEM_REP: ,singular,indefinite,determiner,article,substantiality,property,physical,object,length,horizontal,attribute,1d,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,color9,pose21,size36
+1-----
+SENTENCE: those:DET sharp:ADJ semitrailer:N
+SEM_REP: ,plural,determiner,definite,sharp,property,physical,object,configuration,attribute,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,semitrailer_f0,semitrailer_f1,semitrailer_f2,color2,pose6,size29
+1-----
+SENTENCE: both:DET less:ADJ truck:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,relative-quantity,relation,post,negative,determiner,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color5,pose39,size17
+1-----
+SENTENCE: its:DET vast:ADJ truck:N
+SEM_REP: ,singular,possessive,determiner,definite,substantiality,property,physical,object,length,high_intensity,attribute,1d,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color18,pose0,size10
+1-----
+SENTENCE: both:DET vast:ADJ siamese:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,substantiality,property,physical,object,length,high_intensity,attribute,1d,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,siamese_f0,siamese_f1,siamese_f2,color31,pose26,size19
+1-----
+SENTENCE: that:DET glib:ADJ tow-truck:N
+SEM_REP: ,singular,determiner,definite,psychological_feature,property,life_form,direct,attribute,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,tow-truck_f0,tow-truck_f1,tow-truck_f2,color3,pose1,size11
+1-----
+SENTENCE: your:DET sharp:ADJ airplane:N
+SEM_REP: ,pronoun,possessive,2nd_person,sharp,property,physical,object,configuration,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,color1,pose23,size2
+1-----
+SENTENCE: a:DET full:ADJ fish:N
+SEM_REP: ,singular,indefinite,determiner,article,property,physical,object,full,configuration,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,color29,pose25,size35
+1-----
+SENTENCE: each:DET dark:ADJ siamese:N
+SEM_REP: ,singular,indefinite,determiner,property,negative,lightness,color,attribute,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,siamese_f0,siamese_f1,siamese_f2,color23,pose16,size2
+1-----
+SENTENCE: each:DET wrong:ADJ boat:N
+SEM_REP: ,singular,indefinite,determiner,truth,property,negative,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color28,pose27,size17
+1-----
+SENTENCE: both:DET tall:ADJ tabby:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,vertical,substantiality,property,physical,object,length,attribute,1d,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,tabby_f0,tabby_f1,tabby_f2,color26,pose17,size14
+1-----
+SENTENCE: two:DET staid:ADJ airplane:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,strong,property,physical,object,consistency,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,color1,pose37,size28
+1-----
+SENTENCE: his:DET glib:ADJ motorboat:N
+SEM_REP: ,pronoun,possessive,male,psychological_feature,property,life_form,direct,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,motorboat_f0,motorboat_f1,motorboat_f2,color29,pose24,size7
+1-----
+SENTENCE: my:DET brave:ADJ fish:N
+SEM_REP: ,self,pronoun,possessive,psychological_feature,property,life_form,confident,commence_action,brave,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,color3,pose18,size17
+1-----
+SENTENCE: my:DET first:ADJ semitrailer:N
+SEM_REP: ,self,pronoun,possessive,temporal-relation,relation,post,positive,determiner,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,semitrailer_f0,semitrailer_f1,semitrailer_f2,color34,pose17,size18
+1-----
+SENTENCE: most:DET near:ADJ dog:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,spacial-relation,relation,proximity,negative,length,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,color6,pose0,size3
+1-----
+SENTENCE: their:DET new:ADJ airplane:N
+SEM_REP: ,pronoun,possessive,3rd_person,temporal-relation,property,new,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,color36,pose15,size34
+1-----
+SENTENCE: many:DET least:ADJ airplane:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,relative-quantity,relation,post,positive,negative,determiner,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,color3,pose13,size23
+1-----
+SENTENCE: our:DET south:ADJ animal:N
+SEM_REP: ,reflexive,pronoun,possessive,vertical,spacial-relationship,relation,property,direction,attribute,absolute-direction,animal_f0,animal_f1,animal_f2,color24,pose22,size5
+1-----
+SENTENCE: their:DET brash:ADJ cat:N
+SEM_REP: ,pronoun,possessive,3rd_person,psychological_feature,property,life_form,confident,commence_action,brave,bad,attribute,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,color21,pose37,size4
+1-----
+SENTENCE: both:DET tough:ADJ truck:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,strong,property,physical,object,dense,consistency,attribute,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color10,pose1,size13
+1-----
+SENTENCE: their:DET poor:ADJ truck:N
+SEM_REP: ,pronoun,possessive,3rd_person,property,negative,monetary,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color15,pose15,size9
+1-----
+SENTENCE: her:DET curt:ADJ fish:N
+SEM_REP: ,female,definite,article,speech_act,psychological_feature,property,pleasant,negative,life_form,bad,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,color21,pose32,size11
+1-----
+SENTENCE: all:DET sharp:ADJ pug:N
+SEM_REP: ,positive,plural,determiner,definite,sharp,property,physical,object,configuration,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,pug_f0,pug_f1,pug_f2,color20,pose38,size20
+1-----
+SENTENCE: any:DET grim:ADJ fish:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,property,outlook,negative,bad,attribute,abstraction,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,color2,pose35,size13
+1-----
+SENTENCE: no:DET raw:ADJ tabby:N
+SEM_REP: ,relation,post,nil,negative,determiner,absolute-quantity,property,physical,object,negative,edible,cooked,attribute,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,tabby_f0,tabby_f1,tabby_f2,color32,pose15,size24
+1-----
+SENTENCE: her:DET keen:ADJ boat:N
+SEM_REP: ,female,definite,article,smart,psychological_feature,property,life_form,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color18,pose20,size1
+1-----
+SENTENCE: all:DET poor:ADJ animal:N
+SEM_REP: ,positive,plural,determiner,definite,property,negative,monetary,attribute,abstraction,animal_f0,animal_f1,animal_f2,color0,pose10,size32
+1-----
+SENTENCE: most:DET stout:ADJ dog:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,strong,property,physical,object,consistency,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,color29,pose37,size14
+1-----
+SENTENCE: one:DET weak:ADJ airplane:N
+SEM_REP: ,singular,positive,determiner,definite,strength,property,physical,negative,life_form,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,color14,pose35,size15
+1-----
+SENTENCE: few:DET rife:ADJ airplane:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,quality,property,negative,infestation,clean,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,color39,pose7,size16
+1-----
+SENTENCE: any:DET blank:ADJ shark:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,property,negative,color,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,shark_f0,shark_f1,shark_f2,color16,pose2,size6
+1-----
+SENTENCE: two:DET brash:ADJ boat:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,psychological_feature,property,life_form,confident,commence_action,brave,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color16,pose30,size34
+1-----
+SENTENCE: five:DET tall:ADJ dalmatian:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,vertical,substantiality,property,physical,object,length,attribute,1d,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,dalmatian_f0,dalmatian_f1,dalmatian_f2,color9,pose29,size11
+1-----
+SENTENCE: an:DET rare:ADJ airliner:N
+SEM_REP: ,singular,indefinite,determiner,article,property,negative,frequency,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,airliner_f0,airliner_f1,airliner_f2,color22,pose7,size24
+1-----
+SENTENCE: this:DET broke:ADJ boat:N
+SEM_REP: ,singular,determiner,definite,working,property,physical,negative,bad,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color21,pose28,size24
+1-----
+SENTENCE: five:DET cruel:ADJ poodle:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,psychological_feature,property,pleasant,negative,life_form,bad,attribute,anger,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,poodle_f0,poodle_f1,poodle_f2,color7,pose3,size14
+1-----
+SENTENCE: their:DET dire:ADJ boat:N
+SEM_REP: ,pronoun,possessive,3rd_person,property,outlook,negative,bad,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color4,pose38,size3
+1-----
+SENTENCE: his:DET mere:ADJ sailboat:N
+SEM_REP: ,pronoun,possessive,male,property,negative,importance,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,sailboat_f0,sailboat_f1,sailboat_f2,color23,pose11,size33
+1-----
+SENTENCE: most:DET vast:ADJ fighter-jet:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,substantiality,property,physical,object,length,high_intensity,attribute,1d,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,fighter-jet_f0,fighter-jet_f1,fighter-jet_f2,color17,pose31,size23
+1-----
+SENTENCE: those:DET gray:ADJ flounder:N
+SEM_REP: ,plural,determiner,definite,white,property,hue,color,black,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,flounder_f0,flounder_f1,flounder_f2,color2,pose19,size31
+1-----
+SENTENCE: your:DET rife:ADJ cat:N
+SEM_REP: ,pronoun,possessive,2nd_person,quality,property,negative,infestation,clean,bad,attribute,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,color33,pose8,size8
+1-----
+SENTENCE: those:DET first:ADJ salmon:N
+SEM_REP: ,plural,determiner,definite,temporal-relation,relation,post,positive,determiner,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,salmon_f0,salmon_f1,salmon_f2,color3,pose29,size24
+1-----
+SENTENCE: an:DET quaint:ADJ fire-truck:N
+SEM_REP: ,singular,indefinite,determiner,article,property,pleasant,historic,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,fire-truck_f0,fire-truck_f1,fire-truck_f2,color9,pose34,size28
+1-----
+SENTENCE: which:DET whole:ADJ manx:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,property,physical,full,configuration,attribute,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,manx_f0,manx_f1,manx_f2,color16,pose39,size18
+1-----
+SENTENCE: his:DET tense:ADJ vehicle:N
+SEM_REP: ,pronoun,possessive,male,tight,property,physical,object,configuration,attribute,vehicle_f0,vehicle_f1,vehicle_f2,color8,pose2,size21
+1-----
+SENTENCE: other:DET numb:ADJ salmon:N
+SEM_REP: ,positive,determiner,definite,psychological_feature,property,negative,life_form,feeling,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,salmon_f0,salmon_f1,salmon_f2,color38,pose29,size36
+1-----
+SENTENCE: both:DET blank:ADJ fish:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,property,negative,color,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,color6,pose8,size2
+1-----
+SENTENCE: some:DET black:ADJ truck:N
+SEM_REP: ,positive,plural,indefinite,determiner,property,hue,color,black,attribute,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color13,pose10,size10
+1-----
+SENTENCE: some:DET fair:ADJ animal:N
+SEM_REP: ,positive,plural,indefinite,determiner,property,fair,attribute,abstraction,animal_f0,animal_f1,animal_f2,color12,pose5,size31
+1-----
+SENTENCE: that:DET tough:ADJ vehicle:N
+SEM_REP: ,singular,determiner,definite,strong,property,physical,object,dense,consistency,attribute,vehicle_f0,vehicle_f1,vehicle_f2,color19,pose11,size20
+1-----
+SENTENCE: both:DET north:ADJ tabby:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,vertical,up,spacial-relationship,relation,property,direction,attribute,absolute-direction,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,tabby_f0,tabby_f1,tabby_f2,color12,pose25,size4
+1-----
+SENTENCE: many:DET mere:ADJ animal:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,property,negative,importance,attribute,abstraction,animal_f0,animal_f1,animal_f2,color1,pose35,size12
+1-----
+SENTENCE: these:DET stale:ADJ animal:N
+SEM_REP: ,plural,determiner,definite,property,physical,object,negative,fresh,edible,bad,attribute,animal_f0,animal_f1,animal_f2,color7,pose21,size32
+1-----
+SENTENCE: that:DET false:ADJ fish:N
+SEM_REP: ,singular,determiner,definite,truth,property,negative,attribute,abstraction,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,color24,pose4,size17
+1-----
+SENTENCE: an:DET wide:ADJ cat:N
+SEM_REP: ,singular,indefinite,determiner,article,substantiality,property,physical,object,length,horizontal,attribute,1d,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,color33,pose32,size13
+1-----
+SENTENCE: any:DET quaint:ADJ airplane:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,property,pleasant,historic,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,color20,pose12,size33
+1-----
+SENTENCE: two:DET fourth:ADJ shark:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,relation,post,positive,number,four,determiner,absolute-quantity,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,shark_f0,shark_f1,shark_f2,color27,pose14,size37
+1-----
+SENTENCE: your:DET ripe:ADJ manx:N
+SEM_REP: ,pronoun,possessive,2nd_person,property,physical,object,negative,fresh,edible,attribute,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,manx_f0,manx_f1,manx_f2,color17,pose16,size12
+1-----
+SENTENCE: both:DET fair:ADJ tow-truck:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,property,fair,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,tow-truck_f0,tow-truck_f1,tow-truck_f2,color33,pose27,size28
+1-----
+SENTENCE: some:DET weak:ADJ airplane:N
+SEM_REP: ,positive,plural,indefinite,determiner,strength,property,physical,negative,life_form,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,color37,pose11,size8
+1-----
+SENTENCE: that:DET safe:ADJ airplane:N
+SEM_REP: ,singular,determiner,definite,safe,property,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,color32,pose32,size27
+1-----
+SENTENCE: these:DET crass:ADJ semitrailer:N
+SEM_REP: ,plural,determiner,definite,psychological_feature,property,pleasant,negative,life_form,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,semitrailer_f0,semitrailer_f1,semitrailer_f2,color31,pose14,size30
+1-----
+SENTENCE: any:DET wrong:ADJ tow-truck:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,truth,property,negative,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,tow-truck_f0,tow-truck_f1,tow-truck_f2,color30,pose27,size20
+1-----
+SENTENCE: many:DET tight:ADJ fire-truck:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,tight,property,physical,object,configuration,attribute,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,fire-truck_f0,fire-truck_f1,fire-truck_f2,color30,pose13,size35
+1-----
+SENTENCE: any:DET crude:ADJ boat:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,quality,property,negative,bad,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color25,pose5,size25
+1-----
+SENTENCE: a:DET plain:ADJ fish:N
+SEM_REP: ,singular,indefinite,determiner,article,sense,property,physical,negative,lush,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,color8,pose36,size34
+1-----
+SENTENCE: any:DET brash:ADJ motorboat:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,psychological_feature,property,life_form,confident,commence_action,brave,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,motorboat_f0,motorboat_f1,motorboat_f2,color31,pose39,size6
+1-----
+SENTENCE: which:DET lithe:ADJ airplane:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,property,physical,move,life_form,healthy,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,color15,pose38,size7
+1-----
+SENTENCE: more:DET hard:ADJ fish:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,negative,ease,bad,attribute,abstraction,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,color37,pose17,size29
+1-----
+SENTENCE: its:DET wrong:ADJ tugboat:N
+SEM_REP: ,singular,possessive,determiner,definite,truth,property,negative,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,tugboat_f0,tugboat_f1,tugboat_f2,color19,pose14,size6
+1-----
+SENTENCE: much:DET dark:ADJ vehicle:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,negative,lightness,color,attribute,vehicle_f0,vehicle_f1,vehicle_f2,color13,pose39,size21
+1-----
+SENTENCE: your:DET mere:ADJ airliner:N
+SEM_REP: ,pronoun,possessive,2nd_person,property,negative,importance,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,airliner_f0,airliner_f1,airliner_f2,color2,pose5,size38
+1-----
+SENTENCE: each:DET quaint:ADJ boat:N
+SEM_REP: ,singular,indefinite,determiner,property,pleasant,historic,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color32,pose34,size25
+1-----
+SENTENCE: one:DET should:ADJ boat:N
+SEM_REP: ,singular,positive,determiner,definite,obligatory,low_intensity,effect,action,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color28,pose35,size21
+1-----
+SENTENCE: my:DET sane:ADJ motorboat:N
+SEM_REP: ,self,pronoun,possessive,sturdy,psychological_feature,property,life_form,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,motorboat_f0,motorboat_f1,motorboat_f2,color21,pose29,size8
+1-----
+SENTENCE: its:DET sane:ADJ pug:N
+SEM_REP: ,singular,possessive,determiner,definite,sturdy,psychological_feature,property,life_form,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,pug_f0,pug_f1,pug_f2,color12,pose6,size38
+1-----
+SENTENCE: few:DET hard:ADJ siamese:N
+SEM_REP: ,relative-quantity,relation,post,negative,determiner,property,negative,ease,bad,attribute,abstraction,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,siamese_f0,siamese_f1,siamese_f2,color22,pose20,size30
+1-----
+SENTENCE: much:DET first:ADJ tow-truck:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,temporal-relation,relation,post,positive,determiner,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,tow-truck_f0,tow-truck_f1,tow-truck_f2,color20,pose18,size26
+1-----
+SENTENCE: a:DET brave:ADJ seaplane:N
+SEM_REP: ,singular,indefinite,determiner,article,psychological_feature,property,life_form,confident,commence_action,brave,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,seaplane_f0,seaplane_f1,seaplane_f2,color39,pose18,size5
+1-----
+SENTENCE: five:DET wide:ADJ siamese:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,substantiality,property,physical,object,length,horizontal,attribute,1d,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,siamese_f0,siamese_f1,siamese_f2,color9,pose20,size21
+1-----
+SENTENCE: some:DET sharp:ADJ tabby:N
+SEM_REP: ,positive,plural,indefinite,determiner,sharp,property,physical,object,configuration,attribute,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,tabby_f0,tabby_f1,tabby_f2,color8,pose4,size0
+1-----
+SENTENCE: my:DET least:ADJ poodle:N
+SEM_REP: ,self,pronoun,possessive,relative-quantity,relation,post,positive,negative,determiner,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,poodle_f0,poodle_f1,poodle_f2,color26,pose30,size28
+1-----
+SENTENCE: some:DET rife:ADJ siamese:N
+SEM_REP: ,positive,plural,indefinite,determiner,quality,property,negative,infestation,clean,bad,attribute,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,siamese_f0,siamese_f1,siamese_f2,color4,pose2,size36
+1-----
+SENTENCE: these:DET stark:ADJ sailboat:N
+SEM_REP: ,plural,determiner,definite,uncommon,property,importance,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,sailboat_f0,sailboat_f1,sailboat_f2,color36,pose15,size14
+1-----
+SENTENCE: another:DET ill:ADJ airplane:N
+SEM_REP: ,positive,indefinite,determiner,property,physical,negative,life_form,healthy,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,color35,pose34,size10
+1-----
+SENTENCE: five:DET straight:ADJ cat:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,straight,property,physical,object,configuration,attribute,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,color25,pose30,size1
+1-----
+SENTENCE: those:DET pure:ADJ tugboat:N
+SEM_REP: ,plural,determiner,definite,pure,property,physical,consistency,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,tugboat_f0,tugboat_f1,tugboat_f2,color18,pose22,size21
+1-----
+SENTENCE: each:DET deft:ADJ fish:N
+SEM_REP: ,singular,indefinite,determiner,psychological_feature,property,life_form,attribute,adept,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,color36,pose13,size34
+1-----
+SENTENCE: any:DET black:ADJ animal:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,property,hue,color,black,attribute,animal_f0,animal_f1,animal_f2,color10,pose38,size13
+1-----
+SENTENCE: any:DET false:ADJ vehicle:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,truth,property,negative,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,color24,pose16,size33
+1-----
+SENTENCE: other:DET chaste:ADJ motorboat:N
+SEM_REP: ,positive,determiner,definite,sexual,psychological_feature,property,negative,life_form,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,motorboat_f0,motorboat_f1,motorboat_f2,color36,pose26,size27
+1-----
+SENTENCE: many:DET safe:ADJ seaplane:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,safe,property,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,seaplane_f0,seaplane_f1,seaplane_f2,color37,pose28,size18
+1-----
+SENTENCE: one:DET posh:ADJ truck:N
+SEM_REP: ,singular,positive,determiner,definite,quality,property,monetary,cost,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color32,pose6,size25
+1-----
+SENTENCE: one:DET least:ADJ cat:N
+SEM_REP: ,singular,positive,determiner,definite,relative-quantity,relation,post,positive,negative,determiner,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,color24,pose36,size3
+1-----
+SENTENCE: both:DET ripe:ADJ seaplane:N
+SEM_REP: ,two,positive,plural,indefinite,determiner,property,physical,object,negative,fresh,edible,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,seaplane_f0,seaplane_f1,seaplane_f2,color20,pose36,size13
+1-----
+SENTENCE: a:DET fast:ADJ salmon:N
+SEM_REP: ,singular,indefinite,determiner,article,temporal-relation,speed,property,negative,length,high_intensity,fast,event,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,salmon_f0,salmon_f1,salmon_f2,color30,pose37,size5
+1-----
+SENTENCE: an:DET posh:ADJ poodle:N
+SEM_REP: ,singular,indefinite,determiner,article,quality,property,monetary,cost,attribute,abstraction,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,poodle_f0,poodle_f1,poodle_f2,color39,pose24,size19
+1-----
+SENTENCE: two:DET hoarse:ADJ airliner:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,speak,property,physical,negative,low_intensity,life_form,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,airliner_f0,airliner_f1,airliner_f2,color38,pose0,size19
+1-----
+SENTENCE: two:DET slight:ADJ cat:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,substantiality,small,size,property,physical,object,attribute,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,color37,pose32,size3
+1-----
+SENTENCE: two:DET wrong:ADJ semitrailer:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,truth,property,negative,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,semitrailer_f0,semitrailer_f1,semitrailer_f2,color35,pose1,size39
+1-----
+SENTENCE: many:DET gaunt:ADJ vehicle:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,thin,property,physical,life_form,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,color16,pose5,size38
+1-----
+SENTENCE: your:DET loose:ADJ vehicle:N
+SEM_REP: ,pronoun,possessive,2nd_person,tight,property,physical,object,negative,configuration,attribute,vehicle_f0,vehicle_f1,vehicle_f2,color26,pose16,size0
+1-----
+SENTENCE: any:DET ripe:ADJ semitrailer:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,property,physical,object,negative,fresh,edible,attribute,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,semitrailer_f0,semitrailer_f1,semitrailer_f2,color35,pose12,size0
+1-----
+SENTENCE: this:DET bright:ADJ truck:N
+SEM_REP: ,singular,determiner,definite,property,lightness,high_intensity,color,attribute,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color27,pose19,size35
+1-----
+SENTENCE: no:DET first:ADJ fighter-jet:N
+SEM_REP: ,relation,post,nil,negative,determiner,absolute-quantity,temporal-relation,relation,post,positive,determiner,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,fighter-jet_f0,fighter-jet_f1,fighter-jet_f2,color0,pose3,size11
+1-----
+SENTENCE: more:DET ill:ADJ tugboat:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,physical,negative,life_form,healthy,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,tugboat_f0,tugboat_f1,tugboat_f2,color18,pose34,size30
+1-----
+SENTENCE: some:DET prime:ADJ pug:N
+SEM_REP: ,positive,plural,indefinite,determiner,property,outlook,importance,attribute,abstraction,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,pug_f0,pug_f1,pug_f2,color15,pose10,size0
+1-----
+SENTENCE: one:DET lewd:ADJ fire-truck:N
+SEM_REP: ,singular,positive,determiner,definite,sexual,psychological_feature,property,life_form,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,fire-truck_f0,fire-truck_f1,fire-truck_f2,color25,pose14,size29
+1-----
+SENTENCE: that:DET ripe:ADJ pug:N
+SEM_REP: ,singular,determiner,definite,property,physical,object,negative,fresh,edible,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,pug_f0,pug_f1,pug_f2,color7,pose29,size22
+1-----
+SENTENCE: her:DET lone:ADJ animal:N
+SEM_REP: ,female,definite,article,psychological_feature,property,negative,life_form,attribute,attachment,animal_f0,animal_f1,animal_f2,color23,pose26,size26
+1-----
+SENTENCE: which:DET dire:ADJ cat:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,property,outlook,negative,bad,attribute,abstraction,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,color27,pose2,size37
+1-----
+SENTENCE: two:DET north:ADJ fish:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,vertical,up,spacial-relationship,relation,property,direction,attribute,absolute-direction,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,color36,pose9,size25
+1-----
+SENTENCE: other:DET lewd:ADJ dog:N
+SEM_REP: ,positive,determiner,definite,sexual,psychological_feature,property,life_form,bad,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,color1,pose7,size18
+1-----
+SENTENCE: this:DET tall:ADJ cat:N
+SEM_REP: ,singular,determiner,definite,vertical,substantiality,property,physical,object,length,attribute,1d,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,color22,pose38,size16
+1-----
+SENTENCE: five:DET stale:ADJ cat:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,property,physical,object,negative,fresh,edible,bad,attribute,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,color7,pose30,size9
+1-----
+SENTENCE: its:DET hard:ADJ airliner:N
+SEM_REP: ,singular,possessive,determiner,definite,property,negative,ease,bad,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,airliner_f0,airliner_f1,airliner_f2,color11,pose20,size7
+1-----
+SENTENCE: my:DET wide:ADJ shark:N
+SEM_REP: ,self,pronoun,possessive,substantiality,property,physical,object,length,horizontal,attribute,1d,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,shark_f0,shark_f1,shark_f2,color12,pose32,size4
+1-----
+SENTENCE: other:DET gay:ADJ dog:N
+SEM_REP: ,positive,determiner,definite,psychological_feature,property,life_form,happy,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,color30,pose26,size32
+1-----
+SENTENCE: many:DET loose:ADJ airplane:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,tight,property,physical,object,negative,configuration,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,color0,pose1,size7
+1-----
+SENTENCE: one:DET stout:ADJ sailboat:N
+SEM_REP: ,singular,positive,determiner,definite,strong,property,physical,object,consistency,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,sailboat_f0,sailboat_f1,sailboat_f2,color16,pose4,size29
+1-----
+SENTENCE: each:DET cruel:ADJ manx:N
+SEM_REP: ,singular,indefinite,determiner,psychological_feature,property,pleasant,negative,life_form,bad,attribute,anger,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,manx_f0,manx_f1,manx_f2,color22,pose25,size9
+1-----
+SENTENCE: that:DET gay:ADJ vehicle:N
+SEM_REP: ,singular,determiner,definite,psychological_feature,property,life_form,happy,attribute,vehicle_f0,vehicle_f1,vehicle_f2,color34,pose26,size15
+1-----
+SENTENCE: some:DET lone:ADJ cat:N
+SEM_REP: ,positive,plural,indefinite,determiner,psychological_feature,property,negative,life_form,attribute,attachment,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,color23,pose25,size24
+1-----
+SENTENCE: his:DET blank:ADJ flounder:N
+SEM_REP: ,pronoun,possessive,male,property,negative,color,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,flounder_f0,flounder_f1,flounder_f2,color3,pose6,size1
+1-----
+SENTENCE: my:DET least:ADJ fish:N
+SEM_REP: ,self,pronoun,possessive,relative-quantity,relation,post,positive,negative,determiner,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,color38,pose28,size39
+1-----
+SENTENCE: my:DET cute:ADJ dog:N
+SEM_REP: ,self,pronoun,possessive,property,physical,life_form,attribute,attractive,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,color4,pose28,size16
+1-----
+SENTENCE: any:DET bright:ADJ airplane:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,property,lightness,high_intensity,color,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,color14,pose31,size36
+1-----
+SENTENCE: that:DET staid:ADJ airplane:N
+SEM_REP: ,singular,determiner,definite,strong,property,physical,object,consistency,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,color10,pose22,size37
+1-----
+SENTENCE: more:DET brief:ADJ salmon:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,temporal-relation,property,negative,length,fast,event,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,salmon_f0,salmon_f1,salmon_f2,color4,pose31,size2
+1-----
+SENTENCE: that:DET prim:ADJ tugboat:N
+SEM_REP: ,singular,determiner,definite,property,clean,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,tugboat_f0,tugboat_f1,tugboat_f2,color5,pose39,size37
+1-----
+SENTENCE: these:DET blank:ADJ dog:N
+SEM_REP: ,plural,determiner,definite,property,negative,color,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,color28,pose33,size27
+1-----
+SENTENCE: these:DET brash:ADJ boat:N
+SEM_REP: ,plural,determiner,definite,psychological_feature,property,life_form,confident,commence_action,brave,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color4,pose31,size2
+1-----
+SENTENCE: most:DET frank:ADJ flounder:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,psychological_feature,property,life_form,direct,attribute,animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,flounder_f0,flounder_f1,flounder_f2,color1,pose37,size26
+1-----
+SENTENCE: our:DET safe:ADJ truck:N
+SEM_REP: ,reflexive,pronoun,possessive,safe,property,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color19,pose31,size3
+1-----
+SENTENCE: an:DET tough:ADJ boat:N
+SEM_REP: ,singular,indefinite,determiner,article,strong,property,physical,object,dense,consistency,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color26,pose7,size30
+1-----
+SENTENCE: her:DET terse:ADJ truck:N
+SEM_REP: ,female,definite,article,speech_act,psychological_feature,property,pleasant,negative,life_form,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color28,pose22,size38
+1-----
+SENTENCE: two:DET black:ADJ animal:N
+SEM_REP: ,two,positive,plural,number,determiner,definite,property,hue,color,black,attribute,animal_f0,animal_f1,animal_f2,color14,pose15,size18
+1-----
+SENTENCE: most:DET least:ADJ vehicle:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,relative-quantity,relation,post,positive,negative,determiner,vehicle_f0,vehicle_f1,vehicle_f2,color5,pose21,size34
+1-----
+SENTENCE: her:DET crass:ADJ tow-truck:N
+SEM_REP: ,female,definite,article,psychological_feature,property,pleasant,negative,life_form,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,tow-truck_f0,tow-truck_f1,tow-truck_f2,color17,pose8,size19
+1-----
+SENTENCE: no:DET fourth:ADJ dog:N
+SEM_REP: ,relation,post,nil,negative,determiner,absolute-quantity,relation,post,positive,number,four,determiner,absolute-quantity,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,color15,pose18,size22
+1-----
+SENTENCE: these:DET full:ADJ motorboat:N
+SEM_REP: ,plural,determiner,definite,property,physical,object,full,configuration,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,motorboat_f0,motorboat_f1,motorboat_f2,color26,pose0,size12
+1-----
+SENTENCE: other:DET less:ADJ truck:N
+SEM_REP: ,positive,determiner,definite,relative-quantity,relation,post,negative,determiner,vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color17,pose28,size32
+1-----
+SENTENCE: other:DET frank:ADJ fighter-jet:N
+SEM_REP: ,positive,determiner,definite,psychological_feature,property,life_form,direct,attribute,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,fighter-jet_f0,fighter-jet_f1,fighter-jet_f2,color27,pose5,size8
+1-----
+SENTENCE: all:DET mere:ADJ cat:N
+SEM_REP: ,positive,plural,determiner,definite,property,negative,importance,attribute,abstraction,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,color18,pose11,size32
+1-----
+SENTENCE: many:DET terse:ADJ boat:N
+SEM_REP: ,relative-quantity,relation,positive,determiner,speech_act,psychological_feature,property,pleasant,negative,life_form,bad,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color32,pose21,size30
+1-----
+SENTENCE: that:DET brash:ADJ dalmatian:N
+SEM_REP: ,singular,determiner,definite,psychological_feature,property,life_form,confident,commence_action,brave,bad,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,dalmatian_f0,dalmatian_f1,dalmatian_f2,color21,pose30,size12
+1-----
+SENTENCE: any:DET bright:ADJ boat:N
+SEM_REP: ,relation,negative,determiner,absolute-quantity,property,lightness,high_intensity,color,attribute,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color13,pose24,size28
+1-----
+SENTENCE: all:DET vast:ADJ airliner:N
+SEM_REP: ,positive,plural,determiner,definite,substantiality,property,physical,object,length,high_intensity,attribute,1d,vehicle_f0,vehicle_f1,vehicle_f2,airplane_f0,airplane_f1,airplane_f2,airliner_f0,airliner_f1,airliner_f2,color14,pose23,size14
+1-----
+SENTENCE: their:DET stale:ADJ dalmatian:N
+SEM_REP: ,pronoun,possessive,3rd_person,property,physical,object,negative,fresh,edible,bad,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,dalmatian_f0,dalmatian_f1,dalmatian_f2,color27,pose6,size31
+1-----
+SENTENCE: five:DET weak:ADJ dog:N
+SEM_REP: ,relation,post,positive,number,frequency,five,determiner,absolute-quantity,strength,property,physical,negative,life_form,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,color23,pose10,size31
+1-----
+SENTENCE: one:DET mere:ADJ tugboat:N
+SEM_REP: ,singular,positive,determiner,definite,property,negative,importance,attribute,abstraction,vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,tugboat_f0,tugboat_f1,tugboat_f2,color39,pose21,size33
+1-----
+SENTENCE: most:DET big:ADJ dog:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,substantiality,size,property,physical,object,low_intensity,large,informal,attribute,animal_f0,animal_f1,animal_f2,dog_f0,dog_f1,dog_f2,color19,pose36,size26
+1-----
+SENTENCE: which:DET loose:ADJ cat:N
+SEM_REP: ,wh,interrogative,indefinite,determiner,tight,property,physical,object,negative,configuration,attribute,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,color29,pose23,size35
+1-----
+SENTENCE: that:DET prim:ADJ manx:N
+SEM_REP: ,singular,determiner,definite,property,clean,attribute,abstraction,animal_f0,animal_f1,animal_f2,cat_f0,cat_f1,cat_f2,manx_f0,manx_f1,manx_f2,color37,pose4,size35

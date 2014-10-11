@@ -1,0 +1,706 @@
+thing:N thing_f0:0.333333333333,thing_f1:0.333333333333,thingf_2:0.333333333333,
+
+animal:N thing_f0:0.166666666667,thing_f1:0.166666666667,thingf_2:0.166666666667,animal_f0:0.166666666667,animal_f1:0.166666666667,animalf_2:0.166666666667,
+
+dog:N thing_f0:0.111111111111,thing_f1:0.111111111111,thingf_2:0.111111111111,animal_f0:0.111111111111,animal_f1:0.111111111111,animalf_2:0.111111111111,dog_f0:0.111111111111,dog_f1:0.111111111111,dogf_2:0.111111111111,
+
+dalmatian:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,animal_f0:0.0833333333333,animal_f1:0.0833333333333,animalf_2:0.0833333333333,dog_f0:0.0833333333333,dog_f1:0.0833333333333,dogf_2:0.0833333333333,dalmatian_f0:0.0833333333333,dalmatian_f1:0.0833333333333,dalmatianf_2:0.0833333333333,
+
+poodle:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,animal_f0:0.0833333333333,animal_f1:0.0833333333333,animalf_2:0.0833333333333,dog_f0:0.0833333333333,dog_f1:0.0833333333333,dogf_2:0.0833333333333,poodle_f0:0.0833333333333,poodle_f1:0.0833333333333,poodlef_2:0.0833333333333,
+
+pug:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,animal_f0:0.0833333333333,animal_f1:0.0833333333333,animalf_2:0.0833333333333,dog_f0:0.0833333333333,dog_f1:0.0833333333333,dogf_2:0.0833333333333,pug_f0:0.0833333333333,pug_f1:0.0833333333333,pugf_2:0.0833333333333,
+
+cat:N thing_f0:0.111111111111,thing_f1:0.111111111111,thingf_2:0.111111111111,animal_f0:0.111111111111,animal_f1:0.111111111111,animalf_2:0.111111111111,cat_f0:0.111111111111,cat_f1:0.111111111111,catf_2:0.111111111111,
+
+manx:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,animal_f0:0.0833333333333,animal_f1:0.0833333333333,animalf_2:0.0833333333333,cat_f0:0.0833333333333,cat_f1:0.0833333333333,catf_2:0.0833333333333,manx_f0:0.0833333333333,manx_f1:0.0833333333333,manxf_2:0.0833333333333,
+
+tabby:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,animal_f0:0.0833333333333,animal_f1:0.0833333333333,animalf_2:0.0833333333333,cat_f0:0.0833333333333,cat_f1:0.0833333333333,catf_2:0.0833333333333,tabby_f0:0.0833333333333,tabby_f1:0.0833333333333,tabbyf_2:0.0833333333333,
+
+siamese:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,animal_f0:0.0833333333333,animal_f1:0.0833333333333,animalf_2:0.0833333333333,cat_f0:0.0833333333333,cat_f1:0.0833333333333,catf_2:0.0833333333333,siamese_f0:0.0833333333333,siamese_f1:0.0833333333333,siamesef_2:0.0833333333333,
+
+fish:N thing_f0:0.111111111111,thing_f1:0.111111111111,thingf_2:0.111111111111,animal_f0:0.111111111111,animal_f1:0.111111111111,animalf_2:0.111111111111,fish_f0:0.111111111111,fish_f1:0.111111111111,fishf_2:0.111111111111,
+
+flounder:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,animal_f0:0.0833333333333,animal_f1:0.0833333333333,animalf_2:0.0833333333333,fish_f0:0.0833333333333,fish_f1:0.0833333333333,fishf_2:0.0833333333333,flounder_f0:0.0833333333333,flounder_f1:0.0833333333333,flounderf_2:0.0833333333333,
+
+shark:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,animal_f0:0.0833333333333,animal_f1:0.0833333333333,animalf_2:0.0833333333333,fish_f0:0.0833333333333,fish_f1:0.0833333333333,fishf_2:0.0833333333333,shark_f0:0.0833333333333,shark_f1:0.0833333333333,sharkf_2:0.0833333333333,
+
+salmon:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,animal_f0:0.0833333333333,animal_f1:0.0833333333333,animalf_2:0.0833333333333,fish_f0:0.0833333333333,fish_f1:0.0833333333333,fishf_2:0.0833333333333,salmon_f0:0.0833333333333,salmon_f1:0.0833333333333,salmonf_2:0.0833333333333,
+
+furniture:N thing_f0:0.166666666667,thing_f1:0.166666666667,thingf_2:0.166666666667,furniture_f0:0.166666666667,furniture_f1:0.166666666667,furnituref_2:0.166666666667,
+
+chair:N thing_f0:0.111111111111,thing_f1:0.111111111111,thingf_2:0.111111111111,furniture_f0:0.111111111111,furniture_f1:0.111111111111,furnituref_2:0.111111111111,chair_f0:0.111111111111,chair_f1:0.111111111111,chairf_2:0.111111111111,
+
+swivel-chair:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,furniture_f0:0.0833333333333,furniture_f1:0.0833333333333,furnituref_2:0.0833333333333,chair_f0:0.0833333333333,chair_f1:0.0833333333333,chairf_2:0.0833333333333,swivel-chair_f0:0.0833333333333,swivel-chair_f1:0.0833333333333,swivel-chairf_2:0.0833333333333,
+
+rocking-chair:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,furniture_f0:0.0833333333333,furniture_f1:0.0833333333333,furnituref_2:0.0833333333333,chair_f0:0.0833333333333,chair_f1:0.0833333333333,chairf_2:0.0833333333333,rocking-chair_f0:0.0833333333333,rocking-chair_f1:0.0833333333333,rocking-chairf_2:0.0833333333333,
+
+high-chair:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,furniture_f0:0.0833333333333,furniture_f1:0.0833333333333,furnituref_2:0.0833333333333,chair_f0:0.0833333333333,chair_f1:0.0833333333333,chairf_2:0.0833333333333,high-chair_f0:0.0833333333333,high-chair_f1:0.0833333333333,high-chairf_2:0.0833333333333,
+
+bed:N thing_f0:0.111111111111,thing_f1:0.111111111111,thingf_2:0.111111111111,furniture_f0:0.111111111111,furniture_f1:0.111111111111,furnituref_2:0.111111111111,bed_f0:0.111111111111,bed_f1:0.111111111111,bedf_2:0.111111111111,
+
+four-poster:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,furniture_f0:0.0833333333333,furniture_f1:0.0833333333333,furnituref_2:0.0833333333333,bed_f0:0.0833333333333,bed_f1:0.0833333333333,bedf_2:0.0833333333333,four-poster_f0:0.0833333333333,four-poster_f1:0.0833333333333,four-posterf_2:0.0833333333333,
+
+waterbed:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,furniture_f0:0.0833333333333,furniture_f1:0.0833333333333,furnituref_2:0.0833333333333,bed_f0:0.0833333333333,bed_f1:0.0833333333333,bedf_2:0.0833333333333,waterbed_f0:0.0833333333333,waterbed_f1:0.0833333333333,waterbedf_2:0.0833333333333,
+
+trundle-bed:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,furniture_f0:0.0833333333333,furniture_f1:0.0833333333333,furnituref_2:0.0833333333333,bed_f0:0.0833333333333,bed_f1:0.0833333333333,bedf_2:0.0833333333333,trundle-bed_f0:0.0833333333333,trundle-bed_f1:0.0833333333333,trundle-bedf_2:0.0833333333333,
+
+table:N thing_f0:0.111111111111,thing_f1:0.111111111111,thingf_2:0.111111111111,furniture_f0:0.111111111111,furniture_f1:0.111111111111,furnituref_2:0.111111111111,table_f0:0.111111111111,table_f1:0.111111111111,tablef_2:0.111111111111,
+
+kitchen-table:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,furniture_f0:0.0833333333333,furniture_f1:0.0833333333333,furnituref_2:0.0833333333333,table_f0:0.0833333333333,table_f1:0.0833333333333,tablef_2:0.0833333333333,kitchen-table_f0:0.0833333333333,kitchen-table_f1:0.0833333333333,kitchen-tablef_2:0.0833333333333,
+
+card-table:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,furniture_f0:0.0833333333333,furniture_f1:0.0833333333333,furnituref_2:0.0833333333333,table_f0:0.0833333333333,table_f1:0.0833333333333,tablef_2:0.0833333333333,card-table_f0:0.0833333333333,card-table_f1:0.0833333333333,card-tablef_2:0.0833333333333,
+
+coffee-table:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,furniture_f0:0.0833333333333,furniture_f1:0.0833333333333,furnituref_2:0.0833333333333,table_f0:0.0833333333333,table_f1:0.0833333333333,tablef_2:0.0833333333333,coffee-table_f0:0.0833333333333,coffee-table_f1:0.0833333333333,coffee-tablef_2:0.0833333333333,
+
+fruit:N thing_f0:0.166666666667,thing_f1:0.166666666667,thingf_2:0.166666666667,fruit_f0:0.166666666667,fruit_f1:0.166666666667,fruitf_2:0.166666666667,
+
+berry:N thing_f0:0.111111111111,thing_f1:0.111111111111,thingf_2:0.111111111111,fruit_f0:0.111111111111,fruit_f1:0.111111111111,fruitf_2:0.111111111111,berry_f0:0.111111111111,berry_f1:0.111111111111,berryf_2:0.111111111111,
+
+raspberry:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,fruit_f0:0.0833333333333,fruit_f1:0.0833333333333,fruitf_2:0.0833333333333,berry_f0:0.0833333333333,berry_f1:0.0833333333333,berryf_2:0.0833333333333,raspberry_f0:0.0833333333333,raspberry_f1:0.0833333333333,raspberryf_2:0.0833333333333,
+
+blueberry:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,fruit_f0:0.0833333333333,fruit_f1:0.0833333333333,fruitf_2:0.0833333333333,berry_f0:0.0833333333333,berry_f1:0.0833333333333,berryf_2:0.0833333333333,blueberry_f0:0.0833333333333,blueberry_f1:0.0833333333333,blueberryf_2:0.0833333333333,
+
+strawberry:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,fruit_f0:0.0833333333333,fruit_f1:0.0833333333333,fruitf_2:0.0833333333333,berry_f0:0.0833333333333,berry_f1:0.0833333333333,berryf_2:0.0833333333333,strawberry_f0:0.0833333333333,strawberry_f1:0.0833333333333,strawberryf_2:0.0833333333333,
+
+melon:N thing_f0:0.111111111111,thing_f1:0.111111111111,thingf_2:0.111111111111,fruit_f0:0.111111111111,fruit_f1:0.111111111111,fruitf_2:0.111111111111,melon_f0:0.111111111111,melon_f1:0.111111111111,melonf_2:0.111111111111,
+
+honeydew:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,fruit_f0:0.0833333333333,fruit_f1:0.0833333333333,fruitf_2:0.0833333333333,melon_f0:0.0833333333333,melon_f1:0.0833333333333,melonf_2:0.0833333333333,honeydew_f0:0.0833333333333,honeydew_f1:0.0833333333333,honeydewf_2:0.0833333333333,
+
+cantelope:N thing_f0:0.0833333333333,thing_f1:0.0833333333333,thingf_2:0.0833333333333,fruit_f0:0.0833333333333,fruit_f1:0.0833333333333,fruitf_2:0.0833333333333,melon_f0:0.0833333333333,melon_f1:0.0833333333333,melonf_2:0.0833333333333,cantelope_f0:0.0833333333333,cantelope_f1:0.0833333333333,cantelopef_2:0.0833333333333,
+
+            honeydew:N honeydew_f0:0.333333333333,honeydew_f1:0.333333333333,honeydewf_2:0.333333333333,
+
+apple:N honeydew_f0:0.166666666667,honeydew_f1:0.166666666667,honeydewf_2:0.166666666667,apple_f0:0.166666666667,apple_f1:0.166666666667,applef_2:0.166666666667,
+
+McIntosh:N honeydew_f0:0.111111111111,honeydew_f1:0.111111111111,honeydewf_2:0.111111111111,apple_f0:0.111111111111,apple_f1:0.111111111111,applef_2:0.111111111111,mcintosh_f0:0.111111111111,mcintosh_f1:0.111111111111,mcintoshf_2:0.111111111111,
+
+Granny-Smith:N honeydew_f0:0.111111111111,honeydew_f1:0.111111111111,honeydewf_2:0.111111111111,apple_f0:0.111111111111,apple_f1:0.111111111111,applef_2:0.111111111111,granny-smith_f0:0.111111111111,granny-smith_f1:0.111111111111,granny-smithf_2:0.111111111111,
+
+Golden-Delicious:N honeydew_f0:0.111111111111,honeydew_f1:0.111111111111,honeydewf_2:0.111111111111,apple_f0:0.111111111111,apple_f1:0.111111111111,applef_2:0.111111111111,golden-delicious_f0:0.111111111111,golden-delicious_f1:0.111111111111,golden-deliciousf_2:0.111111111111,
+
+vehicle:N vehicle_f0:0.333333333333,vehicle_f1:0.333333333333,vehiclef_2:0.333333333333,
+
+boat:N vehicle_f0:0.166666666667,vehicle_f1:0.166666666667,vehiclef_2:0.166666666667,boat_f0:0.166666666667,boat_f1:0.166666666667,boatf_2:0.166666666667,
+
+motorboat:N vehicle_f0:0.111111111111,vehicle_f1:0.111111111111,vehiclef_2:0.111111111111,boat_f0:0.111111111111,boat_f1:0.111111111111,boatf_2:0.111111111111,motorboat_f0:0.111111111111,motorboat_f1:0.111111111111,motorboatf_2:0.111111111111,
+
+sailboat:N vehicle_f0:0.111111111111,vehicle_f1:0.111111111111,vehiclef_2:0.111111111111,boat_f0:0.111111111111,boat_f1:0.111111111111,boatf_2:0.111111111111,sailboat_f0:0.111111111111,sailboat_f1:0.111111111111,sailboatf_2:0.111111111111,
+
+tugboat:N vehicle_f0:0.111111111111,vehicle_f1:0.111111111111,vehiclef_2:0.111111111111,boat_f0:0.111111111111,boat_f1:0.111111111111,boatf_2:0.111111111111,tugboat_f0:0.111111111111,tugboat_f1:0.111111111111,tugboatf_2:0.111111111111,
+
+truck:N vehicle_f0:0.166666666667,vehicle_f1:0.166666666667,vehiclef_2:0.166666666667,truck_f0:0.166666666667,truck_f1:0.166666666667,truckf_2:0.166666666667,
+
+semitrailer:N vehicle_f0:0.111111111111,vehicle_f1:0.111111111111,vehiclef_2:0.111111111111,truck_f0:0.111111111111,truck_f1:0.111111111111,truckf_2:0.111111111111,semitrailer_f0:0.111111111111,semitrailer_f1:0.111111111111,semitrailerf_2:0.111111111111,
+
+fire-truck:N vehicle_f0:0.111111111111,vehicle_f1:0.111111111111,vehiclef_2:0.111111111111,truck_f0:0.111111111111,truck_f1:0.111111111111,truckf_2:0.111111111111,fire-truck_f0:0.111111111111,fire-truck_f1:0.111111111111,fire-truckf_2:0.111111111111,
+
+tow-truck:N vehicle_f0:0.111111111111,vehicle_f1:0.111111111111,vehiclef_2:0.111111111111,truck_f0:0.111111111111,truck_f1:0.111111111111,truckf_2:0.111111111111,tow-truck_f0:0.111111111111,tow-truck_f1:0.111111111111,tow-truckf_2:0.111111111111,
+
+airplane:N vehicle_f0:0.166666666667,vehicle_f1:0.166666666667,vehiclef_2:0.166666666667,airplane_f0:0.166666666667,airplane_f1:0.166666666667,airplanef_2:0.166666666667,
+
+airliner:N vehicle_f0:0.111111111111,vehicle_f1:0.111111111111,vehiclef_2:0.111111111111,airplane_f0:0.111111111111,airplane_f1:0.111111111111,airplanef_2:0.111111111111,airliner_f0:0.111111111111,airliner_f1:0.111111111111,airlinerf_2:0.111111111111,
+
+fighter-jet:N vehicle_f0:0.111111111111,vehicle_f1:0.111111111111,vehiclef_2:0.111111111111,airplane_f0:0.111111111111,airplane_f1:0.111111111111,airplanef_2:0.111111111111,fighter-jet_f0:0.111111111111,fighter-jet_f1:0.111111111111,fighter-jetf_2:0.111111111111,
+
+seaplane:N vehicle_f0:0.111111111111,vehicle_f1:0.111111111111,vehiclef_2:0.111111111111,airplane_f0:0.111111111111,airplane_f1:0.111111111111,airplanef_2:0.111111111111,seaplane_f0:0.111111111111,seaplane_f1:0.111111111111,seaplanef_2:0.111111111111,
+
+mauve:ADJ red:0.166667,property:0.166667,hue:0.166667,color:0.166667,blue:0.166667,attribute:0.166667,
+
+rife:ADJ quality:0.142857,property:0.142857,negative:0.142857,infestation:0.142857,clean:0.142857,bad:0.142857,attribute:0.142857,
+
+prim:ADJ property:0.250000,clean:0.250000,attribute:0.250000,abstraction:0.250000,
+
+slim:ADJ substantiality:0.142857,small:0.142857,size:0.142857,property:0.142857,physical:0.142857,object:0.142857,attribute:0.142857,
+
+plain:ADJ sense:0.166667,property:0.166667,physical:0.166667,negative:0.166667,lush:0.166667,attribute:0.166667,
+
+more:DET relative-quantity:0.200000,relation:0.200000,post:0.200000,positive:0.200000,determiner:0.200000,
+
+lone:ADJ psychological_feature:0.166667,property:0.166667,negative:0.166667,life_form:0.166667,attribute:0.166667,attachment:0.166667,
+
+brief:ADJ temporal-relation:0.142857,property:0.142857,negative:0.142857,length:0.142857,fast:0.142857,event:0.142857,attribute:0.142857,
+
+bad:ADJ quality:0.166667,property:0.166667,negative:0.166667,bad:0.166667,attribute:0.166667,abstraction:0.166667,
+
+lithe:ADJ property:0.166667,physical:0.166667,move:0.166667,life_form:0.166667,healthy:0.166667,attribute:0.166667,
+
+keen:ADJ smart:0.200000,psychological_feature:0.200000,property:0.200000,life_form:0.200000,attribute:0.200000,
+
+big:ADJ substantiality:0.111111,size:0.111111,property:0.111111,physical:0.111111,object:0.111111,low_intensity:0.111111,large:0.111111,informal:0.111111,attribute:0.111111,
+
+straight:ADJ straight:0.166667,property:0.166667,physical:0.166667,object:0.166667,configuration:0.166667,attribute:0.166667,
+
+near:ADJ spacial-relation:0.200000,relation:0.200000,proximity:0.200000,negative:0.200000,length:0.200000,
+
+tight:ADJ tight:0.166667,property:0.166667,physical:0.166667,object:0.166667,configuration:0.166667,attribute:0.166667,
+
+broke:ADJ working:0.142857,property:0.142857,physical:0.142857,negative:0.142857,bad:0.142857,attribute:0.142857,abstraction:0.142857,
+
+crass:ADJ psychological_feature:0.142857,property:0.142857,pleasant:0.142857,negative:0.142857,life_form:0.142857,bad:0.142857,attribute:0.142857,
+
+deft:ADJ psychological_feature:0.200000,property:0.200000,life_form:0.200000,attribute:0.200000,adept:0.200000,
+
+north:ADJ vertical:0.125000,up:0.125000,spacial-relationship:0.125000,relation:0.125000,property:0.125000,direction:0.125000,attribute:0.125000,absolute-direction:0.125000,
+
+sharp:ADJ sharp:0.166667,property:0.166667,physical:0.166667,object:0.166667,configuration:0.166667,attribute:0.166667,
+
+hind:ADJ spacial-relationship:0.142857,relation:0.142857,property:0.142857,horizontal:0.142857,direction:0.142857,behind:0.142857,attribute:0.142857,
+
+least:ADJ relative-quantity:0.166667,relation:0.166667,post:0.166667,positive:0.166667,negative:0.166667,determiner:0.166667,
+
+blank:ADJ property:0.250000,negative:0.250000,color:0.250000,attribute:0.250000,
+
+tense:ADJ tight:0.166667,property:0.166667,physical:0.166667,object:0.166667,configuration:0.166667,attribute:0.166667,
+
+hoarse:ADJ speak:0.142857,property:0.142857,physical:0.142857,negative:0.142857,low_intensity:0.142857,life_form:0.142857,attribute:0.142857,
+
+fair:ADJ property:0.250000,fair:0.250000,attribute:0.250000,abstraction:0.250000,
+
+rid:ADJ property:0.166667,physical:0.166667,negative:0.166667,full:0.166667,configuration:0.166667,attribute:0.166667,
+
+few:DET relative-quantity:0.200000,relation:0.200000,post:0.200000,negative:0.200000,determiner:0.200000,
+
+tall:ADJ vertical:0.125000,substantiality:0.125000,property:0.125000,physical:0.125000,object:0.125000,length:0.125000,attribute:0.125000,1d:0.125000,
+
+cruel:ADJ psychological_feature:0.125000,property:0.125000,pleasant:0.125000,negative:0.125000,life_form:0.125000,bad:0.125000,attribute:0.125000,anger:0.125000,
+
+vast:ADJ substantiality:0.125000,property:0.125000,physical:0.125000,object:0.125000,length:0.125000,high_intensity:0.125000,attribute:0.125000,1d:0.125000,
+
+loose:ADJ tight:0.142857,property:0.142857,physical:0.142857,object:0.142857,negative:0.142857,configuration:0.142857,attribute:0.142857,
+
+weird:ADJ unusual:0.250000,property:0.250000,attribute:0.250000,abstraction:0.250000,
+
+far:ADJ spacial-relation:0.250000,relation:0.250000,proximity:0.250000,length:0.250000,
+
+grim:ADJ property:0.166667,outlook:0.166667,negative:0.166667,bad:0.166667,attribute:0.166667,abstraction:0.166667,
+
+this:DET singular:0.333333,determiner:0.333333,definite:0.333333,
+
+numb:ADJ psychological_feature:0.166667,property:0.166667,negative:0.166667,life_form:0.166667,feeling:0.166667,attribute:0.166667,
+
+wrong:ADJ truth:0.200000,property:0.200000,negative:0.200000,attribute:0.200000,abstraction:0.200000,
+
+whole:ADJ property:0.200000,physical:0.200000,full:0.200000,configuration:0.200000,attribute:0.200000,
+
+wide:ADJ substantiality:0.125000,property:0.125000,physical:0.125000,object:0.125000,length:0.125000,horizontal:0.125000,attribute:0.125000,1d:0.125000,
+
+fourth:ADJ relation:0.142857,post:0.142857,positive:0.142857,number:0.142857,four:0.142857,determiner:0.142857,absolute-quantity:0.142857,
+
+raw:ADJ property:0.142857,physical:0.142857,object:0.142857,negative:0.142857,edible:0.142857,cooked:0.142857,attribute:0.142857,
+
+blind:ADJ see:0.166667,property:0.166667,physical:0.166667,negative:0.166667,life_form:0.166667,attribute:0.166667,
+
+hard:ADJ property:0.166667,negative:0.166667,ease:0.166667,bad:0.166667,attribute:0.166667,abstraction:0.166667,
+
+crude:ADJ quality:0.166667,property:0.166667,negative:0.166667,bad:0.166667,attribute:0.166667,abstraction:0.166667,
+
+false:ADJ truth:0.200000,property:0.200000,negative:0.200000,attribute:0.200000,abstraction:0.200000,
+
+most:DET relative-quantity:0.200000,relation:0.200000,post:0.200000,positive:0.200000,determiner:0.200000,
+
+the:DET singular:0.333333,determiner:0.333333,definite:0.333333,
+
+stark:ADJ uncommon:0.200000,property:0.200000,importance:0.200000,attribute:0.200000,abstraction:0.200000,
+
+frank:ADJ psychological_feature:0.200000,property:0.200000,life_form:0.200000,direct:0.200000,attribute:0.200000,
+
+her:DET female:0.333333,definite:0.333333,article:0.333333,
+
+posh:ADJ quality:0.166667,property:0.166667,monetary:0.166667,cost:0.166667,attribute:0.166667,abstraction:0.166667,
+
+quaint:ADJ property:0.200000,pleasant:0.200000,historic:0.200000,attribute:0.200000,abstraction:0.200000,
+
+rare:ADJ property:0.200000,negative:0.200000,frequency:0.200000,attribute:0.200000,abstraction:0.200000,
+
+black:ADJ property:0.200000,hue:0.200000,color:0.200000,black:0.200000,attribute:0.200000,
+
+queer:ADJ unusual:0.250000,property:0.250000,attribute:0.250000,abstraction:0.250000,
+
+many:DET relative-quantity:0.250000,relation:0.250000,positive:0.250000,determiner:0.250000,
+
+curt:ADJ speech_act:0.125000,psychological_feature:0.125000,property:0.125000,pleasant:0.125000,negative:0.125000,life_form:0.125000,bad:0.125000,attribute:0.125000,
+
+weak:ADJ strength:0.166667,property:0.166667,physical:0.166667,negative:0.166667,life_form:0.166667,attribute:0.166667,
+
+late:ADJ temporal-relation:0.142857,relation:0.142857,property:0.142857,past:0.142857,negative:0.142857,attribute:0.142857,association:0.142857,
+
+ripe:ADJ property:0.142857,physical:0.142857,object:0.142857,negative:0.142857,fresh:0.142857,edible:0.142857,attribute:0.142857,
+
+slight:ADJ substantiality:0.142857,small:0.142857,size:0.142857,property:0.142857,physical:0.142857,object:0.142857,attribute:0.142857,
+
+each:DET singular:0.333333,indefinite:0.333333,determiner:0.333333,
+
+his:DET pronoun:0.333333,possessive:0.333333,male:0.333333,
+
+stale:ADJ property:0.125000,physical:0.125000,object:0.125000,negative:0.125000,fresh:0.125000,edible:0.125000,bad:0.125000,attribute:0.125000,
+
+sane:ADJ sturdy:0.200000,psychological_feature:0.200000,property:0.200000,life_form:0.200000,attribute:0.200000,
+
+dark:ADJ property:0.200000,negative:0.200000,lightness:0.200000,color:0.200000,attribute:0.200000,
+
+glad:ADJ psychological_feature:0.200000,property:0.200000,life_form:0.200000,happy:0.200000,attribute:0.200000,
+
+dire:ADJ property:0.166667,outlook:0.166667,negative:0.166667,bad:0.166667,attribute:0.166667,abstraction:0.166667,
+
+glib:ADJ psychological_feature:0.200000,property:0.200000,life_form:0.200000,direct:0.200000,attribute:0.200000,
+
+dull:ADJ sharp:0.125000,property:0.125000,physical:0.125000,object:0.125000,negative:0.125000,configuration:0.125000,bad:0.125000,attribute:0.125000,
+
+cute:ADJ property:0.200000,physical:0.200000,life_form:0.200000,attribute:0.200000,attractive:0.200000,
+
+pure:ADJ pure:0.200000,property:0.200000,physical:0.200000,consistency:0.200000,attribute:0.200000,
+
+terse:ADJ speech_act:0.125000,psychological_feature:0.125000,property:0.125000,pleasant:0.125000,negative:0.125000,life_form:0.125000,bad:0.125000,attribute:0.125000,
+
+some:DET positive:0.250000,plural:0.250000,indefinite:0.250000,determiner:0.250000,
+
+bright:ADJ property:0.200000,lightness:0.200000,high_intensity:0.200000,color:0.200000,attribute:0.200000,
+
+gray:ADJ white:0.166667,property:0.166667,hue:0.166667,color:0.166667,black:0.166667,attribute:0.166667,
+
+prime:ADJ property:0.200000,outlook:0.200000,importance:0.200000,attribute:0.200000,abstraction:0.200000,
+
+gaunt:ADJ thin:0.166667,property:0.166667,physical:0.166667,life_form:0.166667,bad:0.166667,attribute:0.166667,
+
+should:ADJ obligatory:0.250000,low_intensity:0.250000,effect:0.250000,action:0.250000,
+
+chaste:ADJ sexual:0.166667,psychological_feature:0.166667,property:0.166667,negative:0.166667,life_form:0.166667,attribute:0.166667,
+
+these:DET plural:0.333333,determiner:0.333333,definite:0.333333,
+
+mere:ADJ property:0.200000,negative:0.200000,importance:0.200000,attribute:0.200000,abstraction:0.200000,
+
+first:ADJ temporal-relation:0.200000,relation:0.200000,post:0.200000,positive:0.200000,determiner:0.200000,
+
+safe:ADJ safe:0.250000,property:0.250000,attribute:0.250000,abstraction:0.250000,
+
+less:ADJ relative-quantity:0.200000,relation:0.200000,post:0.200000,negative:0.200000,determiner:0.200000,
+
+a:DET singular:0.250000,indefinite:0.250000,determiner:0.250000,article:0.250000,
+
+south:ADJ vertical:0.142857,spacial-relationship:0.142857,relation:0.142857,property:0.142857,direction:0.142857,attribute:0.142857,absolute-direction:0.142857,
+
+stout:ADJ strong:0.166667,property:0.166667,physical:0.166667,object:0.166667,consistency:0.166667,attribute:0.166667,
+
+all:DET positive:0.250000,plural:0.250000,determiner:0.250000,definite:0.250000,
+
+brash:ADJ psychological_feature:0.125000,property:0.125000,life_form:0.125000,confident:0.125000,commence_action:0.125000,brave:0.125000,bad:0.125000,attribute:0.125000,
+
+poor:ADJ property:0.200000,negative:0.200000,monetary:0.200000,attribute:0.200000,abstraction:0.200000,
+
+ill:ADJ property:0.142857,physical:0.142857,negative:0.142857,life_form:0.142857,healthy:0.142857,bad:0.142857,attribute:0.142857,
+
+new:ADJ temporal-relation:0.250000,property:0.250000,new:0.250000,attribute:0.250000,
+
+full:ADJ property:0.166667,physical:0.166667,object:0.166667,full:0.166667,configuration:0.166667,attribute:0.166667,
+
+fast:ADJ temporal-relation:0.111111,speed:0.111111,property:0.111111,negative:0.111111,length:0.111111,high_intensity:0.111111,fast:0.111111,event:0.111111,attribute:0.111111,
+
+odd:ADJ unusual:0.250000,property:0.250000,attribute:0.250000,abstraction:0.250000,
+
+lewd:ADJ sexual:0.166667,psychological_feature:0.166667,property:0.166667,life_form:0.166667,bad:0.166667,attribute:0.166667,
+
+both:DET two:0.200000,positive:0.200000,plural:0.200000,indefinite:0.200000,determiner:0.200000,
+
+brave:ADJ psychological_feature:0.142857,property:0.142857,life_form:0.142857,confident:0.142857,commence_action:0.142857,brave:0.142857,attribute:0.142857,
+
+gay:ADJ psychological_feature:0.200000,property:0.200000,life_form:0.200000,happy:0.200000,attribute:0.200000,
+
+fond:ADJ property:0.250000,life_form:0.250000,attribute:0.250000,attachment:0.250000,
+
+staid:ADJ strong:0.166667,property:0.166667,physical:0.166667,object:0.166667,consistency:0.166667,attribute:0.166667,
+
+tough:ADJ strong:0.142857,property:0.142857,physical:0.142857,object:0.142857,dense:0.142857,consistency:0.142857,attribute:0.142857,
+
+coy:ADJ psychological_feature:0.142857,property:0.142857,negative:0.142857,life_form:0.142857,direct:0.142857,bad:0.142857,attribute:0.142857,
+
+daft:ADJ smart:0.142857,psychological_feature:0.142857,property:0.142857,negative:0.142857,life_form:0.142857,bad:0.142857,attribute:0.142857,
+
+nice:ADJ quality:0.250000,property:0.250000,attribute:0.250000,abstraction:0.250000,
+
+done:ADJ state:0.200000,potential:0.200000,negative:0.200000,commence_action:0.200000,action:0.200000,
+
+two:DET two:0.166667,positive:0.166667,plural:0.166667,number:0.166667,determiner:0.166667,definite:0.166667,
+
+fine:ADJ quality:0.250000,property:0.250000,attribute:0.250000,abstraction:0.250000,
+
+brown:ADJ yellow:0.142857,red:0.142857,property:0.142857,hue:0.142857,color:0.142857,blue:0.142857,attribute:0.142857,
+
+bleak:ADJ property:0.166667,outlook:0.166667,negative:0.166667,bad:0.166667,attribute:0.166667,abstraction:0.166667,
+
+sole:ADJ relative-quantity:0.250000,property:0.250000,one:0.250000,attribute:0.250000,
+
+soft:ADJ texture:0.166667,soft:0.166667,property:0.166667,physical:0.166667,object:0.166667,attribute:0.166667,
+
+suave:ADJ speech_act:0.142857,psychological_feature:0.142857,property:0.142857,life_form:0.142857,confident:0.142857,attribute:0.142857,adept:0.142857,
+
+bold:ADJ psychological_feature:0.125000,property:0.125000,loud:0.125000,life_form:0.125000,confident:0.125000,commence_action:0.125000,brave:0.125000,attribute:0.125000,
+
+staunch:ADJ sturdy:0.166667,psychological_feature:0.166667,property:0.166667,life_form:0.166667,direct:0.166667,attribute:0.166667,
+
+tame:ADJ psychological_feature:0.166667,property:0.166667,pleasant:0.166667,ease:0.166667,attribute:0.166667,animal:0.166667,
+
+still:ADJ temporal-relation:0.200000,relative-quantity:0.200000,relation:0.200000,now:0.200000,indefinite:0.200000,
+
+cold:ADJ temperature:0.200000,property:0.200000,physical:0.200000,cold:0.200000,attribute:0.200000,
+
+mild:ADJ property:0.250000,ease:0.250000,attribute:0.250000,abstraction:0.250000,
+
+ole:ADJ temporal-relation:0.142857,property:0.142857,past:0.142857,new:0.142857,negative:0.142857,attribute:0.142857,archaic:0.142857,
+
+sore:ADJ property:0.125000,physical:0.125000,negative:0.125000,low_intensity:0.125000,life_form:0.125000,healthy:0.125000,bad:0.125000,attribute:0.125000,
+
+slow:ADJ temporal-relation:0.166667,slow:0.166667,property:0.166667,length:0.166667,event:0.166667,attribute:0.166667,
+
+wry:ADJ psychological_feature:0.166667,property:0.166667,negative:0.166667,life_form:0.166667,direct:0.166667,attribute:0.166667,
+
+sly:ADJ psychological_feature:0.142857,property:0.142857,negative:0.142857,life_form:0.142857,direct:0.142857,bad:0.142857,attribute:0.142857,
+
+our:DET reflexive:0.333333,pronoun:0.333333,possessive:0.333333,
+
+dense:ADJ smart:0.142857,psychological_feature:0.142857,property:0.142857,negative:0.142857,life_form:0.142857,bad:0.142857,attribute:0.142857,
+
+right:ADJ spacial-relationship:0.142857,right:0.142857,relative_direction:0.142857,relation:0.142857,property:0.142857,horizontal:0.142857,attribute:0.142857,
+
+quick:ADJ temporal-relation:0.111111,speed:0.111111,property:0.111111,negative:0.111111,low_intensity:0.111111,length:0.111111,fast:0.111111,event:0.111111,attribute:0.111111,
+
+svelte:ADJ uncommon:0.166667,thin:0.166667,property:0.166667,physical:0.166667,life_form:0.166667,attribute:0.166667,
+
+close:ADJ spacial-relation:0.200000,relation:0.200000,proximity:0.200000,negative:0.200000,length:0.200000,
+
+sad:ADJ sad:0.125000,psychological_feature:0.125000,property:0.125000,life_form:0.125000,feeling:0.125000,emotion:0.125000,bad:0.125000,attribute:0.125000,
+
+pert:ADJ psychological_feature:0.200000,property:0.200000,life_form:0.200000,direct:0.200000,attribute:0.200000,
+
+vague:ADJ property:0.250000,clarity:0.250000,attribute:0.250000,abstraction:0.250000,
+
+sheer:ADJ property:0.250000,extreme:0.250000,attribute:0.250000,abstraction:0.250000,
+
+glum:ADJ sad:0.125000,psychological_feature:0.125000,property:0.125000,life_form:0.125000,feeling:0.125000,emotion:0.125000,bad:0.125000,attribute:0.125000,
+
+gruff:ADJ psychological_feature:0.125000,property:0.125000,pleasant:0.125000,negative:0.125000,life_form:0.125000,glib:0.125000,bad:0.125000,attribute:0.125000,
+
+another:DET positive:0.333333,indefinite:0.333333,determiner:0.333333,
+
+tart:ADJ taste:0.125000,sweet:0.125000,sense:0.125000,property:0.125000,physical:0.125000,object:0.125000,negative:0.125000,attribute:0.125000,
+
+dumb:ADJ smart:0.142857,psychological_feature:0.142857,property:0.142857,negative:0.142857,life_form:0.142857,bad:0.142857,attribute:0.142857,
+
+blond:ADJ yellow:0.111111,property:0.111111,physical:0.111111,life_form:0.111111,hue:0.111111,hair:0.111111,female:0.111111,color:0.111111,attribute:0.111111,
+
+my:DET self:0.333333,pronoun:0.333333,possessive:0.333333,
+
+lush:ADJ sense:0.200000,property:0.200000,physical:0.200000,lush:0.200000,attribute:0.200000,
+
+wise:ADJ smart:0.200000,psychological_feature:0.200000,property:0.200000,life_form:0.200000,attribute:0.200000,
+
+bald:ADJ property:0.166667,physical:0.166667,negative:0.166667,life_form:0.166667,hair:0.166667,attribute:0.166667,
+
+broad:ADJ substantiality:0.142857,property:0.142857,physical:0.142857,object:0.142857,length:0.142857,attribute:0.142857,1d:0.142857,
+
+frail:ADJ sturdy:0.142857,psychological_feature:0.142857,property:0.142857,negative:0.142857,life_form:0.142857,bad:0.142857,attribute:0.142857,
+
+that:DET singular:0.333333,determiner:0.333333,definite:0.333333,
+
+faint:ADJ sturdy:0.166667,psychological_feature:0.166667,property:0.166667,negative:0.166667,life_form:0.166667,attribute:0.166667,
+
+east:ADJ spacial-relationship:0.142857,right:0.142857,relation:0.142857,property:0.142857,direction:0.142857,attribute:0.142857,absolute-direction:0.142857,
+
+blonde:ADJ yellow:0.125000,property:0.125000,physical:0.125000,life_form:0.125000,hue:0.125000,hair:0.125000,color:0.125000,attribute:0.125000,
+
+moot:ADJ property:0.200000,negative:0.200000,importance:0.200000,attribute:0.200000,abstraction:0.200000,
+
+swift:ADJ temporal-relation:0.142857,property:0.142857,length:0.142857,good:0.142857,fast:0.142857,event:0.142857,attribute:0.142857,
+
+would:ADJ state:0.166667,potential:0.166667,effect:0.166667,commence_action:0.166667,action:0.166667,ability:0.166667,
+
+nuts:ADJ psychological_feature:0.142857,property:0.142857,negative:0.142857,life_form:0.142857,healthy:0.142857,bad:0.142857,attribute:0.142857,
+
+smug:ADJ psychological_feature:0.166667,property:0.166667,life_form:0.166667,confident:0.166667,bad:0.166667,attribute:0.166667,
+
+vile:ADJ sense:0.111111,property:0.111111,pleasant:0.111111,physical:0.111111,object:0.111111,negative:0.111111,formal:0.111111,bad:0.111111,attribute:0.111111,
+
+proud:ADJ psychological_feature:0.200000,property:0.200000,life_form:0.200000,confident:0.200000,attribute:0.200000,
+
+smooth:ADJ texture:0.166667,smooth:0.166667,property:0.166667,physical:0.166667,object:0.166667,attribute:0.166667,
+
+gilt:ADJ property:0.166667,physical:0.166667,object:0.166667,configuration:0.166667,coated:0.166667,attribute:0.166667,
+
+wee:ADJ substantiality:0.142857,small:0.142857,size:0.142857,property:0.142857,physical:0.142857,object:0.142857,attribute:0.142857,
+
+rough:ADJ texture:0.142857,smooth:0.142857,property:0.142857,physical:0.142857,object:0.142857,negative:0.142857,attribute:0.142857,
+
+loud:ADJ sense:0.200000,property:0.200000,physical:0.200000,noise:0.200000,attribute:0.200000,
+
+one:DET singular:0.250000,positive:0.250000,determiner:0.250000,definite:0.250000,
+
+rude:ADJ speech_act:0.125000,psychological_feature:0.125000,property:0.125000,pleasant:0.125000,negative:0.125000,life_form:0.125000,bad:0.125000,attribute:0.125000,
+
+moist:ADJ wet:0.166667,property:0.166667,physical:0.166667,object:0.166667,consistency:0.166667,attribute:0.166667,
+
+apt:ADJ psychological_feature:0.200000,property:0.200000,life_form:0.200000,commence_action:0.200000,attribute:0.200000,
+
+rich:ADJ property:0.250000,monetary:0.250000,attribute:0.250000,abstraction:0.250000,
+
+dank:ADJ wet:0.142857,property:0.142857,physical:0.142857,decay:0.142857,consistency:0.142857,bad:0.142857,attribute:0.142857,
+
+just:ADJ property:0.200000,formal:0.200000,fair:0.200000,attribute:0.200000,abstraction:0.200000,
+
+true:ADJ truth:0.250000,property:0.250000,attribute:0.250000,abstraction:0.250000,
+
+sparse:ADJ sense:0.166667,property:0.166667,physical:0.166667,negative:0.166667,lush:0.166667,attribute:0.166667,
+
+great:ADJ quality:0.250000,property:0.250000,attribute:0.250000,abstraction:0.250000,
+
+shrewd:ADJ psychological_feature:0.166667,property:0.166667,monetary:0.166667,life_form:0.166667,attribute:0.166667,attending:0.166667,
+
+real:ADJ truth:0.250000,property:0.250000,attribute:0.250000,abstraction:0.250000,
+
+its:DET singular:0.250000,possessive:0.250000,determiner:0.250000,definite:0.250000,
+
+mad:ADJ psychological_feature:0.125000,property:0.125000,life_form:0.125000,feeling:0.125000,emotion:0.125000,bad:0.125000,attribute:0.125000,anger:0.125000,
+
+could:ADJ state:0.166667,potential:0.166667,effect:0.166667,commence_action:0.166667,action:0.166667,ability:0.166667,
+
+worth:ADJ relation:0.166667,property:0.166667,monetary:0.166667,cost:0.166667,attribute:0.166667,abstraction:0.166667,
+
+free:ADJ property:0.200000,negative:0.200000,cost:0.200000,attribute:0.200000,abstraction:0.200000,
+
+deaf:ADJ property:0.166667,physical:0.166667,negative:0.166667,life_form:0.166667,hear:0.166667,attribute:0.166667,
+
+prone:ADJ psychological_feature:0.200000,property:0.200000,life_form:0.200000,commence_action:0.200000,attribute:0.200000,
+
+round:ADJ property:0.142857,physical:0.142857,object:0.142857,negative:0.142857,flat:0.142857,configuration:0.142857,attribute:0.142857,
+
+harsh:ADJ property:0.142857,pleasant:0.142857,negative:0.142857,ease:0.142857,bad:0.142857,attribute:0.142857,abstraction:0.142857,
+
+mute:ADJ speak:0.166667,property:0.166667,physical:0.166667,negative:0.166667,life_form:0.166667,attribute:0.166667,
+
+no:DET relation:0.166667,post:0.166667,nil:0.166667,negative:0.166667,determiner:0.166667,absolute-quantity:0.166667,
+
+sweet:ADJ taste:0.142857,sweet:0.142857,sense:0.142857,property:0.142857,physical:0.142857,object:0.142857,attribute:0.142857,
+
+thick:ADJ property:0.166667,physical:0.166667,object:0.166667,dense:0.166667,consistency:0.166667,attribute:0.166667,
+
+fat:ADJ thin:0.142857,property:0.142857,physical:0.142857,negative:0.142857,life_form:0.142857,bad:0.142857,attribute:0.142857,
+
+wild:ADJ psychological_feature:0.142857,property:0.142857,pleasant:0.142857,negative:0.142857,ease:0.142857,attribute:0.142857,animal:0.142857,
+
+stray:ADJ property:0.200000,negative:0.200000,importance:0.200000,attribute:0.200000,abstraction:0.200000,
+
+left:ADJ spacial-relationship:0.166667,relative_direction:0.166667,relation:0.166667,property:0.166667,horizontal:0.166667,attribute:0.166667,
+
+west:ADJ spacial-relationship:0.166667,relation:0.166667,property:0.166667,direction:0.166667,attribute:0.166667,absolute-direction:0.166667,
+
+much:DET relative-quantity:0.200000,relation:0.200000,post:0.200000,positive:0.200000,determiner:0.200000,
+
+back:ADJ spacial-relationship:0.166667,relative_direction:0.166667,relation:0.166667,negative:0.166667,horizontal:0.166667,direction:0.166667,
+
+low:ADJ substantiality:0.125000,property:0.125000,physical:0.125000,negative:0.125000,length:0.125000,horizontal:0.125000,attribute:0.125000,1d:0.125000,
+
+gross:ADJ slang:0.111111,sense:0.111111,property:0.111111,pleasant:0.111111,physical:0.111111,object:0.111111,negative:0.111111,bad:0.111111,attribute:0.111111,
+
+which:DET wh:0.250000,interrogative:0.250000,indefinite:0.250000,determiner:0.250000,
+
+lame:ADJ strength:0.142857,property:0.142857,physical:0.142857,negative:0.142857,life_form:0.142857,bad:0.142857,attribute:0.142857,
+
+sure:ADJ psychological_feature:0.200000,property:0.200000,life_form:0.200000,confident:0.200000,attribute:0.200000,
+
+dear:ADJ psychological_feature:0.200000,property:0.200000,life_form:0.200000,attribute:0.200000,attachment:0.200000,
+
+buff:ADJ strength:0.166667,slang:0.166667,property:0.166667,physical:0.166667,life_form:0.166667,attribute:0.166667,
+
+blunt:ADJ sharp:0.142857,property:0.142857,physical:0.142857,object:0.142857,negative:0.142857,configuration:0.142857,attribute:0.142857,
+
+such:ADJ such:0.250000,quantity:0.250000,property:0.250000,attribute:0.250000,
+
+white:ADJ white:0.200000,property:0.200000,hue:0.200000,color:0.200000,attribute:0.200000,
+
+null:ADJ relative-quantity:0.200000,property:0.200000,none:0.200000,negative:0.200000,attribute:0.200000,
+
+fresh:ADJ taste:0.166667,sense:0.166667,property:0.166667,physical:0.166667,object:0.166667,attribute:0.166667,
+
+your:DET pronoun:0.333333,possessive:0.333333,2nd_person:0.333333,
+
+stiff:ADJ property:0.125000,pliable:0.125000,physical:0.125000,object:0.125000,negative:0.125000,flat:0.125000,consistency:0.125000,attribute:0.125000,
+
+steep:ADJ property:0.142857,physical:0.142857,object:0.142857,negative:0.142857,flat:0.142857,configuration:0.142857,attribute:0.142857,
+
+clear:ADJ psychological_feature:0.166667,property:0.166667,ease:0.166667,cognition:0.166667,attribute:0.166667,abstraction:0.166667,
+
+dim:ADJ property:0.200000,negative:0.200000,lightness:0.200000,color:0.200000,attribute:0.200000,
+
+green:ADJ property:0.200000,hue:0.200000,green:0.200000,color:0.200000,attribute:0.200000,
+
+scant:ADJ property:0.200000,negative:0.200000,frequency:0.200000,attribute:0.200000,abstraction:0.200000,
+
+must:ADJ obligatory:0.250000,high_intensity:0.250000,effect:0.250000,action:0.250000,
+
+shrill:ADJ speech_act:0.142857,psychological_feature:0.142857,property:0.142857,pleasant:0.142857,negative:0.142857,life_form:0.142857,attribute:0.142857,
+
+plump:ADJ thin:0.166667,property:0.166667,physical:0.166667,negative:0.166667,life_form:0.166667,attribute:0.166667,
+
+grand:ADJ quality:0.200000,property:0.200000,attribute:0.200000,archaic:0.200000,abstraction:0.200000,
+
+scarce:ADJ property:0.200000,negative:0.200000,frequency:0.200000,attribute:0.200000,abstraction:0.200000,
+
+dead:ADJ property:0.200000,physical:0.200000,life_form:0.200000,dead:0.200000,attribute:0.200000,
+
+trite:ADJ property:0.166667,negative:0.166667,importance:0.166667,attribute:0.166667,archaic:0.166667,abstraction:0.166667,
+
+wont:ADJ psychological_feature:0.200000,property:0.200000,life_form:0.200000,commence_action:0.200000,attribute:0.200000,
+
+any:DET relation:0.250000,negative:0.250000,determiner:0.250000,absolute-quantity:0.250000,
+
+slick:ADJ texture:0.166667,smooth:0.166667,property:0.166667,physical:0.166667,object:0.166667,attribute:0.166667,
+
+small:ADJ substantiality:0.142857,small:0.142857,size:0.142857,property:0.142857,physical:0.142857,object:0.142857,attribute:0.142857,
+
+warm:ADJ temperature:0.142857,property:0.142857,physical:0.142857,object:0.142857,low_intensity:0.142857,hot:0.142857,attribute:0.142857,
+
+strange:ADJ unusual:0.250000,property:0.250000,attribute:0.250000,abstraction:0.250000,
+
+non:ADJ relative-quantity:0.200000,property:0.200000,none:0.200000,negative:0.200000,attribute:0.200000,
+
+mid:ADJ spacial-relationship:0.200000,relation:0.200000,property:0.200000,between:0.200000,attribute:0.200000,
+
+large:ADJ substantiality:0.142857,size:0.142857,property:0.142857,physical:0.142857,object:0.142857,large:0.142857,attribute:0.142857,
+
+drunk:ADJ psychological_feature:0.200000,property:0.200000,life_form:0.200000,attribute:0.200000,alcohol:0.200000,
+
+neat:ADJ property:0.250000,clean:0.250000,attribute:0.250000,abstraction:0.250000,
+
+best:ADJ quality:0.166667,property:0.166667,high_intensity:0.166667,good:0.166667,attribute:0.166667,abstraction:0.166667,
+
+next:ADJ temporal-relation:0.200000,relation:0.200000,post:0.200000,determiner:0.200000,association:0.200000,
+
+stern:ADJ sturdy:0.166667,psychological_feature:0.166667,property:0.166667,life_form:0.166667,direct:0.166667,attribute:0.166667,
+
+long:ADJ substantiality:0.142857,property:0.142857,physical:0.142857,object:0.142857,length:0.142857,attribute:0.142857,1d:0.142857,
+
+vain:ADJ psychological_feature:0.166667,property:0.166667,life_form:0.166667,confident:0.166667,bad:0.166667,attribute:0.166667,
+
+blithe:ADJ psychological_feature:0.142857,property:0.142857,negative:0.142857,life_form:0.142857,happy:0.142857,feeling:0.142857,attribute:0.142857,
+
+fake:ADJ truth:0.166667,property:0.166667,negative:0.166667,bad:0.166667,attribute:0.166667,abstraction:0.166667,
+
+flat:ADJ property:0.166667,physical:0.166667,object:0.166667,flat:0.166667,configuration:0.166667,attribute:0.166667,
+
+clad:ADJ property:0.200000,physical:0.200000,life_form:0.200000,clothing:0.200000,attribute:0.200000,
+
+old:ADJ temporal-relation:0.166667,property:0.166667,past:0.166667,new:0.166667,negative:0.166667,attribute:0.166667,
+
+meek:ADJ psychological_feature:0.142857,property:0.142857,life_form:0.142857,fear:0.142857,commence_action:0.142857,bad:0.142857,attribute:0.142857,
+
+rear:ADJ spacial-relationship:0.250000,relation:0.250000,property:0.250000,attribute:0.250000,
+
+five:DET relation:0.125000,post:0.125000,positive:0.125000,number:0.125000,frequency:0.125000,five:0.125000,determiner:0.125000,absolute-quantity:0.125000,
+
+chic:ADJ property:0.250000,fashionability:0.250000,attribute:0.250000,abstraction:0.250000,
+
+same:ADJ post:0.250000,identity:0.250000,determiner:0.250000,definite:0.250000,
+
+drab:ADJ property:0.166667,outlook:0.166667,negative:0.166667,bad:0.166667,attribute:0.166667,abstraction:0.166667,
+
+wet:ADJ wet:0.200000,property:0.200000,physical:0.200000,consistency:0.200000,attribute:0.200000,
+
+lax:ADJ tight:0.142857,property:0.142857,physical:0.142857,object:0.142857,negative:0.142857,configuration:0.142857,attribute:0.142857,
+
+cheap:ADJ property:0.166667,negative:0.166667,cost:0.166667,bad:0.166667,attribute:0.166667,abstraction:0.166667,
+
+blue:ADJ property:0.200000,hue:0.200000,color:0.200000,blue:0.200000,attribute:0.200000,
+
+strong:ADJ strength:0.200000,property:0.200000,physical:0.200000,life_form:0.200000,attribute:0.200000,
+
+calm:ADJ psychological_feature:0.200000,property:0.200000,life_form:0.200000,confident:0.200000,attribute:0.200000,
+
+strict:ADJ property:0.250000,care:0.250000,attribute:0.250000,abstraction:0.250000,
+
+hot:ADJ temperature:0.200000,property:0.200000,physical:0.200000,hot:0.200000,attribute:0.200000,
+
+gauche:ADJ psychological_feature:0.142857,property:0.142857,pleasant:0.142857,negative:0.142857,life_form:0.142857,bad:0.142857,attribute:0.142857,
+
+wan:ADJ small:0.200000,size:0.200000,property:0.200000,attribute:0.200000,abstraction:0.200000,
+
+shy:ADJ quiet:0.142857,psychological_feature:0.142857,property:0.142857,negative:0.142857,life_form:0.142857,direct:0.142857,attribute:0.142857,
+
+deep:ADJ substantiality:0.200000,property:0.200000,physical:0.200000,depth:0.200000,attribute:0.200000,
+
+swank:ADJ quality:0.166667,property:0.166667,monetary:0.166667,cost:0.166667,attribute:0.166667,abstraction:0.166667,
+
+those:DET plural:0.333333,determiner:0.333333,definite:0.333333,
+
+taut:ADJ tight:0.166667,property:0.166667,physical:0.166667,object:0.166667,configuration:0.166667,attribute:0.166667,
+
+limp:ADJ tight:0.142857,property:0.142857,physical:0.142857,object:0.142857,negative:0.142857,configuration:0.142857,attribute:0.142857,
+
+dour:ADJ psychological_feature:0.142857,property:0.142857,outlook:0.142857,negative:0.142857,life_form:0.142857,bad:0.142857,attribute:0.142857,
+
+red:ADJ red:0.200000,property:0.200000,hue:0.200000,color:0.200000,attribute:0.200000,
+
+fierce:ADJ psychological_feature:0.125000,property:0.125000,life_form:0.125000,confident:0.125000,commence_action:0.125000,brave:0.125000,attribute:0.125000,anger:0.125000,
+
+bare:ADJ property:0.200000,physical:0.200000,negative:0.200000,clothing:0.200000,attribute:0.200000,
+
+crisp:ADJ property:0.142857,pliable:0.142857,physical:0.142857,object:0.142857,negative:0.142857,consistency:0.142857,attribute:0.142857,
+
+sick:ADJ property:0.142857,physical:0.142857,negative:0.142857,life_form:0.142857,healthy:0.142857,bad:0.142857,attribute:0.142857,
+
+brisk:ADJ temperature:0.166667,property:0.166667,physical:0.166667,low_intensity:0.166667,cold:0.166667,attribute:0.166667,
+
+worst:ADJ quality:0.142857,property:0.142857,negative:0.142857,high_intensity:0.142857,bad:0.142857,attribute:0.142857,abstraction:0.142857,
+
+an:DET singular:0.250000,indefinite:0.250000,determiner:0.250000,article:0.250000,
+
+thin:ADJ thin:0.200000,property:0.200000,physical:0.200000,life_form:0.200000,attribute:0.200000,
+
+rash:ADJ psychological_feature:0.166667,property:0.166667,negative:0.166667,life_form:0.166667,careful:0.166667,attribute:0.166667,
+
+snug:ADJ tight:0.142857,property:0.142857,physical:0.142857,object:0.142857,good:0.142857,configuration:0.142857,attribute:0.142857,
+
+coarse:ADJ texture:0.142857,smooth:0.142857,property:0.142857,physical:0.142857,object:0.142857,negative:0.142857,attribute:0.142857,
+
+high:ADJ vertical:0.142857,up:0.142857,spacial-relationship:0.142857,relation:0.142857,property:0.142857,direction:0.142857,attribute:0.142857,
+
+last:ADJ temporal-relation:0.166667,relation:0.166667,post:0.166667,past:0.166667,negative:0.166667,determiner:0.166667,
+
+pale:ADJ state:0.200000,property:0.200000,negative:0.200000,color:0.200000,attribute:0.200000,
+
+sleek:ADJ texture:0.166667,smooth:0.166667,property:0.166667,physical:0.166667,object:0.166667,attribute:0.166667,
+
+through:ADJ spacial-relationship:0.333333,relation:0.333333,location:0.333333,
+
+smart:ADJ smart:0.200000,psychological_feature:0.200000,property:0.200000,life_form:0.200000,attribute:0.200000,
+
+good:ADJ quality:0.200000,property:0.200000,good:0.200000,attribute:0.200000,abstraction:0.200000,
+
+their:DET pronoun:0.333333,possessive:0.333333,3rd_person:0.333333,
+
+short:ADJ substantiality:0.125000,property:0.125000,physical:0.125000,object:0.125000,negative:0.125000,length:0.125000,attribute:0.125000,1d:0.125000,
+
+young:ADJ temporal-relation:0.250000,property:0.250000,new:0.250000,attribute:0.250000,
+
+loath:ADJ psychological_feature:0.142857,property:0.142857,life_form:0.142857,feeling:0.142857,fear:0.142857,commence_action:0.142857,attribute:0.142857,
+
+rapt:ADJ psychological_feature:0.200000,property:0.200000,life_form:0.200000,attribute:0.200000,attending:0.200000,
+
+huge:ADJ substantiality:0.125000,size:0.125000,property:0.125000,physical:0.125000,object:0.125000,large:0.125000,high_intensity:0.125000,attribute:0.125000,
+
+other:DET positive:0.333333,determiner:0.333333,definite:0.333333,
+
+pink:ADJ white:0.166667,red:0.166667,property:0.166667,hue:0.166667,color:0.166667,attribute:0.166667,
+
+bland:ADJ taste:0.125000,sense:0.125000,property:0.125000,physical:0.125000,object:0.125000,negative:0.125000,bad:0.125000,attribute:0.125000,
+
+damp:ADJ wet:0.166667,property:0.166667,physical:0.166667,consistency:0.166667,bad:0.166667,attribute:0.166667,
+
+beige:ADJ yellow:0.166667,white:0.166667,property:0.166667,hue:0.166667,color:0.166667,attribute:0.166667,
+
+nude:ADJ property:0.142857,physical:0.142857,negative:0.142857,life_form:0.142857,human:0.142857,clothing:0.142857,attribute:0.142857,
+
+ought:ADJ obligatory:0.250000,low_intensity:0.250000,effect:0.250000,action:0.250000,
+
+well:ADJ quality:0.166667,property:0.166667,good:0.166667,formal:0.166667,attribute:0.166667,abstraction:0.166667,
+
+fep:N bedf_2:0.00301204819277,monetary:0.00301204819277,location:0.00301204819277,honeydewf_2:0.00301204819277,formal:0.00301204819277,proximity:0.00301204819277,move:0.00301204819277,poodle_f1:0.00301204819277,poodle_f0:0.00301204819277,yellow:0.00301204819277,four:0.00301204819277,relation:0.00301204819277,human:0.00301204819277,infestation:0.00301204819277,animal_f0:0.00301204819277,animal_f1:0.00301204819277,cold:0.00301204819277,relative-quantity:0.00301204819277,fish_f0:0.00301204819277,fish_f1:0.00301204819277,salmonf_2:0.00301204819277,low_intensity:0.00301204819277,high-chair_f0:0.00301204819277,high-chair_f1:0.00301204819277,one:0.00301204819277,decay:0.00301204819277,informal:0.00301204819277,thingf_2:0.00301204819277,ease:0.00301204819277,relative_direction:0.00301204819277,behind:0.00301204819277,texture:0.00301204819277,blueberry_f1:0.00301204819277,blueberry_f0:0.00301204819277,tabby_f1:0.00301204819277,tabby_f0:0.00301204819277,black:0.00301204819277,association:0.00301204819277,wet:0.00301204819277,strawberry_f1:0.00301204819277,strawberry_f0:0.00301204819277,smart:0.00301204819277,depth:0.00301204819277,cantelopef_2:0.00301204819277,granny-smithf_2:0.00301204819277,good:0.00301204819277,animal:0.00301204819277,2nd_person:0.00301204819277,care:0.00301204819277,safe:0.00301204819277,animalf_2:0.00301204819277,none:0.00301204819277,number:0.00301204819277,truck_f0:0.00301204819277,golden-deliciousf_2:0.00301204819277,flounder_f1:0.00301204819277,flounder_f0:0.00301204819277,coffee-table_f0:0.00301204819277,new:0.00301204819277,attending:0.00301204819277,pugf_2:0.00301204819277,archaic:0.00301204819277,motorboat_f0:0.00301204819277,motorboat_f1:0.00301204819277,identity:0.00301204819277,high_intensity:0.00301204819277,seaplanef_2:0.00301204819277,raspberry_f1:0.00301204819277,raspberry_f0:0.00301204819277,state:0.00301204819277,large:0.00301204819277,bad:0.00301204819277,truth:0.00301204819277,determiner:0.00301204819277,small:0.00301204819277,frequency:0.00301204819277,truckf_2:0.00301204819277,semitrailerf_2:0.00301204819277,soft:0.00301204819277,brave:0.00301204819277,cost:0.00301204819277,female:0.00301204819277,fair:0.00301204819277,slang:0.00301204819277,smooth:0.00301204819277,feeling:0.00301204819277,direct:0.00301204819277,swivel-chairf_2:0.00301204819277,honeydew_f0:0.00301204819277,past:0.00301204819277,tugboatf_2:0.00301204819277,see:0.00301204819277,full:0.00301204819277,now:0.00301204819277,configuration:0.00301204819277,coated:0.00301204819277,vehicle_f1:0.00301204819277,vehicle_f0:0.00301204819277,trundle-bed_f1:0.00301204819277,trundle-bed_f0:0.00301204819277,pronoun:0.00301204819277,blue:0.00301204819277,clarity:0.00301204819277,dense:0.00301204819277,alcohol:0.00301204819277,coffee-table_f1:0.00301204819277,furnituref_2:0.00301204819277,sharkf_2:0.00301204819277,speed:0.00301204819277,commence_action:0.00301204819277,definite:0.00301204819277,importance:0.00301204819277,substantiality:0.00301204819277,rocking-chairf_2:0.00301204819277,sailboatf_2:0.00301204819277,fighter-jet_f0:0.00301204819277,fighter-jet_f1:0.00301204819277,airlinerf_2:0.00301204819277,speak:0.00301204819277,dog_f1:0.00301204819277,dog_f0:0.00301204819277,red:0.00301204819277,thin:0.00301204819277,sexual:0.00301204819277,fire-truck_f0:0.00301204819277,fire-truck_f1:0.00301204819277,fishf_2:0.00301204819277,ability:0.00301204819277,vertical:0.00301204819277,tablef_2:0.00301204819277,boat_f0:0.00301204819277,boat_f1:0.00301204819277,waterbed_f0:0.00301204819277,waterbed_f1:0.00301204819277,vehiclef_2:0.00301204819277,shark_f0:0.00301204819277,shark_f1:0.00301204819277,slow:0.00301204819277,right:0.00301204819277,article:0.00301204819277,post:0.00301204819277,tugboat_f0:0.00301204819277,lightness:0.00301204819277,between:0.00301204819277,dead:0.00301204819277,temperature:0.00301204819277,pleasant:0.00301204819277,interrogative:0.00301204819277,property:0.00301204819277,semitrailer_f1:0.00301204819277,adept:0.00301204819277,healthy:0.00301204819277,golden-delicious_f1:0.00301204819277,tabbyf_2:0.00301204819277,quiet:0.00301204819277,dalmatian_f0:0.00301204819277,dalmatian_f1:0.00301204819277,chairf_2:0.00301204819277,absolute-direction:0.00301204819277,length:0.00301204819277,kitchen-table_f0:0.00301204819277,kitchen-table_f1:0.00301204819277,action:0.00301204819277,male:0.00301204819277,kitchen-tablef_2:0.00301204819277,fear:0.00301204819277,emotion:0.00301204819277,outlook:0.00301204819277,reflexive:0.00301204819277,life_form:0.00301204819277,color:0.00301204819277,sweet:0.00301204819277,berryf_2:0.00301204819277,card-tablef_2:0.00301204819277,possessive:0.00301204819277,tugboat_f1:0.00301204819277,cat_f1:0.00301204819277,cat_f0:0.00301204819277,waterbedf_2:0.00301204819277,salmon_f0:0.00301204819277,salmon_f1:0.00301204819277,speech_act:0.00301204819277,indefinite:0.00301204819277,quality:0.00301204819277,size:0.00301204819277,siamesef_2:0.00301204819277,fruitf_2:0.00301204819277,absolute-quantity:0.00301204819277,working:0.00301204819277,edible:0.00301204819277,positive:0.00301204819277,mcintosh_f1:0.00301204819277,mcintosh_f0:0.00301204819277,negative:0.00301204819277,fast:0.00301204819277,obligatory:0.00301204819277,confident:0.00301204819277,motorboatf_2:0.00301204819277,1d:0.00301204819277,temporal-relation:0.00301204819277,white:0.00301204819277,extreme:0.00301204819277,applef_2:0.00301204819277,melonf_2:0.00301204819277,coffee-tablef_2:0.00301204819277,glib:0.00301204819277,hue:0.00301204819277,direction:0.00301204819277,mcintoshf_2:0.00301204819277,airliner_f0:0.00301204819277,airliner_f1:0.00301204819277,four-poster_f1:0.00301204819277,four-poster_f0:0.00301204819277,uncommon:0.00301204819277,swivel-chair_f0:0.00301204819277,swivel-chair_f1:0.00301204819277,hear:0.00301204819277,honeydew_f1:0.00301204819277,chair_f0:0.00301204819277,chair_f1:0.00301204819277,lush:0.00301204819277,careful:0.00301204819277,potential:0.00301204819277,quantity:0.00301204819277,catf_2:0.00301204819277,hair:0.00301204819277,melon_f0:0.00301204819277,melon_f1:0.00301204819277,dogf_2:0.00301204819277,four-posterf_2:0.00301204819277,straight:0.00301204819277,sturdy:0.00301204819277,table_f1:0.00301204819277,table_f0:0.00301204819277,furniture_f1:0.00301204819277,furniture_f0:0.00301204819277,strawberryf_2:0.00301204819277,rocking-chair_f0:0.00301204819277,rocking-chair_f1:0.00301204819277,thing_f1:0.00301204819277,thing_f0:0.00301204819277,truck_f1:0.00301204819277,bed_f0:0.00301204819277,bed_f1:0.00301204819277,unusual:0.00301204819277,boatf_2:0.00301204819277,dalmatianf_2:0.00301204819277,golden-delicious_f0:0.00301204819277,poodlef_2:0.00301204819277,up:0.00301204819277,taste:0.00301204819277,attribute:0.00301204819277,siamese_f0:0.00301204819277,siamese_f1:0.00301204819277,sailboat_f1:0.00301204819277,sailboat_f0:0.00301204819277,sad:0.00301204819277,flounderf_2:0.00301204819277,manx_f0:0.00301204819277,manx_f1:0.00301204819277,tow-truck_f1:0.00301204819277,tow-truck_f0:0.00301204819277,sense:0.00301204819277,anger:0.00301204819277,sharp:0.00301204819277,wh:0.00301204819277,clothing:0.00301204819277,happy:0.00301204819277,physical:0.00301204819277,seaplane_f1:0.00301204819277,seaplane_f0:0.00301204819277,strength:0.00301204819277,3rd_person:0.00301204819277,attractive:0.00301204819277,granny-smith_f1:0.00301204819277,granny-smith_f0:0.00301204819277,high-chairf_2:0.00301204819277,self:0.00301204819277,airplane_f0:0.00301204819277,airplane_f1:0.00301204819277,event:0.00301204819277,fire-truckf_2:0.00301204819277,tight:0.00301204819277,hot:0.00301204819277,raspberryf_2:0.00301204819277,fashionability:0.00301204819277,attachment:0.00301204819277,pure:0.00301204819277,psychological_feature:0.00301204819277,airplanef_2:0.00301204819277,strong:0.00301204819277,cognition:0.00301204819277,tow-truckf_2:0.00301204819277,such:0.00301204819277,abstraction:0.00301204819277,nil:0.00301204819277,singular:0.00301204819277,apple_f1:0.00301204819277,apple_f0:0.00301204819277,card-table_f1:0.00301204819277,card-table_f0:0.00301204819277,spacial-relation:0.00301204819277,effect:0.00301204819277,two:0.00301204819277,noise:0.00301204819277,berry_f1:0.00301204819277,berry_f0:0.00301204819277,horizontal:0.00301204819277,flat:0.00301204819277,manxf_2:0.00301204819277,plural:0.00301204819277,semitrailer_f0:0.00301204819277,pliable:0.00301204819277,object:0.00301204819277,loud:0.00301204819277,fruit_f1:0.00301204819277,fruit_f0:0.00301204819277,blueberryf_2:0.00301204819277,pug_f1:0.00301204819277,pug_f0:0.00301204819277,cooked:0.00301204819277,spacial-relationship:0.00301204819277,historic:0.00301204819277,green:0.00301204819277,clean:0.00301204819277,consistency:0.00301204819277,five:0.00301204819277,fresh:0.00301204819277,cantelope_f0:0.00301204819277,cantelope_f1:0.00301204819277,fighter-jetf_2:0.00301204819277,trundle-bedf_2:0.00301204819277,
+
