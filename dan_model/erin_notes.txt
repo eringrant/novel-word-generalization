@@ -1,0 +1,93 @@
+==========
+DAN'S CODE
+==========
+
+
+make_inputs.py
+==============
+- create a lexicon consisting of words from hierarchy.txt, with their levels in the hierarchy
+    - resulting representation is something like
+
+        [('animal', 0, ['animal_f0', 'animal_f1', 'animal_f2']), ('dog', 0, ['animal_f0', 'animal_f1', 'animal_f2', 'dog_f0', 'dog_f1', 'dog_f2']), ('dalmatian', 0, ['animal_f0', 'animal_f1', 'animal_f2', 'dog_f0', 'dog_f1', 'dog_f2', 'dalmatian_f0', 'dalmatian_f1', 'dalmatian_f2']), ...
+
+- pad the lexicon with a certain number of determiners and adjectives (the number is a parameter) from lexicon-SENSORY.all
+    - no other vocabulary items are added to the lexicon
+- write out to lexicon-XT.all; initially; distribution of all features given a word is uniform
+- append to this lexicon 'fep:N', with a uniform probability distribution over all features currently considered in the lexicon (i.e., all and only features from words in the hierarchy, or from the selected adjectives and determiners)
+
+- also, generate sentences for the each word in the hierarchy and write to input-XT.dev (shuffled)
+    - sentences take the following form: DET ADJ N
+    - e.g., 
+
+1-----
+SENTENCE: much:DET quaint:ADJ flounder:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,pleasant,historic,attribute,abstraction,    animal_f0,animal_f1,animal_f2,fish_f0,fish_f1,fish_f2,flounder_f0,flounder_f1,flounder_f2,color39,pose24,size38
+1-----
+SENTENCE: all:DET dull:ADJ boat:N
+SEM_REP: ,positive,plural,determiner,definite,sharp,property,physical,object,negative,configuration,bad,attribute, vehicle_f0,vehicle_f1,vehicle_f2,boat_f0,boat_f1,boat_f2,color6,pose9,size4
+1-----
+SENTENCE: much:DET prime:ADJ truck:N
+SEM_REP: ,relative-quantity,relation,post,positive,determiner,property,outlook,importance,attribute,abstraction,   vehicle_f0,vehicle_f1,vehicle_f2,truck_f0,truck_f1,truck_f2,color13,pose2,size6
+...
+
+    - numbers of sentences for a given word in the hierarchy is dependent on level in the hierarchy
+        - number given by parameters: root_freq, supero_freq, basic_freq, subo_freq
+    - also, in each sentence, some randomised colour, pose and size features are appended to the semantic representation
+        - e.g., ,color11,pose27,size8
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+main_testing.py
+===============
+- learner learns from corpus generated in make_inputs.py (DET ADJ NOUN sentences)
+    - the learner does not learn from any other naturalistic corpus
+
+- learner is exposed to teaching set: items labelled with the word 'fep':
+    - 3 reps of 1 Dalmatian (identity is modelled by the Dalmatian having the same size, color, shape features)
+    - 3 reps of 3 different Dalmatians (subordinate-level)
+    - 1 rep Dalmatian, 1 rep poodle, 1 rep pug (basic-level)
+    - 1 rep Dalmatian, 1 rep tabby, 1 rep flounder (superordinate-level)
+        - learner is reinitialised after every set
+
+- learner is tested on the meaning of 'fep' at the end of each teaching set:
+    - test set is the following items:
+        -dalmatian0T', 'dalmatian1T', 'poodle0T', 'pug0T', 'tabby0T', 'manx0T', 'flounder0T', 'motorboat0T', 'fire-truck0T'
+        
+    - for each test set item:
+
+        - sim_to_obj denominator is calculated:
+            - sum of cosine similarity between the test item's scene (semantic) representation (uniform distribution over relevant features) and each learned word in the lexicon (nouns from the hierarchy & selected adjectives and determiners)
+        - sim_to_fep denominator is calculated:
+            - sum of cosine similarity between the acquired meaning of 'fep' and each word in the lexicon
+        - word_freq denominator is calculated:
+            - sum of the frequency of each word in the lexicon
+
+
+        - then, the 'probability' between the meaning of 'fep' and the test set item is calculated as follows:
+
+
+
+
+
+
+    
+

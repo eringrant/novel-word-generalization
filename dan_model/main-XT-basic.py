@@ -32,14 +32,20 @@ testtype = ""
 f = open("individuals.pkl",'r')
 items = pickle.load(f)
 f.close()
+# items is a mapping of test items to the features to a list of
+# features that apply to them
 
+# teaching set number
 tsn = 0
 
-# need two more dalmatians for fair testing
+# DAN: need two more dalmatians for fair testing
 # items['dalmatian3'] = items['dalmatian0'][:-1] + ['dalmatian3']
 # items['dalmatian4'] = items['dalmatian0'][:-1] + ['dalmatian4']
 
 # convert all items to semantic representations
+# reps is a mapping of items from the ontology to a wmmapping.Meaning
+# given an item, each feature has equal probability (uniform distribution)
+# (but only the features which apply to the object)
 reps = dict()
 for (k,v) in items.items():
     rep = wmmapping.Meaning(Beta)
@@ -54,9 +60,8 @@ teach_3Xsub = [reps['dalmatian0'], reps['dalmatian1'], reps['dalmatian2']]
 teach_3Xbas = [reps['dalmatian0'], reps['poodle0'], reps['pug0']]
 #teach_3Xsup = [reps['dalmatian0'],reps['tabby0'],reps['flounder0']]
 
-teaching_sets = [teach_1X1, teach_1X3, teach_3Xsub, teach_3Xbas]
-teaching_names = ["1 dal", "3x1 dal", "3 dal", "3 dog"]
-#teaching_sets = [teach_1X1,teach_1X3, teach_3Xsub, teach_3Xbas] #, teach_3Xsup]
+teaching_sets = [teach_1X1, teach_1X3, teach_3Xsub, teach_3Xbas] #, teach_3Xsup]
+teaching_names = ["1_dal", "3x1_dal", "3_dal", "3_dog"]
 
 relevant_features = ["dalmatian0", "dalmatian1", "dalmatian2", "dalmatian_f0", "dalmatian_f1", "dalmatian_f2", "dog_f0", "dog_f1", "dog_f2", "animal_f0", "animal_f1", "animal_f2", "poodle0", "pug0", "poodle_f0", "poodle_f1", "poodle_f2", "pug_f0", "pug_f1", "pug_f2"]
 
@@ -66,10 +71,12 @@ relevant_features = ["dalmatian0", "dalmatian1", "dalmatian2", "dalmatian_f0", "
 #test_reps = [reps[n] for n in test_names]
 
 # teaching phase -- learner trains on teaching set
-def teach(learner, teach_set):
+def teach(learner, teaching_set):
     outfile = open("RESULT_" + teaching_names[tsn] , 'w')
     i = 0
-    for meaning in teach_set:
+    for meaning in teaching_set:
+        print('meaning in teaching set', meaning)
+        print('meaning in teaching set', meaning.getSeenPrims())
         outfile.write("TEACHING TRIAL " + str(i) + "\n")
         learner.processPair(['fep:N'],meaning.getSeenPrims(), add_dummy)
 
@@ -83,8 +90,8 @@ def teach(learner, teach_set):
 			outfile.write("\n")
 
 	outfile.write("----------------------------------------------------\n")
-    	i += 1	
- 
+    	i += 1
+
 def bar_chart(all_prims,probs):
     l0 = [probs[p][0] for p in all_prims]
     l1 = [probs[p][1] for p in all_prims]
@@ -99,28 +106,28 @@ def bar_chart(all_prims,probs):
 
     p0 = ax.bar(ind,l0,width,color='r')
     p1 = ax.bar(ind+width,l1,width,color='g')
-    p2 = ax.bar(ind+2*width,l2,width,color='b')	
-    p3 = ax.bar(ind+3*width,l3,width,color='y')	
+    p2 = ax.bar(ind+2*width,l2,width,color='b')
+    p3 = ax.bar(ind+3*width,l3,width,color='y')
 
     ax.set_ylabel("probability")
     ax.set_xticks(ind + 2 * width)
-   ax.set_xticklabels(all_prims,rotation='vertical')
+    ax.set_xticklabels(all_prims,rotation='vertical')
 
     title = "Learned meaning of fep\n Beta=" + str(Beta) + " Lambda=" + str(Lambda)
     ax.set_title(title)
 
     plt.show()
-    
+
 # --------------------------------------------- #
 #      main					                    #
 # --------------------------------------------- #
 def main(repkl=True):
     global tsn
-    if repkl:      
+    if repkl:
         # learn the meanings of words from input corpus, and update the learning curves
         learner = learn.Learner(Beta, Lambda, alpha, epsilon, simtype, theta, lexname, outdir, add_dummy, traceword, minfreq)
         (j1, j2, rfD) = learner.processCorpus(corpus, add_dummy, maxsents, 10000)
-        f = open("learner.pkl",'w')        
+        f = open("learner.pkl",'w')
         pickle.dump(learner,f)
         f.close()
 
@@ -130,21 +137,21 @@ def main(repkl=True):
 
     i = 0
     # run experiments
-    for t in teaching_sets:
-        
+    for teaching_set in teaching_sets:
+
         #outfile.write("####################### TRIAL " + str(i) + " #############################\n")
         f = open("learner.pkl",'r')
         exp_learner = pickle.load(f)
         f.close()
 
-        teach(exp_learner, t)
+        teach(exp_learner, teaching_set)
 	tsn += 1
-    
+
         #m = exp_learner.transp.getMeaning("fep:N")
-        #outfile.write(str(m.getSortedPrims()) + "\n")                 
+        #outfile.write(str(m.getSortedPrims()) + "\n")
         #for p in m.getSortedPrims():
         #    if(p[0] > 0.015):
-        #        if p[1] not in all_prims:   
+        #        if p[1] not in all_prims:
         #            all_prims.append(p[1])
         #            probs[p[1]] = [0,0,0,0]
         #        probs[p[1]][i] = p[0]
@@ -153,6 +160,6 @@ def main(repkl=True):
     #outfile.close()
     #bar_chart(all_prims,probs)
 
-       
+
 if __name__ == "__main__":
-    main()
+    main(repkl=False)

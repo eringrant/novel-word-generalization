@@ -10,14 +10,14 @@ import math
 class Learner:
     def __init__(self, Beta, Lambda, alpha, epsilon, simtype, theta, lexname, outdir, add_dummy, traceword, minfreq=0):
         # parameters for smoothing meaning probabilities
-        self.Beta = Beta 
-        self.Lambda = Lambda 
+        self.Beta = Beta
+        self.Lambda = Lambda
         # parameters for smoothing alignment probabilities
         self.alpha = 0 #alpha
         self.epsilon = 0 #epsilon
-        # threshold for determining whether a word is learned by the model 
+        # threshold for determining whether a word is learned by the model
         self.simthreshold = theta
-        # the similarity measure used for evaluation 
+        # the similarity measure used for evaluation
         self.simtype = simtype
 
         self.minfreq = minfreq
@@ -33,13 +33,13 @@ class Learner:
         self.timesp = evaluate.TimePropsTable("time_props")
 
         self.time = 0
-        self.vocabD = {}       # hash of words whose meaning isLearned at some point in time 
+        self.vocabD = {}       # hash of words whose meaning isLearned at some point in time
 #        self.novelD = {}       # hash of novel words and their sim_score at time of first exposure
         self.allprimsD = {}    # hash of primitives seen so far
 
         self.lastcompscoreD = {}
 
-        # the original `gold-standard' lexicon 
+        # the original `gold-standard' lexicon
         self.original_lex = lexicon.readAll(lexname, self.Beta)
 
         # initialize translation table for all words in the lexicon
@@ -64,7 +64,7 @@ class Learner:
         self.timesp.reset()
 
         self.time = 0
-        self.vocabD = {}       # hash of words whose meaning isLearned at some point in time 
+        self.vocabD = {}       # hash of words whose meaning isLearned at some point in time
         self.allprimsD = {}    # hash of primitives seen so far
 
     # ------------------------------------------------------------- #
@@ -97,7 +97,7 @@ class Learner:
 #        self.timesp.Write(handle)
 
         handle.close()
- 
+
     # ------------------------------------------------------------- #
     def Read(self, filename):
         handle = open(self.outdir+filename, 'r')
@@ -113,7 +113,7 @@ class Learner:
         self.simtype = paramsL[5]
         self.minfreq = int(paramsL[6])
         self.outdir = paramsL[7]
-        self.time = int(paramsL[8]) 
+        self.time = int(paramsL[8])
 
         line = handle.readline().strip("\n")
         itemsL = re.findall("([^,]+),", line)
@@ -187,7 +187,7 @@ class Learner:
             if tasktype in ['priming', 'production']:
                 # get learned meaning of word
                 wmeaning = self.transp.getMeaning(word)
-            else: 
+            else:
                 # task is 'comprehension'
                 # get true meaning of word
                 wmeaning = self.original_lex.getMeaning(word)
@@ -217,12 +217,12 @@ class Learner:
             # check if postag matches key
             if self.isSeen(w):
                 if key=='ALL' or (key in ['N','V'] and postag==key) or (key=='OTH' and not postag in ['V','N']):
-                    sum = sum + self.getComprehensionScore(w) 
+                    sum = sum + self.getComprehensionScore(w)
                     vsize += 1
         if sum==0.0:
             avg = 0.0
         else:
-            avg = sum / float(vsize) 
+            avg = sum / float(vsize)
         return avg
 
     # ------------------------------------------------------------- #
@@ -233,7 +233,7 @@ class Learner:
             comp = evaluate.calculateSimilarity(self.Beta, uniform, trueMeaning, self.simtype)
             return comp
         return self.lastcompscoreD[word]
-   
+
     # ------------------------------------------------------------- #
     def calculateComprehensionScore(self, word):
         trueMeaning = self.original_lex.getMeaning(word)
@@ -244,7 +244,7 @@ class Learner:
     def isSeen(self, word):
         if self.wordsp.hasWord(word):
             return True
-        return False 
+        return False
 
     # ------------------------------------------------------------- #
     def isLearned(self, word):
@@ -313,7 +313,7 @@ class Learner:
 
         for w in wordsL:
             # if w is seen for the first time, add it to wordsp as a new word,
-            # otherwise increase its frequency of occurrence by 1 
+            # otherwise increase its frequency of occurrence by 1
             if not self.wordsp.hasWord(w):
                  # self.wordsp.addWord(w, self.time, len(self.vocabD.keys()))
                  self.wordsp.addWord(w, self.time, self.getLearnedCount(self.postagL))
@@ -335,15 +335,15 @@ class Learner:
         self.updateMappingTables(wordsL, primsL)
 
         # print alignments and meaning probs for all (w,f) pairs in current input
-        for w in wordsL:
-            for f in primsL:
-                print "a(%s|%s) -> %6.4f" %(w,f,self.alignp.getValue(w,f))
+        #for w in wordsL:
+        #    for f in primsL:
+        #        print "a(%s|%s) -> %6.4f" %(w,f,self.alignp.getValue(w,f))
         #    for f in primsL:
         #        if not w==dummy:
         #            rfp = self.calculateRFProb(w,f)
         #            print "rf(%s|%s) -> %6.4f" %(w,f,rfp)
-            for f in self.allprimsD.keys():
-                print "p(%s|%s) => %4.3f" %(f,w,self.transp.getValue(w,f))
+        #    for f in self.allprimsD.keys():
+        #        print "p(%s|%s) => %4.3f" %(f,w,self.transp.getValue(w,f))
 
         if add_dummy!=0:
             wordsL.remove(dummy)
@@ -360,7 +360,7 @@ class Learner:
 #                self.novelD[w][1] = self.getComprehensionScore(w)
 
             # if the meaning of the word has been learned, update its properties;
-            # note this is done only the first time sim(L_w,T_w) exceeds the threshold 
+            # note this is done only the first time sim(L_w,T_w) exceeds the threshold
             if not self.vocabD.has_key(w) and self.isLearned(w):
                 #self.wordsp.updateLrndProps(w, self.time, self.wordsp.getWFreq(w), len(self.vocabD.keys()))
                 self.wordsp.updateLrndProps(w, self.time, self.wordsp.getWFreq(w), self.getLearnedCount(self.postagL))
@@ -381,7 +381,7 @@ class Learner:
         return count
 
     # ------------------------------------------------------------- #
-    def getLearnedCount(self, postagL): 
+    def getLearnedCount(self, postagL):
         if 'ALL' in postagL:
             return len(self.vocabD.keys())
 
@@ -399,7 +399,7 @@ class Learner:
         if not word in allwordsL: print "ERROR %s" %(word)
         num = self.transp.getValue(word, prim) * self.wordsp.getWFreq(word)
         denom = 0.0
-        #num = 1.0 / self.Beta 
+        #num = 1.0 / self.Beta
         #denom = num
         for w in allwordsL:
             denom += self.transp.getValue(w, prim) * self.wordsp.getWFreq(w)
@@ -419,7 +419,7 @@ class Learner:
         (current_wordsL, current_primsL) = indata.getNextPair()
         sent_count = 1
         while current_wordsL != []:
-            
+
             #if (maxtime > 0) and (self.time > maxtime):
             if (maxsents > 0) and (sent_count > maxsents):
                 break
@@ -458,5 +458,5 @@ class Learner:
         #    for o in oL:
         #        rfD[w][o] = self.calculateRFProb(w,o)
 
-        indata.close() 
+        indata.close()
         return learned_count, self.time, rfD

@@ -7,6 +7,12 @@ class Meaning:    # added on Dec. 29
         self.prob = {}
         self.unseen = 1.0/float(Beta)
 
+    def __str__(self):
+        return self.prob.items()
+
+    def __repr__(self):
+        return str(self.prob.items())
+
     def setValue(self, prim, value):
         self.prob[prim] = value
 
@@ -42,7 +48,7 @@ class Meaning:    # added on Dec. 29
         print ranked, '<', self.unseen, '>',
 
     def Write(self, handle):
-        kL = self.prob.keys() 
+        kL = self.prob.keys()
         kL.sort()
         for k in kL:
             handle.write(k+":"+str(self.getValue(k))+",")
@@ -63,7 +69,7 @@ class TransDist:
         self.Beta = Beta
 
     def reset(self, word):
-        self.wordsD[word] = Meaning(self.Beta) 
+        self.wordsD[word] = Meaning(self.Beta)
 
     def initialize(self, wordsL):
         for w in wordsL:
