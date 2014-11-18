@@ -157,7 +157,7 @@ def write_learned_lex(learner, outdir):
     alpha, and epsilon come from the Learner learner.
 
     The file is written as :
-        {word}:{frequency} [{feature}:({ture_probability}, {learned_probability}),
+        {word}:{frequency} [{feature}:({true_probability}, {learned_probability}),
             ...]
         <<{word's_aqcuisition_score}>>>
     for each word.
