@@ -15,7 +15,7 @@ outdir = 'referent_probability_experiments_output'
 if not os.path.exists(outdir):
     os.makedirs(outdir)
 
-# gold-staandard lexicon
+# gold-standard lexicon
 lexname = norm_prob_lexicon_cs.all
 
 # number of iterations for each condition
@@ -48,7 +48,7 @@ corpora = {}
 for word in parameter_values['novel-word']:
     corpora[word] = create_corpus_without_word(word, corpus_path):
 
-# cartesian product of all parameter settings
+# Cartesian product of all parameter settings
 experiment_conditions = [dict(zip(parameter_values, x)) for x in itertools.product(*parameter_values.values())]
 
 def calculate_referent_probability(learner, utterance, scene):
@@ -75,7 +75,10 @@ def calculate_referent_probability(learner, utterance, scene):
             # p ( f | w' ) * p( w' )
             sum_assoc += learner.association(word, feature) * learner._wordsp.frequency(word))
 
-            # TODO: for novel words, following returns 0
+
+# TODO: implement one training iteration of novel word in scene before test
+#TODO: use wmmapping.prob instead of association
+#TODO: if using meaning prob, be sure to update meaning problem if forget bool is True
 
             if word in utterance and feature in scene: #TODO: check formatting aligns
                 joint_prob[(word, feature)] = learner.association(word, feature) * learner._wordsp.frequency(word)
@@ -84,9 +87,7 @@ def calculate_referent_probability(learner, utterance, scene):
 
         feature_prob[feature] = sum_assoc
 
-    # TODO: joint probability for novel words
-
-    # normalise the joint probabililties over total word frequency
+    # normalise the joint probabilities over total word frequency
     for (w_f, prob) in joint_prob.values():
         joint_prob[w_f] = prob / float(sum_word_freq)
 
@@ -240,7 +241,7 @@ def setup_experiments(experiment_condition):
         forget = False
         forget_decay = 0
 
-    # novelt
+    # novelty
     if experiment_condition['novelty'] is not False:
         novelty = True
         novelty_decay = experiment_condition['novelty']
