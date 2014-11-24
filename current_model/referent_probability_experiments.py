@@ -62,7 +62,7 @@ def calculate_referent_probability(learner, utterance, scene):
     # TODO: determine if the referent prob should be a joint distribution of features, conditional upon a word
 
     feature_prob = {} # dictionary of { feature : p (f) = \sum_{w' \in W} p ( f | w' ) * p( w' ) }
-    joint_prob = {} # dictionary of { (word, feature) : p( f | w ) * p( w ) = p(f, w) }
+    joint_prob = {} # dictionary of { (word, feature) : p( f | w ) * p( w ) = p( f, w ) }
 
     # TODO: change loop order
     for feature in scene:
@@ -72,16 +72,15 @@ def calculate_referent_probability(learner, utterance, scene):
 
         for word in learner._vocab:
 
-            # p ( f | w' ) * p( w' )
-            sum_assoc += learner.association(word, feature) * learner._wordsp.frequency(word))
+            # \sum [ p ( f | w' ) * p( w' ) ] = \sum [ p ( f, w' ) ]
+            sum_assoc += learner._learned_lexicon.prob(word, feature) * learner._wordsp.frequency(word))
 
 
 # TODO: implement one training iteration of novel word in scene before test
-#TODO: use wmmapping.prob instead of association
 #TODO: if using meaning prob, be sure to update meaning problem if forget bool is True
 
             if word in utterance and feature in scene: #TODO: check formatting aligns
-                joint_prob[(word, feature)] = learner.association(word, feature) * learner._wordsp.frequency(word)
+                joint_prob[(word, feature)] = learner._learned_lexicon.prob(word, feature) * learner._wordsp.frequency(word)
 
             sum_word_freq += learner._wordsp.frequency(word)
 
@@ -90,6 +89,11 @@ def calculate_referent_probability(learner, utterance, scene):
     # normalise the joint probabilities over total word frequency
     for (w_f, prob) in joint_prob.values():
         joint_prob[w_f] = prob / float(sum_word_freq)
+    # normalise the feature probabilities over total word frequency
+    for (f, prob) in feature_prob.values():
+        feature_prob[f] = prob / float(sum_word_freq)
+
+    # compute j
 
     # TODO: finish writing
 
