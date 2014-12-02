@@ -5,6 +5,7 @@ import re
 import random
 import itertools
 import pprint
+import pickle
 
 import input
 import learn
@@ -34,14 +35,13 @@ num_novel_word_conditions = 2
 # manually specify novel objects?
 fix_novel_words = True
 fixed_novel_words = [
-        #'dog:N',
-        'apple:N'
+        'nose:N'
 ]
 
 # manually specify familiar objects?
 fix_familiar_objects = True
 fixed_familiar_objects = [
-        'hat:N',
+        'apple:N'
         #'piece:N'
 ]
 
@@ -50,11 +50,12 @@ parameter_values = {
     'dummy' :                           [False],
     'forget' :                          [False, 0.03],
     'novelty' :                         [False, 0.03],
-    'lambda' :                          [-1, 0.03],
-    'power' :                           [1, 2], #c = 1 is ND; c = 0.5 is LT_.5 (late talker less severe),; c = 0.25 is LT_.25 (late talker more severe)
-    'remove-singleton-utterances' :     [True],
-    'maxtime' :                         [5000],
-    'category learner' :                [False],
+    'lambda' :                          [-1],
+    #'lambda' :                          [-1, 0.03],
+    #'power' :                           [1, 0.5, 0.25], #c = 1 is ND; c = 0.5 is LT_.5 (late talker less severe),; c = 0.25 is LT_.25 (late talker more severe)
+    'power' :                           [1],
+    'maxtime' :                         [10000],
+    'category-learner' :                [False],
 # training parameters
     #'permute-input-sentences' :         [True, False],
     'probabilistic-features' :           [True], # if True, generate a subset of the gold-standard features for the test scene
@@ -206,11 +207,6 @@ def calculate_referent_probability(learner, utterance, scene_generator, scene_re
 
     if verbose:
         print '------------------------------------------------------------------'
-        for obj in scene_generator:
-            print 'word:', obj
-            for v, f in problex.meaning(obj).sorted_features():
-                print 'feature:', f, 'prob:', learner._learned_lexicon.prob(obj, feature)
-        print '------------------------------------------------------------------'
         print ''
         print 'Joint probability of word and feature:'
         pprint.pprint(joint_prob)
@@ -232,7 +228,6 @@ def write_config_file(
     novelty_decay,
     L,
     power,
-    singletons,
     maxtime
     ):
 
@@ -302,10 +297,7 @@ record-iterations=-1
 
     f.write("""maxlearned=-1\n""")
 
-    if singletons is True:
-        f.write('remove-singleton-utterances=true\n')
-    else:
-        f.write('remove-singleton-utterances=false\n')
+    f.write('remove-singleton-utterances=false\n')
 
     return config_filename
 
@@ -338,7 +330,6 @@ def setup_experiments(experiment_condition):
         novelty_decay=novelty_decay,
         L=experiment_condition['lambda'],
         power=experiment_condition['power'],
-        singletons=experiment_condition['remove-singleton-utterances'],
         maxtime=experiment_condition['maxtime']
     )
 
@@ -363,6 +354,7 @@ def setup_experiments(experiment_condition):
 
     # generate the scene
     scene_generator = [novel_word] + familiar_objects
+    print scene_generator
     scene_representation = generate_scene(scene_generator, experiment_condition, probabilistic=experiment_condition['probabilistic-features'])
     utterance = [novel_word]
 
@@ -391,14 +383,13 @@ def run_experiments(learner, experiment_condition, utterance, scene_generator, s
         print '-------Before processing the scene--------'
         print ''
 
-        for word in utterance:
-            print 'Word:', word
-            for feature in scene_representation:
-                print 'Feature:', feature, 'Meaning probability:', learner._learned_lexicon.prob(word, feature)
+        for obj in scene_generator:
+            print 'word:', obj
+            for v, f in problex.meaning(obj).sorted_features():
+                print 'Feature:', f, '\t\tProb:', learner._learned_lexicon.prob(obj, f)
 
-        raw_input()
-
-    learner.process_pair(utterance, scene_representation, outdir, experiment_condition['category learner'])
+    print utterance, scene_representation
+    learner.process_pair(utterance, scene_representation, outdir, experiment_condition['category-learner'])
 
     if check_probs:
 
@@ -409,9 +400,12 @@ def run_experiments(learner, experiment_condition, utterance, scene_generator, s
         for word in utterance:
             print 'Word:', word
             for feature in scene_representation:
-                print 'Feature:', feature, 'Meaning probability:', learner._learned_lexicon.prob(word, feature)
-
-        raw_input()
+                print 'Feature:', feature, '\t\tProb:', learner._learned_lexicon.prob(word, feature)
+        print '------------------------------------------------------------------'
+        for obj in scene_generator:
+            print 'word:', obj
+            for v, f in problex.meaning(obj).sorted_features():
+                print 'Feature:', f, '\t\tProb:', learner._learned_lexicon.prob(obj, f)
 
     return calculate_referent_probability(learner, utterance, scene_generator, scene_representation, forget=experiment_condition['forget'])
 
@@ -425,9 +419,37 @@ if __name__ == '__main__':
     try:
         for experiment_condition in experiment_conditions:
 
-            experimental_results[str(experiment_condition)] = {}
-            experimental_results[str(experiment_condition)]['referent probability of novel target'] = []
-            experimental_results[str(experiment_condition)]['referent probability of familiar target'] = []
+            # create a label for this trial
+            r = dict(experiment_condition)
+            del r['number-familiar-objects']
+            del r['number-novel-objects']
+            del r['category-learner']
+            del r['dummy']
+            del r['novel-word']
+            del r['maxtime']
+            del r['power']
+            del r['lambda']
+            novel_word = experiment_condition['novel-word']
+            power = experiment_condition['power']
+            l = experiment_condition['lambda']
+
+            d=""
+            for i in r:
+                a=i
+                b=r[i]
+                c=i+" : "+str(r[i])
+                d=d+c+', '
+
+            c='lambda'+" : "+str(l)
+            d=d+c+', '
+            c='power'+" : "+str(power)
+            d=d+c+', '
+            c='novel-word'+" : "+novel_word
+            d=d+c
+
+            experimental_results[d] = {}
+            experimental_results[d]['referent probability of novel target'] = []
+            experimental_results[d]['referent probability of familiar target'] = []
 
             for i in range(num_iterations):
                 learner, utterance, scene_generator, scene_representation, novel_word = setup_experiments(experiment_condition)
@@ -459,18 +481,18 @@ if __name__ == '__main__':
                     #print '\t\tFamiliar word:\t\t', word, '\t\tReferent probability: ', referent_probabilities[word]
 
 
-                experimental_results[str(experiment_condition)]['referent probability of novel target'].append(referent_probabilities[(utterance[0], scene_generator[0])])
-                experimental_results[str(experiment_condition)]['referent probability of familiar target'].append(referent_probabilities[(utterance[0], scene_generator[1])])
+                experimental_results[d]['referent probability of novel target'].append(referent_probabilities[(utterance[0], scene_generator[0])])
+                experimental_results[d]['referent probability of familiar target'].append(referent_probabilities[(utterance[0], scene_generator[1])])
 
-            experimental_results[str(experiment_condition)]['mean referent probability of novel target across trials'] = \
-                np.mean(experimental_results[str(experiment_condition)]['referent probability of novel target'])
-            experimental_results[str(experiment_condition)]['mean referent probability of familiar target across trials'] = \
-                np.mean(experimental_results[str(experiment_condition)]['referent probability of familiar target'])
+            experimental_results[d]['mean referent probability of novel target across trials'] = \
+                np.mean(experimental_results[d]['referent probability of novel target'])
+            experimental_results[d]['mean referent probability of familiar target across trials'] = \
+                np.mean(experimental_results[d]['referent probability of familiar target'])
 
     except KeyboardInterrupt:
         pass
 
-    with open('results.txt', 'w') as f:
-        f.write(str(experimental_results))
+    with open('results3.pkl', 'wb') as f:
+        pickle.dump(experimental_results, f)
 
     clean_up()
