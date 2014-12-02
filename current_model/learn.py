@@ -165,7 +165,7 @@ class Learner:
 
         self._gold_lexicon = input.read_gold_lexicon(lexicon_path, self._beta)
         self._all_features = input.all_features(lexicon_path)
-        print "number of Gold Features", len(self._all_features)
+        #print "number of Gold Features", len(self._all_features)
 
         self._learned_lexicon = wmmapping.Lexicon(self._beta, self._gold_lexicon.words())
         self._aligns = wmmapping.Alignments(self._alpha)
@@ -622,7 +622,7 @@ class Learner:
             if self._maxlearned > 0 and learned > self._maxlearned:
                 break
 
-            if self._time % 100 == 0:
+            if self._time % 1000 == 0:
                 print self._time
 
             # Record statistics - average acquisition and similarity scores
@@ -636,6 +636,7 @@ class Learner:
                 self._contextsp.add_context(set(words), self._time, sims, comps)
 
             (words, features) = corpus.next_pair()
+
         # End processing words-sentences pairs from corpus
 
         if self._stats_flag:

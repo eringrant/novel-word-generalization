@@ -1,101 +1,228 @@
 #!/usr/bin/python
 
 import os
+import re
 import random
 import itertools
+import pprint
 
 import input
+import learn
 import learnconfig
+import numpy as np
+
+verbose = True
+check_probs = True
 
 # input corpus
 corpus_path = 'input_wn_fu_cs_scaled_categ.dev'
+
+# gold-standard lexicon
+lexname = 'all_catf_prob_lexicon_cs.all'
 
 # output directory
 outdir = 'referent_probability_experiments_output'
 if not os.path.exists(outdir):
     os.makedirs(outdir)
 
-# gold-standard lexicon
-lexname = norm_prob_lexicon_cs.all
-
 # number of iterations for each condition
-num_iterations = 20
+num_iterations = 2
 
 # number of random novel words to generate experimental conditions for
-num_novel_word_conditions = 10
+num_novel_word_conditions = 2
+
+# manually specify novel objects?
+fix_novel_words = True
+fixed_novel_words = [
+        #'dog:N',
+        'apple:N'
+]
+
+# manually specify familiar objects?
+fix_familiar_objects = True
+fixed_familiar_objects = [
+        'hat:N',
+        #'piece:N'
+]
 
 parameter_values = {
 # config file parameters
-    'dummy' :                           [True, False],
-    'forget' :                          [False, 0], #TODO: what are the possible values here
-    'novelty' :                         [False, 0], #TODO: what are the possible values here
-    'remove-singleton-utterances' :     [True, False],
-    'maxtime' :                         [n for n in range(500, 1100, 500)], # max num words; 100 to 1000
-    'category' :                        [True, False],
+    'dummy' :                           [False],
+    'forget' :                          [False, 0.03],
+    'novelty' :                         [False, 0.03],
+    'lambda' :                          [-1, 0.03],
+    'power' :                           [1, 2], #c = 1 is ND; c = 0.5 is LT_.5 (late talker less severe),; c = 0.25 is LT_.25 (late talker more severe)
+    'remove-singleton-utterances' :     [True],
+    'maxtime' :                         [5000],
+    'category learner' :                [False],
 # training parameters
     #'permute-input-sentences' :         [True, False],
+    'probabilistic-features' :           [True], # if True, generate a subset of the gold-standard features for the test scene
 # test parameters
-    'target-type' :                     ['familiar', 'novel'],
-    'number-familiar-objects' :         [n for n in range(3)], # number of familiar objects in test array
-    'number-novel-objects' :            [n for n in range(3)] # number of novel objects in test array
+    #'target-type' :                     ['familiar', 'novel'],
+    #'number-familiar-objects' :         [n for n in range(3)], # number of familiar objects in test array
+    'number-familiar-objects' :         [1],
+    #'number-novel-objects' :            [n for n in range(3)] # number of novel objects in test array
+    'number-novel-objects' :            [1]
 }
 
+def get_random_sample_words(corpus_path, n, maxtime=None):
+    word_list = []
+
+    count = 0
+
+    corpus = input.Corpus(corpus_path)
+    (words, features) = corpus.next_pair()
+    count += 1
+
+    for wd in words:
+        word_list.append(wd)
+
+    while words != [] and ((count < maxtime) if maxtime is not None else True):
+
+        if len(words) == 1:
+            # Skip singleton utterances
+            (words, features) = corpus.next_pair()
+            continue
+
+        for wd in words:
+            if wd[-1] == 'N': # get only the nouns
+                word_list.append(wd)
+
+        (words, features) = corpus.next_pair()
+        count += 1
+
+    return random.sample(set(word_list), n)
+
+def create_corpus_without_word(word, corpus_path):
+    corpus_output_filename = corpus_path + '_without_' + word
+
+    found_word = False
+    at_SEM_REP = False
+
+    fin = open( corpus_path )
+    fout = open( corpus_output_filename , "w" )
+
+    for line in fin:
+        if word in line:
+            found_word = True
+            sent = line
+            continue
+
+        if found_word == True:
+            found_word = False
+            at_SEM_REP = True
+            continue
+
+        if at_SEM_REP == True:
+            at_SEM_REP = False
+            continue
+
+        fout.write(line)
+
+    fin.close()
+    fout.close()
+
+    return corpus_output_filename
+
+
 # generate the novel word possibilities
-parameter_values['novel-word'] =  get_random_sample_words(corpus_path, num_novel_word_conditions):
+if fix_novel_words is False:
+    parameter_values['novel-word'] =  get_random_sample_words(corpus_path, num_novel_word_conditions)
+else:
+    parameter_values['novel-word'] = fixed_novel_words
 
 # create and hash the paths to the modified corpora
 corpora = {}
 for word in parameter_values['novel-word']:
-    corpora[word] = create_corpus_without_word(word, corpus_path):
+    corpora[word] = create_corpus_without_word(word, corpus_path)
 
 # Cartesian product of all parameter settings
 experiment_conditions = [dict(zip(parameter_values, x)) for x in itertools.product(*parameter_values.values())]
 
-def calculate_referent_probability(learner, utterance, scene):
+# read the input lexicon file and store lexemes in a probabilistic lexicon in memory
+M = 10000 # based on script generate_dev_data.sh
+problex = input.read_gold_lexicon(lexname, M)
+
+def generate_scene(objects, experiment_condition, probabilistic=False):
+    # ensure we have a list of objects
+    if isinstance(objects, str):
+        objects = [ objects ]
+
+    scene = []
+
+    for obj in objects:
+        for v, f in problex.meaning(obj).sorted_features():
+            prob = float(v)
+
+            if probabilistic:
+                r = random.random()
+                if prob > r:
+                    scene.append(f)
+
+            else:
+                scene.append(f)
+
+    return scene
+
+def calculate_referent_probability(learner, utterance, scene_generator, scene_representation, forget=False):
 
     # ensure we have a list of words and a list of features
     if isinstance(utterance, str):
         utterance = [ utterance ]
-    if isinstance(scene, str):
-        scene = [ scene ]
-
-    # TODO: determine if the referent prob should be a joint distribution of features, conditional upon a word
+    if isinstance(scene_representation, str):
+        scene_representation = [ scene_representation ]
 
     feature_prob = {} # dictionary of { feature : p (f) = \sum_{w' \in W} p ( f | w' ) * p( w' ) }
     joint_prob = {} # dictionary of { (word, feature) : p( f | w ) * p( w ) = p( f, w ) }
 
-    # TODO: change loop order
-    for feature in scene:
+    for feature in scene_representation:
 
-        sum_word_freq = 0.0
-        sum_assoc = 0.0
+        feature_prob[feature] = 0.0
 
-        for word in learner._vocab:
+        for word in learner._wordsp.all_words(0): # get all words the learner has seen (with min frequency of 0)
 
-            # \sum [ p ( f | w' ) * p( w' ) ] = \sum [ p ( f, w' ) ]
-            sum_assoc += learner._learned_lexicon.prob(word, feature) * learner._wordsp.frequency(word))
+            # p (f) = \sum_{w'} [ p ( f | w' ) * p( w' ) ] = \sum_{w'} [ p ( f, w' ) ]
+            feature_prob[feature] += learner._learned_lexicon.prob(word, feature) * learner._wordsp.frequency(word)
 
+            if word in utterance and feature in scene_representation:
+                # hack to ensure meaning probability is updated for encountered words (when forget is True)
+                learner.acquisition_score(word)
 
-# TODO: implement one training iteration of novel word in scene before test
-#TODO: if using meaning prob, be sure to update meaning problem if forget bool is True
-
-            if word in utterance and feature in scene: #TODO: check formatting aligns
                 joint_prob[(word, feature)] = learner._learned_lexicon.prob(word, feature) * learner._wordsp.frequency(word)
 
-            sum_word_freq += learner._wordsp.frequency(word)
+    # calculate the referent probabilities
+    referent_prob = {} # dictionary of { word : p ( w | F ) }
 
-        feature_prob[feature] = sum_assoc
+    for seen_word in scene_generator:
+        for spoken_word in utterance:
+            referent_prob[(spoken_word, seen_word)] = 1
 
-    # normalise the joint probabilities over total word frequency
-    for (w_f, prob) in joint_prob.values():
-        joint_prob[w_f] = prob / float(sum_word_freq)
-    # normalise the feature probabilities over total word frequency
-    for (f, prob) in feature_prob.values():
-        feature_prob[f] = prob / float(sum_word_freq)
+            # get the features indicating this seen word from the gold-standard lexicon
+            for value, feature in problex.meaning(seen_word).sorted_features():
+                if feature in scene_representation:
+                    # p ( w | F ) = \prod_f [ p ( w | f ) ] = \prod_f [ p ( f, w ) / p ( f ) ]
+                    referent_prob[(spoken_word, seen_word)] *= (joint_prob[(spoken_word, feature)] / feature_prob[feature])
 
-    # compute j
+    if verbose:
+        print '------------------------------------------------------------------'
+        for obj in scene_generator:
+            print 'word:', obj
+            for v, f in problex.meaning(obj).sorted_features():
+                print 'feature:', f, 'prob:', learner._learned_lexicon.prob(obj, feature)
+        print '------------------------------------------------------------------'
+        print ''
+        print 'Joint probability of word and feature:'
+        pprint.pprint(joint_prob)
+        print ''
+        print 'Marginal probability of feature:'
+        pprint.pprint(feature_prob)
+        print ''
+        print 'Referent probability:'
+        pprint.pprint(referent_prob)
+        print ''
 
-    # TODO: finish writing
+    return referent_prob
 
 def write_config_file(
     dummy,
@@ -103,9 +230,10 @@ def write_config_file(
     forget_decay,
     novelty,
     novelty_decay,
+    L,
+    power,
     singletons,
-    maxtime,
-    category
+    maxtime
     ):
 
     config_filename = 'temp_config.ini'
@@ -114,10 +242,12 @@ def write_config_file(
 
     f.write("""[Smoothing]
 beta=10000
-lambda=-1
-power=1
+""")
+
+    f.write('lambda=' + str(L) + '\n')
+    f.write('power=' + str(power) + '\n')
+    f.write("""epsilon=0.01
 alpha=20
-epsilon=0.01
 
 [Similarity]
 simtype=COS
@@ -146,7 +276,7 @@ theta=0.7
         f.write('novelty-decay=' + str(novelty_decay) + '\n')
 
     f.write('assoc-type=SUM\n')
-    f.write('category' + str(category) + '\n')
+    f.write('category=false\n')
 
     f.write("""semantic-network=false
 hub-type=hub-freq-degree
@@ -182,59 +312,6 @@ record-iterations=-1
 def delete_config_file():
     os.remove('temp_config.ini')
 
-def get_random_sample_words(corpus_path, n):
-    word_list = []
-
-    corpus = input.Corpus(corpus_path)
-    (words, features) = corpus.next_pair()
-
-    for wd in words:
-        word_list.append(wd)
-
-    while words != []:
-
-        if len(words) == 1:
-            # Skip singleton utterances
-            (words, features) = corpus.next_pair()
-            continue
-
-        for wd in words:
-            word_list.append(wd)
-
-        (words, features) = corpus.next_pair()
-
-    return random.sample(set(word_list), num_novel_word_conditions)
-
-def create_corpus_without_word(word, corpus_path):
-    corpus_output_filename = corpus_path + '_without_' + word
-
-    found_word = False
-    at_SEM_REP = False
-
-    fin = open( corpus_path )
-    fout = open( corpus_output_filename , "w")
-
-    for line in fin:
-        if word in line:
-            found_word = True
-            continue
-
-        if found_word == True:
-            found_word = False
-            at_SEM_REP = True
-            continue
-
-        if at_SEM_REP == True:
-            at_SEM_REP = False
-            continue
-
-        fout.write(line)
-
-    fin.close()
-    fout.close()
-
-    return corpus_output_filename
-
 def setup_experiments(experiment_condition):
 
     # forgetting
@@ -254,17 +331,19 @@ def setup_experiments(experiment_condition):
         novelty_decay = 0
 
     config_path = write_config_file(
-        experiment_condition['dummy'],
-        forget,
-        forget_decay,
-        novelty,
-        novelty_decay,
-        experiment_condition['remove-singleton-utterances'],
-        experiment_condition['maxtime'],
-        experiment_condition['category']
+        dummy=experiment_condition['dummy'],
+        forget=forget,
+        forget_decay=forget_decay,
+        novelty=novelty,
+        novelty_decay=novelty_decay,
+        L=experiment_condition['lambda'],
+        power=experiment_condition['power'],
+        singletons=experiment_condition['remove-singleton-utterances'],
+        maxtime=experiment_condition['maxtime']
     )
 
-    corpus_without_word_path = create_corpus_without_word(experiment_condition['novel-word'], corpus_path)
+    novel_word = experiment_condition['novel-word']
+    corpus_without_word_path = corpora[novel_word]
 
     # create and teach the learner
     learner_config = learnconfig.LearnerConfig(config_path)
@@ -272,20 +351,69 @@ def setup_experiments(experiment_condition):
     learner = learn.Learner(lexname, learner_config, stopwords)
     learner.process_corpus(corpus_without_word_path, outdir)
 
-    # generate the test array
+    # generate the test utterance and scene
+    if fix_familiar_objects is False:
+        familiar_objects =  get_random_sample_words(corpus_without_word_path, experiment_condition['number-familiar-objects'], maxtime=experiment_condition['maxtime'])
+    else:
+        familiar_objects = fixed_familiar_objects
 
-    # target type
-    if experiment_condition['target-type'] == 'familiar':
-        get_random_sample_words(corpus_path, n):
+    # check that the learner knows all the familiar objects
+    for obj in familiar_objects:
+        assert obj in learner._wordsp.all_words(0)
 
-    elif experiment_condition['target-type'] == 'novel':
+    # generate the scene
+    scene_generator = [novel_word] + familiar_objects
+    scene_representation = generate_scene(scene_generator, experiment_condition, probabilistic=experiment_condition['probabilistic-features'])
+    utterance = [novel_word]
 
-    'number-familiar-objects' :         [n for n in range(3)], # number of familiar objects in test array
-    'number-novel-objects' :            [n for n in range(3)] # number of novel objects in test array
+    # check that the novel word has not yet been encountered
+    for feature in scene_representation:
+        assert learner._learned_lexicon.prob(novel_word, feature) < 0.001
+
+    return learner, utterance, scene_generator, scene_representation, novel_word
+
+# not yet implemented
+    ## target type
+    #if experiment_condition['target-type'] == 'familiar':
+    #    get_random_sample_words(corpus_path, n):
+    #elif experiment_condition['target-type'] == 'novel':
+    #'number-familiar-objects' :         [n for n in range(3)], # number of familiar objects in test array
+    #'number-novel-objects' :            [n for n in range(3)] # number of novel objects in test array
 
 
-#def run_experiments(experiment_condition):
+def run_experiments(learner, experiment_condition, utterance, scene_generator, scene_representation):
 
+    # learn the test utterance and then calculate the referent probabilities
+
+    if check_probs:
+
+        print ''
+        print '-------Before processing the scene--------'
+        print ''
+
+        for word in utterance:
+            print 'Word:', word
+            for feature in scene_representation:
+                print 'Feature:', feature, 'Meaning probability:', learner._learned_lexicon.prob(word, feature)
+
+        raw_input()
+
+    learner.process_pair(utterance, scene_representation, outdir, experiment_condition['category learner'])
+
+    if check_probs:
+
+        print ''
+        print '-------After processing the scene--------'
+        print ''
+
+        for word in utterance:
+            print 'Word:', word
+            for feature in scene_representation:
+                print 'Feature:', feature, 'Meaning probability:', learner._learned_lexicon.prob(word, feature)
+
+        raw_input()
+
+    return calculate_referent_probability(learner, utterance, scene_generator, scene_representation, forget=experiment_condition['forget'])
 
 def clean_up():
     for word in parameter_values['novel-word']:
@@ -293,7 +421,56 @@ def clean_up():
 
 
 if __name__ == '__main__':
-    #for experiment_condition in experiment_conditions:
-        #setup_experiments(experiment_condition)
-        #run_experiments(experiment_condition)
+    experimental_results = {}
+    try:
+        for experiment_condition in experiment_conditions:
 
+            experimental_results[str(experiment_condition)] = {}
+            experimental_results[str(experiment_condition)]['referent probability of novel target'] = []
+            experimental_results[str(experiment_condition)]['referent probability of familiar target'] = []
+
+            for i in range(num_iterations):
+                learner, utterance, scene_generator, scene_representation, novel_word = setup_experiments(experiment_condition)
+
+                print '=================================================================='
+                print 'Experiment condition:'
+                pprint.pprint(experiment_condition)
+                print ''
+                print 'Utterance:', utterance
+                print 'Scene:', scene_representation
+                print ''
+
+                referent_probabilities = run_experiments(learner, experiment_condition, utterance, scene_generator, scene_representation)
+
+                #if len(utterance) > 0:
+                    #print 'The familiar word(s) is /are:'
+                    #for word in utterance:
+                        #print '\t', word, '(with frequency', learner._wordsp.frequency(word), ')'
+
+                print '\tReferent prob:'
+
+                for referent in scene_generator:
+                    for novel_word in utterance:
+                        print '\t\tNovel word:\t\t', novel_word, '\t\tReferent:\t\t', referent, '\t\tReferent probability: ', referent_probabilities[(novel_word, referent)]
+
+                #print '\t\tNovel word:\t\t', novel_word, '\t\tReferent probability: ', referent_probabilities[novel_word]
+                #utterance.remove(novel_word)
+                #for word in utterance:
+                    #print '\t\tFamiliar word:\t\t', word, '\t\tReferent probability: ', referent_probabilities[word]
+
+
+                experimental_results[str(experiment_condition)]['referent probability of novel target'].append(referent_probabilities[(utterance[0], scene_generator[0])])
+                experimental_results[str(experiment_condition)]['referent probability of familiar target'].append(referent_probabilities[(utterance[0], scene_generator[1])])
+
+            experimental_results[str(experiment_condition)]['mean referent probability of novel target across trials'] = \
+                np.mean(experimental_results[str(experiment_condition)]['referent probability of novel target'])
+            experimental_results[str(experiment_condition)]['mean referent probability of familiar target across trials'] = \
+                np.mean(experimental_results[str(experiment_condition)]['referent probability of familiar target'])
+
+    except KeyboardInterrupt:
+        pass
+
+    with open('results.txt', 'w') as f:
+        f.write(str(experimental_results))
+
+    clean_up()
