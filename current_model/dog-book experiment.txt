@@ -1,0 +1,127 @@
+Experiment condition:
+{'forget': False,
+ 'lambda': -1,
+ 'maxtime': 10000,
+ 'novel-word': 'dog:N',
+ 'novelty': 0.03,
+ 'number-familiar-objects': 1,
+ 'number-novel-objects': 1,
+ 'power': 1,
+ 'probabilistic-features': True}
+
+Utterance: ['dog:N'] 
+Objects in scene: ['dog:N', 'book:N']
+Scene: ['animal#1', 'vertebrate#1', 'chordate#1', 'organism#1', 'living thing#1', 'whole#2', 'object#1', 'entity#1', 'product#2', 'publication#1']
+
+
+-------Before processing the scene--------
+
+Meaning probability of features associated with the word in the gold-standard lexicon:
+
+word: dog:N
+feature: animal#1 prob: 0.0001
+feature: vertebrate#1 prob: 0.0001
+feature: chordate#1 prob: 0.0001
+feature: organism#1 prob: 0.0001
+feature: living thing#1 prob: 0.0001
+feature: mammal#1 prob: 0.0001
+feature: placental#1 prob: 0.0001
+feature: whole#2 prob: 0.0001
+feature: object#1 prob: 0.0001
+feature: physical entity#1 prob: 0.0001
+feature: entity#1 prob: 0.0001
+feature: carnivore#1 prob: 0.0001
+feature: canine#2 prob: 0.0001
+feature: domestic animal#1 prob: 0.0001
+feature: dog prob: 0.0001
+
+word: book:N
+feature: entity#1 prob: 9.93363186937e-05
+feature: creation#2 prob: 0.000436636896976
+feature: artifact#1 prob: 0.000326737545741
+feature: product#2 prob: 0.000351997757637
+feature: publication#1 prob: 0.000327829815058
+feature: physical entity#1 prob: 0.000192775160055
+feature: whole#2 prob: 0.000269509610205
+feature: object#1 prob: 0.000182127982066
+feature: work#2 prob: 0.000226426874374
+feature: book prob: 0.000164216644964
+
+-------After processing the scene--------
+
+Meaning probability of features in scene:
+
+Word: dog:N
+Feature: animal#1 Meaning probability: 0.000155437196529
+Feature: vertebrate#1 Meaning probability: 0.000155437196529
+Feature: chordate#1 Meaning probability: 0.000155437196529
+Feature: organism#1 Meaning probability: 0.000155437196529
+Feature: living thing#1 Meaning probability: 0.000155437196529
+Feature: whole#2 Meaning probability: 0.000155437196529
+Feature: object#1 Meaning probability: 0.000155437196529
+Feature: entity#1 Meaning probability: 0.000155437196529
+Feature: product#2 Meaning probability: 0.000155437196529
+Feature: publication#1 Meaning probability: 0.000155437196529
+------------------------------------------------------------------
+
+Meaning probability of features associated with the word in the gold-standard lexicon:
+
+word: dog:N
+feature: animal#1 prob: 0.000155437196529
+feature: vertebrate#1 prob: 0.000155437196529
+feature: chordate#1 prob: 0.000155437196529
+feature: organism#1 prob: 0.000155437196529
+feature: living thing#1 prob: 0.000155437196529
+feature: mammal#1 prob: 9.99445073108e-05
+feature: placental#1 prob: 9.99445073108e-05
+feature: whole#2 prob: 0.000155437196529
+feature: object#1 prob: 0.000155437196529
+feature: physical entity#1 prob: 9.99445073108e-05
+feature: entity#1 prob: 0.000155437196529
+feature: carnivore#1 prob: 9.99445073108e-05
+feature: canine#2 prob: 9.99445073108e-05
+feature: domestic animal#1 prob: 9.99445073108e-05
+feature: dog prob: 9.99445073108e-05
+
+word: book:N
+feature: entity#1 prob: 9.93363186937e-05
+feature: creation#2 prob: 0.000436636896976
+feature: artifact#1 prob: 0.000326737545741
+feature: product#2 prob: 0.000351997757637
+feature: publication#1 prob: 0.000327829815058
+feature: physical entity#1 prob: 0.000192775160055
+feature: whole#2 prob: 0.000269509610205
+feature: object#1 prob: 0.000182127982066
+feature: work#2 prob: 0.000226426874374
+feature: book prob: 0.000164216644964
+------------------------------------------------------------------
+
+Joint probability of word and feature p(f|w)*p(w):
+
+{('dog:N', 'animal#1'): 0.0001554371965294012,
+ ('dog:N', 'chordate#1'): 0.0001554371965294012,
+ ('dog:N', 'entity#1'): 0.0001554371965294012,
+ ('dog:N', 'living thing#1'): 0.0001554371965294012,
+ ('dog:N', 'object#1'): 0.0001554371965294012,
+ ('dog:N', 'organism#1'): 0.0001554371965294012,
+ ('dog:N', 'product#2'): 0.0001554371965294012,
+ ('dog:N', 'publication#1'): 0.0001554371965294012,
+ ('dog:N', 'vertebrate#1'): 0.0001554371965294012,
+ ('dog:N', 'whole#2'): 0.0001554371965294012}
+
+Marginal probability of feature  \sum_w' p(f|w')*p(w'):
+
+{'animal#1': 7.530154337734583,
+ 'chordate#1': 6.078496555701137,
+ 'entity#1': 3.7774418289592733,
+ 'living thing#1': 9.079186801865541,
+ 'object#1': 10.86981998288956,
+ 'organism#1': 9.419220172648766,
+ 'product#2': 4.178578435156471,
+ 'publication#1': 4.152093742211798,
+ 'vertebrate#1': 6.082774460148427,
+ 'whole#2': 12.200025442945396}
+
+	Referent prob:
+		Novel word:		dog:N 		Referent:		dog:N 		Referent probability:  2.85690038721e-38
+		Novel word:		dog:N 		Referent:		book:N 		Referent probability:  1.04399445422e-23

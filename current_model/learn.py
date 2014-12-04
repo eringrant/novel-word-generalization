@@ -64,7 +64,7 @@ class Learner:
             sys.exit(2)
 
         self._lambda = config.param_float("lambda")
-        self._power = config.param_int("power")
+        self._power = config.param_float("power")
         if self._lambda > 1 and self._power <= 0:
             print "Config Error [lambda] [power]"
             print "\t lambda: " + self._lambda + ", power: " + self._power
