@@ -19,8 +19,8 @@ import input
 import learn
 import learnconfig
 
-verbose = True
-check_probs = True
+verbose = False
+check_probs = False
 
 # read the input lexicon file and store lexemes in a probabilistic lexicon in memory
 M = 10000 # based on script generate_dev_data.sh
@@ -30,7 +30,79 @@ problex = input.read_gold_lexicon(lexname, M)
 # hash the path of the modified corpora to avoid regenerating
 corpora = {}
 
-class NovelReferentExperiment(PyExperimentSuite):
+
+class ExperimentConfig(object):
+    """
+    Reads the config file and generate the experimental conditions.
+
+    """
+
+    def __init__(self, config_path):
+        """ Create an ExperimentConfig from the file located at config_path. """
+        self._config_params = {}
+
+        config = ConfigParser.ConfigParser()
+        config.read(config_path)
+
+        paramlist = []
+        for section in config.sections():
+            if not self.options.experiments or exp in self.options.experiments:
+                params = self.items_to_params(self.cfgparser.items(exp))
+                params['name'] = exp
+                paramlist.append(params)
+
+
+            for option in config.options(section):
+                self._config_params[option] = config.get(section, option)
+
+        if len(self._config_params) < 1:
+            print "ERROR: config file not found: " + config_path
+            sys.exit(2)
+
+     def items_to_params(self, items):
+         params = {}
+         for t,v in items:
+             try:
+    # try to evaluate parameter (float, int, list)
+             if v in ['grid', 'list']:
+                 params[t] = v
+             else:
+                 params[t] = eval(v)
+                 if isinstance(params[t], ndarray):
+                     params[t] = params[t].tolist()
+             except (NameError, SyntaxError):
+# otherwise assume string
+             params[t] = v
+             return param
+
+
+    def param(self, param):
+        """
+        Return the string value of parameter param if it exists, otherwise
+        return the empty string.
+
+        """
+        if param in self._config_params:
+            return self._config_params[param]
+        else:
+            return ''
+
+    def param_int(self, param):
+        """
+        Return the integer value of parameter param if it exists, otherwise
+        return -1.
+
+        """
+        if param in self._config_params:
+            try:
+                return int(self._config_params[param])
+            except:
+                p = self._config_params[param]
+                print "ERROR [Config File]: Parameter %s is not a valid int" % p
+                sys.exit(2)
+        else:
+PyExperimentSuit
+class NovelReferentExperiment(object):
     """
     A  condition (certain setting of parameter values) of the novel referent
     experiment.
@@ -184,7 +256,14 @@ class NovelReferentExperiment(PyExperimentSuite):
                     print 'Feature:', f, '\t\tProb:', self.learner._learned_lexicon.prob(obj, f)
                 print ''
 
-        return self.calculate_referent_probability(params['inference-type'])
+#TODO find better way to organise
+        referent_probs = self.calculate_referehnt_probability(params['inference-type'])
+
+        return { 'novel referent' : referent_probs[(self.novel_word, self.novel_word)],
+                 'familiar referent' : referent_probs[(self.novel_word, self.familiar_objects[0])],
+                 'ratio' : referent_probs[(self.novel_word, self.novel_word)] /\
+                           referent_probs[(self.novel_word, self.familiar_objects[0])]
+            }
 
     def calculate_referent_probability(self, inference_type):
         """
@@ -209,7 +288,9 @@ class NovelReferentExperiment(PyExperimentSuite):
                     # hack to ensure meaning probability is updated for encountered words (when forget is True)
                     self.learner.acquisition_score(word)
 
-                    self.joint_prob[(word, feature)] = self.learner._learned_lexicon.prob(word, feature) * self.learner._wordsp.frequency(word)
+                    self.joint_prob[(word, feature)] = \
+                            self.learner._learned_lexicon.prob(word, feature) \
+                            * self.learner._wordsp.frequency(word)
 
         # calculate the referent probabilities
         self.referent_prob = {} # dictionary of { word : p ( w | F ) }
@@ -223,7 +304,9 @@ class NovelReferentExperiment(PyExperimentSuite):
 
                     for feature in self.referent_to_features_map[referent]:
                         # p ( w | F ) = \prod_f [ p ( w | f ) ] = \prod_f [ p ( f, w ) / p ( f ) ]
-                        self.referent_prob[(spoken_word, referent)] *= (self.joint_prob[(spoken_word, feature)] / self.feature_prob[feature])
+                        self.referent_prob[(spoken_word, referent)] *= \
+                            np.float64(self.joint_prob[(spoken_word, feature)]) / \
+                            np.float64(self.feature_prob[feature])
 
                 elif inference_type == 'SUM':
 
@@ -231,7 +314,9 @@ class NovelReferentExperiment(PyExperimentSuite):
 
                     for feature in self.referent_to_features_map[referent]:
                         # p ( w | F ) = \sum_f [ p ( w | f ) ] = \sum_f [ p ( f, w ) / p ( f ) ]
-                        self.referent_prob[(spoken_word, referent)] *= (self.joint_prob[(spoken_word, feature)] / self.feature_prob[feature])
+                        self.referent_prob[(spoken_word, referent)] *= \
+                            np.float64(self.joint_prob[(spoken_word, feature)]) / \
+                            np.float64(self.feature_prob[feature])
 
                 else:
                     raise NotImplementedError

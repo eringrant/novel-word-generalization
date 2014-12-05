@@ -7,7 +7,7 @@ import constants as CONST
 import evaluate
 
 import numpy as np
-import scipy.stats
+# import scipy.stats
 from scipy.misc import logsumexp
 import math, random
 
