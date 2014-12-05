@@ -13,7 +13,7 @@ import re
 import random
 import pprint
 import numpy as np
-from expsuite import PyExperimentSuite
+from experiment import Experiment
 
 import input
 import learn
@@ -30,14 +30,14 @@ problex = input.read_gold_lexicon(lexname, M)
 # hash the path of the modified corpora to avoid regenerating
 corpora = {}
 
-class NovelReferentExperiment(PyExperimentSuite):
+class NovelReferentExperiment(Experiment):
     """
-    A  condition (certain setting of parameter values) of the novel referent
+    A condition (certain setting of parameter values) of the novel referent
     experiment.
 
     """
 
-    def reset(self, params, rep):
+    def setup(self, params, rep):
         """ Setup the experiment. """
 
         # forgetting
@@ -122,7 +122,6 @@ class NovelReferentExperiment(PyExperimentSuite):
                 params['n-features'],
                 p=[float(vf[0]) for vf in values_and_features]
             )
-
 
             self.referent_to_features_map[obj] = features
             self.scene += features
@@ -459,3 +458,6 @@ def main():
 if __name__ == '__main__':
     experiment = NovelReferentExperiment()
     experiment.start()
+
+    with open('results.pkl', 'wb') as f:
+        pickle.dump(f, experiment)
