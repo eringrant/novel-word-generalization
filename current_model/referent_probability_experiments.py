@@ -10,10 +10,11 @@ Python's ConfigParser format.
 import os
 import re
 
+import pickle
 import random
 import pprint
 import numpy as np
-from expsuite import PyExperimentSuite
+from experiment import Experiment
 
 import input
 import learn
@@ -30,86 +31,14 @@ problex = input.read_gold_lexicon(lexname, M)
 # hash the path of the modified corpora to avoid regenerating
 corpora = {}
 
-
-class ExperimentConfig(object):
+class NovelReferentExperiment(Experiment):
     """
-    Reads the config file and generate the experimental conditions.
-
-    """
-
-    def __init__(self, config_path):
-        """ Create an ExperimentConfig from the file located at config_path. """
-        self._config_params = {}
-
-        config = ConfigParser.ConfigParser()
-        config.read(config_path)
-
-        paramlist = []
-        for section in config.sections():
-            if not self.options.experiments or exp in self.options.experiments:
-                params = self.items_to_params(self.cfgparser.items(exp))
-                params['name'] = exp
-                paramlist.append(params)
-
-
-            for option in config.options(section):
-                self._config_params[option] = config.get(section, option)
-
-        if len(self._config_params) < 1:
-            print "ERROR: config file not found: " + config_path
-            sys.exit(2)
-
-     def items_to_params(self, items):
-         params = {}
-         for t,v in items:
-             try:
-    # try to evaluate parameter (float, int, list)
-             if v in ['grid', 'list']:
-                 params[t] = v
-             else:
-                 params[t] = eval(v)
-                 if isinstance(params[t], ndarray):
-                     params[t] = params[t].tolist()
-             except (NameError, SyntaxError):
-# otherwise assume string
-             params[t] = v
-             return param
-
-
-    def param(self, param):
-        """
-        Return the string value of parameter param if it exists, otherwise
-        return the empty string.
-
-        """
-        if param in self._config_params:
-            return self._config_params[param]
-        else:
-            return ''
-
-    def param_int(self, param):
-        """
-        Return the integer value of parameter param if it exists, otherwise
-        return -1.
-
-        """
-        if param in self._config_params:
-            try:
-                return int(self._config_params[param])
-            except:
-                p = self._config_params[param]
-                print "ERROR [Config File]: Parameter %s is not a valid int" % p
-                sys.exit(2)
-        else:
-PyExperimentSuit
-class NovelReferentExperiment(object):
-    """
-    A  condition (certain setting of parameter values) of the novel referent
+    A condition (certain setting of parameter values) of the novel referent
     experiment.
 
     """
 
-    def reset(self, params, rep):
+    def setup(self, params, rep):
         """ Setup the experiment. """
 
         # forgetting
@@ -195,7 +124,6 @@ class NovelReferentExperiment(object):
                 p=[float(vf[0]) for vf in values_and_features]
             )
 
-
             self.referent_to_features_map[obj] = features
             self.scene += features
 
@@ -214,7 +142,7 @@ class NovelReferentExperiment(object):
         # add features to scene with probability equal to gold-standard meaning
         features = np.random.choice(
             [vf[1] for vf in values_and_features],
-            params['n-features'],
+            params['n-features'] - number_novel_features_for_novel_word,
             p=[float(vf[0]) for vf in values_and_features]
         )
 
@@ -256,13 +184,15 @@ class NovelReferentExperiment(object):
                     print 'Feature:', f, '\t\tProb:', self.learner._learned_lexicon.prob(obj, f)
                 print ''
 
-#TODO find better way to organise
-        referent_probs = self.calculate_referehnt_probability(params['inference-type'])
+        #TODO find better way to organise
+        referent_probs = self.calculate_referent_probability(params['inference-type'])
 
-        return { 'novel referent' : referent_probs[(self.novel_word, self.novel_word)],
-                 'familiar referent' : referent_probs[(self.novel_word, self.familiar_objects[0])],
+        return { 'novel-referent' : referent_probs[(self.novel_word, self.novel_word)],
+                 'familiar-referent' : referent_probs[(self.novel_word, self.familiar_objects[0])],
                  'ratio' : referent_probs[(self.novel_word, self.novel_word)] /\
-                           referent_probs[(self.novel_word, self.familiar_objects[0])]
+                           referent_probs[(self.novel_word, self.familiar_objects[0])],
+                 'number of novel features' : int(params['n-features'] * params['prop-novel-features']),
+                 'scene' : self.scene
             }
 
     def calculate_referent_probability(self, inference_type):
@@ -305,8 +235,8 @@ class NovelReferentExperiment(object):
                     for feature in self.referent_to_features_map[referent]:
                         # p ( w | F ) = \prod_f [ p ( w | f ) ] = \prod_f [ p ( f, w ) / p ( f ) ]
                         self.referent_prob[(spoken_word, referent)] *= \
-                            np.float64(self.joint_prob[(spoken_word, feature)]) / \
-                            np.float64(self.feature_prob[feature])
+                            (np.float64(self.joint_prob[(spoken_word, feature)]) / \
+                            np.float64(self.feature_prob[feature]))
 
                 elif inference_type == 'SUM':
 
@@ -314,9 +244,9 @@ class NovelReferentExperiment(object):
 
                     for feature in self.referent_to_features_map[referent]:
                         # p ( w | F ) = \sum_f [ p ( w | f ) ] = \sum_f [ p ( f, w ) / p ( f ) ]
-                        self.referent_prob[(spoken_word, referent)] *= \
-                            np.float64(self.joint_prob[(spoken_word, feature)]) / \
-                            np.float64(self.feature_prob[feature])
+                        self.referent_prob[(spoken_word, referent)] += \
+                            (np.float64(self.joint_prob[(spoken_word, feature)]) / \
+                            np.float64(self.feature_prob[feature]))
 
                 else:
                     raise NotImplementedError
@@ -424,7 +354,16 @@ def write_config_file(
     maxtime
     ):
 
-    config_filename = 'temp_config.ini'
+    config_filename = 'temp_config'
+    config_filename += '_dummy:' + str(dummy)
+    config_filename += '_forget:' + str(forget)
+    config_filename += '_forget-decay:' + str(forget_decay)
+    config_filename += '_novelty:' + str(novelty)
+    config_filename += '_novelty-decay:' + str(novelty_decay)
+    config_filename += '_lambda:' + str(L)
+    config_filename += '_power:' + str(power)
+    config_filename += '_maxtime:' + str(maxtime)
+    config_filename += '.ini'
 
     f = open(config_filename, 'w')
 
@@ -499,48 +438,25 @@ def clean_up():
         os.remove(corpora[word])
     os.remove('temp_config.ini')
 
-def usage():
-    print "usage:"
-    print "  main.py -c (--corpus) -l (--lexicon) -o (--output) -v (--verbose)"
-    print ""
-    print "  --corpus:   input corpus"
-    print "  --lexicon:  gold-standard lexicon"
-    print "  --output:   output directory"
-    print "  --verbose:  for detailed output"
-    print "  --help:     prints this usage"
-    print ""
-
-def main():
-    try:
-        options_list = ["help", "corpus=", "lexicon=", "inputdir=", "output="]
-        opts, args = getopt.getopt(sys.argv[1:], "hc:l:i:o:", options_list)
-    except getopt.error, msg:
-        print msg
-        usage()
-        sys.exit(2)
-
-    if len(opts) < 4:
-        usage()
-        sys.exit(0)
-
-    corpus_path = ""
-    stop = ""
-    for o, a in opts:
-        if o in ("-h", "--help"):
-            usage()
-            sys.exit(0)
-        if o in ("-c", "--corpus"):
-            corpus_path = a
-        if o in ("-l", "--lexicon"):
-            lexname = a
-        if o in ("-o", "--output"):
-            outdir = a
-        if o in ("-v", "--verbose"):
-            verbose = True
-
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
-
 if __name__ == '__main__':
     experiment = NovelReferentExperiment()
     experiment.start()
+
+    with open('results.pkl', 'wb') as f:
+        pickle.dump(experiment, f)
+
+# TODO fix this cleanup function
+    clean_up()
+
+
+# TODO
+# for 100 differnet word pairs: do
+# 1st condition) 5 f each word, with exactly one overlapping feature
+# 2nd condition) 10 f each word, with exactly two overlapping feature
+# no forget, novelty, etc.
+# initially do both sum and product, but then switch to just product if product works out
+# report mean and variance for 100 different trials
+
+# FIX 1) control for novelty of features
+# FIX 2) control for duplicate features
+
