@@ -14,14 +14,17 @@ import pickle
 import random
 import pprint
 import numpy as np
+import itertools
+from scipy.stats import rankdata
+
 from experiment import Experiment
 
 import input
 import learn
 import learnconfig
 
-verbose = False
-check_probs = False
+verbose = True
+check_probs = True
 
 # read the input lexicon file and store lexemes in a probabilistic lexicon in memory
 M = 10000 # based on script generate_dev_data.sh
@@ -58,7 +61,19 @@ class NovelReferentExperiment(Experiment):
             self.novelty_decay = 0
 
         # create temporary config file
-        config_path = write_config_file(
+        config_filename = 'temp_config_'
+        config_filename += '_'.join([str(param) + ':' + str(value) \
+                for (param, value) in params.items() \
+                if param not in ['path', 'name', 'fix-familiar-objects',
+                    'fix-novel-words', 'corpus-path', 'inference-type',
+                    'repetitions', 'familiar-object', 'iterations',
+                    'maxtime', 'prop-novel-features', 'n-features',
+                    'rep', 'novel-word']])
+        config_filename += '_rep:' + str(rep)
+        config_filename += '.ini'
+
+        self.config_path = write_config_file(
+            config_filename,
             dummy=params['dummy'],
             forget=self.forget,
             forget_decay=self.forget_decay,
@@ -69,60 +84,86 @@ class NovelReferentExperiment(Experiment):
             maxtime=params['maxtime']
         )
 
-        if params['fix-novel-words'] is False:
-            self.novel_word =  get_random_sample_words(params['corpus-path'], 1)
-        else:
-            self.novel_word = params['novel-word']
+        searching_for_words = True
+        while searching_for_words:
 
-        # create the modified corpus if it does not already exist
-        try:
-            corpus_without_word_path = corpora[self.novel_word]
-        except KeyError:
-            corpora[self.novel_word] = create_corpus_without_word(self.novel_word, params['corpus-path'])
-            corpus_without_word_path = corpora[self.novel_word]
+            if params['fix-words'] is False:
+                #self.novel_word =  get_random_sample_words(params['corpus-path'], 1)
+                #self.familiar_objects =  get_random_sample_words(corpus_without_word_path, 1, maxtime=params['maxtime'])
 
-        # create and teach the learner
-        learner_config = learnconfig.LearnerConfig(config_path)
-        stopwords = []
-        self.learner = learn.Learner(lexname, learner_config, stopwords)
-        self.learner.process_corpus(corpus_without_word_path, params['path'])
+                # TODO: temporary hack
+                if params['n-features'] == 5:
+                    self.novel_word, self.familiar_objects = five_feature_condition.pop()
+                elif params['n-features'] == 10:
+                    self.novel_word, self.familiar_objects = ten_feature_condition.pop()
+                else:
+                    raise NotImplementedError
 
-        # generate the test utterance and scene
-        if params['fix-familiar-objects'] is False:
-            #self.familiar_objects =  get_random_sample_words(corpus_without_word_path, params['n-familiar-objects'], maxtime=params['maxtime'])
-            self.familiar_objects =  get_random_sample_words(corpus_without_word_path, 1, maxtime=params['maxtime'])
-        else:
-            self.familiar_objects = params['familiar-object']
-        # TODO
-        self.familiar_objects = [self.familiar_objects]
-        print self.familiar_objects
+            else:
+                self.novel_word = params['novel-word']
+                self.familiar_objects = params['familiar-object']
+                searching_for_words = False
 
-        # check that the learner knows all the familiar objects
-        for obj in self.familiar_objects:
-            assert obj in self.learner._wordsp.all_words(0)
+            # create the modified corpus if it does not already exist
+            try:
+                corpus_without_word_path = corpora[self.novel_word]
+            except KeyError:
+                corpora[self.novel_word] = create_corpus_without_word(self.novel_word, params['corpus-path'])
+                corpus_without_word_path = corpora[self.novel_word]
+
+            # create and teach the learner
+            learner_config = learnconfig.LearnerConfig(self.config_path)
+            stopwords = []
+            self.learner = learn.Learner(lexname, learner_config, stopwords)
+            self.learner.process_corpus(corpus_without_word_path, params['path'])
+
+            #TODO: implement this somewhere else to make it faster
+            self.familiar_features = set(
+                list(itertools.chain.from_iterable(
+                    [self.learner._learned_lexicon.seen_features(word) \
+                    for word in self.learner._wordsp.all_words(0)])
+                )
+            )
+
+            if self.familiar_objects in self.learner._wordsp.all_words(0):
+                searching_for_words = False
+            else:
+                self.learner.reset() # redo the learning with a word that exists in the corpus
 
         self.utterance = [self.novel_word]
+        self.familiar_objects = [self.familiar_objects]
+
+        return True
 
     def iterate(self, params, rep, n):
         """
         Conduct a trial of this experiment condition.
 
         """
+        #import pdb; pdb.set_trace()
         self.scene = []
         self.referent_to_features_map = {}
 
-        # generate the scene
+        # GENERATE THE SCENE
         # generate representations of familiar objects
         for obj in self.familiar_objects:
 
             values_and_features = problex.meaning(obj).sorted_features()
 
-            # add features to scene with probability equal to gold-standard meaning
-            features = np.random.choice(
-                [vf[1] for vf in values_and_features],
-                params['n-features'],
-                p=[float(vf[0]) for vf in values_and_features]
-            )
+            if params['probabilistic'] is True:
+                # add features to scene with probability equal to gold-standard meaning
+                probs = np.array([np.float64(value) for (value, feature) in values_and_features if feature in self.familiar_features])
+                probs /= probs.sum()
+
+                features = np.random.choice(
+                    a=[feature for (value, feature) in values_and_features if feature in self.familiar_features],
+                    size=params['n-features'],
+                    replace=False,  # sample features without replacement
+                    p=probs
+                )
+            else:
+                # grab the top n features
+                features = [feature for value, feature in values_and_features[:params['n-features']]]
 
             self.referent_to_features_map[obj] = features
             self.scene += features
@@ -139,15 +180,40 @@ class NovelReferentExperiment(Experiment):
 
         values_and_features = problex.meaning(self.novel_word).sorted_features()
 
-        # add features to scene with probability equal to gold-standard meaning
-        features = np.random.choice(
-            [vf[1] for vf in values_and_features],
-            params['n-features'] - number_novel_features_for_novel_word,
-            p=[float(vf[0]) for vf in values_and_features]
-        )
+        if params['probabilistic'] is True:
+            # add features to scene with probability equal to gold-standard meaning
+            probs = np.array([np.float64(value) for (value, feature) in values_and_features if feature in self.familiar_features])
+            probs /= probs.sum()
+
+            features = np.random.choice(
+                a=[feature for (value, feature) in values_and_features if feature in self.familiar_features],
+                size=number_familiar_features_for_novel_word,
+                replace=False,  # sample features without replacement
+                p=probs
+            )
+        else:
+            # grab the top n features
+            features = [feature for value, feature in values_and_features[:params['n-features']]]
+            # TODO account for the general case here
+
+            # TODO: hack
+            if params['no-novelty'] is True:
+                if len([nov_feat for nov_feat in features if nov_feat not in self.familiar_features]) > 0:
+                    features = list(set(features).intersection(self.familiar_features))
+                    print features
+
+                    candidates = [f for v, f in problex.meaning(self.novel_word).sorted_features()]
+                    while len(features) < number_familiar_features_for_novel_word:
+                        candidate = candidates.pop()
+                        print candidate
+                        if candidate not in self.learner._learned_lexicon.meaning(self.familiar_objects[0]).seen_features():
+                            features += [candidate]
 
         self.referent_to_features_map[self.novel_word] += features
         self.scene += features
+
+        # TODO: make this work otherwise
+        self.scene = set(self.scene) # do not have duplicate features in the scene
 
         if check_probs:
 
@@ -167,7 +233,7 @@ class NovelReferentExperiment(Experiment):
                 print ''
 
         #self.learner.process_pair(self.utterance, self.scene, outdir, params['category-learner'])
-        self.learner.process_pair(self.utterance, self.scene, params['path']), False
+        self.learner.process_pair(self.utterance, self.scene, params['path'], False)
 
         if check_probs:
 
@@ -187,13 +253,26 @@ class NovelReferentExperiment(Experiment):
         #TODO find better way to organise
         referent_probs = self.calculate_referent_probability(params['inference-type'])
 
-        return { 'novel-referent' : referent_probs[(self.novel_word, self.novel_word)],
-                 'familiar-referent' : referent_probs[(self.novel_word, self.familiar_objects[0])],
-                 'ratio' : referent_probs[(self.novel_word, self.novel_word)] /\
-                           referent_probs[(self.novel_word, self.familiar_objects[0])],
+        return { 'novel-referent-sum' : referent_probs['SUM'][(self.novel_word, self.novel_word)],
+                 'novel-referent-mul' : referent_probs['MUL'][(self.novel_word, self.novel_word)],
+                 'familiar-referent-sum' : referent_probs['SUM'][(self.novel_word, self.familiar_objects[0])],
+                 'familiar-referent-mul' : referent_probs['MUL'][(self.novel_word, self.familiar_objects[0])],
+                 'ratio-sum' : referent_probs['SUM'][(self.novel_word, self.novel_word)] /\
+                           referent_probs['SUM'][(self.novel_word, self.familiar_objects[0])],
+                 'ratio-mul' : referent_probs['MUL'][(self.novel_word, self.novel_word)] /\
+                           referent_probs['MUL'][(self.novel_word, self.familiar_objects[0])],
                  'number of novel features' : int(params['n-features'] * params['prop-novel-features']),
                  'scene' : self.scene
             }
+
+    def finalize(self, params, rep):
+        """
+        Final tasks to perform after completing this experiment condition.
+
+        """
+        os.remove(self.config_path)
+        print('Finished experiment.')
+        pass
 
     def calculate_referent_probability(self, inference_type):
         """
@@ -224,32 +303,34 @@ class NovelReferentExperiment(Experiment):
 
         # calculate the referent probabilities
         self.referent_prob = {} # dictionary of { word : p ( w | F ) }
+        self.referent_prob['MUL'] = {}
+        self.referent_prob['SUM'] = {}
 
         for spoken_word in self.utterance:
             for referent in self.referent_to_features_map:
 
-                if inference_type == 'MUL':
+                #if inference_type == 'MUL':
 
-                    self.referent_prob[(spoken_word, referent)] = 1
+                self.referent_prob['MUL'][(spoken_word, referent)] = 1
 
-                    for feature in self.referent_to_features_map[referent]:
-                        # p ( w | F ) = \prod_f [ p ( w | f ) ] = \prod_f [ p ( f, w ) / p ( f ) ]
-                        self.referent_prob[(spoken_word, referent)] *= \
-                            (np.float64(self.joint_prob[(spoken_word, feature)]) / \
-                            np.float64(self.feature_prob[feature]))
+                for feature in self.referent_to_features_map[referent]:
+                    # p ( w | F ) = \prod_f [ p ( w | f ) ] = \prod_f [ p ( f, w ) / p ( f ) ]
+                    self.referent_prob['MUL'][(spoken_word, referent)] *= \
+                        (np.float64(self.joint_prob[(spoken_word, feature)]) / \
+                        np.float64(self.feature_prob[feature]))
 
-                elif inference_type == 'SUM':
+                #elif inference_type == 'SUM':
 
-                    self.referent_prob[(spoken_word, referent)] = 0
+                self.referent_prob['SUM'][(spoken_word, referent)] = 0
 
-                    for feature in self.referent_to_features_map[referent]:
-                        # p ( w | F ) = \sum_f [ p ( w | f ) ] = \sum_f [ p ( f, w ) / p ( f ) ]
-                        self.referent_prob[(spoken_word, referent)] += \
-                            (np.float64(self.joint_prob[(spoken_word, feature)]) / \
-                            np.float64(self.feature_prob[feature]))
+                for feature in self.referent_to_features_map[referent]:
+                    # p ( w | F ) = \sum_f [ p ( w | f ) ] = \sum_f [ p ( f, w ) / p ( f ) ]
+                    self.referent_prob['SUM'][(spoken_word, referent)] += \
+                        (np.float64(self.joint_prob[(spoken_word, feature)]) / \
+                        np.float64(self.feature_prob[feature]))
 
-                else:
-                    raise NotImplementedError
+                #else:
+                    #raise NotImplementedError
 
         if verbose:
             print '------------------------------------------------------------------'
@@ -272,7 +353,7 @@ def get_random_sample_words(corpus_path, n, weighted=False, maxtime=None):
     at corpus_path.
     If weighted is True, weight the probability of sampling a word by its
     frequency in the corpus.
-    If maxtime is an integer, read only maxtime sentences fro m the input
+    If maxtime is an integer, read only maxtime sentences from the input
     corpus.
 
     """
@@ -344,6 +425,7 @@ def create_corpus_without_word(word, corpus_path):
     return corpus_output_filename
 
 def write_config_file(
+    config_filename,
     dummy,
     forget,
     forget_decay,
@@ -353,17 +435,6 @@ def write_config_file(
     power,
     maxtime
     ):
-
-    config_filename = 'temp_config'
-    config_filename += '_dummy:' + str(dummy)
-    config_filename += '_forget:' + str(forget)
-    config_filename += '_forget-decay:' + str(forget_decay)
-    config_filename += '_novelty:' + str(novelty)
-    config_filename += '_novelty-decay:' + str(novelty_decay)
-    config_filename += '_lambda:' + str(L)
-    config_filename += '_power:' + str(power)
-    config_filename += '_maxtime:' + str(maxtime)
-    config_filename += '.ini'
 
     f = open(config_filename, 'w')
 
@@ -433,30 +504,125 @@ record-iterations=-1
 
     return config_filename
 
+def choose_words_by_features(lex, n, num_overlap_features, top=False, ranked=True):
+    """
+    Return a list of n (word1, word2) tuples which are such that word1 and
+    word2 have exactly num_overlap features in common, according to the
+    Lexicon lex.
+    If top is an integer, the above check is restricted to first top
+    features associated with each word, sorted by meaning probability in lex.
+    If ranked is True, the overlapping features must appear in the same
+    position in each words' sorted meaning probability list (accounting for
+    the possibility of ties between features).
+
+    """
+    assert top is False or num_overlap_features <= top
+
+    if top is not False:
+        num = top
+    else:
+        num = -1
+
+    feature_to_words_map = {}
+
+    candidate_pool = [word for word in lex.words() if \
+        (word[-1] == 'N') and
+        ((top is not False and len(lex.meaning(word).sorted_features()) >= top) or \
+        (top is False and len(lex.meaning(word).sorted_features()) >= num_overlap_features))]
+
+    for word in candidate_pool:
+        # hack to include the last item in the list
+        v_f = lex.meaning(word).sorted_features()[:num]
+        if num == -1:
+            v_f.append(lex.meaning(word).sorted_features()[-1])
+
+        for (value, feature) in v_f:
+            try:
+                feature_to_words_map[feature].append(word)
+            except KeyError:
+                feature_to_words_map[feature] = []
+                feature_to_words_map[feature].append(word)
+
+    words = []
+
+    while len(candidate_pool) > 0:
+        word = candidate_pool.pop()
+
+        # hack to include the last item in the list
+        v_f = lex.meaning(word).sorted_features()[:num]
+        if num == -1:
+            v_f.append(lex.meaning(word).sorted_features()[-1])
+
+        # rank the features
+        f_r = zip(
+            [feature for value, feature in v_f],
+            rankdata([value for value, feature in v_f], method='dense')
+        )
+
+        # find all words that have at least one feature in common (of top features)
+        candidate_matches = list(itertools.chain.from_iterable(
+            [feature_to_words_map[feature] for (feature, rank) in f_r]))
+
+        # now restrict to the number of features we need
+        candidate_matches = [cand for cand in set(candidate_matches) if \
+            candidate_matches.count(cand) == num_overlap_features]
+
+        # make sure feature rankings are aligned if applicable
+        if ranked is True:
+            checked = []
+            for match in candidate_matches:
+
+                cand_v_f = lex.meaning(match).sorted_features()[:num]
+                if num == -1:
+                    cand_v_f.append(lex.meaning(match).sorted_features()[-1])
+
+                # rank the features
+                cand_f_r = zip(
+                    [feature for value, feature in cand_v_f],
+                    rankdata([value for value, feature in cand_v_f], method='dense')
+                )
+
+                add = True
+                for feature, rank in f_r:
+                    if feature not in [f for f, r in cand_f_r] or \
+                        rank == dict(cand_f_r)[feature]:
+                        pass
+                    else:
+                        add = False
+                if add is True:
+                    checked.append(match)
+
+            candidate_matches = checked
+
+        words.extend([(word, cand) for cand in candidate_matches])
+
+    choices = np.array(words)
+    idx = np.random.choice(len(words),size=n)
+
+    return choices[idx]
+
 def clean_up():
     for word in corpora:
         os.remove(corpora[word])
-    os.remove('temp_config.ini')
 
 if __name__ == '__main__':
+    # generate the familiar and novel targets
+    five_feature_condition = list(choose_words_by_features(problex, 50, 1, top=5))
+    ten_feature_condition = list(choose_words_by_features(problex, 50, 2, top=10))
+
     experiment = NovelReferentExperiment()
     experiment.start()
 
-    with open('results.pkl', 'wb') as f:
-        pickle.dump(experiment, f)
+    print 'results:', experiment.query_output()
+    #with open('results.pkl', 'wb') as f:
+        #pickle.dump(experiment, f)
 
-# TODO fix this cleanup function
     clean_up()
 
-
 # TODO
-# for 100 differnet word pairs: do
+# for 100 different word pairs: do
 # 1st condition) 5 f each word, with exactly one overlapping feature
 # 2nd condition) 10 f each word, with exactly two overlapping feature
 # no forget, novelty, etc.
 # initially do both sum and product, but then switch to just product if product works out
 # report mean and variance for 100 different trials
-
-# FIX 1) control for novelty of features
-# FIX 2) control for duplicate features
-

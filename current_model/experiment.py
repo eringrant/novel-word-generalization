@@ -123,7 +123,6 @@ class Experiment(object):
 
         explist = []
 
-        print paramlist[0]
         for p in paramlist:
             explist.extend(zip( [self]*p['repetitions'], [p]*p['repetitions'], xrange(p['repetitions']) ))
 
@@ -140,23 +139,24 @@ class Experiment(object):
         return outputs
 
     def run_rep(self, params, rep):
-        self.setup(params, rep)
+        self.success = self.setup(params, rep)
 
         results = []
 
-        if params['iterations'] == 1:
-            iter_dict = params.copy()
-            iter_dict.update(self.iterate(params, rep, 1))
-            results.append(iter_dict)
-
-        else:
-
-            for it in xrange(params['iterations']):
+        if self.success:
+            if params['iterations'] == 1:
                 iter_dict = params.copy()
                 iter_dict.update(self.iterate(params, rep, 1))
                 results.append(iter_dict)
 
-        self.finalize(params, rep)
+            else:
+
+                for it in xrange(params['iterations']):
+                    iter_dict = params.copy()
+                    iter_dict.update(self.iterate(params, rep, 1))
+                    results.append(iter_dict)
+
+            self.finalize(params, rep)
 
         return results
 
