@@ -1,6 +1,5 @@
 n-ft,n-nov-ft,power, forget,novelty,lambda,novel word,fam. object,overlapping fts, ratio-SUM,ratio-PROD
 10,0,0.5,False,0.03,-1,abbey:N,finger:N,"['entity#1', 'physical entity#1']",0.89355388531828084,0.25095818055849056
-10,0,0.5,False,0.03,-1,abbey:N,finger:N,"['entity#1', 'physical entity#1']",0.89355388531828084,0.25095818055849056
 10,0,0.5,False,0.03,-1,amalgam:N,shop:N,"['physical entity#1', 'entity#1']",1.0916713498514041,3.0891925079712803
 10,0,0.5,False,0.03,-1,america:N,fish:N,"['physical entity#1', 'object#1']",1.2148531207636684,7.1751312743631042
 10,0,0.5,False,0.03,-1,bale:N,snow:N,"['entity#1', 'physical entity#1']",0.82624265042352552,0.11442300023945821
@@ -72,7 +71,6 @@ n-ft,n-nov-ft,power, forget,novelty,lambda,novel word,fam. object,overlapping ft
 10,0,0.5,False,0.03,-1,postbox:N,toe:N,"['entity#1', 'physical entity#1']",0.90183304947446052,0.27180030608538208
 10,0,0.5,False,0.03,-1,propeller:N,toe:N,"['entity#1', 'physical entity#1']",0.85578235532350433,0.16246682418342553
 10,0,0.5,False,0.03,-1,pump:N,finger:N,"['entity#1', 'physical entity#1']",0.85578235532350433,0.16246682418342553
-10,0,0.5,False,0.03,-1,pussy:N,boy:N,"['entity#1', 'physical entity#1']",1.1965131556973587,6.8551406702558113
 10,0,0.5,False,0.03,-1,pussy:N,boy:N,"['entity#1', 'physical entity#1']",1.1965131556973587,6.8551406702558113
 10,0,0.5,False,0.03,-1,radar:N,mouth:N,"['entity#1', 'physical entity#1']",0.8535248994230753,0.15848691334023024
 10,0,0.5,False,0.03,-1,radar:N,skull:N,"['entity#1', 'physical entity#1']",0.8535248994230753,0.15848691334023024
@@ -229,7 +227,6 @@ n-ft,n-nov-ft,power, forget,novelty,lambda,novel word,fam. object,overlapping ft
 10,0,1,False,0.03,0.0001,city:N,spider:N,"['physical entity#1', 'object#1']",2.7591310991133895,374713072.50788301
 10,0,1,False,0.03,0.0001,cob:N,panda:N,"['whole#2', 'object#1']",9.9686675779835667,47787167.249651745
 10,0,1,False,0.03,0.0001,compartment:N,snout:N,"['entity#1', 'physical entity#1']",1.3158650364830131,12.185324524988346
-10,0,1,False,0.03,0.0001,compartment:N,snout:N,"['entity#1', 'physical entity#1']",1.694380611660238,2821.6814408627879
 10,0,1,False,0.03,0.0001,crepe:N,guitar:N,"['entity#1', 'physical entity#1']",1.039016161486481,702.21391247192093
 10,0,1,False,0.03,0.0001,crepe:N,guitar:N,"['entity#1', 'physical entity#1']",0.59042263004022077,3.1464478734801418
 10,0,1,False,0.03,0.0001,crepe:N,toe:N,"['entity#1', 'physical entity#1']",0.79070441827983518,0.011074692080058941
@@ -316,9 +313,6 @@ n-ft,n-nov-ft,power, forget,novelty,lambda,novel word,fam. object,overlapping ft
 10,0,1,False,0.03,0.0001,propeller:N,toe:N,"['entity#1', 'physical entity#1']",0.77444296087730768,4.5439341632896529e-05
 10,0,1,False,0.03,0.0001,pump:N,finger:N,"['entity#1', 'physical entity#1']",0.77444296087730768,4.5439341632896529e-05
 10,0,1,False,0.03,0.0001,pump:N,finger:N,"['entity#1', 'physical entity#1']",0.96158528847058111,0.0089240177318921591
-10,0,1,False,0.03,0.0001,pussy:N,boy:N,"['entity#1', 'physical entity#1']",2.0589580218232002,75281360.976744413
-10,0,1,False,0.03,0.0001,pussy:N,boy:N,"['entity#1', 'physical entity#1']",1.7448648101799036,2100762.3865540377
-10,0,1,False,0.03,0.0001,pussy:N,boy:N,"['entity#1', 'physical entity#1']",2.056610609206341,59730738.072883286
 10,0,1,False,0.03,0.0001,radar:N,mouth:N,"['entity#1', 'physical entity#1']",0.82630056373595584,0.0001299933901313303
 10,0,1,False,0.03,0.0001,radar:N,mouth:N,"['entity#1', 'physical entity#1']",0.67468450691088988,9.7209425740828975e-06
 10,0,1,False,0.03,0.0001,radar:N,skull:N,"['entity#1', 'physical entity#1']",0.83715243486757129,0.0011358927006556551
@@ -375,12 +369,8 @@ n-ft,n-nov-ft,power, forget,novelty,lambda,novel word,fam. object,overlapping ft
 10,0,1,False,False,-1,china:N,percy:N,"['physical entity#1', 'object#1']",2.3221190972128429,243961028.6638799
 10,0,1,False,False,-1,china:N,percy:N,"['physical entity#1', 'object#1']",2.2039830700392264,154045150.26124212
 10,0,1,False,False,-1,city:N,spider:N,"['physical entity#1', 'object#1']",2.8030513278834004,159645678.97220472
-10,0,1,False,False,-1,city:N,spider:N,"['physical entity#1', 'object#1']",2.6603874944958315,100796610.38445847
-10,0,1,False,False,-1,city:N,spider:N,"['physical entity#1', 'object#1']",2.6603874944958315,100796610.38445847
-10,0,1,False,False,-1,city:N,spider:N,"['physical entity#1', 'object#1']",2.8030513278834004,159645678.97220472
 10,0,1,False,False,-1,cob:N,panda:N,"['whole#2', 'object#1']",7.7336158599237486,8457550.0442605242
 10,0,1,False,False,-1,compartment:N,snout:N,"['entity#1', 'physical entity#1']",1.2550294352621594,5.6795811127679752
-10,0,1,False,False,-1,compartment:N,snout:N,"['entity#1', 'physical entity#1']",1.5656036025929871,831.46898215562851
 10,0,1,False,False,-1,crepe:N,guitar:N,"['entity#1', 'physical entity#1']",1.0335693587249659,327.05684914824667
 10,0,1,False,False,-1,crepe:N,toe:N,"['entity#1', 'physical entity#1']",0.77965390654307887,0.0064785742910202417
 10,0,1,False,False,-1,crepe:N,toe:N,"['entity#1', 'physical entity#1']",0.62547980836693606,0.0010470176311835194
@@ -463,9 +453,6 @@ n-ft,n-nov-ft,power, forget,novelty,lambda,novel word,fam. object,overlapping ft
 10,0,1,False,False,-1,propeller:N,toe:N,"['entity#1', 'physical entity#1']",0.775903794249167,7.9308237313565561e-05
 10,0,1,False,False,-1,pump:N,finger:N,"['entity#1', 'physical entity#1']",0.775903794249167,7.9308237313565616e-05
 10,0,1,False,False,-1,pump:N,finger:N,"['entity#1', 'physical entity#1']",0.95867893732289311,0.01303998063770836
-10,0,1,False,False,-1,pussy:N,boy:N,"['entity#1', 'physical entity#1']",2.056048420024986,35442628.170397095
-10,0,1,False,False,-1,pussy:N,boy:N,"['entity#1', 'physical entity#1']",1.7476464554984759,1384992.4708614571
-10,0,1,False,False,-1,pussy:N,boy:N,"['entity#1', 'physical entity#1']",2.0540630530822588,30598738.372409847
 10,0,1,False,False,-1,radar:N,mouth:N,"['entity#1', 'physical entity#1']",0.82351418115588926,0.00014470883705814845
 10,0,1,False,False,-1,radar:N,mouth:N,"['entity#1', 'physical entity#1']",0.68732557544208484,2.3728538332032506e-05
 10,0,1,False,False,-1,radar:N,skull:N,"['entity#1', 'physical entity#1']",0.84846447903963251,0.0021948290130291538
@@ -574,8 +561,6 @@ n-ft,n-nov-ft,power, forget,novelty,lambda,novel word,fam. object,overlapping ft
 10,0,1,False,False,0.0001,postbox:N,toe:N,"['entity#1', 'physical entity#1']",1.1752957425103019,0.29730974196011306
 10,0,1,False,False,0.0001,propeller:N,toe:N,"['entity#1', 'physical entity#1']",0.79615142224636126,5.9028996819629469e-05
 10,0,1,False,False,0.0001,pump:N,finger:N,"['entity#1', 'physical entity#1']",0.79615142224636115,5.9028996819629442e-05
-10,0,1,False,False,0.0001,pussy:N,boy:N,"['entity#1', 'physical entity#1']",1.7068116537803706,18460294.980503239
-10,0,1,False,False,0.0001,pussy:N,boy:N,"['entity#1', 'physical entity#1']",1.7068116537803706,18460294.980503239
 10,0,1,False,False,0.0001,radar:N,mouth:N,"['entity#1', 'physical entity#1']",0.67542129234986181,5.0567231026614035e-06
 10,0,1,False,False,0.0001,radar:N,skull:N,"['entity#1', 'physical entity#1']",0.67542129234986181,5.0567231026614052e-06
 10,0,1,False,False,0.0001,saddle:N,skull:N,"['entity#1', 'physical entity#1']",0.67542129234986181,5.0567231026614069e-06
@@ -792,7 +777,6 @@ n-ft,n-nov-ft,power, forget,novelty,lambda,novel word,fam. object,overlapping ft
 5,0,1,False,0.03,-1,chair:N,mouth:N,['physical entity#1'],0.16471773352225116,0.00077932022949940333
 5,0,1,False,0.03,-1,chair:N,mouth:N,['physical entity#1'],0.71548948574957372,0.011738664945083587
 5,0,1,False,0.03,-1,change:N,color:N,['abstraction#6'],2.0893520770187779,44.476700330510624
-5,0,1,False,0.03,-1,chest:N,sausage:N,['physical entity#1'],0.82469511820530461,0.39529345774387303
 5,0,1,False,0.03,-1,chest:N,sausage:N,['physical entity#1'],1.216612390671522,2.0095803466709725
 5,0,1,False,0.03,-1,chop:N,pie:N,['physical entity#1'],1.5940323646429633,13.680894020930044
 5,0,1,False,0.03,-1,compound:N,noise:N,['psychological feature#1'],2.0121725311900795,53.329506074542117
