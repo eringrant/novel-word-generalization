@@ -1,3 +1,4 @@
+n-ft,n-nov-ft,power, forget,novelty,lambda,novel word,fam. object,overlapping fts, ratio-SUM,ratio-PROD
 10,0,0.5,False,0.03,-1,abbey:N,finger:N,"['entity#1', 'physical entity#1']",0.89355388531828084,0.25095818055849056
 10,0,0.5,False,0.03,-1,abbey:N,finger:N,"['entity#1', 'physical entity#1']",0.89355388531828084,0.25095818055849056
 10,0,0.5,False,0.03,-1,amalgam:N,shop:N,"['physical entity#1', 'entity#1']",1.0916713498514041,3.0891925079712803
@@ -1132,11 +1133,3 @@
 5,0,1,False,False,0.0001,speed:N,last:N,['abstraction#6'],2.2274238866794707,101.09163633339875
 5,0,1,False,False,0.0001,state:N,easel:N,['object#1'],42.741230196670479,194577928.43835139
 5,0,1,False,False,0.0001,valve:N,mat:N,['physical entity#1'],4.4103842165818028,177.37448276933245
-n-features,number of novel features,power,forget,novelty,lambda,novel-word,familiar-object,overlapping-feature(s),ratio-sum,ratio-mul
-n-features,number of novel features,power,forget,novelty,lambda,novel-word,familiar-object,overlapping-feature(s),ratio-sum,ratio-mul
-n-features,number of novel features,power,forget,novelty,lambda,novel-word,familiar-object,overlapping-feature(s),ratio-sum,ratio-mul
-n-features,number of novel features,power,forget,novelty,lambda,novel-word,familiar-object,overlapping-feature(s),ratio-sum,ratio-mul
-n-features,number of novel features,power,forget,novelty,lambda,novel-word,familiar-object,overlapping-feature(s),ratio-sum,ratio-mul
-n-features,number of novel features,power,forget,novelty,lambda,novel-word,familiar-object,overlapping-feature(s),ratio-sum,ratio-mul
-n-features,number of novel features,power,forget,novelty,lambda,novel-word,familiar-object,overlapping-feature(s),ratio-sum,ratio-mul
-n-features,number of novel features,power,forget,novelty,lambda,novel-word,familiar-object,overlapping-feature(s),ratio-sum,ratio-mul
