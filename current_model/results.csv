@@ -1,4 +1,4 @@
-n-ft,n-nov-ft,power,forget,novelty,lambda,novel word,fam. object,overlapping fts,ratio-PROD
+n-ft,power,forget,novelty,lambda,novel word,fam. object,overlapping fts,ratio-PROD
 10,1,False,False,-1,gumdrop:N,snowman:N,"['entity#1', 'physical entity#1']",7543.2559490589747
 10,1,False,0.03,0.0001,gumdrop:N,snowman:N,"['entity#1', 'physical entity#1']",8619.8547425810666
 10,1,False,False,-1,france:N,grandma:N,"['physical entity#1', 'object#1']",4230430973.8885937

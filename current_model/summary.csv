@@ -1,4 +1,4 @@
-n-ft,n-nov-ft,power,forget,novelty,lambda,number of cases,mean of ratio,variance of ratio
+n-ft,power,forget,novelty,lambda,number of cases,mean of ratio,variance of ratio
 5,1,False,False,0.0001,100,17477655.3909,1.86324616352e+16
 10,1,0.03,0.03,0.0001,1,15455879125.4,0.0
 5,0.5,False,False,0.0001,100,9169455.22904,7.32648941075e+15
