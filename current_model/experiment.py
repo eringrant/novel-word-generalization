@@ -38,6 +38,8 @@ import numpy as np
 import itertools
 import types
 
+import csv
+
 def mp_runrep(args):
     return Experiment.run_rep(*args)
 
@@ -46,6 +48,8 @@ class Experiment(object):
     def __init__(self):
         self.parse_cmd_line()
         self.parse_config()
+        self.csv_header = None
+        print 'Default number of cores is ', cpu_count()
         pass
 
     def parse_cmd_line(self):
@@ -114,6 +118,7 @@ class Experiment(object):
 
     def run_experiment(self, params):
         paramlist = self.generate_conditions(params)
+        print paramlist
 
         for pl in paramlist:
             if ('iterations' in pl) and ('repetitions' in pl):
@@ -146,17 +151,35 @@ class Experiment(object):
         if self.success:
             if params['iterations'] == 1:
                 iter_dict = params.copy()
-                iter_dict.update(self.iterate(params, rep, 1))
-                results.append(iter_dict)
+                return_dict = self.iterate(params, rep, 1)
+                if return_dict is not None:
+                    iter_dict.update(return_dict)
+                    results.append(iter_dict)
 
             else:
 
                 for it in xrange(params['iterations']):
                     iter_dict = params.copy()
-                    iter_dict.update(self.iterate(params, rep, 1))
-                    results.append(iter_dict)
+                    if return_dict is not None:
+                        iter_dict.update(return_dict)
+                        results.append(iter_dict)
 
             self.finalize(params, rep)
+
+        # write intermediate results
+        try:
+            if self.csv_header is None:
+                self.csv_header = list(results[0].keys())
+                with open('results_probabilistic.csv', 'a') as csvfile:
+                    writer = csv.DictWriter(csvfile, fieldnames=self.csv_header)
+                    writer.writeheader()
+
+            with open('results_probabilistic.csv', 'a') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=self.csv_header)
+                for row in results:
+                    writer.writerow(row)
+        except IndexError: # there are no results to record
+            pass
 
         return results
 
