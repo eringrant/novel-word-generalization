@@ -650,8 +650,6 @@ if __name__ == '__main__':
     # generate the familiar and novel targets
     words = get_random_sample_words('input_wn_fu_cs_scaled_categ.dev', maxtime=10000, min_freq=3)
 
-    print words
-
     five_feature_condition = list(choose_words_by_features(problex, 1, words=words, top=5))
     ten_feature_condition = list(choose_words_by_features(problex, 2, words=words, top=10))
 
