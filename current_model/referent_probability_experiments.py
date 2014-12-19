@@ -16,6 +16,7 @@ import pprint
 import numpy as np
 import itertools
 from scipy.stats import rankdata
+from collections import Counter
 
 from experiment import Experiment
 
@@ -23,8 +24,8 @@ import input
 import learn
 import learnconfig
 
-verbose = True
-check_probs = True
+verbose = False
+check_probs = False
 
 # read the input lexicon file and store lexemes in a probabilistic lexicon in memory
 M = 10000 # based on script generate_dev_data.sh
@@ -94,9 +95,9 @@ class NovelReferentExperiment(Experiment):
 
                 # TODO: temporary hack
                 if params['n-features'] == 5:
-                    self.novel_word, self.familiar_objects = five_feature_condition.pop()
+                    self.novel_word, self.familiar_objects = five_feature_condition.pop(random.randrange(len(five_feature_condition)))
                 elif params['n-features'] == 10:
-                    self.novel_word, self.familiar_objects = ten_feature_condition.pop()
+                    self.novel_word, self.familiar_objects = ten_feature_condition.pop(random.randrange(len(ten_feature_condition)))
                 else:
                     raise NotImplementedError
 
@@ -118,7 +119,6 @@ class NovelReferentExperiment(Experiment):
             self.learner = learn.Learner(lexname, learner_config, stopwords)
             self.learner.process_corpus(corpus_without_word_path, params['path'])
 
-            #TODO: implement this somewhere else to make it faster
             self.familiar_features = set(
                 list(itertools.chain.from_iterable(
                     [self.learner._learned_lexicon.seen_features(word) \
@@ -126,7 +126,8 @@ class NovelReferentExperiment(Experiment):
                 )
             )
 
-            if self.familiar_objects in self.learner._wordsp.all_words(0):
+            # make sure the learner has seen the familiar word at least three times
+            if self.familiar_objects in self.learner._wordsp.all_words(3):
                 searching_for_words = False
             else:
                 self.learner.reset() # redo the learning with a word that exists in the corpus
@@ -142,7 +143,6 @@ class NovelReferentExperiment(Experiment):
         Conduct a trial of this experiment condition.
 
         """
-        #import pdb; pdb.set_trace()
         self.scene = []
         self.referent_to_features_map = {}
 
@@ -153,19 +153,26 @@ class NovelReferentExperiment(Experiment):
             values_and_features = problex.meaning(obj).sorted_features()
 
             if params['probabilistic'] is True:
-                # add features to scene with probability equal to gold-standard meaning
-                probs = np.array([np.float64(value) for (value, feature) in values_and_features if feature in self.familiar_features])
+                # add FAMILIAR features to scene with probability equal to gold-standard meaning
+                probs = np.array([np.float128(value) for (value, feature) in values_and_features if feature in self.familiar_features])
                 probs /= probs.sum()
 
-                features = np.random.choice(
-                    a=[feature for (value, feature) in values_and_features if feature in self.familiar_features],
-                    size=params['n-features'],
-                    replace=False,  # sample features without replacement
-                    p=probs
-                )
+                try:
+                    features = list(np.random.choice(
+                        a=[feature for (value, feature) in values_and_features if feature in self.familiar_features],
+                        size=params['n-features'],
+                        replace=False,  # sample features without replacement
+                        p=probs
+                    ))
+                except ValueError: # there were not enough familiar features to sample from
+                    return None
+
             else:
-                # grab the top n features
-                features = [feature for value, feature in values_and_features[:params['n-features']]]
+                # grab the top n familiar features
+                features = [feature for value, feature in values_and_features \
+                    if feature in self.familiar_features][:params['n-features']]
+                if len(features) < params['n-features']:
+                    return None
 
             self.referent_to_features_map[obj] = features
             self.scene += features
@@ -174,48 +181,63 @@ class NovelReferentExperiment(Experiment):
         self.referent_to_features_map[self.novel_word] = []
 
         number_novel_features_for_novel_word = int(params['n-features'] * params['prop-novel-features'])
+        number_overlapping_features_for_novel_word = int(params['n-features'] * params['prop-overlapping-features'])
         number_familiar_features_for_novel_word = params['n-features'] - number_novel_features_for_novel_word
-
-        novel_features = ['novelft#' + str(i+1) for i in range(number_novel_features_for_novel_word)]
-        self.scene += novel_features
-        self.referent_to_features_map[self.novel_word] = novel_features
 
         values_and_features = problex.meaning(self.novel_word).sorted_features()
 
         if params['probabilistic'] is True:
-            # add features to scene with probability equal to gold-standard meaning
-            probs = np.array([np.float64(value) for (value, feature) in values_and_features if feature in self.familiar_features])
+            # add familiar features to scene with probability equal to gold-standard meaning
+            probs = np.array([np.float128(value) for (value, feature) in values_and_features if feature in self.familiar_features])
             probs /= probs.sum()
 
-            features = np.random.choice(
-                a=[feature for (value, feature) in values_and_features if feature in self.familiar_features],
-                size=number_familiar_features_for_novel_word,
-                replace=False,  # sample features without replacement
-                p=probs
-            )
+            try:
+                features = np.random.choice(
+                    a=[feature for (value, feature) in values_and_features if feature in self.familiar_features],
+                    size=number_familiar_features_for_novel_word,
+                    replace=False,  # sample features without replacement
+                    p=probs
+                )
+                features = list(features)
+            except ValueError: # there were not enough familiar features to sample from
+                return None
+
         else:
-            # grab the top n features
-            features = [feature for value, feature in values_and_features[:params['n-features']]]
-            # TODO account for the general case here
+            features = [feature for value, feature in values_and_features \
+                if feature in self.familiar_features][:number_familiar_features_for_novel_word]
+            if len(features) < number_familiar_features_for_novel_word:
+                return None
 
-            # TODO: hack
-            if params['no-novelty'] is True:
-                if len([nov_feat for nov_feat in features if nov_feat not in self.familiar_features]) > 0:
-                    features = list(set(features).intersection(self.familiar_features))
-                    print features
-
-                    candidates = [f for v, f in problex.meaning(self.novel_word).sorted_features()]
-                    while len(features) < number_familiar_features_for_novel_word:
-                        candidate = candidates.pop()
-                        print candidate
-                        if candidate not in self.learner._learned_lexicon.meaning(self.familiar_objects[0]).seen_features():
-                            features += [candidate]
+        if len(set(features).intersection(self.scene)) < number_overlapping_features_for_novel_word:
+            candidates = list(set([f for v, f in problex.meaning(self.novel_word).sorted_features()]).intersection(
+                [f for v, f in problex.meaning(self.familiar_objects[0]).sorted_features()]))
+            while len(set(features).intersection(self.scene)) < number_overlapping_features_for_novel_word:
+                try:
+                    candidate = candidates.pop()
+                    if candidate in self.learner._learned_lexicon.meaning(self.familiar_objects[0]).seen_features():
+                        if candidate not in features:
+                            features.pop(-1)
+                            features = [candidate] + features
+                        if candidate not in self.scene:
+                            to_remove = self.scene.pop(-1) # assumption: if not probabilistic, remove weakest meaning from familiar object
+                            self.scene += [candidate]
+                            self.referent_to_features_map[self.familiar_objects[0]].remove(to_remove)
+                            self.referent_to_features_map[self.familiar_objects[0]] += [candidate]
+                except IndexError:
+                    return None
+        #elif len(set(features).intersection(self.scene)) > number_overlapping_features_for_novel_word:
+        #    print 'Objects too similar.'
+        #    return None
 
         self.referent_to_features_map[self.novel_word] += features
         self.scene += features
 
-        # TODO: make this work otherwise
-        self.scene = set(self.scene) # do not have duplicate features in the scene
+        novel_features = ['novelft#' + str(i+1) for i in range(number_novel_features_for_novel_word)]
+        self.scene += novel_features
+        self.referent_to_features_map[self.novel_word] += novel_features
+
+        self.overlapping_features = [k for k,v in Counter(self.scene).items() if v>1]
+        self.scene = list(set(self.scene)) # do not have duplicate features in the scene
 
         if check_probs:
 
@@ -253,26 +275,32 @@ class NovelReferentExperiment(Experiment):
                 print ''
 
         #TODO find better way to organise
-        referent_probs = self.calculate_referent_probability(params['inference-type'])
+        mul_referent_probs = self.calculate_referent_probability(inference_type='MUL')
+        sum_referent_probs = self.calculate_referent_probability(inference_type='SUM')
 
-        return { 'novel-referent-sum' : referent_probs['SUM'][(self.novel_word, self.novel_word)],
-                 'novel-referent-mul' : referent_probs['MUL'][(self.novel_word, self.novel_word)],
-                 'familiar-referent-sum' : referent_probs['SUM'][(self.novel_word, self.familiar_objects[0])],
-                 'familiar-referent-mul' : referent_probs['MUL'][(self.novel_word, self.familiar_objects[0])],
-                 'ratio-sum' : referent_probs['SUM'][(self.novel_word, self.novel_word)] /\
-                           referent_probs['SUM'][(self.novel_word, self.familiar_objects[0])],
-                 'ratio-mul' : referent_probs['MUL'][(self.novel_word, self.novel_word)] /\
-                           referent_probs['MUL'][(self.novel_word, self.familiar_objects[0])],
+        return_dict = { 'novel referent (SUM)' : sum_referent_probs[(self.novel_word, self.novel_word)],
+                 'novel referent (MUL)' : mul_referent_probs[(self.novel_word, self.novel_word)],
+                 'familiar referent (SUM)' : sum_referent_probs[(self.novel_word, self.familiar_objects[0])],
+                 'familiar referent (MUL)' : mul_referent_probs[(self.novel_word, self.familiar_objects[0])],
+                 'ratio (SUM)' : np.divide(sum_referent_probs[(self.novel_word, self.novel_word)],
+                           sum_referent_probs[(self.novel_word, self.familiar_objects[0])]),
+                 'ratio (PROD)' : np.divide(mul_referent_probs[(self.novel_word, self.novel_word)],
+                           mul_referent_probs[(self.novel_word, self.familiar_objects[0])]),
                  'number of novel features' : int(params['n-features'] * params['prop-novel-features']),
-                 'scene' : self.scene
+                 'scene' : self.scene,
+                 'overlapping feature(s)' : self.overlapping_features,
+                 'novel word' : self.novel_word,
+                 'familiar object' : self.familiar_objects[0]
             }
+
+        return return_dict
 
     def finalize(self, params, rep):
         """
         Final tasks to perform after completing this experiment condition.
 
         """
-        os.remove(self.config_path)
+        #os.remove(self.config_path)
         print('Finished experiment.')
         pass
 
@@ -288,51 +316,49 @@ class NovelReferentExperiment(Experiment):
 
         for feature in self.scene:
 
-            self.feature_prob[feature] = 0.0
+            self.feature_prob[feature] = np.float128(0)
 
             for word in self.learner._wordsp.all_words(0): # get all words the learner has seen (with min frequency of 0)
 
                 # p (f) = \sum_{w'} [ p ( f | w' ) * p( w' ) ] = \sum_{w'} [ p ( f, w' ) ]
-                self.feature_prob[feature] += self.learner._learned_lexicon.prob(word, feature) * self.learner._wordsp.frequency(word)
+                self.feature_prob[feature] += np.multiply(
+                    np.float128(self.learner._learned_lexicon.prob(word, feature)),
+                    np.float128(self.learner._wordsp.frequency(word)))
 
                 if word in self.utterance and feature in self.scene:
                     # hack to ensure meaning probability is updated for encountered words (when forget is True)
                     self.learner.acquisition_score(word)
 
                     self.joint_prob[(word, feature)] = \
-                            self.learner._learned_lexicon.prob(word, feature) \
-                            * self.learner._wordsp.frequency(word)
+                            np.multiply(
+                                np.float128(self.learner._learned_lexicon.prob(word, feature)),
+                                np.float128(self.learner._wordsp.frequency(word)))
 
         # calculate the referent probabilities
         self.referent_prob = {} # dictionary of { word : p ( w | F ) }
-        self.referent_prob['MUL'] = {}
-        self.referent_prob['SUM'] = {}
 
         for spoken_word in self.utterance:
             for referent in self.referent_to_features_map:
 
-                #if inference_type == 'MUL':
+                if inference_type == 'MUL':
 
-                self.referent_prob['MUL'][(spoken_word, referent)] = 1
+                    self.referent_prob[(spoken_word, referent)] = 1
 
-                for feature in self.referent_to_features_map[referent]:
-                    # p ( w | F ) = \prod_f [ p ( w | f ) ] = \prod_f [ p ( f, w ) / p ( f ) ]
-                    self.referent_prob['MUL'][(spoken_word, referent)] *= \
-                        (np.float64(self.joint_prob[(spoken_word, feature)]) / \
-                        np.float64(self.feature_prob[feature]))
+                    for feature in self.referent_to_features_map[referent]:
+                        # p ( w | F ) = \prod_f [ p ( w | f ) ] = \prod_f [ p ( f, w ) / p ( f ) ]
+                        self.referent_prob[(spoken_word, referent)] *= \
+                            np.divide(self.joint_prob[(spoken_word, feature)],
+                            self.feature_prob[feature])
 
-                #elif inference_type == 'SUM':
+                elif inference_type == 'SUM':
 
-                self.referent_prob['SUM'][(spoken_word, referent)] = 0
+                    self.referent_prob[(spoken_word, referent)] = np.divide(
+                        # p ( w | F ) =  [ p ( w | f_1 + ... + f_n ) ] = [ \sum_f p ( f, w ) ] / \sum_f p ( f )
+                        np.sum([self.joint_prob[(spoken_word, feature)] for feature in self.referent_to_features_map[referent]]),
+                        np.sum([self.feature_prob[feature] for feature in self.referent_to_features_map[referent]]))
 
-                for feature in self.referent_to_features_map[referent]:
-                    # p ( w | F ) = \sum_f [ p ( w | f ) ] = \sum_f [ p ( f, w ) / p ( f ) ]
-                    self.referent_prob['SUM'][(spoken_word, referent)] += \
-                        (np.float64(self.joint_prob[(spoken_word, feature)]) / \
-                        np.float64(self.feature_prob[feature]))
-
-                #else:
-                    #raise NotImplementedError
+                else:
+                    raise NotImplementedError
 
         if verbose:
             print '------------------------------------------------------------------'
@@ -349,10 +375,11 @@ class NovelReferentExperiment(Experiment):
 
         return self.referent_prob
 
-def get_random_sample_words(corpus_path, n, weighted=False, maxtime=None):
+def get_random_sample_words(corpus_path, n=None, weighted=False, maxtime=None, min_freq=1):
     """
-    Return a random sample of n words from the corpus located in the filesystem
-    at corpus_path.
+    Return a random sample of nouns from the corpus located in the filesystem
+    at corpus_path, such the nouns have occcurred at least min_freq times.
+    If n is an integer, return n words; otherwise return all nouns.
     If weighted is True, weight the probability of sampling a word by its
     frequency in the corpus.
     If maxtime is an integer, read only maxtime sentences from the input
@@ -383,6 +410,12 @@ def get_random_sample_words(corpus_path, n, weighted=False, maxtime=None):
 
         (words, features) = corpus.next_pair()
         count += 1
+
+    counter = Counter(word_list)
+    word_list = [ word for word, count in counter.items() if count >= min_freq ]
+
+    if n is None:
+        return word_list
 
     if weighted:
         return random.sample(word_list, n)
@@ -506,7 +539,7 @@ record-iterations=-1
 
     return config_filename
 
-def choose_words_by_features(lex, n, num_overlap_features, top=False, ranked=True):
+def choose_words_by_features(lex, num_overlap_features, n=False, top=False, ranked=True, words=None):
     """
     Return a list of n (word1, word2) tuples which are such that word1 and
     word2 have exactly num_overlap features in common, according to the
@@ -516,6 +549,7 @@ def choose_words_by_features(lex, n, num_overlap_features, top=False, ranked=Tru
     If ranked is True, the overlapping features must appear in the same
     position in each words' sorted meaning probability list (accounting for
     the possibility of ties between features).
+    If words is a list, use that list of words to choose from.
 
     """
     assert top is False or num_overlap_features <= top
@@ -525,9 +559,12 @@ def choose_words_by_features(lex, n, num_overlap_features, top=False, ranked=Tru
     else:
         num = -1
 
+    if words is None:
+        words = lex.words()
+
     feature_to_words_map = {}
 
-    candidate_pool = [word for word in lex.words() if \
+    candidate_pool = [word for word in words if \
         (word[-1] == 'N') and
         ((top is not False and len(lex.meaning(word).sorted_features()) >= top) or \
         (top is False and len(lex.meaning(word).sorted_features()) >= num_overlap_features))]
@@ -599,7 +636,10 @@ def choose_words_by_features(lex, n, num_overlap_features, top=False, ranked=Tru
         words.extend([(word, cand) for cand in candidate_matches])
 
     choices = np.array(words)
-    idx = np.random.choice(len(words),size=n)
+    if n is not False:
+        idx = np.random.choice(len(words),size=n)
+    else:
+        idx = np.random.choice(len(words),size=len(choices))
 
     return choices[idx]
 
@@ -608,23 +648,19 @@ def clean_up():
         os.remove(corpora[word])
 
 if __name__ == '__main__':
+
     # generate the familiar and novel targets
-    five_feature_condition = list(choose_words_by_features(problex, 50, 1, top=5))
-    ten_feature_condition = list(choose_words_by_features(problex, 50, 2, top=10))
+    words = get_random_sample_words('input_wn_fu_cs_scaled_categ.dev', maxtime=10000, min_freq=3)
+
+    print words
+
+    five_feature_condition = list(choose_words_by_features(problex, 1, words=words, top=5))
+    ten_feature_condition = list(choose_words_by_features(problex, 2, words=words, top=10))
 
     experiment = NovelReferentExperiment()
     experiment.start()
 
-    print 'results:', experiment.query_output()
-    #with open('results.pkl', 'wb') as f:
-        #pickle.dump(experiment, f)
+    with open('results.pkl', 'wb') as f:
+        pickle.dump(experiment, f)
 
     clean_up()
-
-# TODO
-# for 100 different word pairs: do
-# 1st condition) 5 f each word, with exactly one overlapping feature
-# 2nd condition) 10 f each word, with exactly two overlapping feature
-# no forget, novelty, etc.
-# initially do both sum and product, but then switch to just product if product works out
-# report mean and variance for 100 different trials

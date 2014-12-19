@@ -38,6 +38,9 @@ import numpy as np
 import itertools
 import types
 
+import datetime
+import csv
+
 def mp_runrep(args):
     return Experiment.run_rep(*args)
 
@@ -46,6 +49,9 @@ class Experiment(object):
     def __init__(self):
         self.parse_cmd_line()
         self.parse_config()
+        self.id = datetime.date.today().isoformat()
+        self.csv_header = None # header for results CSV file
+        print 'Default number of cores is ', cpu_count()
         pass
 
     def parse_cmd_line(self):
@@ -126,14 +132,16 @@ class Experiment(object):
         for p in paramlist:
             explist.extend(zip( [self]*p['repetitions'], [p]*p['repetitions'], xrange(p['repetitions']) ))
 
+        import pdb; pdb.set_trace()
         if self.options.ncores == 1:
             outputs = []
             for e in explist:
                 output = mp_runrep(e)
                 outputs.append(output)
 
+
         else:
-            pool = Pool(processes=self.options.ncores, maxtasksperchild=10)
+            pool = Pool(processes=self.options.ncores, maxtasksperchild=5)
             outputs = pool.map(mp_runrep, explist)
 
         return outputs
@@ -146,17 +154,35 @@ class Experiment(object):
         if self.success:
             if params['iterations'] == 1:
                 iter_dict = params.copy()
-                iter_dict.update(self.iterate(params, rep, 1))
-                results.append(iter_dict)
+                return_dict = self.iterate(params, rep, 1)
+                if return_dict is not None:
+                    iter_dict.update(return_dict)
+                    results.append(iter_dict)
 
             else:
 
                 for it in xrange(params['iterations']):
                     iter_dict = params.copy()
-                    iter_dict.update(self.iterate(params, rep, 1))
-                    results.append(iter_dict)
+                    if return_dict is not None:
+                        iter_dict.update(return_dict)
+                        results.append(iter_dict)
 
             self.finalize(params, rep)
+
+        # write intermediate results
+        try:
+            if self.csv_header is None:
+                self.csv_header = list(results[0].keys())
+                with open(self.id + '_results.csv', 'a') as csvfile:
+                    writer = csv.DictWriter(csvfile, fieldnames=self.csv_header)
+                    writer.writeheader()
+
+            with open(self.id + '_results.csv', 'a') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=self.csv_header)
+                for row in results:
+                    writer.writerow(row)
+        except IndexError: # there are no results to record
+            pass
 
         return results
 
