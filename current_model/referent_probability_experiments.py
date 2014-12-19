@@ -41,6 +41,7 @@ class NovelReferentExperiment(Experiment):
 
     """
 
+    @profile
     def setup(self, params, rep):
         """ Setup the experiment. """
 
@@ -135,6 +136,7 @@ class NovelReferentExperiment(Experiment):
 
         return True
 
+    @profile
     def iterate(self, params, rep, n):
         """
         Conduct a trial of this experiment condition.
