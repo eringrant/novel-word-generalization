@@ -125,7 +125,8 @@ class NovelReferentExperiment(Experiment):
                 )
             )
 
-            if self.familiar_objects in self.learner._wordsp.all_words(0):
+            # make sure the learner has seen the familiar word at least three times
+            if self.familiar_objects in self.learner._wordsp.all_words(3):
                 searching_for_words = False
             else:
                 self.learner.reset() # redo the learning with a word that exists in the corpus
@@ -162,7 +163,6 @@ class NovelReferentExperiment(Experiment):
                         p=probs
                     ))
                 except ValueError: # there were not enough familiar features to sample from
-                    print values_and_features
                     return None
 
             else:
@@ -198,7 +198,6 @@ class NovelReferentExperiment(Experiment):
                 )
                 features = list(features)
             except ValueError: # there were not enough familiar features to sample from
-                print values_and_features
                 return None
 
         else:
@@ -374,10 +373,11 @@ class NovelReferentExperiment(Experiment):
 
         return self.referent_prob
 
-def get_random_sample_words(corpus_path, n, weighted=False, maxtime=None):
+def get_random_sample_words(corpus_path, n=None, weighted=False, maxtime=None, min_freq=1):
     """
-    Return a random sample of n words from the corpus located in the filesystem
-    at corpus_path.
+    Return a random sample of nouns from the corpus located in the filesystem
+    at corpus_path, such the nouns have occcurred at least min_freq times.
+    If n is an integer, return n words; otherwise return all nouns.
     If weighted is True, weight the probability of sampling a word by its
     frequency in the corpus.
     If maxtime is an integer, read only maxtime sentences from the input
@@ -408,6 +408,12 @@ def get_random_sample_words(corpus_path, n, weighted=False, maxtime=None):
 
         (words, features) = corpus.next_pair()
         count += 1
+
+    counter = Counter(word_list)
+    word_list = [ word for word, count in counter.items() if count >= min_freq ]
+
+    if n is None:
+        return word_list
 
     if weighted:
         return random.sample(word_list, n)
@@ -531,7 +537,7 @@ record-iterations=-1
 
     return config_filename
 
-def choose_words_by_features(lex, num_overlap_features, n=False, top=False, ranked=True):
+def choose_words_by_features(lex, num_overlap_features, n=False, top=False, ranked=True, words=None):
     """
     Return a list of n (word1, word2) tuples which are such that word1 and
     word2 have exactly num_overlap features in common, according to the
@@ -541,6 +547,7 @@ def choose_words_by_features(lex, num_overlap_features, n=False, top=False, rank
     If ranked is True, the overlapping features must appear in the same
     position in each words' sorted meaning probability list (accounting for
     the possibility of ties between features).
+    If words is a list, use that list of words to choose from.
 
     """
     assert top is False or num_overlap_features <= top
@@ -550,9 +557,12 @@ def choose_words_by_features(lex, num_overlap_features, n=False, top=False, rank
     else:
         num = -1
 
+    if words is None:
+        words = lex.words()
+
     feature_to_words_map = {}
 
-    candidate_pool = [word for word in lex.words() if \
+    candidate_pool = [word for word in words if \
         (word[-1] == 'N') and
         ((top is not False and len(lex.meaning(word).sorted_features()) >= top) or \
         (top is False and len(lex.meaning(word).sorted_features()) >= num_overlap_features))]
@@ -636,9 +646,14 @@ def clean_up():
         os.remove(corpora[word])
 
 if __name__ == '__main__':
+
     # generate the familiar and novel targets
-    five_feature_condition = list(choose_words_by_features(problex, 1, top=5))
-    ten_feature_condition = list(choose_words_by_features(problex, 2, top=10))
+    words = get_random_sample_words('input_wn_fu_cs_scaled_categ.dev', maxtime=10000, min_freq=3)
+
+    print words
+
+    five_feature_condition = list(choose_words_by_features(problex, 1, words=words, top=5))
+    ten_feature_condition = list(choose_words_by_features(problex, 2, words=words, top=10))
 
     experiment = NovelReferentExperiment()
     experiment.start()

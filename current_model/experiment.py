@@ -38,6 +38,7 @@ import numpy as np
 import itertools
 import types
 
+import datetime
 import csv
 
 def mp_runrep(args):
@@ -48,7 +49,8 @@ class Experiment(object):
     def __init__(self):
         self.parse_cmd_line()
         self.parse_config()
-        self.csv_header = None
+        self.id = datetime.date.today().isoformat()
+        self.csv_header = None # header for results CSV file
         print 'Default number of cores is ', cpu_count()
         pass
 
@@ -118,7 +120,6 @@ class Experiment(object):
 
     def run_experiment(self, params):
         paramlist = self.generate_conditions(params)
-        print paramlist
 
         for pl in paramlist:
             if ('iterations' in pl) and ('repetitions' in pl):
@@ -131,14 +132,16 @@ class Experiment(object):
         for p in paramlist:
             explist.extend(zip( [self]*p['repetitions'], [p]*p['repetitions'], xrange(p['repetitions']) ))
 
+        import pdb; pdb.set_trace()
         if self.options.ncores == 1:
             outputs = []
             for e in explist:
                 output = mp_runrep(e)
                 outputs.append(output)
 
+
         else:
-            pool = Pool(processes=self.options.ncores, maxtasksperchild=10)
+            pool = Pool(processes=self.options.ncores, maxtasksperchild=5)
             outputs = pool.map(mp_runrep, explist)
 
         return outputs
@@ -170,11 +173,11 @@ class Experiment(object):
         try:
             if self.csv_header is None:
                 self.csv_header = list(results[0].keys())
-                with open('results_probabilistic.csv', 'a') as csvfile:
+                with open(self.id + '_results.csv', 'a') as csvfile:
                     writer = csv.DictWriter(csvfile, fieldnames=self.csv_header)
                     writer.writeheader()
 
-            with open('results_probabilistic.csv', 'a') as csvfile:
+            with open(self.id + '_results.csv', 'a') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=self.csv_header)
                 for row in results:
                     writer.writerow(row)
