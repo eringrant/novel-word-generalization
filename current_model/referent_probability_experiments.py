@@ -42,7 +42,6 @@ class NovelReferentExperiment(Experiment):
 
     """
 
-    @profile
     def setup(self, params, rep):
         """ Setup the experiment. """
 
@@ -137,7 +136,6 @@ class NovelReferentExperiment(Experiment):
 
         return True
 
-    @profile
     def iterate(self, params, rep, n):
         """
         Conduct a trial of this experiment condition.
@@ -647,12 +645,10 @@ def clean_up():
     for word in corpora:
         os.remove(corpora[word])
 
-if __name__ == '__main__':
+def main():
 
     # generate the familiar and novel targets
     words = get_random_sample_words('input_wn_fu_cs_scaled_categ.dev', maxtime=10000, min_freq=3)
-
-    print words
 
     five_feature_condition = list(choose_words_by_features(problex, 1, words=words, top=5))
     ten_feature_condition = list(choose_words_by_features(problex, 2, words=words, top=10))
@@ -660,7 +656,15 @@ if __name__ == '__main__':
     experiment = NovelReferentExperiment()
     experiment.start()
 
-    with open('results.pkl', 'wb') as f:
-        pickle.dump(experiment, f)
+    #with open('results.pkl', 'wb') as f:
+        #pickle.dump(experiment, f)
 
-    clean_up()
+    #clean_up()
+
+# generate the familiar and novel targets
+words = get_random_sample_words('input_wn_fu_cs_scaled_categ.dev', maxtime=10000, min_freq=3)
+five_feature_condition = list(choose_words_by_features(problex, 1, words=words, top=5))
+ten_feature_condition = list(choose_words_by_features(problex, 2, words=words, top=10))
+
+if __name__ == '__main__':
+    main()
