@@ -510,7 +510,6 @@ maxtime=1000"""
                 familiar_count += 1
             else:
                 novel_features.append(feature)
-        print novel_features
         self.assertEqual(10, len(results['overlapping feature(s)']) + familiar_count + params['n-features'] * params['prop-novel-features'])
         self.assertEqual(True, np.all([feature in self.experiment.learner._gold_lexicon.seen_features('gumdrop:N') or feature.startswith('novel') for feature in novel_features]))
 
@@ -545,8 +544,6 @@ maxtime=1000"""
                 familiar_count += 1
             else:
                 novel_features.append(feature)
-        print novel_features
-        print familiar_count
         self.assertEqual(20, len(results['overlapping feature(s)']) + familiar_count + params['n-features'] * params['prop-novel-features'])
         self.assertEqual(True, np.all([feature in self.experiment.learner._gold_lexicon.seen_features('milk:N') or feature.startswith('novel') for feature in novel_features]))
 

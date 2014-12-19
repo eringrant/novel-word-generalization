@@ -132,7 +132,6 @@ class Experiment(object):
         for p in paramlist:
             explist.extend(zip( [self]*p['repetitions'], [p]*p['repetitions'], xrange(p['repetitions']) ))
 
-        import pdb; pdb.set_trace()
         if self.options.ncores == 1:
             outputs = []
             for e in explist:
@@ -173,11 +172,11 @@ class Experiment(object):
         try:
             if self.csv_header is None:
                 self.csv_header = list(results[0].keys())
-                with open(self.id + '_results.csv', 'a') as csvfile:
+                with open('results.csv', 'a') as csvfile:
                     writer = csv.DictWriter(csvfile, fieldnames=self.csv_header)
                     writer.writeheader()
 
-            with open(self.id + '_results.csv', 'a') as csvfile:
+            with open('results.csv', 'a') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=self.csv_header)
                 for row in results:
                     writer.writerow(row)
