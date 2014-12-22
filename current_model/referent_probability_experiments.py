@@ -42,7 +42,6 @@ class NovelReferentExperiment(Experiment):
 
     """
 
-    @profile
     def setup(self, params, rep):
         """ Setup the experiment. """
 
@@ -137,7 +136,6 @@ class NovelReferentExperiment(Experiment):
 
         return True
 
-    @profile
     def iterate(self, params, rep, n):
         """
         Conduct a trial of this experiment condition.
@@ -653,7 +651,7 @@ if __name__ == '__main__':
     words = get_random_sample_words('input_wn_fu_cs_scaled_categ.dev', maxtime=10000, min_freq=3)
 
     five_feature_condition = list(choose_words_by_features(problex, 1, words=words, top=5))
-    ten_feature_condition = list(choose_words_by_features(problex, 2, words=words, top=10))
+    #ten_feature_condition = list(choose_words_by_features(problex, 2, words=words, top=10))
 
     experiment = NovelReferentExperiment()
     experiment.start()
