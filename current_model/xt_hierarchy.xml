@@ -37,15 +37,15 @@
         <basic-level label='truck' features='vehicle_f0 vehicle_f1 vehicle_f2 truck_f0 truck_f1 truck_f2'>
             <subordinate label='semitrailer' features='vehicle_f0 vehicle_f1 vehicle_f2 truck_f0 truck_f1 truck_f2 semitrailer_f0 semitrailer_f1 semitrailer_f2'>
             </subordinate>
-            <subordinate label='fire'>-truck [vehicle_f0 vehicle_f1 vehicle_f2 truck_f0 truck_f1 truck_f2 fire-truck_f0 fire-truck_f1 fire-truck_f2'>
+            <subordinate label='fire-truck' features='vehicle_f0 vehicle_f1 vehicle_f2 truck_f0 truck_f1 truck_f2 fire-truck_f0 fire-truck_f1 fire-truck_f2'>
             </subordinate>
-            <subordinate label='tow'>-truck [vehicle_f0 vehicle_f1 vehicle_f2 truck_f0 truck_f1 truck_f2 tow-truck_f0 tow-truck_f1 tow-truck_f2'>
+            <subordinate label='tow-truck' features='vehicle_f0 vehicle_f1 vehicle_f2 truck_f0 truck_f1 truck_f2 tow-truck_f0 tow-truck_f1 tow-truck_f2'>
             </subordinate>
         </basic-level>
         <basic-level label='airplane' features='vehicle_f0 vehicle_f1 vehicle_f2 airplane_f0 airplane_f1 airplane_f2'>
             <subordinate label='airliner' features='vehicle_f0 vehicle_f1 vehicle_f2 airplane_f0 airplane_f1 airplane_f2 airliner_f0 airliner_f1 airliner_f2'>
             </subordinate>
-            <subordinate label='fighter'>-jet [vehicle_f0 vehicle_f1 vehicle_f2 airplane_f0 airplane_f1 airplane_f2 fighter-jet_f0 fighter-jet_f1 fighter-jet_f2'>
+            <subordinate label='fighter-jet' features='vehicle_f0 vehicle_f1 vehicle_f2 airplane_f0 airplane_f1 airplane_f2 fighter-jet_f0 fighter-jet_f1 fighter-jet_f2'>
             </subordinate>
             <subordinate label='seaplane' features='vehicle_f0 vehicle_f1 vehicle_f2 airplane_f0 airplane_f1 airplane_f2 seaplane_f0 seaplane_f1 seaplane_f2'>
             </subordinate>
