@@ -69,11 +69,12 @@ class NovelReferentExperiment(Experiment):
                     'fix-novel-words', 'corpus-path', 'inference-type',
                     'repetitions', 'familiar-object', 'iterations',
                     'maxtime', 'prop-novel-features', 'n-features',
-                    'rep', 'novel-word']])
+                    'rep', 'novel-word', 'fix-words', 'probabilistic',
+                    'prop-overlapping-features']])
         config_filename += '_rep:' + str(rep)
         config_filename += '.ini'
 
-        self.config_path = write_config_file(
+        self.config_path = experimental_materials.write_config_file(
             config_filename,
             dummy=params['dummy'],
             forget=self.forget,
@@ -373,7 +374,7 @@ class NovelReferentExperiment(Experiment):
 
         return self.referent_prob
 
-def get_random_sample_words(corpus_path, n=None, weighted=False, maxtime=None, min_freq=1):
+def get_random_sample_words(corpus_path, n=None, weighted=False, maxtime=None, min_freq=1, unique_features=1):
     """
     Return a random sample of nouns from the corpus located in the filesystem
     at corpus_path, such the nouns have occcurred at least min_freq times.
@@ -384,33 +385,15 @@ def get_random_sample_words(corpus_path, n=None, weighted=False, maxtime=None, m
     corpus.
 
     """
+    learner_config = learnconfig.LearnerConfig('config.ini')
+    stopwords = []
+    learner = learn.Learner(lexname, learner_config, stopwords)
+    learner.process_corpus(corpus_path, './')
 
-    word_list = []
-    count = 0
-
-    corpus = input.Corpus(corpus_path)
-    (words, features) = corpus.next_pair()
-    count += 1
-
-    for wd in words:
-        word_list.append(wd)
-
-    while words != [] and ((count < maxtime) if maxtime is not None else True):
-
-        if len(words) == 1:
-            # Skip singleton utterances
-            (words, features) = corpus.next_pair()
-            continue
-
-        for wd in words:
-            if wd[-1] == 'N': # get only the nouns
-                word_list.append(wd)
-
-        (words, features) = corpus.next_pair()
-        count += 1
-
-    counter = Counter(word_list)
-    word_list = [ word for word, count in counter.items() if count >= min_freq ]
+    word_list = [word for word in learner._wordsp.all_words(min_freq) if \
+                 len(set(learner._learned_lexicon.seen_features(word)).intersection(
+                 [f for v, f in problex.meaning(word).sorted_features()])) \
+                 >= unique_features]
 
     if n is None:
         return word_list
@@ -457,85 +440,6 @@ def create_corpus_without_word(word, corpus_path):
 
     return corpus_output_filename
 
-def write_config_file(
-    config_filename,
-    dummy,
-    forget,
-    forget_decay,
-    novelty,
-    novelty_decay,
-    L,
-    power,
-    maxtime
-    ):
-
-    f = open(config_filename, 'w')
-
-    f.write("""[Smoothing]
-beta=10000
-""")
-
-    f.write('lambda=' + str(L) + '\n')
-    f.write('power=' + str(power) + '\n')
-    f.write("""epsilon=0.01
-alpha=20
-
-[Similarity]
-simtype=COS
-theta=0.7
-
-[Features]
-""")
-
-    if dummy is False:
-        f.write('dummy=false\n')
-    else:
-        f.write('dummy=true\n')
-
-    if forget is False:
-        f.write('forget=false\n')
-        f.write('forget-decay=0\n')
-    else:
-        f.write('forget=true\n')
-        f.write('forget-decay=' + str(forget_decay) + '\n')
-
-    if novelty is False:
-        f.write('novelty=false\n')
-        f.write('novelty-decay=0\n')
-    else:
-        f.write('novelty=true\n')
-        f.write('novelty-decay=' + str(novelty_decay) + '\n')
-
-    f.write('assoc-type=SUM\n')
-    f.write('category=false\n')
-
-    f.write("""semantic-network=false
-hub-type=hub-freq-degree
-hub-num=75
-
-[Statistics]
-stats=true
-context-stats=false
-familiarity-smoothing=0.01
-familiarity-measure=COUNT
-age-of-exposure-norm=100
-tag1=ALL
-word-props-name=word_props_
-time-props-name=time_props_
-context-props-name=context_props
-
-[Other]
-minfreq=0
-record-iterations=-1
-""")
-
-    f.write('maxtime=' + str(maxtime) + '\n')
-
-    f.write("""maxlearned=-1\n""")
-
-    f.write('remove-singleton-utterances=false\n')
-
-    return config_filename
 
 def choose_words_by_features(lex, num_overlap_features, n=False, top=False, ranked=True, words=None):
     """
@@ -645,13 +549,15 @@ def clean_up():
     for word in corpora:
         os.remove(corpora[word])
 
+# generate the familiar and novel targets
+words = get_random_sample_words('input_wn_fu_cs_scaled_categ.dev', maxtime=10000, min_freq=3, unique_features=10)
+print words
+
+#five_feature_condition = list(choose_words_by_features(problex, 1, words=words, top=5))
+ten_feature_condition = list(choose_words_by_features(problex, 2, words=words, top=10))
+
 def main():
 
-    # generate the familiar and novel targets
-    words = get_random_sample_words('input_wn_fu_cs_scaled_categ.dev', maxtime=10000, min_freq=3)
-
-    five_feature_condition = list(choose_words_by_features(problex, 1, words=words, top=5))
-    ten_feature_condition = list(choose_words_by_features(problex, 2, words=words, top=10))
 
     experiment = NovelReferentExperiment()
     experiment.start()
@@ -660,11 +566,6 @@ def main():
         #pickle.dump(experiment, f)
 
     #clean_up()
-
-# generate the familiar and novel targets
-words = get_random_sample_words('input_wn_fu_cs_scaled_categ.dev', maxtime=10000, min_freq=3)
-five_feature_condition = list(choose_words_by_features(problex, 1, words=words, top=5))
-ten_feature_condition = list(choose_words_by_features(problex, 2, words=words, top=10))
 
 if __name__ == '__main__':
     main()
