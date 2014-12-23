@@ -62,6 +62,9 @@ class Experiment(object):
         optparser.add_option('-n', '--numcores',
             action='store', dest='ncores', type='int', default=cpu_count(),
             help="Number of processes used; default is %i"%cpu_count())
+        optparser.add_option('-o', '--outputfile',
+            action='store', dest='outputfile', type='string', default='results.csv',
+            help="The output csv file.")
 
         options, args = optparser.parse_args()
         self.options = options
@@ -116,6 +119,8 @@ class Experiment(object):
             params['name'] = exp
             paramlist.append(params)
 
+        np.random.shuffle(paramlist) # randomise the order of experiment conditions
+
         self.outputs = self.run_experiment(paramlist)
 
     def run_experiment(self, params):
@@ -138,9 +143,8 @@ class Experiment(object):
                 output = mp_runrep(e)
                 outputs.append(output)
 
-
         else:
-            pool = Pool(processes=self.options.ncores, maxtasksperchild=5)
+            pool = Pool(processes=self.options.ncores, maxtasksperchild=2)
             outputs = pool.map(mp_runrep, explist)
 
         return outputs
@@ -150,7 +154,7 @@ class Experiment(object):
 
         results = []
 
-        if self.success:
+        if self.success is True:
             if params['iterations'] == 1:
                 iter_dict = params.copy()
                 return_dict = self.iterate(params, rep, 1)
@@ -172,15 +176,16 @@ class Experiment(object):
         try:
             if self.csv_header is None:
                 self.csv_header = list(results[0].keys())
-                with open('results.csv', 'a') as csvfile:
+                with open(self.options.outputfile, 'a') as csvfile:
                     writer = csv.DictWriter(csvfile, fieldnames=self.csv_header)
                     writer.writeheader()
 
-            with open('results.csv', 'a') as csvfile:
+            with open(self.options.outputfile, 'a') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=self.csv_header)
                 for row in results:
                     writer.writerow(row)
         except IndexError: # there are no results to record
+            print "No results to record."
             pass
 
         return results

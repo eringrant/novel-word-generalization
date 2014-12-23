@@ -51,4 +51,30 @@
             </subordinate>
         </basic-level>
     </superordinate>
+    <superordinate label='vegetable' features='vegetable_f0 vegetable_f1 vegetable_f2'>
+        <basic-level label='pepper' features='vegetable_f0 vegetable_f1 vegetable_f2 pepper_f0 pepper_f1 pepper_f2'>
+            <subordinate label='green pepper' features='vegetable_f0 vegetable_f1 vegetable_f2 pepper_f0 pepper_f1 pepper_f2 green_pepper_f0 green_pepper_f1 green_pepper_f2'>
+            </subordinate>
+            <subordinate label='yellow pepper' features='vegetable_f0 vegetable_f1 vegetable_f2 pepper_f0 pepper_f1 pepper_f2 yellow_pepper_f0 yellow_pepper_f1 yellow_pepper_f2'>
+            </subordinate>
+            <subordinate label='red pepper' features='vegetable_f0 vegetable_f1 vegetable_f2 pepper_f0 pepper_f1 pepper_f2 red_pepper_f0 red_pepper_f1 red_pepper_f2'>
+            </subordinate>
+        </basic-level>
+        <basic-level label='squash' features='vegetable_f0 vegetable_f1 vegetable_f2 squash_f0 squash_f1 squash_f2'>
+            <subordinate label='zucchini' features='vegetable_f0 vegetable_f1 vegetable_f2 squash_f0 squash_f1 squash_f2 zucchini_f0 zucchini_f1 zucchini_f2'>
+            </subordinate>
+            <subordinate label='pumpkin' features='vegetable_f0 vegetable_f1 vegetable_f2 squash_f0 squash_f1 squash_f2 pumpkin_f0 pumpkin_f1 pumpkin_f2'>
+            </subordinate>
+            <subordinate label='acorn_squash' features='vegetable_f0 vegetable_f1 vegetable_f2 squash_f0 squash_f1 squash_f2 acorn_squash_f0 acorn_squash_f1 acorn_squash_f2'>
+            </subordinate>
+        </basic-level>
+        <basic-level label='root vegetable' features='vegetable_f0 vegetable_f1 vegetable_f2 root_vegetable_f0 root_vegetable_f1 root_vegetable_f2'>
+            <subordinate label='carrot' features='vegetable_f0 vegetable_f1 vegetable_f2 root_vegetable_f0 root_vegetable_f1 root_vegetable_f2 carrot_f0 carrot_f1 carrot_f2'>
+            </subordinate>
+            <subordinate label='potato' features='vegetable_f0 vegetable_f1 vegetable_f2 root_vegetable_f0 root_vegetable_f1 root_vegetable_f2 potato_f0 potato_f1 potato_f2'>
+            </subordinate>
+            <subordinate label='onion' features='vegetable_f0 vegetable_f1 vegetable_f2 root_vegetable_f0 root_vegetable_f1 root_vegetable_f2 onion_f0 onion_f1 onion_f2'>
+            </subordinate>
+        </basic-level>
+    </superordinate>
 </hierarchy>
