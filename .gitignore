@@ -1,3 +1,4 @@
 *.pyc
 *.corpora
 results_ref_prob/*
+*.bak
