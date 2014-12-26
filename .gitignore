@@ -1,3 +1,3 @@
 *.pyc
 *.corpora
-results_ref_prob/*
+results_to_discard/*
