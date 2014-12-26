@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[ampersand]{easylist}
+\usepackage{multirow} 
+
+\begin{document}
+
+\begin{align*}
+    P(y \in C \mid x_1 \in C, x_2 \in C, \hdots, x_n \in C)
+    &= \frac{P(y \in C , x_1 \in C, x_2 \in C, \hdots, x_n \in C)}{
+    P(x_1 \in C, x_2 \in C, \hdots, x_n \in C)}\\
+\end{align*}
+
+But $P(x_1 \in C, x_2 \in C, \hdots, x_n \in C)=1$ since the learner is not uncertain that $x_1, \hdots, x_n$ belong to the class $C$. Then
+
+\begin{align*}
+    P(y \in C \mid x_1 \in C, x_2 \in C, \hdots, x_n \in C)
+    &= P(y \in C , x_1 \in C, x_2 \in C, \hdots, x_n \in C).
+\end{align*}
+
+Since the learner is uncertain about the meaning of the class $C$, we incoropoate the eamning of a hyposthesis.
+
+\begin{align*}
+    &P(y \in C , x_1 \in C, x_2 \in C, \hdots, x_n \in C)\\
+    &=\sum_h P(y \in h , x_1 \in h, x_2 \in C, \hdots, x_n \in h \mid C=h) P(C=h)\\
+\end{align*}
+
+If we consider $C$ to be a set of unweighted features, then the set of hypotheses $h$ are all possible subsets of features.
+This is an intractable computation, but can be simplified if we restrict the set of hypotheses as follows:
+
+\begin{easylist}[itemize]
+    & $P(y \in h , x_1 \in h, x_2 \in C, \hdots, x_n \in h \mid C=h) =0$ if $h$ has no features in common with $x_1, \hdots, x_n$
+    & $P(C=h)=0$ if 
+\end{easylist}
+
+Consider a toy example: define the following hypotheses:
+
+\begin{align*}
+    h_{sub} &= \{animal, dog, poodle\}
+    \\
+    h_{basic} &= \{animal, dog\}
+    \\
+    h_{sup} &= \{animal\}
+    \\
+\end{align*}
+
+\begin{tabular}[!h]{lllll}
+    \hline
+    observed data & concept & hypotheses consitent & $P(y \in h , x_i \in h \mid C=h)$ & sum
+    \\\hline
+    1 subordinate instance &
+    subordinate & 
+    $h_{sub}$,
+    $h_{basic}$,
+    $h_{sup}$ &
+    \\
+    \multirow{2}{*}{$f = \{animal, dog, poodle\}$}
+    & basic &
+    $h_{basic}$,
+    $h_{sup}$ &
+    \\
+    & superordinate &
+    $h_{sup}$ &
+
+
+\end{tabular}
+
+
+
+\end{document}
+
