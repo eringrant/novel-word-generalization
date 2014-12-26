@@ -18,6 +18,7 @@ import experimental_materials
 
 make_inputs = False
 
+
 class GeneralisationExperiment(experiment.Experiment):
 
     def setup(self, params, rep):
@@ -39,8 +40,9 @@ class GeneralisationExperiment(experiment.Experiment):
 
         # create temporary config file
         config_filename = 'temp_config_'
-        config_filename += '_'.join([str(value) for (param, value) \
-                in sorted(params.items()) if len(str(value)) < 6])
+        config_filename += '_'.join([str(value) for (param, value)
+                                    in sorted(params.items())
+                                    if len(str(value)) < 6])
         config_filename += '.ini'
 
         self.config_path = experimental_materials.write_config_file(
@@ -55,7 +57,7 @@ class GeneralisationExperiment(experiment.Experiment):
             maxtime=params['maxtime']
         )
 
-        # create the lexicon and the learner
+        # create the gold-standard lexicon and the learner
         learner_config = learnconfig.LearnerConfig(self.config_path)
         beta = learner_config.param_float("beta")
         tree = ET.parse(params['hierarchy'])
@@ -69,8 +71,8 @@ class GeneralisationExperiment(experiment.Experiment):
         else:
             self.corpus = params['corpus-path']
 
-        # training_sets is a dictionary of condition to a set of three
-        # differnet training sets
+        # training_sets is a dictionary of condition to a list of
+        # three training sets
         self.training_sets = {}
 
         self.training_sets['one example'] = [
@@ -159,9 +161,8 @@ class GeneralisationExperiment(experiment.Experiment):
 
         #pprint.pprint(self.training_sets)
 
-        # there are three relevant sets, correpsonding to the three
-        # training sets for eahc confdition
-        # i.e., we do not compute distractor ratings
+        # there are three test sets, corresponding to the three
+        # training sets for each condition
         self.test_sets = [{}, {}, {}]
         self.test_sets[0]['subordinate matches'] = [
             'green-pepper',
@@ -200,7 +201,7 @@ class GeneralisationExperiment(experiment.Experiment):
             'salmon'
         ]
 
-        # turn into scene representations
+        # turn the test sets into scene representations
         for trial in self.test_sets:
             for cond in trial:
                 trial[cond] = \
@@ -227,25 +228,27 @@ class GeneralisationExperiment(experiment.Experiment):
                 self.learner.process_corpus(self.corpus, params['path'])
 
                 for trial in training_set:
-                    self.learner.process_pair(trial.utterance(), trial.scene(), params['path'], False)
+                    self.learner.process_pair(trial.utterance(), trial.scene(),
+                                              params['path'], False)
 
                 for cond in self.test_sets[i]:
                     for j in range(len(self.test_sets[i][cond])):
                         test_scene = self.test_sets[i][cond][j]
-                        print('')
-                        print(test_scene)
-                        print('')
-                        gen_prob = calculate_generalisation_probability(self.learner, 'fep', test_scene.scene())
+                        gen_prob = calculate_generalisation_probability(
+                            self.learner, test_scene.utterance()[0],
+                            test_scene.scene())
                         try:
                             results[condition][cond].append(gen_prob)
                         except KeyError:
                             results[condition][cond] = []
                             results[condition][cond].append(gen_prob)
 
+                # reset the learner after each test set
                 self.learner.reset()
 
         bar_chart(results)
         raw_input()
+
         return results
 
     def generate_corpus(self, tree, params):
@@ -269,23 +272,28 @@ class GeneralisationExperiment(experiment.Experiment):
             bag_of_words.extend([sup.get('label')] * num_superordinate)
 
             subordinate_choices = sup.findall('.//subordinate')
-            choice = subordinate_choices[np.random.randint(len(subordinate_choices))]
+            choice = subordinate_choices[np.random.randint(
+                len(subordinate_choices))]
 
-            word_to_features_map[sup.get('label')] = choice.get('features').split(' ')
+            word_to_features_map[sup.get('label')] = \
+                choice.get('features').split(' ')
 
-            for basic in sup.findall('.//basic-level'):
+        for basic in sup.findall('.//basic-level'):
 
-                bag_of_words.extend([basic.get('label')] * num_basic)
+            bag_of_words.extend([basic.get('label')] * num_basic)
 
-                subordinate_choices = basic.findall('.//subordinate')
-                choice = subordinate_choices[np.random.randint(len(subordinate_choices))]
+            subordinate_choices = basic.findall('.//subordinate')
+            choice = subordinate_choices[np.random.randint(
+                len(subordinate_choices))]
 
-                word_to_features_map[basic.get('label')] = choice.get('features').split(' ')
+            word_to_features_map[basic.get('label')] = \
+                choice.get('features').split(' ')
 
-                for sub in basic.findall('.//subordinate'):
+        for sub in basic.findall('.//subordinate'):
 
-                    bag_of_words.extend([sub.get('label')] * num_subordinate)
-                    word_to_features_map[sub.get('label')] = sub.get('features').split(' ')
+            bag_of_words.extend([sub.get('label')] * num_subordinate)
+            word_to_features_map[sub.get('label')] = \
+                sub.get('features').split(' ')
 
         np.random.shuffle(bag_of_words)
 
@@ -294,10 +302,12 @@ class GeneralisationExperiment(experiment.Experiment):
 
             if params['probabilistic'] is True:
                 s = np.random.randint(1, len(feature_choices)+1)
-                scene = list(np.random.choice(a=feature_choices, size=s, replace=False))
+                scene = list(np.random.choice(a=feature_choices, size=s,
+                    replace=False))
             else:
                 scene = feature_choices[:]
 
+            # write out the corpus
             temp_corpus.write("1-----\nSENTENCE: ")
             temp_corpus.write(word)
             temp_corpus.write('\n')
@@ -310,7 +320,7 @@ class GeneralisationExperiment(experiment.Experiment):
         return corpus_path
 
     def create_lexicon_from_etree(self, tree, beta):
-        output_filename = 'lexicon-XT.all'
+        output_filename = 'temp_lexicon-XT.all'
         output_file = open(output_filename, 'w')
         root = tree.getroot()
 
@@ -323,23 +333,29 @@ class GeneralisationExperiment(experiment.Experiment):
                 features = node.get('features').split(' ')
 
                 for feature in features:
-                    output_file.write(feature + ':' + str(1/float(len(features))) + ',')
+                    output_file.write(feature + ':' + \
+                        str(1/float(len(features))) + ',')
                 output_file.write('\n\n')
 
         output_file.close()
         return output_filename
 
-def calculate_generalisation_probability(learner, target_word, item):
+def calculate_generalisation_probability(learner, target_word, target_scene):
     """
-    @param learner
-    @param target_word
-    @param item A list of features; e.g., a test scene.
+    Calculate the probability of learner to generalise the target word to the
+    target scene.
+
+    @param learner A learn.Learner instance.
+    @param target_word The word for which to calculate the
+    generalisation probability.
+    @param tearget A list of features representing a scene.
 
     """
     total = np.float128(0)
+
     for word in learner._wordsp.all_words(0):
 
-        f_in_y = np.sum([learner._learned_lexicon.prob(word, feature) for feature in item])
+        f_in_y = np.sum([learner._learned_lexicon.prob(word, feature) for feature in target_scene])
         f_in_target = np.sum([learner._learned_lexicon.prob(word, feature) for feature in learner._learned_lexicon.seen_features(target_word)])
         word_freq = learner._wordsp.frequency(word)
         total += f_in_y * f_in_target * word_freq

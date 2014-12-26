@@ -18,7 +18,7 @@ import itertools
 from scipy.stats import rankdata
 from collections import Counter
 
-from experiment import Experiment
+import experiment
 
 import input
 import learn
@@ -35,7 +35,7 @@ problex = input.read_gold_lexicon(lexname, M)
 # hash the path of the modified corpora to avoid regenerating
 corpora = {}
 
-class NovelReferentExperiment(Experiment):
+class NovelReferentExperiment(experiment.Experiment):
     """
     A condition (certain setting of parameter values) of the novel referent
     experiment.
@@ -93,7 +93,7 @@ class NovelReferentExperiment(Experiment):
                 #self.novel_word =  get_random_sample_words(params['corpus-path'], 1)
                 #self.familiar_objects =  get_random_sample_words(corpus_without_word_path, 1, maxtime=params['maxtime'])
 
-                # TODO: temporary hack
+                # TODO: temporary hack to get certain types of words
                 if params['n-features'] == 5:
                     self.novel_word, self.familiar_objects = five_feature_condition.pop(random.randrange(len(five_feature_condition)))
                 elif params['n-features'] == 10:
@@ -126,7 +126,8 @@ class NovelReferentExperiment(Experiment):
                 )
             )
 
-            # make sure the learner has seen the familiar word at least three times
+            # make sure the learner has seen the familiar word at least three
+            # times
             if self.familiar_objects in self.learner._wordsp.all_words(3):
                 searching_for_words = False
             else:
@@ -207,6 +208,7 @@ class NovelReferentExperiment(Experiment):
             if len(features) < number_familiar_features_for_novel_word:
                 return None
 
+        # enforce the number of overlapping features
         if len(set(features).intersection(self.scene)) < number_overlapping_features_for_novel_word:
             candidates = list(set([f for v, f in problex.meaning(self.novel_word).sorted_features()]).intersection(
                 [f for v, f in problex.meaning(self.familiar_objects[0]).sorted_features()]))
@@ -224,9 +226,9 @@ class NovelReferentExperiment(Experiment):
                             self.referent_to_features_map[self.familiar_objects[0]] += [candidate]
                 except IndexError:
                     return None
-        #elif len(set(features).intersection(self.scene)) > number_overlapping_features_for_novel_word:
-        #    print 'Objects too similar.'
-        #    return None
+        elif len(set(features).intersection(self.scene)) > number_overlapping_features_for_novel_word:
+            print 'Objects too similar.'
+            raise NotImplementedError
 
         self.referent_to_features_map[self.novel_word] += features
         self.scene += features
@@ -255,7 +257,6 @@ class NovelReferentExperiment(Experiment):
                     print 'Feature:', f, '\t\tProb:', self.learner._learned_lexicon.prob(obj, f)
                 print ''
 
-        #self.learner.process_pair(self.utterance, self.scene, outdir, params['category-learner'])
         self.learner.process_pair(self.utterance, self.scene, params['path'], False)
 
         if check_probs:
@@ -273,7 +274,6 @@ class NovelReferentExperiment(Experiment):
                     print 'Feature:', f, '\t\tProb:', self.learner._learned_lexicon.prob(obj, f)
                 print ''
 
-        #TODO find better way to organise
         mul_referent_probs = self.calculate_referent_probability(inference_type='MUL')
         sum_referent_probs = self.calculate_referent_probability(inference_type='SUM')
 
@@ -301,7 +301,6 @@ class NovelReferentExperiment(Experiment):
         """
         #os.remove(self.config_path)
         print('Finished experiment.')
-        pass
 
     def calculate_referent_probability(self, inference_type):
         """
@@ -376,9 +375,11 @@ class NovelReferentExperiment(Experiment):
 
 def get_random_sample_words(corpus_path, n=None, weighted=False, maxtime=None, min_freq=1, unique_features=1):
     """
-    Return a random sample of nouns from the corpus located in the filesystem
-    at corpus_path, such the nouns have occcurred at least min_freq times.
-    If n is an integer, return n words; otherwise return all nouns.
+    Return a random sample of words from the corpus located in the filesystem
+    at corpus_path, such the words have occurred at least min_freq times.
+    Also, ensure that each word has been seen with at least
+    unique_features of its gold-standard features.
+    If n is an integer, return n words; otherwise return all words.
     If weighted is True, weight the probability of sampling a word by its
     frequency in the corpus.
     If maxtime is an integer, read only maxtime sentences from the input
@@ -410,7 +411,7 @@ def create_corpus_without_word(word, corpus_path):
     Return the filename of the newly created corpus.
 
     """
-    corpus_output_filename = corpus_path + '_without_' + word
+    corpus_output_filename = 'temp_' + corpus_path + '_without_' + word
 
     found_word = False
     at_SEM_REP = False
@@ -439,7 +440,6 @@ def create_corpus_without_word(word, corpus_path):
     fout.close()
 
     return corpus_output_filename
-
 
 def choose_words_by_features(lex, num_overlap_features, n=False, top=False, ranked=True, words=None):
     """
@@ -551,7 +551,6 @@ def clean_up():
 
 # generate the familiar and novel targets
 words = get_random_sample_words('input_wn_fu_cs_scaled_categ.dev', maxtime=10000, min_freq=3, unique_features=10)
-print words
 
 #five_feature_condition = list(choose_words_by_features(problex, 1, words=words, top=5))
 ten_feature_condition = list(choose_words_by_features(problex, 2, words=words, top=10))
@@ -560,10 +559,7 @@ def main():
     experiment = NovelReferentExperiment()
     experiment.start()
 
-    #with open('results.pkl', 'wb') as f:
-        #pickle.dump(experiment, f)
-
-    #clean_up()
+    clean_up()
 
 if __name__ == '__main__':
     main()
