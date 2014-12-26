@@ -1,6 +1,8 @@
 from collections import defaultdict
 import pprint
+import copy
 
+import input
 
 class Hierarchy(object):
 
@@ -29,7 +31,7 @@ class Hierarchy(object):
         for node in path:
            t = t[node]
 
-class UtternaceScenePair(object):
+class UtteranceScenePair(object):
 
     def __init__(self, utterance, objects, lexicon, num_features=None, probabilistic=True,
             feature_restriction=None):
@@ -48,9 +50,16 @@ class UtternaceScenePair(object):
         scene to those that occur in the list.
 
         """
+        if not isinstance(utterance, list):
+            utterance = [utterance]
         self._utterance = utterance
+
         self._scene = []
-        self._referent_to_features_map = []
+        self._objects = objects
+        self._referent_to_features_map = {}
+
+        if isinstance(lexicon, str):
+            lexicon = input.read_gold_lexicon(lexicon, 10000)
 
         for obj in objects:
             values_and_features = lexicon.meaning(obj).sorted_features()
@@ -68,7 +77,7 @@ class UtternaceScenePair(object):
                 try:
                     features = list(np.random.choice(
                         a=[feature for (value, feature) in values_and_features],
-                        size=(num_features if num_features is not None else len(a),
+                        size=(num_features if num_features is not None else len(a)),
                         replace=False,  # sample features without replacement
                         p=probs
                     ))
@@ -78,8 +87,11 @@ class UtternaceScenePair(object):
 
             else:
                 # grab the top n familiar features
-                features = [f for v, f in values_and_features]\
-                        [(:num_features if num_features is not None else :)]
+                if num_features is not None:
+                    features = [f for v, f in values_and_features][:num_features]
+                else:
+                    features = [f for v, f in values_and_features]
+
                 if len(features) < num_features:
                     print('There were not enough features to sample from.')
                     raise ValueError
@@ -90,17 +102,23 @@ class UtternaceScenePair(object):
             # remove duplicates
             self._scene = list(set(self._scene))
 
+    def __repr__(self):
+        return 'Utterance: ' + str(self._utterance) + '; Objects in scene: ' + str(self._objects) + '; Scene: ' + str(self._scene)
+
     def scene(self):
-        return self._scene
+        return self._scene[:]
+
+    def objects(self):
+        return self._objects.copy()
 
     def utterance(self):
         return self._utterance
 
     def pair(self):
-        return self._utterance, self._scene
+        return self._utterance, self._scene[:]
 
     def features_for_object(self, obj):
-        return self._referent_to_features_map[obj]
+        return self._referent_to_features_map[obj].copy()
 
 
 def write_config_file(

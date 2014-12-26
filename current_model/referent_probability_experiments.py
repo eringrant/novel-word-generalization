@@ -557,8 +557,6 @@ print words
 ten_feature_condition = list(choose_words_by_features(problex, 2, words=words, top=10))
 
 def main():
-
-
     experiment = NovelReferentExperiment()
     experiment.start()
 
