@@ -59,6 +59,7 @@ class GeneralisationExperiment(experiment.Experiment):
             forget_decay=self.forget_decay,
             novelty=self.novelty,
             novelty_decay=self.novelty_decay,
+            beta=params['beta'],
             L=params['lambda'],
             power=params['power'],
             maxtime=params['maxtime']
@@ -257,7 +258,8 @@ class GeneralisationExperiment(experiment.Experiment):
                 self.learner.reset()
 
         savename = datetime.now().isoformat() + '.png'
-        bar_chart(results, savename=savename)
+        annotation = pprint.pformat(params)
+        bar_chart(results, savename=savename, annotation=annotation)
 
         return results
 
@@ -363,7 +365,6 @@ def calculate_generalisation_probability(learner, target_word, target_scene, met
     Normal distribution with small variance.
 
     """
-    import pdb; pdb.set_trace()
     total = np.float128(0)
     lexicon = learner._learned_lexicon
     beta = learner._beta
@@ -397,64 +398,43 @@ def calculate_generalisation_probability(learner, target_word, target_scene, met
 
             pass
 
-        elif method == 'gaussian with sum':
+        elif method == 'gaussian':
 
             target_word_meaning = lexicon.meaning(target_word)
-            factor_1 = 0
-            second_factor = 0
+            y_factor = 1
+            target_factor = 1
 
-            # only look at features in each word; all others have any value wp0
-            for feature in [f for f in lexicon.seen_features(word) if lexicon.prob(word, f) != lexicon.meaning(word).unseen_prob()]:
+            for feature in target_scene:
 
                 mean = lexicon.prob(word, feature)
                 dist = scipy.stats.norm(loc=mean, scale=std)
 
-                factor_1 += dist.pdf(target_meaning.prob(feature))
-                second_factor += dist.pdf(target_word_meaning.prob(feature))
+                y_factor *= dist.pdf(target_meaning.prob(feature))
 
-            word_freq = learner._wordsp.frequency(word)
-
-            if first_factor is True:
-                total += factor_1 * second_factor * word_freq
-            else:
-                total += second_factor * word_freq
-
-            total /= np.sum([learner._wordsp.frequency(w) for w in learner._wordsp.all_words(0)])
-
-            print('\t', word, ':', '\tfirst factor =', factor_1, '\tsecond factor =', second_factor, '\tword freq =', word_freq)
-
-        elif method == 'gaussian with product':
-
-            target_word_meaning = lexicon.meaning(target_word)
-            factor_1 = 1
-            second_factor = 1
-
-            # only look at features in each word; all others have any value wp0
-            for feature in [f for f in lexicon.seen_features(word) if lexicon.prob(word, f) != lexicon.meaning(word).unseen_prob()]:
+            for feature in [f for f in lexicon.seen_features(target_word) if lexicon.prob(target_word, f) != lexicon.meaning(target_word).unseen_prob()]:
 
                 mean = lexicon.prob(word, feature)
                 dist = scipy.stats.norm(loc=mean, scale=std)
 
-                factor_1 *= dist.pdf(target_meaning.prob(feature))
-                second_factor *= dist.pdf(target_word_meaning.prob(feature))
+                target_factor *= dist.pdf(target_word_meaning.prob(feature))
 
             word_freq = learner._wordsp.frequency(word)
 
             if first_factor is True:
-                total += factor_1 * second_factor * word_freq
+                total += y_factor * target_factor * word_freq
             else:
-                total += second_factor * word_freq
+                total += target_factor * word_freq
 
             total /= np.sum([learner._wordsp.frequency(w) for w in learner._wordsp.all_words(0)])
 
-            print('\t', word, ':', '\tfirst factor =', factor_1, '\tsecond factor =', second_factor, '\tword freq =', word_freq)
+            #print('\t', word, ':', '\tfirst factor =', y_factor, '\tsecond factor =', target_factor, '\tword freq =', word_freq)
 
         else:
             raise NotImplementedError
 
     return total
 
-def bar_chart(results, savename=None):
+def bar_chart(results, savename=None, annotation=None):
     conditions = ['one example',
         'three subordinate examples',
         'three basic-level examples',
@@ -485,10 +465,13 @@ def bar_chart(results, savename=None):
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
-    ax.legend( (p0, p1, p2), ('sub.', 'basic', 'super.'), loc='center left', bbox_to_anchor=(1, 0.5))
+    ax.legend( (p0, p1, p2), ('sub.', 'basic', 'super.'), loc='center left', bbox_to_anchor=(1, 0))
 
     title = "Generalization scores"
     ax.set_title(title)
+
+    if annotation is not None:
+        fig.text(0.8, 0.3, annotation, ha='center', fontsize='small')
 
     if savename is None:
         plt.show()
