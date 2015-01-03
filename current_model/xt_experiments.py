@@ -5,25 +5,26 @@ from __future__ import print_function, division
 import matplotlib
 matplotlib.use('Agg')
 
+import copy
+from datetime import datetime
+import itertools
 import matplotlib.pyplot as plt
-import scipy.stats
 import numpy as np
 from operator import itemgetter
-import xml.etree.cElementTree as ET
-import itertools
-import copy
+import os
 import pprint
+import scipy.stats
+import xml.etree.cElementTree as ET
 
+import constants as CONST
+import evaluate
 import input
 import learn
 import learnconfig
 import wmmapping
+
 import experiment
 import experimental_materials
-import evaluate
-import constants as CONST
-
-from datetime import datetime
 
 
 class GeneralisationExperiment(experiment.Experiment):
@@ -65,11 +66,16 @@ class GeneralisationExperiment(experiment.Experiment):
             maxtime=params['maxtime']
         )
 
-        # create the gold-standard lexicon and the learner
+        # create a dictionary mapping features to their level in the hierarchy
+        self.feature_to_level_map = {}
+
+        # create the gold-standard lexicon
         learner_config = learnconfig.LearnerConfig(self.config_path)
         beta = learner_config.param_float("beta")
         tree = ET.parse(params['hierarchy'])
         self.lexicon = self.create_lexicon_from_etree(tree, beta)
+
+        # create the learner
         stopwords = []
         self.learner = learn.Learner(self.lexicon, learner_config, stopwords)
 
@@ -86,43 +92,19 @@ class GeneralisationExperiment(experiment.Experiment):
         self.training_sets['one example'] = [
             [experimental_materials.UtteranceScenePair(
                 utterance='fep',
-                objects=['green-pepper'],
+                objects=[obj],
                 lexicon=self.lexicon,
                 probabilistic=False
-            )],
-            [experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                objects=['tow-truck'],
-                lexicon=self.lexicon,
-                probabilistic=False
-            )],
-            [experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                objects=['dalmatian'],
-                lexicon=self.lexicon,
-                probabilistic=False
-            )]
+            )] for obj in ['green-pepper', 'tow-truck', 'dalmatian']
         ]
 
         self.training_sets['three subordinate examples'] = [
             [experimental_materials.UtteranceScenePair(
                 utterance='fep',
-                objects=['green-pepper'],
+                objects=[obj],
                 lexicon=self.lexicon,
                 probabilistic=False
-            )] * 3,
-            [experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                objects=['tow-truck'],
-                lexicon=self.lexicon,
-                probabilistic=False
-            )] * 3,
-            [experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                objects=['dalmatian'],
-                lexicon=self.lexicon,
-                probabilistic=False
-            )] * 3
+            )] * 3 for obj in ['green-pepper', 'tow-truck', 'dalmatian']
         ]
 
         self.training_sets['three basic-level examples'] = [
@@ -241,12 +223,30 @@ class GeneralisationExperiment(experiment.Experiment):
 
                 for cond in self.test_sets[i]:
                     for j in range(len(self.test_sets[i][cond])):
+
                         test_scene = self.test_sets[i][cond][j]
+                        word = test_scene.utterance()[0]
+
+                        # create the Meaning representation of the test scene
+                        meaning = wmmapping.Meaning(self.learner._beta)
+                        if params['basic-level-bias'] is not None:
+                            d = {}
+                            for feature in test_scene.scene():
+                                if self.feature_to_level_map[feature] == 'basic-level':
+                                    d[feature] = params['basic-level-bias']
+                                else:
+                                    d[feature] = 1
+                            for feature in test_scene.scene():
+                                meaning._meaning_probs[feature] = \
+                                    d[feature]/sum([v for (f,v) in d.items()])
+                        else:
+                            for feature in test_scene.scene():
+                                meaning._meaning_probs[feature] = \
+                                    1/len(test_scene.scene())
+
                         gen_prob = calculate_generalisation_probability(
-                            self.learner, test_scene.utterance()[0],
-                            test_scene.scene(),
+                            self.learner, word, meaning,
                             method=params['calculation-type'],
-                            first_factor=params['first-factor'],
                             std=params['std'])
                         try:
                             results[condition][cond].append(gen_prob)
@@ -257,8 +257,9 @@ class GeneralisationExperiment(experiment.Experiment):
                 # reset the learner after each test set
                 self.learner.reset()
 
-        savename = datetime.now().isoformat() + '.png'
-        annotation = pprint.pformat(params)
+        savename = ','.join([key + ':' + str(params[key]) for key in params['graph-annotation']])
+        savename += '.png'
+        annotation = pprint.pformat(dict((key, value) for (key, value) in params.items() if key in params['graph-annotation']))
         bar_chart(results, savename=savename, annotation=annotation)
 
         return results
@@ -267,7 +268,8 @@ class GeneralisationExperiment(experiment.Experiment):
         """
         @param tree An ElementTree instance.
         """
-        corpus_path = 'temp_xt_corpus.dev'
+        corpus_path = 'temp_xt_corpus_'
+        corpus_path += datetime.now().isoformat() + '.dev'
         temp_corpus = open(corpus_path, 'w')
 
         root = tree.getroot()
@@ -278,6 +280,10 @@ class GeneralisationExperiment(experiment.Experiment):
         num_superordinate = params['num-superordinate']
         num_basic = params['num-basic-level']
         num_subordinate = params['num-subordinate']
+
+        sup_count = 0
+        basic_count = 0
+        sub_count = 0
 
         for sup in root.findall('.//superordinate'):
 
@@ -290,6 +296,8 @@ class GeneralisationExperiment(experiment.Experiment):
             word_to_features_map[sup.get('label')] = \
                 choice.get('features').split(' ')
 
+            sup_count += num_superordinate
+
         for basic in root.findall('.//basic-level'):
 
             bag_of_words.extend([basic.get('label')] * num_basic)
@@ -301,11 +309,15 @@ class GeneralisationExperiment(experiment.Experiment):
             word_to_features_map[basic.get('label')] = \
                 choice.get('features').split(' ')
 
+            basic_count += num_basic
+
         for sub in root.findall('.//subordinate'):
 
             bag_of_words.extend([sub.get('label')] * num_subordinate)
             word_to_features_map[sub.get('label')] = \
                 sub.get('features').split(' ')
+
+            sub_count += num_subordinate
 
         np.random.shuffle(bag_of_words)
 
@@ -329,6 +341,13 @@ class GeneralisationExperiment(experiment.Experiment):
             temp_corpus.write('\n')
 
         temp_corpus.close()
+
+        params.update({
+            'num-super' : sup_count,
+            'num-basic' : basic_count,
+            'num-sub' : sub_count
+        })
+
         return corpus_path
 
     def create_lexicon_from_etree(self, tree, beta):
@@ -336,23 +355,59 @@ class GeneralisationExperiment(experiment.Experiment):
         output_file = open(output_filename, 'w')
         root = tree.getroot()
 
-        for level in ['superordinate', 'basic-level', 'subordinate']:
+        for sup in root.findall('.//superordinate'):
+            sup_features = []
+            sup_features.extend(sup.get('features').split(' '))
 
-            for node in root.findall('.//'+level):
+            word = sup.get('label')
+            output_file.write(word + " ")
 
-                word = node.get('label')
+            for feature in sup_features:
+                output_file.write(feature + ':' + \
+                    str(1/float(len(sup_features))) + ',')
+                self.feature_to_level_map[feature] = 'superordinate'
+            output_file.write('\n\n')
+
+            for basic in sup.findall('.//basic-level'):
+                basic_features = sup_features[:]
+                basic_features.extend(basic.get('features').split(' '))
+
+                for f in basic.get('features').split(' '):
+                    self.feature_to_level_map[f] = 'basic-level'
+
+                word = basic.get('label')
                 output_file.write(word + " ")
-                features = node.get('features').split(' ')
 
-                for feature in features:
+                for feature in basic_features:
                     output_file.write(feature + ':' + \
-                        str(1/float(len(features))) + ',')
+                        str(1/float(len(basic_features))) + ',')
                 output_file.write('\n\n')
 
+                for sub in basic.findall('.//subordinate'):
+                    sub_features = basic_features[:]
+                    sub_features.extend(sub.get('features').split(' '))
+
+                    for f in sub.get('features').split(' '):
+                        self.feature_to_level_map[f] = 'subordinate'
+
+                    word = sub.get('label')
+                    output_file.write(word + " ")
+
+                    for feature in sub_features:
+                        output_file.write(feature + ':' + \
+                            str(1/float(len(sub_features))) + ',')
+                    output_file.write('\n\n')
+
         output_file.close()
+
         return output_filename
 
-def calculate_generalisation_probability(learner, target_word, target_scene, method='cosine', first_factor=True, std=0.0001):
+    def finalize(params, rep, n):
+        os.remove(self.corpus)
+        os.remove(self.lexicon)
+
+
+def calculate_generalisation_probability(learner, target_word, target_scene_meaning, method='cosine', std=0.0001):
     """
     Calculate the probability of learner to generalise the target word to the
     target scene.
@@ -360,43 +415,41 @@ def calculate_generalisation_probability(learner, target_word, target_scene, met
     @param learner A learn.Learner instance.
     @param target_word The word for which to calculate the
     generalisation probability.
-    @param target_scene A list of features representing a scene.
+    @param target_scene_meaning A wmmapping.Meaning instance representing a scene.
     @param method If 'cosine', use cosine similarity; if 'gaussian', use a
-    Normal distribution with small variance.
+    Normal distribution with variance std.
+    @param std
 
     """
+    print(target_scene_meaning)
+    def cos(one, two):
+        beta = learner._beta
+        return evaluate.calculate_similarity(beta, one, two, CONST.COS)
+
     total = np.float128(0)
     lexicon = learner._learned_lexicon
-    beta = learner._beta
-
-    target_meaning = wmmapping.Meaning(beta)
-    for feature in target_scene:
-        target_meaning._meaning_probs[feature] = 1/len(target_scene) # uniform prob
 
     for word in learner._wordsp.all_words(0):
 
-# initial implementation
-#        f_in_y = np.sum([learner._learned_lexicon.prob(word, feature) for feature in target_scene])
-#        f_in_target = np.sum([learner._learned_lexicon.prob(word, feature) for feature in learner._learned_lexicon.seen_features(target_word)])
-#        word_freq = learner._wordsp.frequency(word)
-#        total += f_in_y * f_in_target * word_freq
-#        total /= np.sum([learner._wordsp.frequency(word) for word in learner._wordsp.all_words(0)])
+        if method == 'cosine' or method == 'cosine-norm':
 
-        if method == 'cosine':
+            cos_y_w = cos(target_scene_meaning, lexicon.meaning(word))
+            cos_target_w = cos(lexicon.meaning(target_word), lexicon.meaning(word))
 
-            cos_y_w = evaluate.calculate_similarity(beta, target_meaning, lexicon.meaning(word), CONST.COS)
-            cos_target_w = evaluate.calculate_similarity(beta, lexicon.meaning(target_word), lexicon.meaning(word), CONST.COS)
+            p_w = learner._wordsp.frequency(word) / np.sum([learner._wordsp.frequency(w) for w in learner._wordsp.all_words(0)])
 
-            if first_factor is True:
-                total += cos_y_w * cos_target_w
-            else:
-                total += cos_target_w
+            term = cos_y_w * cos_target_w * p_w
 
-            #print('\t', word, ':', '\tcos_y_w =', cos_y_w, '\tcos_target_w =', cos_target_w, '\tword freq =', word_freq)
+            print('\t', word, ':', '\tcos_y_w =', cos_y_w, '\tcos_target_w =', cos_target_w, '\tp(w) =', p_w,
+                    '\tterm:', cos_y_w * cos_target_w * p_w)
 
-        elif method == 'normalised cosine':
+            if method == 'cosine-norm':
 
-            pass
+                denom = np.sum([cos(lexicon.meaning(w), lexicon.meaning(word)) for w in learner._wordsp.all_words(0)])
+                term /= denom
+                term /= denom
+
+            total += term
 
         elif method == 'gaussian':
 
@@ -409,7 +462,7 @@ def calculate_generalisation_probability(learner, target_word, target_scene, met
                 mean = lexicon.prob(word, feature)
                 dist = scipy.stats.norm(loc=mean, scale=std)
 
-                y_factor *= dist.pdf(target_meaning.prob(feature))
+                y_factor *= dist.pdf(target_scene_meaning.prob(feature))
 
             for feature in [f for f in lexicon.seen_features(target_word) if lexicon.prob(target_word, f) != lexicon.meaning(target_word).unseen_prob()]:
 
@@ -420,10 +473,7 @@ def calculate_generalisation_probability(learner, target_word, target_scene, met
 
             word_freq = learner._wordsp.frequency(word)
 
-            if first_factor is True:
-                total += y_factor * target_factor * word_freq
-            else:
-                total += target_factor * word_freq
+            total += y_factor * target_factor * word_freq
 
             total /= np.sum([learner._wordsp.frequency(w) for w in learner._wordsp.all_words(0)])
 
