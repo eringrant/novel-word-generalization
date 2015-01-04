@@ -128,6 +128,7 @@ def write_config_file(
     forget_decay,
     novelty,
     novelty_decay,
+    beta,
     L,
     power,
     maxtime
@@ -136,11 +137,12 @@ def write_config_file(
     f = open(config_filename, 'w')
 
     f.write("""[Smoothing]
-beta=10000
 """)
 
+    f.write('beta=' + str(beta) + '\n')
     f.write('lambda=' + str(L) + '\n')
     f.write('power=' + str(power) + '\n')
+
     f.write("""epsilon=0.01
 alpha=20
 

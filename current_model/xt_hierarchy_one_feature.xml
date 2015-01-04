@@ -1,0 +1,80 @@
+<hierarchy>
+    <superordinate label='animal' features='animal_f0'>
+        <basic-level label='dog' features='dog_f0'>
+            <subordinate label='dalmatian' features='dalmatian_f0'>
+            </subordinate>
+            <subordinate label='poodle' features='poodle_f0'>
+            </subordinate>
+            <subordinate label='pug' features='pug_f0'>
+            </subordinate>
+        </basic-level>
+        <basic-level label='cat' features='cat_f0'>
+            <subordinate label='manx' features='manx_f0'>
+            </subordinate>
+            <subordinate label='tabby' features='tabby_f0'>
+            </subordinate>
+            <subordinate label='siamese' features='siamese_f0'>
+            </subordinate>
+        </basic-level>
+        <basic-level label='fish' features='fish_f0'>
+            <subordinate label='flounder' features='flounder_f0'>
+            </subordinate>
+            <subordinate label='shark' features='shark_f0'>
+            </subordinate>
+                <subordinate label='salmon' features='salmon_f0'>
+            </subordinate>
+        </basic-level>
+    </superordinate>
+    <superordinate label='vehicle' features='vehicle_f0'>
+        <basic-level label='boat' features='boat_f0'>
+            <subordinate label='motorboat' features='motorboat_f0'>
+            </subordinate>
+            <subordinate label='sailboat' features='sailboat_f0'>
+            </subordinate>
+            <subordinate label='tugboat' features='tugboat_f0'>
+            </subordinate>
+        </basic-level>
+        <basic-level label='truck' features='truck_f0'>
+            <subordinate label='semitrailer' features='semitrailer_f0'>
+            </subordinate>
+            <subordinate label='fire-truck' features='fire-truck_f0'>
+            </subordinate>
+            <subordinate label='tow-truck' features='tow-truck_f0'>
+            </subordinate>
+        </basic-level>
+        <basic-level label='airplane' features='airplane_f0'>
+            <subordinate label='airliner' features='airliner_f0'>
+            </subordinate>
+            <subordinate label='fighter-jet' features='fighter-jet_f0'>
+            </subordinate>
+            <subordinate label='seaplane' features='seaplane_f0'>
+            </subordinate>
+        </basic-level>
+    </superordinate>
+    <superordinate label='vegetable' features='vegetable_f0'>
+        <basic-level label='pepper' features='pepper_f0'>
+            <subordinate label='green-pepper' features='green_pepper_f0'>
+            </subordinate>
+            <subordinate label='yellow-pepper' features='yellow_pepper_f0'>
+            </subordinate>
+            <subordinate label='red-pepper' features='red_pepper_f0'>
+            </subordinate>
+        </basic-level>
+        <basic-level label='squash' features='squash_f0'>
+            <subordinate label='zucchini' features='zucchini_f0'>
+            </subordinate>
+            <subordinate label='pumpkin' features='pumpkin_f0'>
+            </subordinate>
+            <subordinate label='acorn-squash' features='acorn_squash_f0'>
+            </subordinate>
+        </basic-level>
+        <basic-level label='root-vegetable' features='root_vegetable_f0'>
+            <subordinate label='carrot' features='carrot_f0'>
+            </subordinate>
+            <subordinate label='potato' features='potato_f0'>
+            </subordinate>
+            <subordinate label='onion' features='onion_f0'>
+            </subordinate>
+        </basic-level>
+    </superordinate>
+</hierarchy>

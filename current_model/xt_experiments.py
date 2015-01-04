@@ -81,7 +81,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
         # get the corpus
         if params['corpus-path'] == 'generate':
-            self.corpus = self.generate_corpus(tree, params)
+            self.corpus = self.generate_corpus(tree, self.learner._gold_lexicon, params)
         else:
             self.corpus = params['corpus-path']
 
@@ -264,9 +264,13 @@ class GeneralisationExperiment(experiment.Experiment):
 
         return results
 
-    def generate_corpus(self, tree, params):
+    def generate_corpus(self, tree, lexicon, params):
         """
-        @param tree An ElementTree instance.
+        @param tree An ElementTree instance containing node organised in a
+        hierarchy, where the label attribute of each node is a word.
+        @param lexicon A wmapping.Lexicon instance containing meanings for the
+        words in tree.
+        @param params The dictionary of experiment parameters.
         """
         corpus_path = 'temp_xt_corpus_'
         corpus_path += datetime.now().isoformat() + '.dev'
@@ -274,8 +278,8 @@ class GeneralisationExperiment(experiment.Experiment):
 
         root = tree.getroot()
 
-        bag_of_words = []
-        word_to_features_map = {}
+        # dictionary of word and random subordinate object tuples
+        words_and_objects = []
 
         num_superordinate = params['num-superordinate']
         num_basic = params['num-basic-level']
@@ -286,45 +290,44 @@ class GeneralisationExperiment(experiment.Experiment):
         sub_count = 0
 
         for sup in root.findall('.//superordinate'):
+            label = sup.get('label')
 
-            bag_of_words.extend([sup.get('label')] * num_superordinate)
-
-            subordinate_choices = sup.findall('.//subordinate')
-            choice = subordinate_choices[np.random.randint(
-                len(subordinate_choices))]
-
-            word_to_features_map[sup.get('label')] = \
-                choice.get('features').split(' ')
+            # add the appropriate number of words to the dictionary and choose
+            # a random subordinate object
+            for i in range(num_superordinate):
+                subordinate_choices = sup.findall('.//subordinate')
+                choice = subordinate_choices[np.random.randint(
+                    len(subordinate_choices))]
+                words_and_objects.append((label, choice.get('label')))
 
             sup_count += num_superordinate
 
         for basic in root.findall('.//basic-level'):
+            label = basic.get('label')
 
-            bag_of_words.extend([basic.get('label')] * num_basic)
-
-            subordinate_choices = basic.findall('.//subordinate')
-            choice = subordinate_choices[np.random.randint(
-                len(subordinate_choices))]
-
-            word_to_features_map[basic.get('label')] = \
-                choice.get('features').split(' ')
+            # add the appropriate number of words to the dictionary and choose
+            # a random subordinate object
+            for i in range(num_basic):
+                subordinate_choices = basic.findall('.//subordinate')
+                choice = subordinate_choices[np.random.randint(
+                    len(subordinate_choices))]
+                words_and_objects.append((label, choice.get('label')))
 
             basic_count += num_basic
 
         for sub in root.findall('.//subordinate'):
 
-            bag_of_words.extend([sub.get('label')] * num_subordinate)
-            word_to_features_map[sub.get('label')] = \
-                sub.get('features').split(' ')
+            label = sub.get('label')
+            words_and_objects.extend([(label, label) for i in range(num_subordinate)])
 
             sub_count += num_subordinate
 
-        np.random.shuffle(bag_of_words)
+        np.random.shuffle(words_and_objects)
 
-        for word in bag_of_words:
-            feature_choices = word_to_features_map[word]
+        for (label, obj) in words_and_objects:
+            feature_choices = list(lexicon.seen_features(obj))
 
-            if params['probabilistic'] is True:
+            if params['prob'] is True:
                 s = np.random.randint(1, len(feature_choices)+1)
                 scene = list(np.random.choice(a=feature_choices, size=s,
                     replace=False))
@@ -333,7 +336,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
             # write out the corpus
             temp_corpus.write("1-----\nSENTENCE: ")
-            temp_corpus.write(word)
+            temp_corpus.write(label)
             temp_corpus.write('\n')
             temp_corpus.write("SEM_REP:  ")
             for ft in scene:
@@ -351,7 +354,8 @@ class GeneralisationExperiment(experiment.Experiment):
         return corpus_path
 
     def create_lexicon_from_etree(self, tree, beta):
-        output_filename = 'temp_lexicon-XT.all'
+        output_filename = 'temp_xt_lexicon_'
+        output_filename += datetime.now().isoformat() + '.all'
         output_file = open(output_filename, 'w')
         root = tree.getroot()
 
@@ -402,7 +406,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
         return output_filename
 
-    def finalize(params, rep, n):
+    def finalize(self, params, rep):
         os.remove(self.corpus)
         os.remove(self.lexicon)
 
@@ -421,7 +425,6 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
     @param std
 
     """
-    print(target_scene_meaning)
     def cos(one, two):
         beta = learner._beta
         return evaluate.calculate_similarity(beta, one, two, CONST.COS)
@@ -440,8 +443,8 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
             term = cos_y_w * cos_target_w * p_w
 
-            print('\t', word, ':', '\tcos_y_w =', cos_y_w, '\tcos_target_w =', cos_target_w, '\tp(w) =', p_w,
-                    '\tterm:', cos_y_w * cos_target_w * p_w)
+            #print('\t', word, ':', '\tcos_y_w =', cos_y_w, '\tcos_target_w =', cos_target_w, '\tp(w) =', p_w,
+                    #'\tterm:', cos_y_w * cos_target_w * p_w)
 
             if method == 'cosine-norm':
 
