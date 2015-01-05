@@ -9,6 +9,8 @@ import copy
 from datetime import datetime
 import itertools
 import matplotlib.pyplot as plt
+import nltk
+from nltk.corpus.reader import CorpusReader
 import numpy as np
 from operator import itemgetter
 import os
@@ -61,7 +63,7 @@ class GeneralisationExperiment(experiment.Experiment):
             novelty=self.novelty,
             novelty_decay=self.novelty_decay,
             beta=params['beta'],
-            L=params['lambda'],
+            L=(1/params['beta']),
             power=params['power'],
             maxtime=params['maxtime']
         )
@@ -72,137 +74,36 @@ class GeneralisationExperiment(experiment.Experiment):
         # create the gold-standard lexicon
         learner_config = learnconfig.LearnerConfig(self.config_path)
         beta = learner_config.param_float("beta")
-        tree = ET.parse(params['hierarchy'])
-        self.lexicon = self.create_lexicon_from_etree(tree, beta)
-
-        # create the learner
-        stopwords = []
-        self.learner = learn.Learner(self.lexicon, learner_config, stopwords)
 
         # get the corpus
-        if params['corpus-path'] == 'generate':
-            self.corpus = self.generate_corpus(tree, self.learner._gold_lexicon, params)
+        if params['corpus'] == 'generate-simple':
+
+            tree = ET.parse(params['hierarchy'])
+            self.lexicon = self.create_lexicon_from_etree(tree, beta)
+
+            # create the learner
+            stopwords = []
+            self.learner = learn.Learner(self.lexicon, learner_config, stopwords)
+
+            self.corpus = self.generate_simple_corpus(tree, self.learner._gold_lexicon, params)
+            self.training_sets = self.generate_simple_training_sets()
+            self.test_sets = self.generate_simple_test_sets()
+
+        elif params['corpus'] == 'generate-naturalistic':
+
+            self.corpus = self.generate_naturalistic_corpus(params['corpus-path'], params['maxtime'])
+
+            # create the learner
+            stopwords = []
+            self.learner = learn.Learner(self.lexicon, learner_config, stopwords)
+
+            self.training_sets = self.generate_naturalistic_training_sets(self.corpus)
+            self.test_sets = self.generate_naturalistic_test_sets(self.corpus)
+
+
         else:
-            self.corpus = params['corpus-path']
+            raise NotImplementedError
 
-        # training_sets is a dictionary of condition to a list of
-        # three training sets
-        self.training_sets = {}
-
-        self.training_sets['one example'] = [
-            [experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                objects=[obj],
-                lexicon=self.lexicon,
-                probabilistic=False
-            )] for obj in ['green-pepper', 'tow-truck', 'dalmatian']
-        ]
-
-        self.training_sets['three subordinate examples'] = [
-            [experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                objects=[obj],
-                lexicon=self.lexicon,
-                probabilistic=False
-            )] * 3 for obj in ['green-pepper', 'tow-truck', 'dalmatian']
-        ]
-
-        self.training_sets['three basic-level examples'] = [
-            [experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                objects=[obj],
-                lexicon=self.lexicon,
-                probabilistic=False
-            ) for obj in ['green-pepper', 'yellow-pepper', 'red-pepper']],
-            [experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                objects=[obj],
-                lexicon=self.lexicon,
-                probabilistic=False
-            ) for obj in ['tow-truck', 'fire-truck', 'semitrailer']],
-            [experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                objects=[obj],
-                lexicon=self.lexicon,
-                probabilistic=False
-            ) for obj in ['dalmatian', 'poodle', 'pug']]
-        ]
-
-        self.training_sets['three superordinate examples'] = [
-            [experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                objects=[obj],
-                lexicon=self.lexicon,
-                probabilistic=False
-            ) for obj in ['green-pepper', 'potato', 'zucchini']],
-            [experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                objects=[obj],
-                lexicon=self.lexicon,
-                probabilistic=False
-            ) for obj in ['tow-truck', 'airliner', 'sailboat']],
-            [experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                objects=[obj],
-                lexicon=self.lexicon,
-                probabilistic=False
-            ) for obj in ['dalmatian', 'tabby', 'salmon']]
-        ]
-
-        #pprint.pprint(self.training_sets)
-
-        # there are three test sets, corresponding to the three
-        # training sets for each condition
-        self.test_sets = [{}, {}, {}]
-        self.test_sets[0]['subordinate matches'] = [
-            'green-pepper',
-            'green-pepper'
-        ]
-        self.test_sets[1]['subordinate matches'] = [
-            'tow-truck',
-            'tow-truck'
-        ]
-        self.test_sets[2]['subordinate matches'] = [
-            'dalmatian',
-            'dalmatian'
-        ]
-        self.test_sets[0]['basic-level matches'] = [
-            'red-pepper',
-            'yellow-pepper'
-        ]
-        self.test_sets[1]['basic-level matches'] = [
-            'fire-truck',
-            'semitrailer'
-        ]
-        self.test_sets[2]['basic-level matches'] = [
-            'poodle',
-            'pug'
-        ]
-        self.test_sets[0]['superordinate matches'] = [
-            'potato',
-            'zucchini'
-        ]
-        self.test_sets[1]['superordinate matches'] = [
-            'airliner',
-            'sailboat'
-        ]
-        self.test_sets[2]['superordinate matches'] = [
-            'tabby',
-            'salmon'
-        ]
-
-        # turn the test sets into scene representations
-        for trial in self.test_sets:
-            for cond in trial:
-                trial[cond] = \
-                    [experimental_materials.UtteranceScenePair(
-                        utterance='fep',
-                        objects=[item],
-                        lexicon=self.lexicon,
-                        probabilistic=False
-                    ) for item in trial[cond]]
-
-        #pprint.pprint(self.test_sets)
 
         return True
 
@@ -264,7 +165,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
         return results
 
-    def generate_corpus(self, tree, lexicon, params):
+    def generate_simple_corpus(self, tree, lexicon, params):
         """
         @param tree An ElementTree instance containing node organised in a
         hierarchy, where the label attribute of each node is a word.
@@ -352,6 +253,255 @@ class GeneralisationExperiment(experiment.Experiment):
         })
 
         return corpus_path
+
+    def generate_simple_training_sets():
+        # training_sets is a dictionary of condition to a list of
+        # three training sets
+        training_sets = {}
+
+        training_sets['one example'] = [
+            [experimental_materials.UtteranceScenePair(
+                utterance='fep',
+                objects=[obj],
+                lexicon=self.lexicon,
+                probabilistic=False
+            )] for obj in ['green-pepper', 'tow-truck', 'dalmatian']
+        ]
+
+        training_sets['three subordinate examples'] = [
+            [experimental_materials.UtteranceScenePair(
+                utterance='fep',
+                objects=[obj],
+                lexicon=self.lexicon,
+                probabilistic=False
+            )] * 3 for obj in ['green-pepper', 'tow-truck', 'dalmatian']
+        ]
+
+        training_sets['three basic-level examples'] = [
+            [experimental_materials.UtteranceScenePair(
+                utterance='fep',
+                objects=[obj],
+                lexicon=self.lexicon,
+                probabilistic=False
+            ) for obj in ['green-pepper', 'yellow-pepper', 'red-pepper']],
+            [experimental_materials.UtteranceScenePair(
+                utterance='fep',
+                objects=[obj],
+                lexicon=self.lexicon,
+                probabilistic=False
+            ) for obj in ['tow-truck', 'fire-truck', 'semitrailer']],
+            [experimental_materials.UtteranceScenePair(
+                utterance='fep',
+                objects=[obj],
+                lexicon=self.lexicon,
+                probabilistic=False
+            ) for obj in ['dalmatian', 'poodle', 'pug']]
+        ]
+
+        training_sets['three superordinate examples'] = [
+            [experimental_materials.UtteranceScenePair(
+                utterance='fep',
+                objects=[obj],
+                lexicon=self.lexicon,
+                probabilistic=False
+            ) for obj in ['green-pepper', 'potato', 'zucchini']],
+            [experimental_materials.UtteranceScenePair(
+                utterance='fep',
+                objects=[obj],
+                lexicon=self.lexicon,
+                probabilistic=False
+            ) for obj in ['tow-truck', 'airliner', 'sailboat']],
+            [experimental_materials.UtteranceScenePair(
+                utterance='fep',
+                objects=[obj],
+                lexicon=self.lexicon,
+                probabilistic=False
+            ) for obj in ['dalmatian', 'tabby', 'salmon']]
+        ]
+
+        #pprint.pprint(training_sets)
+
+    def generate_simple_test_sets():
+
+        # there are three test sets, corresponding to the three
+        # training sets for each condition
+        test_sets = [{}, {}, {}]
+        test_sets[0]['subordinate matches'] = [
+            'green-pepper',
+            'green-pepper'
+        ]
+        test_sets[1]['subordinate matches'] = [
+            'tow-truck',
+            'tow-truck'
+        ]
+        test_sets[2]['subordinate matches'] = [
+            'dalmatian',
+            'dalmatian'
+        ]
+        test_sets[0]['basic-level matches'] = [
+            'red-pepper',
+            'yellow-pepper'
+        ]
+        test_sets[1]['basic-level matches'] = [
+            'fire-truck',
+            'semitrailer'
+        ]
+        test_sets[2]['basic-level matches'] = [
+            'poodle',
+            'pug'
+        ]
+        test_sets[0]['superordinate matches'] = [
+            'potato',
+            'zucchini'
+        ]
+        test_sets[1]['superordinate matches'] = [
+            'airliner',
+            'sailboat'
+        ]
+        test_sets[2]['superordinate matches'] = [
+            'tabby',
+            'salmon'
+        ]
+
+        # turn the test sets into scene representations
+        for trial in test_sets:
+            for cond in trial:
+                trial[cond] = \
+                    [experimental_materials.UtteranceScenePair(
+                        utterance='fep',
+                        objects=[item],
+                        lexicon=self.lexicon,
+                        probabilistic=False
+                    ) for item in trial[cond]]
+
+        #pprint.pprint(test_sets)
+
+    def generate_naturalistic_corpus(self, corpus, maxtime):
+        corpus_path = 'temp_xt_corpus_'
+        corpus_path += datetime.now().isoformat() + '.dev'
+        temp_corpus = open(corpus_path, 'w')
+
+        corpus = input.Corpus(corpus)
+
+        wn = nltk.corpus.WordNetCorpusReader(nltk.data.find('corpora/wordnet'), None)
+        superordinate_to_members_map = {}
+
+        sentence_count = 0
+
+        while sentence_count < maxtime:
+            (words, features) = corpus.next_pair()
+
+            for word in words:
+                if word.split(':')[1] == 'N':
+                    word = word.split(':')[0]
+                    try:
+                        s = wn.synset(word + '.n.01')
+                        lex = str(s.lexname().split('.')[-1])
+
+                        try:
+                            superordinate_to_members_map[lex].append(word)
+                        except KeyError:
+                            superordinate_to_members_map[lex] = []
+                            superordinate_to_members_map[lex].append(word)
+
+                    except nltk.corpus.reader.wordnet.WordNetError:
+                        pass # word not recognised by WordNet
+
+            sentence_count += 1
+
+        print(superordinate_to_members_map)
+
+        proposed_triples = []
+
+        # generate (superordinate, basic, subordinate) triples
+        for lex in superordinate_to_members_map:
+            # remove duplicates
+            superordinate_to_members_map[lex] = list(set(superordinate_to_members_map[lex]))
+
+            placement_map = {}
+
+            for word in superordinate_to_members_map:
+
+                try:
+                    s = wn.synset(word + '.n.01')
+
+                    # find hypernyms and hyponyms
+                    hypos = [str(w.name()).split('.')[0] for w in s.hyponyms()]
+                    hypers = [str(w.name()).split('.')[0] for w in s.hypernyms()]
+                    #hypos = [str(w.name()).split('.')[0] for w in s.closure(lambda x:x.hyponyms())]
+                    #hypers = [str(w.name()).split('.')[0] for w in s.closure(lambda x:x.hypernyms())]
+
+                    # restrict to those that exist in the corpus
+                    hypos = list(set(hypos).intersection(superordinate_to_members_map[lex]))
+                    hypers = list(set(hypers).intersection(superordinate_to_members_map[lex]))
+
+                    # pick the position for this word (basic, subordinate) which
+                    # has already been decided, or greedily choose the one that
+                    # gives the most triples
+
+                    try:
+                        test = (placement_map[word] == 'basic')
+                    except:
+                        test = False
+                    if test or len(hypos) > len(hypers):
+                        placement_map[word] = 'basic'
+                        for sub in hypos:
+                            try:
+                                if placement_map[sub] == 'subordinate':
+                                    proposed_triples.append((lex, word, sub))
+                            except KeyError:
+                                placement_map[sub] = 'subordinate'
+                                proposed_triples.append((lex, word, sub))
+                    else:
+                        placement_map[word] = 'subordinate'
+                        for basic in hypers:
+                            try:
+                                if placement_map[basic] == 'basic':
+                                    proposed_triples.append((lex, basic, word))
+                            except KeyError:
+                                placement_map[basic] = 'basic'
+                                proposed_triples.append((lex, basic, word))
+
+                except nltk.corpus.reader.wordnet.WordNetError:
+                    pass # word not recognised by WordNet
+
+        print(proposed_triples)
+        raw_input()
+
+        for (label, obj) in words_and_objects:
+            feature_choices = list(lexicon.seen_features(obj))
+
+            if params['prob'] is True:
+                s = np.random.randint(1, len(feature_choices)+1)
+                scene = list(np.random.choice(a=feature_choices, size=s,
+                    replace=False))
+            else:
+                scene = feature_choices[:]
+
+            # write out the corpus
+            temp_corpus.write("1-----\nSENTENCE: ")
+            temp_corpus.write(label)
+            temp_corpus.write('\n')
+            temp_corpus.write("SEM_REP:  ")
+            for ft in scene:
+                temp_corpus.write("," + ft)
+            temp_corpus.write('\n')
+
+        temp_corpus.close()
+
+        params.update({
+            'num-super' : sup_count,
+            'num-basic' : basic_count,
+            'num-sub' : sub_count
+        })
+
+        return corpus_path
+
+    def generate_naturalistic_training_sets(self, corpus):
+        pass
+
+    def generate_naturalistic_test_sets(self, corpus):
+        pass
 
     def create_lexicon_from_etree(self, tree, beta):
         output_filename = 'temp_xt_lexicon_'
