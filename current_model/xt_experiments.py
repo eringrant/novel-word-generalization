@@ -69,6 +69,8 @@ class GeneralisationExperiment(experiment.Experiment):
             beta=params['beta'],
             L=(1/params['beta']),
             power=params['power'],
+            alpha=params['alpha'],
+            epsilon=params['epsilon'],
             maxtime=params['maxtime']
         )
 
@@ -410,7 +412,6 @@ class GeneralisationExperiment(experiment.Experiment):
     def generate_naturalistic_corpus(self, corpus_path, lexicon, beta, maxtime, n, params):
         temp_corpus = 'temp_xt_corpus_'
         temp_corpus += datetime.now().isoformat() + '.dev'
-        print(temp_corpus)
         temp_corpus = open(temp_corpus, 'w')
 
         corpus = input.Corpus(corpus_path)
@@ -556,8 +557,8 @@ class GeneralisationExperiment(experiment.Experiment):
 
             scene = ''
             for word in words:
-                if word.split(':')[1] == 'N' and word.split(':')[0] in hierarchy_words:
-                    ref = word_to_list_of_feature_bundles_map[word.split(':')[0]]
+                if word.split(':')[1] == 'N' and word in hierarchy_words:
+                    ref = word_to_list_of_feature_bundles_map[word]
                     choice = ref[np.random.randint(len(ref))]
                     for f in choice:
                         wsem = ",%s" % (f)
@@ -593,10 +594,12 @@ class GeneralisationExperiment(experiment.Experiment):
 
         # test for length
         sufficient_number_sub_in_basic = []
+        sufficient_number_sub_in_sup = []
         for sup in hierarchy:
             for basic in hierarchy[sup]:
                 if len(hierarchy[sup][basic]) >= 5: # 3 for training, 2 for test
                     sufficient_number_sub_in_basic.append(basic)
+                    sufficient_number_sub_in_sup.append(sup)
 
         training_sets_info = []
 
@@ -609,104 +612,103 @@ class GeneralisationExperiment(experiment.Experiment):
         info = []
 
         for sup in hierarchy:
-            try:
-                superordinate_matches = np.array(hierarchy[sup].keys())
-                np.random.shuffle(superordinate_matches)
-                superordinate_matches = list(superordinate_matches)
-                if len(superordinate_matches) >= 4:
+            if sup in sufficient_number_sub_in_sup:
+                try:
+                    superordinate_matches = np.array(list(set(sufficient_number_sub_in_basic).intersection(np.array(hierarchy[sup].keys()))))
+                    if len(superordinate_matches) >= 5:
+                        print(superordinate_matches)
+                        np.random.shuffle(superordinate_matches)
+                        superordinate_matches = list(superordinate_matches)
+                        basic = superordinate_matches.pop()
 
-                    basic_choices = list(set(sufficient_number_sub_in_basic).intersection(superordinate_matches))
-                    basic = basic_choices.pop()
-                    superordinate_matches.remove(basic)
+                        basic_level_matches = np.array(hierarchy[sup][basic])
+                        np.random.shuffle(basic_level_matches)
+                        basic_level_matches = list(basic_level_matches)
+                        sub = basic_level_matches.pop()
 
-                    basic_level_matches = np.array(hierarchy[sup][basic])
-                    np.random.shuffle(basic_level_matches)
-                    basic_level_matches = list(basic_level_matches)
-                    sub = basic_level_matches.pop()
-
-                    training_sets['one example'].append(
-                        [experimental_materials.UtteranceScenePair(
-                            utterance='fep',
-                            objects=[sub],
-                            lexicon=self.lexicon,
-                            probabilistic=False
-                        )]
-                    )
-
-                    training_sets['three subordinate examples'].append(
-                        [experimental_materials.UtteranceScenePair(
-                            utterance='fep',
-                            objects=[sub],
-                            lexicon=self.lexicon,
-                            probabilistic=False
-                        )] * 3
-                    )
-
-                    basic_match_1 = basic_level_matches.pop()
-                    basic_match_2 = basic_level_matches.pop()
-
-                    training_sets['three basic-level examples'].append(
-                        [
-                            experimental_materials.UtteranceScenePair(
+                        training_sets['one example'].append(
+                            [experimental_materials.UtteranceScenePair(
                                 utterance='fep',
                                 objects=[sub],
                                 lexicon=self.lexicon,
                                 probabilistic=False
-                            ),
-                            experimental_materials.UtteranceScenePair(
-                                utterance='fep',
-                                objects=[basic_match_1],
-                                lexicon=self.lexicon,
-                                probabilistic=False
-                            ),
-                            experimental_materials.UtteranceScenePair(
-                                utterance='fep',
-                                objects=[basic_match_2],
-                                lexicon=self.lexicon,
-                                probabilistic=False
-                            )
-                        ]
-                    )
+                            )]
+                        )
 
-                    sup_match_1 = superordinate_matches.pop()
-                    sup_match_1_basic_level_matches = np.array(hierarchy[sup][sup_match_1])
-                    np.random.shuffle(sup_match_1_basic_level_matches)
-                    sup_match_1_basic_level_matches = list(sup_match_1_basic_level_matches)
-                    sup_match_1_sub = sup_match_1_basic_level_matches.pop()
-
-                    sup_match_2 = superordinate_matches.pop()
-                    sup_match_2_basic_level_matches = np.array(hierarchy[sup][sup_match_2])
-                    np.random.shuffle(sup_match_2_basic_level_matches)
-                    sup_match_2_basic_level_matches = list(sup_match_2_basic_level_matches)
-                    sup_match_2_sub = sup_match_2_basic_level_matches.pop()
-
-                    training_sets['three superordinate examples'].append(
-                        [
-                            experimental_materials.UtteranceScenePair(
+                        training_sets['three subordinate examples'].append(
+                            [experimental_materials.UtteranceScenePair(
                                 utterance='fep',
                                 objects=[sub],
                                 lexicon=self.lexicon,
                                 probabilistic=False
-                            ),
-                            experimental_materials.UtteranceScenePair(
-                                utterance='fep',
-                                objects=[sup_match_1_sub],
-                                lexicon=self.lexicon,
-                                probabilistic=False
-                            ),
-                            experimental_materials.UtteranceScenePair(
-                                utterance='fep',
-                                objects=[sup_match_2_sub],
-                                lexicon=self.lexicon,
-                                probabilistic=False
-                            )
-                        ]
-                    )
+                            )] * 3
+                        )
 
-                    training_sets_info.append((sup, sub, basic_level_matches, superordinate_matches))
+                        basic_match_1 = basic_level_matches.pop()
+                        basic_match_2 = basic_level_matches.pop()
 
-            except IndexError: # there wasn't enough of something
-                pass
+                        training_sets['three basic-level examples'].append(
+                            [
+                                experimental_materials.UtteranceScenePair(
+                                    utterance='fep',
+                                    objects=[sub],
+                                    lexicon=self.lexicon,
+                                    probabilistic=False
+                                ),
+                                experimental_materials.UtteranceScenePair(
+                                    utterance='fep',
+                                    objects=[basic_match_1],
+                                    lexicon=self.lexicon,
+                                    probabilistic=False
+                                ),
+                                experimental_materials.UtteranceScenePair(
+                                    utterance='fep',
+                                    objects=[basic_match_2],
+                                    lexicon=self.lexicon,
+                                    probabilistic=False
+                                )
+                            ]
+                        )
+
+                        sup_match_1 = superordinate_matches.pop()
+                        sup_match_1_basic_level_matches = np.array(hierarchy[sup][sup_match_1])
+                        np.random.shuffle(sup_match_1_basic_level_matches)
+                        sup_match_1_basic_level_matches = list(sup_match_1_basic_level_matches)
+                        sup_match_1_sub = sup_match_1_basic_level_matches.pop()
+
+                        sup_match_2 = superordinate_matches.pop()
+                        sup_match_2_basic_level_matches = np.array(hierarchy[sup][sup_match_2])
+                        np.random.shuffle(sup_match_2_basic_level_matches)
+                        sup_match_2_basic_level_matches = list(sup_match_2_basic_level_matches)
+                        sup_match_2_sub = sup_match_2_basic_level_matches.pop()
+
+                        training_sets['three superordinate examples'].append(
+                            [
+                                experimental_materials.UtteranceScenePair(
+                                    utterance='fep',
+                                    objects=[sub],
+                                    lexicon=self.lexicon,
+                                    probabilistic=False
+                                ),
+                                experimental_materials.UtteranceScenePair(
+                                    utterance='fep',
+                                    objects=[sup_match_1_sub],
+                                    lexicon=self.lexicon,
+                                    probabilistic=False
+                                ),
+                                experimental_materials.UtteranceScenePair(
+                                    utterance='fep',
+                                    objects=[sup_match_2_sub],
+                                    lexicon=self.lexicon,
+                                    probabilistic=False
+                                )
+                            ]
+                        )
+
+                        training_sets_info.append((sup, sub, basic_level_matches, superordinate_matches))
+
+                except IndexError: # there wasn't enough of something
+                    pass
 
         pprint.pprint(training_sets)
 
@@ -717,6 +719,12 @@ class GeneralisationExperiment(experiment.Experiment):
         test_sets = []
         for i, (sup, sub, basic_level_matches, superordinate_matches) in enumerate(training_sets_info):
             test_sets.append({})
+
+            test_sets[i]['subordinate matches'] = []
+            test_sets[i]['subordinate matches'] = []
+            test_sets[i]['three basic-level examples'] = []
+            test_sets[i]['three superordinate examples'] = []
+
             test_sets[i]['subordinate matches'] = [
                 experimental_materials.UtteranceScenePair(
                     utterance='fep',
@@ -728,18 +736,6 @@ class GeneralisationExperiment(experiment.Experiment):
 
             basic_match_1 = basic_level_matches.pop()
             basic_match_2 = basic_level_matches.pop()
-
-            sup_match_1 = superordinate_matches.pop()
-            sup_match_1_basic_level_matches = np.array(hierarchy[sup][sup_match_1])
-            np.random.shuffle(sup_match_1_basic_level_matches)
-            sup_match_1_basic_level_matches = list(sup_match_1_basic_level_matches)
-            sup_match_1_sub = sup_match_1_basic_level_matches.pop()
-
-            sup_match_2 = superordinate_matches.pop()
-            sup_match_2_basic_level_matches = np.array(hierarchy[sup][sup_match_2])
-            np.random.shuffle(sup_match_2_basic_level_matches)
-            sup_match_2_basic_level_matches = list(sup_match_2_basic_level_matches)
-            sup_match_2_sub = sup_match_2_basic_level_matches.pop()
 
             test_sets[i]['basic-level matches'] = [
                 experimental_materials.UtteranceScenePair(
@@ -757,16 +753,32 @@ class GeneralisationExperiment(experiment.Experiment):
             ]
 
             sup_match_1 = superordinate_matches.pop()
-            sup_match_1_basic_level_matches = np.array(hierarchy[sup][sup_match_1])
-            np.random.shuffle(sup_match_1_basic_level_matches)
-            sup_match_1_basic_level_matches = list(sup_match_1_basic_level_matches)
-            sup_match_1_sub = sup_match_1_basic_level_matches.pop()
+
+            found = False
+            while not found:
+                print('loop3')
+                try:
+                    sup_match_1_basic_level_matches = np.array(hierarchy[sup][sup_match_1])
+                    np.random.shuffle(sup_match_1_basic_level_matches)
+                    sup_match_1_basic_level_matches = list(sup_match_1_basic_level_matches)
+                    sup_match_1_sub = sup_match_1_basic_level_matches.pop()
+                    found = True
+                except IndexError:
+                    pass
 
             sup_match_2 = superordinate_matches.pop()
-            sup_match_2_basic_level_matches = np.array(hierarchy[sup][sup_match_2])
-            np.random.shuffle(sup_match_2_basic_level_matches)
-            sup_match_2_basic_level_matches = list(sup_match_2_basic_level_matches)
-            sup_match_2_sub = sup_match_2_basic_level_matches.pop()
+
+            found = False
+            while not found:
+                print('loop4')
+                try:
+                    sup_match_2_basic_level_matches = np.array(hierarchy[sup][sup_match_2])
+                    np.random.shuffle(sup_match_2_basic_level_matches)
+                    sup_match_2_basic_level_matches = list(sup_match_2_basic_level_matches)
+                    sup_match_2_sub = sup_match_2_basic_level_matches.pop()
+                    found = True
+                except IndexError:
+                    pass
 
             test_sets[i]['superordinate matches'] = [
                 experimental_materials.UtteranceScenePair(
@@ -875,6 +887,8 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
         for word in learner._wordsp.all_words(0):
 
+            print(word)
+
             if method == 'cosine' or method == 'cosine-norm':
 
                 cos_y_w = cos(target_scene_meaning, lexicon.meaning(word))
@@ -882,7 +896,7 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
                 p_w = learner._wordsp.frequency(word) / np.sum([learner._wordsp.frequency(w) for w in learner._wordsp.all_words(0)])
 
-                term = cos_y_w * cos_target_w * p_w
+                term = np.float128(cos_y_w * cos_target_w * p_w)
 
                 #print('\t', word, ':', '\tcos_y_w =', cos_y_w, '\tcos_target_w =', cos_target_w, '\tp(w) =', p_w,
                         #'\tterm:', cos_y_w * cos_target_w * p_w)
@@ -898,26 +912,26 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
             elif method == 'gaussian':
 
                 target_word_meaning = lexicon.meaning(target_word)
-                y_factor = 1
-                target_factor = 1
+                y_factor = np.float128(1)
+                target_factor = np.float128(1)
 
                 for feature in target_scene_meaning.seen_features():
 
                     mean = lexicon.prob(word, feature)
                     dist = scipy.stats.norm(loc=mean, scale=std)
 
-                    y_factor *= dist.pdf(target_scene_meaning.prob(feature))
+                    y_factor *= dist.pdf(np.float64(target_scene_meaning.prob(feature)))
 
                 for feature in [f for f in lexicon.seen_features(target_word) if lexicon.prob(target_word, f) != lexicon.meaning(target_word).unseen_prob()]:
 
                     mean = lexicon.prob(word, feature)
                     dist = scipy.stats.norm(loc=mean, scale=std)
 
-                    target_factor *= dist.pdf(target_word_meaning.prob(feature))
+                    target_factor *= dist.pdf(np.float64(target_word_meaning.prob(feature)))
 
                 word_freq = learner._wordsp.frequency(word)
 
-                total += y_factor * target_factor * word_freq
+                total += np.float128(y_factor * target_factor * word_freq)
 
                 total /= np.sum([learner._wordsp.frequency(w) for w in learner._wordsp.all_words(0)])
 
@@ -936,8 +950,11 @@ def bar_chart(results, savename=None, annotation=None):
     ]
 
     l0 = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
+    err0 = [np.var(results[cond]['subordinate matches']) for cond in conditions]
     l1 = [np.mean(results[cond]['basic-level matches']) for cond in conditions]
+    err1 = [np.var(results[cond]['basic-level matches']) for cond in conditions]
     l2 = [np.mean(results[cond]['superordinate matches']) for cond in conditions]
+    err2 = [np.var(results[cond]['superordinate matches']) for cond in conditions]
 
     ind = np.array([2*n for n in range(len(results))])
     width = 0.5
@@ -945,9 +962,9 @@ def bar_chart(results, savename=None, annotation=None):
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
-    p0 = ax.bar(ind,l0,width,color='r')
-    p1 = ax.bar(ind+width,l1,width,color='g')
-    p2 = ax.bar(ind+2*width,l2,width,color='b')
+    p0 = ax.bar(ind,l0,width,color='r',yerr=err0)
+    p1 = ax.bar(ind+width,l1,width,color='g',yerr=err1)
+    p2 = ax.bar(ind+2*width,l2,width,color='b',yerr=err2)
 
     ax.set_ylabel("generalisation probability")
     ax.set_xlabel("condition")
