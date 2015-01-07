@@ -6,15 +6,19 @@ import matplotlib
 matplotlib.use('Agg')
 
 import copy
+import csv
 from datetime import datetime
+import heapq
 import itertools
 import matplotlib.pyplot as plt
 import nltk
 from nltk.corpus.reader import CorpusReader
 import numpy as np
-from operator import itemgetter
+import operator
 import os
+import pickle
 import pprint
+import random
 import scipy.stats
 import xml.etree.cElementTree as ET
 
@@ -31,7 +35,7 @@ import experimental_materials
 
 class GeneralisationExperiment(experiment.Experiment):
 
-    def setup(self, params, rep):
+    def pre_setup(self, params):
 
         if params['forget'] is not False:
             self.forget = True
@@ -91,32 +95,55 @@ class GeneralisationExperiment(experiment.Experiment):
 
         elif params['corpus'] == 'generate-naturalistic':
 
-            self.corpus = self.generate_naturalistic_corpus(params['corpus-path'], params['maxtime'])
+            self.corpus, word_to_list_of_feature_bundles_map, hierarchy = self.generate_naturalistic_corpus(params['corpus-path'], params['lexname'], params['beta'], params['maxtime'], params['num-features'], params)
 
             # create the learner
             stopwords = []
-            self.learner = learn.Learner(self.lexicon, learner_config, stopwords)
+            if params['new-learner'] is True:
+                self.learner = learn.Learner(params['lexname'], learner_config, stopwords)
+                self.learner.process_corpus(self.corpus, params['path'])
+                learner_dump = open(params['learner-path'], "wb")
+                pickle.dump(self.learner, learner_dump)
+                learner_dump.close()
 
-            self.training_sets = self.generate_naturalistic_training_sets(self.corpus)
-            self.test_sets = self.generate_naturalistic_test_sets(self.corpus)
+            else:
+                learner_dump = open(params['learner-path'], "rb")
+                self.learner = pickle.load(learner_dump)
+                learner_dump.close()
 
+            for sup in hierarchy:
+                for basic in hierarchy[sup]:
+                    for sub in hierarchy[sup][basic]:
+                        meaning = wmmapping.Meaning(params['beta'])
+                        self.learner._gold_lexicon._word_meanings[sub] = meaning
+                        print(sup, basic, sub)
+                        try:
+                            assert len(word_to_list_of_feature_bundles_map[sub]) == 1
+                        except AssertionError:
+                            hierarchy[sup][basic].remove(sub)
+                        features = word_to_list_of_feature_bundles_map[sub][0]
+                        num = len(features)
+                        for f in features:
+                            self.learner._gold_lexicon.set_prob(sub, f, 1/num)
+
+            self.lexicon = self.learner._gold_lexicon
+            self.training_sets, training_sets_info = self.generate_naturalistic_training_sets(self.corpus, hierarchy)
+            self.test_sets = self.generate_naturalistic_test_sets(self.corpus, hierarchy, training_sets_info)
 
         else:
             raise NotImplementedError
-
 
         return True
 
     def iterate(self, params, rep, n):
 
+        print('iteration')
         results = {}
 
         for condition in self.training_sets:
             results[condition] = {}
 
             for i, training_set in enumerate(self.training_sets[condition]):
-
-                self.learner.process_corpus(self.corpus, params['path'])
 
                 for trial in training_set:
                     self.learner.process_pair(trial.utterance(), trial.scene(),
@@ -321,6 +348,8 @@ class GeneralisationExperiment(experiment.Experiment):
 
         #pprint.pprint(training_sets)
 
+        return training_sets
+
     def generate_simple_test_sets():
 
         # there are three test sets, corresponding to the three
@@ -376,15 +405,24 @@ class GeneralisationExperiment(experiment.Experiment):
 
         #pprint.pprint(test_sets)
 
-    def generate_naturalistic_corpus(self, corpus, maxtime):
-        corpus_path = 'temp_xt_corpus_'
-        corpus_path += datetime.now().isoformat() + '.dev'
-        temp_corpus = open(corpus_path, 'w')
+        return test_sets
 
-        corpus = input.Corpus(corpus)
+    def generate_naturalistic_corpus(self, corpus_path, lexicon, beta, maxtime, n, params):
+        temp_corpus = 'temp_xt_corpus_'
+        temp_corpus += datetime.now().isoformat() + '.dev'
+        print(temp_corpus)
+        temp_corpus = open(temp_corpus, 'w')
+
+        corpus = input.Corpus(corpus_path)
+
+        word_to_frequency_map = {}
+        with open('lemma.al', 'rb') as csvfile:
+            reader = csv.reader(csvfile, delimiter=' ')
+            for row in reader:
+                word_to_frequency_map[row[2]] = row[1]
 
         wn = nltk.corpus.WordNetCorpusReader(nltk.data.find('corpora/wordnet'), None)
-        superordinate_to_members_map = {}
+        word_list = []
 
         sentence_count = 0
 
@@ -395,97 +433,151 @@ class GeneralisationExperiment(experiment.Experiment):
                 if word.split(':')[1] == 'N':
                     word = word.split(':')[0]
                     try:
-                        s = wn.synset(word + '.n.01')
-                        lex = str(s.lexname().split('.')[-1])
-
-                        try:
-                            superordinate_to_members_map[lex].append(word)
-                        except KeyError:
-                            superordinate_to_members_map[lex] = []
-                            superordinate_to_members_map[lex].append(word)
-
-                    except nltk.corpus.reader.wordnet.WordNetError:
+                        s = wn.synsets(word, 'n')[0]
+                        word_list.append(word)
+                    except IndexError:
                         pass # word not recognised by WordNet
 
             sentence_count += 1
 
-        print(superordinate_to_members_map)
+        word_list = list(set(word_list))
 
-        proposed_triples = []
+        hierarchy = {}
 
         # generate (superordinate, basic, subordinate) triples
-        for lex in superordinate_to_members_map:
-            # remove duplicates
-            superordinate_to_members_map[lex] = list(set(superordinate_to_members_map[lex]))
+        for word in word_list:
 
-            placement_map = {}
+            try:
+                s = wn.synsets(word, 'n')[0]
 
-            for word in superordinate_to_members_map:
+                # only check words at the bottom of the hierarchy
+                if s.hyponyms() == []:
 
-                try:
-                    s = wn.synset(word + '.n.01')
+                    lowest_to_highest = []
+                    searching = True
+                    encountered = []
 
-                    # find hypernyms and hyponyms
-                    hypos = [str(w.name()).split('.')[0] for w in s.hyponyms()]
-                    hypers = [str(w.name()).split('.')[0] for w in s.hypernyms()]
-                    #hypos = [str(w.name()).split('.')[0] for w in s.closure(lambda x:x.hyponyms())]
-                    #hypers = [str(w.name()).split('.')[0] for w in s.closure(lambda x:x.hypernyms())]
+                    while searching and str(s.name()).split('.')[0] not in encountered:
 
-                    # restrict to those that exist in the corpus
-                    hypos = list(set(hypos).intersection(superordinate_to_members_map[lex]))
-                    hypers = list(set(hypers).intersection(superordinate_to_members_map[lex]))
+                        d = {}
+                        encountered.append(str(s.name()).split('.')[0])
+                        hypers = [w for w in s.hypernyms()]
 
-                    # pick the position for this word (basic, subordinate) which
-                    # has already been decided, or greedily choose the one that
-                    # gives the most triples
+                        if hypers == []:
+                            searching = False
 
-                    try:
-                        test = (placement_map[word] == 'basic')
-                    except:
-                        test = False
-                    if test or len(hypos) > len(hypers):
-                        placement_map[word] = 'basic'
-                        for sub in hypos:
+                        else:
+                            for hyper in hypers:
+                                try:
+                                    hyper = str(hyper.name()).split('.')[0]
+                                    d[hyper] = word_to_frequency_map[hyper]
+                                except KeyError: # no frequency information
+                                    pass
                             try:
-                                if placement_map[sub] == 'subordinate':
-                                    proposed_triples.append((lex, word, sub))
+                                s = max(hypers, key=(lambda key: d[str(key.name()).split('.')[0]]))
+                                lowest_to_highest.append(str(s.name()).split('.')[0])
+
+                            except KeyError: # no frequency information was found
+                                s = hypers[0] # choose first hypernym (random)
+
+                    if len(lowest_to_highest) >= 3: # at least three levels
+
+                        # discard the highest level as it is tooo broad
+                        # instead, use the second-highest as the superordinate level,
+                        # and choose the highest frequency word as the basic level
+                        lowest_to_highest.pop(-1)
+                        sup = lowest_to_highest.pop(-1)+':N'
+                        basic = max(lowest_to_highest, key=(lambda key: word_to_frequency_map[key]))+':N'
+                        sub = word+':N'
+
+                        try:
+                            hierarchy[sup][basic].append(sub)
+                        except KeyError:
+                            try:
+                                hierarchy[sup][basic] = []
+                                hierarchy[sup][basic].append(sub)
                             except KeyError:
-                                placement_map[sub] = 'subordinate'
-                                proposed_triples.append((lex, word, sub))
+                                hierarchy[sup] = {}
+                                hierarchy[sup][basic] = []
+                                hierarchy[sup][basic].append(sub)
+
                     else:
-                        placement_map[word] = 'subordinate'
-                        for basic in hypers:
-                            try:
-                                if placement_map[basic] == 'basic':
-                                    proposed_triples.append((lex, basic, word))
-                            except KeyError:
-                                placement_map[basic] = 'basic'
-                                proposed_triples.append((lex, basic, word))
+                        pass
 
-                except nltk.corpus.reader.wordnet.WordNetError:
-                    pass # word not recognised by WordNet
+            except nltk.corpus.reader.wordnet.WordNetError:
+                pass # word not recognised by WordNet
 
-        print(proposed_triples)
-        raw_input()
+        # store choices for choosing subordinate items
+        word_to_list_of_feature_bundles_map = {}
+        hierarchy_words = []
+        basic_to_delete = []
+        sup_count = len(hierarchy.keys())
+        basic_count = 0
+        sub_count = 0
+        for sup in hierarchy:
+            word_to_list_of_feature_bundles_map[sup] = []
+            sup_features = [sup + '_f' + str(i) for i in range(n)]
+            hierarchy_words.append(sup)
+            for basic in hierarchy[sup]:
+                hierarchy[sup][basic] = list(set(hierarchy[sup][basic]))
+                if basic in hierarchy_words:
+                    basic_to_delete.append((sup, basic))
+                else:
+                    word_to_list_of_feature_bundles_map[basic] = []
+                    basic_features = [basic + '_f' + str(i) for i in range(n)]
+                    hierarchy_words.append(basic)
+                    for sub in hierarchy[sup][basic]:
+                        sub_features = [sub + '_f' + str(i) for i in range(n)]
+                        if sub in hierarchy_words:
+                            hierarchy[sup][basic].remove(sub)
+                        else:
+                            hierarchy_words.append(sub)
+                            features = sup_features + basic_features + sub_features
+                            word_to_list_of_feature_bundles_map[sub] = []
+                            word_to_list_of_feature_bundles_map[sub].append(features[:])
+                            word_to_list_of_feature_bundles_map[basic].append(features[:])
+                            word_to_list_of_feature_bundles_map[sup].append(features[:])
+                    sub_count += len(hierarchy[sup][basic])
+            basic_count += len(hierarchy[sup].keys()) - len(basic_to_delete)
 
-        for (label, obj) in words_and_objects:
-            feature_choices = list(lexicon.seen_features(obj))
+        for sup, basic in basic_to_delete:
+            del hierarchy[sup][basic]
 
-            if params['prob'] is True:
-                s = np.random.randint(1, len(feature_choices)+1)
-                scene = list(np.random.choice(a=feature_choices, size=s,
-                    replace=False))
-            else:
-                scene = feature_choices[:]
+        hierarchy_words.sort()
 
-            # write out the corpus
+        # rewrite the corpus
+        corpus = input.Corpus(corpus_path)
+        lexicon = input.read_gold_lexicon(lexicon, beta)
+
+        sentence_count = 0
+
+        while sentence_count < maxtime:
+            (words, features) = corpus.next_pair()
+
+            scene = ''
+            for word in words:
+                if word.split(':')[1] == 'N' and word.split(':')[0] in hierarchy_words:
+                    ref = word_to_list_of_feature_bundles_map[word.split(':')[0]]
+                    choice = ref[np.random.randint(len(ref))]
+                    for f in choice:
+                        wsem = ",%s" % (f)
+                        scene = scene + wsem
+                else:
+                    for v,f in lexicon.meaning(word).sorted_features():
+                        prob = float(v)
+                        r = random.random()
+                        if prob > r:
+                            wsem = ",%s" % (f)
+                            scene = scene + wsem
+
             temp_corpus.write("1-----\nSENTENCE: ")
-            temp_corpus.write(label)
+            temp_corpus.write(' '.join(words))
             temp_corpus.write('\n')
             temp_corpus.write("SEM_REP:  ")
-            for ft in scene:
-                temp_corpus.write("," + ft)
+            temp_corpus.write(scene)
             temp_corpus.write('\n')
+
+            sentence_count += 1
 
         temp_corpus.close()
 
@@ -495,13 +587,205 @@ class GeneralisationExperiment(experiment.Experiment):
             'num-sub' : sub_count
         })
 
-        return corpus_path
+        return corpus_path, word_to_list_of_feature_bundles_map, hierarchy
 
-    def generate_naturalistic_training_sets(self, corpus):
-        pass
+    def generate_naturalistic_training_sets(self, corpus, hierarchy):
 
-    def generate_naturalistic_test_sets(self, corpus):
-        pass
+        # test for length
+        sufficient_number_sub_in_basic = []
+        for sup in hierarchy:
+            for basic in hierarchy[sup]:
+                if len(hierarchy[sup][basic]) >= 5: # 3 for training, 2 for test
+                    sufficient_number_sub_in_basic.append(basic)
+
+        training_sets_info = []
+
+        training_sets = {}
+        training_sets['one example'] = []
+        training_sets['three subordinate examples'] = []
+        training_sets['three basic-level examples'] = []
+        training_sets['three superordinate examples'] = []
+
+        info = []
+
+        for sup in hierarchy:
+            try:
+                superordinate_matches = np.array(hierarchy[sup].keys())
+                np.random.shuffle(superordinate_matches)
+                superordinate_matches = list(superordinate_matches)
+                if len(superordinate_matches) >= 4:
+
+                    basic_choices = list(set(sufficient_number_sub_in_basic).intersection(superordinate_matches))
+                    basic = basic_choices.pop()
+                    superordinate_matches.remove(basic)
+
+                    basic_level_matches = np.array(hierarchy[sup][basic])
+                    np.random.shuffle(basic_level_matches)
+                    basic_level_matches = list(basic_level_matches)
+                    sub = basic_level_matches.pop()
+
+                    training_sets['one example'].append(
+                        [experimental_materials.UtteranceScenePair(
+                            utterance='fep',
+                            objects=[sub],
+                            lexicon=self.lexicon,
+                            probabilistic=False
+                        )]
+                    )
+
+                    training_sets['three subordinate examples'].append(
+                        [experimental_materials.UtteranceScenePair(
+                            utterance='fep',
+                            objects=[sub],
+                            lexicon=self.lexicon,
+                            probabilistic=False
+                        )] * 3
+                    )
+
+                    basic_match_1 = basic_level_matches.pop()
+                    basic_match_2 = basic_level_matches.pop()
+
+                    training_sets['three basic-level examples'].append(
+                        [
+                            experimental_materials.UtteranceScenePair(
+                                utterance='fep',
+                                objects=[sub],
+                                lexicon=self.lexicon,
+                                probabilistic=False
+                            ),
+                            experimental_materials.UtteranceScenePair(
+                                utterance='fep',
+                                objects=[basic_match_1],
+                                lexicon=self.lexicon,
+                                probabilistic=False
+                            ),
+                            experimental_materials.UtteranceScenePair(
+                                utterance='fep',
+                                objects=[basic_match_2],
+                                lexicon=self.lexicon,
+                                probabilistic=False
+                            )
+                        ]
+                    )
+
+                    sup_match_1 = superordinate_matches.pop()
+                    sup_match_1_basic_level_matches = np.array(hierarchy[sup][sup_match_1])
+                    np.random.shuffle(sup_match_1_basic_level_matches)
+                    sup_match_1_basic_level_matches = list(sup_match_1_basic_level_matches)
+                    sup_match_1_sub = sup_match_1_basic_level_matches.pop()
+
+                    sup_match_2 = superordinate_matches.pop()
+                    sup_match_2_basic_level_matches = np.array(hierarchy[sup][sup_match_2])
+                    np.random.shuffle(sup_match_2_basic_level_matches)
+                    sup_match_2_basic_level_matches = list(sup_match_2_basic_level_matches)
+                    sup_match_2_sub = sup_match_2_basic_level_matches.pop()
+
+                    training_sets['three superordinate examples'].append(
+                        [
+                            experimental_materials.UtteranceScenePair(
+                                utterance='fep',
+                                objects=[sub],
+                                lexicon=self.lexicon,
+                                probabilistic=False
+                            ),
+                            experimental_materials.UtteranceScenePair(
+                                utterance='fep',
+                                objects=[sup_match_1_sub],
+                                lexicon=self.lexicon,
+                                probabilistic=False
+                            ),
+                            experimental_materials.UtteranceScenePair(
+                                utterance='fep',
+                                objects=[sup_match_2_sub],
+                                lexicon=self.lexicon,
+                                probabilistic=False
+                            )
+                        ]
+                    )
+
+                    training_sets_info.append((sup, sub, basic_level_matches, superordinate_matches))
+
+            except IndexError: # there wasn't enough of something
+                pass
+
+        pprint.pprint(training_sets)
+
+        return training_sets, training_sets_info
+
+    def generate_naturalistic_test_sets(self, corpus, hierarchy, training_sets_info):
+
+        test_sets = []
+        for i, (sup, sub, basic_level_matches, superordinate_matches) in enumerate(training_sets_info):
+            test_sets.append({})
+            test_sets[i]['subordinate matches'] = [
+                experimental_materials.UtteranceScenePair(
+                    utterance='fep',
+                    objects=[sub],
+                    lexicon=self.lexicon,
+                    probabilistic=False
+                )
+            ] * 2
+
+            basic_match_1 = basic_level_matches.pop()
+            basic_match_2 = basic_level_matches.pop()
+
+            sup_match_1 = superordinate_matches.pop()
+            sup_match_1_basic_level_matches = np.array(hierarchy[sup][sup_match_1])
+            np.random.shuffle(sup_match_1_basic_level_matches)
+            sup_match_1_basic_level_matches = list(sup_match_1_basic_level_matches)
+            sup_match_1_sub = sup_match_1_basic_level_matches.pop()
+
+            sup_match_2 = superordinate_matches.pop()
+            sup_match_2_basic_level_matches = np.array(hierarchy[sup][sup_match_2])
+            np.random.shuffle(sup_match_2_basic_level_matches)
+            sup_match_2_basic_level_matches = list(sup_match_2_basic_level_matches)
+            sup_match_2_sub = sup_match_2_basic_level_matches.pop()
+
+            test_sets[i]['basic-level matches'] = [
+                experimental_materials.UtteranceScenePair(
+                    utterance='fep',
+                    objects=[basic_match_1],
+                    lexicon=self.lexicon,
+                    probabilistic=False
+                ),
+                experimental_materials.UtteranceScenePair(
+                    utterance='fep',
+                    objects=[basic_match_2],
+                    lexicon=self.lexicon,
+                    probabilistic=False
+                )
+            ]
+
+            sup_match_1 = superordinate_matches.pop()
+            sup_match_1_basic_level_matches = np.array(hierarchy[sup][sup_match_1])
+            np.random.shuffle(sup_match_1_basic_level_matches)
+            sup_match_1_basic_level_matches = list(sup_match_1_basic_level_matches)
+            sup_match_1_sub = sup_match_1_basic_level_matches.pop()
+
+            sup_match_2 = superordinate_matches.pop()
+            sup_match_2_basic_level_matches = np.array(hierarchy[sup][sup_match_2])
+            np.random.shuffle(sup_match_2_basic_level_matches)
+            sup_match_2_basic_level_matches = list(sup_match_2_basic_level_matches)
+            sup_match_2_sub = sup_match_2_basic_level_matches.pop()
+
+            test_sets[i]['superordinate matches'] = [
+                experimental_materials.UtteranceScenePair(
+                    utterance='fep',
+                    objects=[sup_match_1_sub],
+                    lexicon=self.lexicon,
+                    probabilistic=False
+                ),
+                experimental_materials.UtteranceScenePair(
+                    utterance='fep',
+                    objects=[sup_match_2_sub],
+                    lexicon=self.lexicon,
+                    probabilistic=False
+                )
+            ]
+
+        pprint.pprint(test_sets)
+
+        return test_sets
 
     def create_lexicon_from_etree(self, tree, beta):
         output_filename = 'temp_xt_lexicon_'
@@ -579,61 +863,68 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
         beta = learner._beta
         return evaluate.calculate_similarity(beta, one, two, CONST.COS)
 
-    total = np.float128(0)
     lexicon = learner._learned_lexicon
 
-    for word in learner._wordsp.all_words(0):
+    if method == 'no-word-averaging':
 
-        if method == 'cosine' or method == 'cosine-norm':
+        total = cos(target_scene_meaning, lexicon.meaning(target_word))
 
-            cos_y_w = cos(target_scene_meaning, lexicon.meaning(word))
-            cos_target_w = cos(lexicon.meaning(target_word), lexicon.meaning(word))
+    else:
 
-            p_w = learner._wordsp.frequency(word) / np.sum([learner._wordsp.frequency(w) for w in learner._wordsp.all_words(0)])
+        total = np.float128(0)
 
-            term = cos_y_w * cos_target_w * p_w
+        for word in learner._wordsp.all_words(0):
 
-            #print('\t', word, ':', '\tcos_y_w =', cos_y_w, '\tcos_target_w =', cos_target_w, '\tp(w) =', p_w,
-                    #'\tterm:', cos_y_w * cos_target_w * p_w)
+            if method == 'cosine' or method == 'cosine-norm':
 
-            if method == 'cosine-norm':
+                cos_y_w = cos(target_scene_meaning, lexicon.meaning(word))
+                cos_target_w = cos(lexicon.meaning(target_word), lexicon.meaning(word))
 
-                denom = np.sum([cos(lexicon.meaning(w), lexicon.meaning(word)) for w in learner._wordsp.all_words(0)])
-                term /= denom
-                term /= denom
+                p_w = learner._wordsp.frequency(word) / np.sum([learner._wordsp.frequency(w) for w in learner._wordsp.all_words(0)])
 
-            total += term
+                term = cos_y_w * cos_target_w * p_w
 
-        elif method == 'gaussian':
+                #print('\t', word, ':', '\tcos_y_w =', cos_y_w, '\tcos_target_w =', cos_target_w, '\tp(w) =', p_w,
+                        #'\tterm:', cos_y_w * cos_target_w * p_w)
 
-            target_word_meaning = lexicon.meaning(target_word)
-            y_factor = 1
-            target_factor = 1
+                if method == 'cosine-norm':
 
-            for feature in target_scene:
+                    denom = np.sum([cos(lexicon.meaning(w), lexicon.meaning(word)) for w in learner._wordsp.all_words(0)])
+                    term /= denom
+                    term /= denom
 
-                mean = lexicon.prob(word, feature)
-                dist = scipy.stats.norm(loc=mean, scale=std)
+                total += term
 
-                y_factor *= dist.pdf(target_scene_meaning.prob(feature))
+            elif method == 'gaussian':
 
-            for feature in [f for f in lexicon.seen_features(target_word) if lexicon.prob(target_word, f) != lexicon.meaning(target_word).unseen_prob()]:
+                target_word_meaning = lexicon.meaning(target_word)
+                y_factor = 1
+                target_factor = 1
 
-                mean = lexicon.prob(word, feature)
-                dist = scipy.stats.norm(loc=mean, scale=std)
+                for feature in target_scene_meaning.seen_features():
 
-                target_factor *= dist.pdf(target_word_meaning.prob(feature))
+                    mean = lexicon.prob(word, feature)
+                    dist = scipy.stats.norm(loc=mean, scale=std)
 
-            word_freq = learner._wordsp.frequency(word)
+                    y_factor *= dist.pdf(target_scene_meaning.prob(feature))
 
-            total += y_factor * target_factor * word_freq
+                for feature in [f for f in lexicon.seen_features(target_word) if lexicon.prob(target_word, f) != lexicon.meaning(target_word).unseen_prob()]:
 
-            total /= np.sum([learner._wordsp.frequency(w) for w in learner._wordsp.all_words(0)])
+                    mean = lexicon.prob(word, feature)
+                    dist = scipy.stats.norm(loc=mean, scale=std)
 
-            #print('\t', word, ':', '\tfirst factor =', y_factor, '\tsecond factor =', target_factor, '\tword freq =', word_freq)
+                    target_factor *= dist.pdf(target_word_meaning.prob(feature))
 
-        else:
-            raise NotImplementedError
+                word_freq = learner._wordsp.frequency(word)
+
+                total += y_factor * target_factor * word_freq
+
+                total /= np.sum([learner._wordsp.frequency(w) for w in learner._wordsp.all_words(0)])
+
+                #print('\t', word, ':', '\tfirst factor =', y_factor, '\tsecond factor =', target_factor, '\tword freq =', word_freq)
+
+            else:
+                raise NotImplementedError
 
     return total
 
