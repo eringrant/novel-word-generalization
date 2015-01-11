@@ -2,6 +2,10 @@
 results_to_discard
 results_to_discard/*
 temp*
+tmp*
+time_props*
+word_props*
+*.png
 
 ## Core latex/pdflatex auxiliary files:
 *.aux

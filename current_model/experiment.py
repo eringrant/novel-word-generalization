@@ -124,7 +124,6 @@ class Experiment(object):
 
     def run_experiment(self, params):
         paramlist = self.generate_conditions(params)
-
         for pl in paramlist:
             if ('iterations' in pl) and ('repetitions' in pl):
                 pass
@@ -136,17 +135,35 @@ class Experiment(object):
         for p in paramlist:
             explist.extend(zip( [self]*p['repetitions'], [p]*p['repetitions'], xrange(p['repetitions']) ))
 
-        if self.options.ncores == 1:
-            outputs = []
-            for e in explist:
-                output = mp_runrep(e)
-                outputs.append(output)
+        setup_params = {}
+        params = params[0]
+        for key in params:
+            if not isinstance(params[key], list):
+                setup_params[key] = params[key]
+            else:
+                try:
+                    if len(params[key]) == 1:
+                        setup_params[key] = params[key][0]
+                except TypeError:
+                    pass
+        self.success = self.pre_setup(setup_params)
+
+        if self.success is True:
+
+            if self.options.ncores == 1:
+                outputs = []
+                for e in explist:
+                    output = mp_runrep(e)
+                    outputs.append(output)
+
+            else:
+                pool = Pool(processes=self.options.ncores, maxtasksperchild=2)
+                outputs = pool.map(mp_runrep, explist)
+
+            return outputs
 
         else:
-            pool = Pool(processes=self.options.ncores, maxtasksperchild=2)
-            outputs = pool.map(mp_runrep, explist)
-
-        return outputs
+            raise Exception
 
     def run_rep(self, params, rep):
         self.success = self.setup(params, rep)
@@ -154,6 +171,7 @@ class Experiment(object):
         results = []
 
         if self.success is True:
+
             if params['iterations'] == 1:
                 iter_dict = params.copy()
                 return_dict = self.iterate(params, rep, 1)
@@ -189,9 +207,13 @@ class Experiment(object):
 
         return results
 
+    def pre_setup(self, params):
+        """ Implemented by the subclass. """
+        return True
+
     def setup(self, params, rep):
         """ Implemented by the subclass. """
-        pass
+        return True
 
     def iterate(self, params, rep, n):
         """ Implemented by the subclass. """

@@ -73,9 +73,10 @@ class Learner:
         self._alpha = config.param_float("alpha")
         if self._alpha == 0:
             print "Config Warning [alpha] No alpha smoothing"
-        if self._alpha < 0:
-            print "Config Error [alpha] Must be positive : "+str(self._alpha)
-            sys.exit(2)
+        elif self._alpha < 0:
+            #print "Config [alpha] Must be positive : "+str(self._alpha)
+            #sys.exit(2)
+            print "Using frequency-dependent alpha."
 
         self._epsilon = config.param_float("epsilon")
         if self._epsilon <= 0:
@@ -173,6 +174,7 @@ class Learner:
         self._time = 0
         self._vocab = set()
         self._features = set()
+        self._feature_frequencies = {}
         self._acquisition_scores = {}
         self._last_time = {}
 
@@ -194,6 +196,16 @@ class Learner:
         # Dictionary to avoid recalculating wordnet categories for words that
         # have already been seen
         #self._wordnet_categories = {}
+
+    def alpha(self, feature):
+        if self._alpha >= 0:
+            return self._alpha
+        else:
+            alpha =  self._feature_frequencies[feature]
+            #if feature.endswith('f0'):
+                #print feature, alpha
+            return alpha
+
     def init_words_graph(self, hubs_num, sim_threshold, hub_type, coupling, lambda0, a0, miu0, sigma0, sampling_method):
         self._words_graph = wgraph.WordsGraph(hubs_num, sim_threshold, hub_type, coupling, lambda0, a0, miu0, sigma0, sampling_method)
 
@@ -387,8 +399,6 @@ class Learner:
             category_probs = self.calculate_category_probs(words, features,
                                                           category_learner)
 
-
-
         # Begin calculating the new alignment of a word given a feature, as:
         # alignment(w|f) = (p(f|w) + ep) / (sum(w' in words)p(f|w') + alpha*ep)
         for feature in features:
@@ -402,8 +412,8 @@ class Learner:
                 if category_flag:
                     category_denom += category_probs[word][feature]
 
-            denom +=  (self._alpha * self._epsilon)
-            category_denom +=  (self._alpha * self._epsilon)
+            denom +=  (self.alpha(feature) * self._epsilon)
+            category_denom +=  (self.alpha(feature) * self._epsilon)
 
             # Calculate alignment of each word
             for word in words:
@@ -439,6 +449,9 @@ class Learner:
         # for each word, update p(f|w) distribution
         for word in words:
             self.update_meaning_prob(word)
+
+            # Add features to the list of seen features for each word
+            self._learned_lexicon.add_seen_features(word, features)
 
             if self._novelty_flag or self._grow_graph_flag:
                 # Update the last time this word has been seen
@@ -518,6 +531,11 @@ class Learner:
         # Add current features to the set of all seen features
         for feature in features:
             self._features.add(feature)
+            try:
+                self._feature_frequencies[feature] += 1
+            except KeyError:
+                self._feature_frequencies[feature] = 0
+                self._feature_frequencies[feature] += 1
 
         if self._dummy:
             words.append("dummy")

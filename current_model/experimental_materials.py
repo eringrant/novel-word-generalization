@@ -33,11 +33,12 @@ class Hierarchy(object):
 
 class UtteranceScenePair(object):
 
-    def __init__(self, utterance, objects, lexicon, num_features=None, probabilistic=True,
+    def __init__(self, utterance, scene=None, objects=None, lexicon=None, num_features=None, probabilistic=True,
             feature_restriction=None):
         """
         Initialise a scene representation.
 
+        @param objects A list of features that represent a scene.
         @param objects A list of words from which to generate the test scene.
         @param lexicon A Lexicon instance that gives gold-standard lexicon
         representations.
@@ -61,46 +62,55 @@ class UtteranceScenePair(object):
         if isinstance(lexicon, str):
             lexicon = input.read_gold_lexicon(lexicon, 10000)
 
-        for obj in objects:
-            values_and_features = lexicon.meaning(obj).sorted_features()
+        if scene is not None:
+            assert isinstance(scene, list)
+            self._scene.extend(scene)
 
-            if feature_restriction is not None:
-                values_and_features = [(value, feature) for (value, feature) \
-                    in values_and_features if feature in feature_restriction]
+        elif objects is not None:
+            assert lexicon is not None
+            for obj in objects:
+                values_and_features = lexicon.meaning(obj).sorted_features()
 
-            if probabilistic is True:
+                if feature_restriction is not None:
+                    values_and_features = [(value, feature) for (value, feature) \
+                        in values_and_features if feature in feature_restriction]
 
-                # normalise the generation probabilities
-                probs = np.array([np.float128(value) for (value, feature) in values_and_features])
-                probs /= probs.sum()
+                if probabilistic is True:
 
-                try:
-                    features = list(np.random.choice(
-                        a=[feature for (value, feature) in values_and_features],
-                        size=(num_features if num_features is not None else len(a)),
-                        replace=False,  # sample features without replacement
-                        p=probs
-                    ))
-                except ValueError:
-                    print('There were not enough features to sample from.')
-                    raise ValueError
+                    # normalise the generation probabilities
+                    probs = np.array([np.float128(value) for (value, feature) in values_and_features])
+                    probs /= probs.sum()
+
+                    try:
+                        features = list(np.random.choice(
+                            a=[feature for (value, feature) in values_and_features],
+                            size=(num_features if num_features is not None else len(a)),
+                            replace=False,  # sample features without replacement
+                            p=probs
+                        ))
+                    except ValueError:
+                        print('There were not enough features to sample from.')
+                        raise ValueError
+
+                else:
+                    # grab the top n familiar features
+                    if num_features is not None:
+                        features = [f for v, f in values_and_features][:num_features]
+                    else:
+                        features = [f for v, f in values_and_features]
+
+                    if len(features) < num_features:
+                        print('There were not enough features to sample from.')
+                        raise ValueError
+
+                self._referent_to_features_map[obj] = features
+                self._scene += features
+
+                # remove duplicates
+                self._scene = list(set(self._scene))
 
             else:
-                # grab the top n familiar features
-                if num_features is not None:
-                    features = [f for v, f in values_and_features][:num_features]
-                else:
-                    features = [f for v, f in values_and_features]
-
-                if len(features) < num_features:
-                    print('There were not enough features to sample from.')
-                    raise ValueError
-
-            self._referent_to_features_map[obj] = features
-            self._scene += features
-
-            # remove duplicates
-            self._scene = list(set(self._scene))
+                raise Exception
 
     def __repr__(self):
         return 'Utterance: ' + str(self._utterance) + '; Objects in scene: ' + str(self._objects) + '; Scene: ' + str(self._scene)
@@ -131,6 +141,8 @@ def write_config_file(
     beta,
     L,
     power,
+    epsilon,
+    alpha,
     maxtime
     ):
 
@@ -143,10 +155,10 @@ def write_config_file(
     f.write('lambda=' + str(L) + '\n')
     f.write('power=' + str(power) + '\n')
 
-    f.write("""epsilon=0.01
-alpha=20
+    f.write('alpha=' + str(alpha) + '\n')
+    f.write('epsilon=' + str(epsilon) + '\n')
 
-[Similarity]
+    f.write("""[Similarity]
 simtype=COS
 theta=0.7
 

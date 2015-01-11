@@ -1,16 +1,14 @@
 #!/usr/bin/python
 from __future__ import print_function, division
 
-# for compatibility over ssh
-import matplotlib
-matplotlib.use('Agg')
-
 import copy
 import csv
 from datetime import datetime
 import heapq
 import itertools
+import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import mpmath; mpmath.mp.dps = 50
 import nltk
 from nltk.corpus.reader import CorpusReader
 import numpy as np
@@ -32,6 +30,7 @@ import wmmapping
 import experiment
 import experimental_materials
 
+verbose = True
 
 class GeneralisationExperiment(experiment.Experiment):
 
@@ -85,11 +84,11 @@ class GeneralisationExperiment(experiment.Experiment):
         if params['corpus'] == 'generate-simple':
 
             tree = ET.parse(params['hierarchy'])
-            self.lexicon = self.create_lexicon_from_etree(tree, beta)
+            self.gold_standard_lexicon = self.create_lexicon_from_etree(tree, beta)
 
             # create the learner
             stopwords = []
-            self.learner = learn.Learner(self.lexicon, learner_config, stopwords)
+            self.learner = learn.Learner(self.gold_standard_lexicon, learner_config, stopwords)
 
             self.corpus = self.generate_simple_corpus(tree, self.learner._gold_lexicon, params)
             self.training_sets = self.generate_simple_training_sets()
@@ -97,7 +96,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
         elif params['corpus'] == 'generate-naturalistic':
 
-            self.corpus, word_to_list_of_feature_bundles_map, hierarchy = self.generate_naturalistic_corpus(params['corpus-path'], params['lexname'], params['beta'], params['maxtime'], params['num-features'], params)
+            self.corpus, sup, basic, sub = self.generate_naturalistic_corpus(params['corpus-path'], params['lexname'], params['beta'], params['maxtime'], params['num-features'], params)
 
             # create the learner
             stopwords = []
@@ -113,24 +112,11 @@ class GeneralisationExperiment(experiment.Experiment):
                 self.learner = pickle.load(learner_dump)
                 learner_dump.close()
 
-            for sup in hierarchy:
-                for basic in hierarchy[sup]:
-                    for sub in hierarchy[sup][basic]:
-                        meaning = wmmapping.Meaning(params['beta'])
-                        self.learner._gold_lexicon._word_meanings[sub] = meaning
-                        print(sup, basic, sub)
-                        try:
-                            assert len(word_to_list_of_feature_bundles_map[sub]) == 1
-                        except AssertionError:
-                            hierarchy[sup][basic].remove(sub)
-                        features = word_to_list_of_feature_bundles_map[sub][0]
-                        num = len(features)
-                        for f in features:
-                            self.learner._gold_lexicon.set_prob(sub, f, 1/num)
+            self.gold_standard_lexicon = self.learner._gold_lexicon
+            self.learner = None
 
-            self.lexicon = self.learner._gold_lexicon
-            self.training_sets, training_sets_info = self.generate_naturalistic_training_sets(self.corpus, hierarchy)
-            self.test_sets = self.generate_naturalistic_test_sets(self.corpus, hierarchy, training_sets_info)
+            self.training_sets, fep_features = self.generate_naturalistic_training_sets(sup, basic, sub)
+            self.test_sets = self.generate_naturalistic_test_sets(sup, basic, sub, fep_features)
 
         else:
             raise NotImplementedError
@@ -139,7 +125,6 @@ class GeneralisationExperiment(experiment.Experiment):
 
     def iterate(self, params, rep, n):
 
-        print('iteration')
         results = {}
 
         for condition in self.training_sets:
@@ -147,11 +132,27 @@ class GeneralisationExperiment(experiment.Experiment):
 
             for i, training_set in enumerate(self.training_sets[condition]):
 
+                learner_dump = open(params['learner-path'], "rb")
+                self.learner = pickle.load(learner_dump)
+                learner_dump.close()
+
+                if verbose is True:
+                    print('condition:', condition, 'training set:')
+                    pprint.pprint(training_set)
+                    print('\n')
+
                 for trial in training_set:
                     self.learner.process_pair(trial.utterance(), trial.scene(),
                                               params['path'], False)
 
+                    if verbose is True:
+                        print('trial fep meaning:')
+                        print([(feature, self.learner._learned_lexicon.prob(trial.utterance()[0], feature)) for feature in self.learner._learned_lexicon.seen_features(trial.utterance()[0]) if feature in trial.scene()])
+                        print('\n')
+
                 for cond in self.test_sets[i]:
+
+                    take_average = []
                     for j in range(len(self.test_sets[i][cond])):
 
                         test_scene = self.test_sets[i][cond][j]
@@ -169,28 +170,38 @@ class GeneralisationExperiment(experiment.Experiment):
                             for feature in test_scene.scene():
                                 meaning._meaning_probs[feature] = \
                                     d[feature]/sum([v for (f,v) in d.items()])
+                                meaning._seen_features.append(feature)
                         else:
                             for feature in test_scene.scene():
                                 meaning._meaning_probs[feature] = \
                                     1/len(test_scene.scene())
+                                meaning._seen_features.append(feature)
 
                         gen_prob = calculate_generalisation_probability(
                             self.learner, word, meaning,
                             method=params['calculation-type'],
-                            std=params['std'])
-                        try:
-                            results[condition][cond].append(gen_prob)
-                        except KeyError:
-                            results[condition][cond] = []
-                            results[condition][cond].append(gen_prob)
+                            std=params['std'],
+                            delta=params['delta-interval'],
+                            include_target=params['include-fep-in-loop'],
+                            target_word_as_distribution=params['use-distribution-fep']
+                            )
+                        take_average.append(gen_prob)
+
+                    gen_prob = np.mean(take_average)
+
+                    try:
+                        results[condition][cond].append(gen_prob)
+                    except KeyError:
+                        results[condition][cond] = []
+                        results[condition][cond].append(gen_prob)
 
                 # reset the learner after each test set
-                self.learner.reset()
+                self.learner = None
 
         savename = ','.join([key + ':' + str(params[key]) for key in params['graph-annotation']])
         savename += '.png'
-        annotation = pprint.pformat(dict((key, value) for (key, value) in params.items() if key in params['graph-annotation']))
-        bar_chart(results, savename=savename, annotation=annotation)
+        annotation = str(dict((key, value) for (key, value) in params.items() if key in params['graph-annotation']))
+        bar_chart(results, savename=savename, annotation=annotation, normalise_over_test_scene=params['normalise-over-test-scene'])
 
         return results
 
@@ -292,7 +303,7 @@ class GeneralisationExperiment(experiment.Experiment):
             [experimental_materials.UtteranceScenePair(
                 utterance='fep',
                 objects=[obj],
-                lexicon=self.lexicon,
+                lexicon=self.gold_standard_lexicon,
                 probabilistic=False
             )] for obj in ['green-pepper', 'tow-truck', 'dalmatian']
         ]
@@ -301,7 +312,7 @@ class GeneralisationExperiment(experiment.Experiment):
             [experimental_materials.UtteranceScenePair(
                 utterance='fep',
                 objects=[obj],
-                lexicon=self.lexicon,
+                lexicon=self.gold_standard_lexicon,
                 probabilistic=False
             )] * 3 for obj in ['green-pepper', 'tow-truck', 'dalmatian']
         ]
@@ -310,19 +321,19 @@ class GeneralisationExperiment(experiment.Experiment):
             [experimental_materials.UtteranceScenePair(
                 utterance='fep',
                 objects=[obj],
-                lexicon=self.lexicon,
+                lexicon=self.gold_standard_lexicon,
                 probabilistic=False
             ) for obj in ['green-pepper', 'yellow-pepper', 'red-pepper']],
             [experimental_materials.UtteranceScenePair(
                 utterance='fep',
                 objects=[obj],
-                lexicon=self.lexicon,
+                lexicon=self.gold_standard_lexicon,
                 probabilistic=False
             ) for obj in ['tow-truck', 'fire-truck', 'semitrailer']],
             [experimental_materials.UtteranceScenePair(
                 utterance='fep',
                 objects=[obj],
-                lexicon=self.lexicon,
+                lexicon=self.gold_standard_lexicon,
                 probabilistic=False
             ) for obj in ['dalmatian', 'poodle', 'pug']]
         ]
@@ -331,19 +342,19 @@ class GeneralisationExperiment(experiment.Experiment):
             [experimental_materials.UtteranceScenePair(
                 utterance='fep',
                 objects=[obj],
-                lexicon=self.lexicon,
+                lexicon=self.gold_standard_lexicon,
                 probabilistic=False
             ) for obj in ['green-pepper', 'potato', 'zucchini']],
             [experimental_materials.UtteranceScenePair(
                 utterance='fep',
                 objects=[obj],
-                lexicon=self.lexicon,
+                lexicon=self.gold_standard_lexicon,
                 probabilistic=False
             ) for obj in ['tow-truck', 'airliner', 'sailboat']],
             [experimental_materials.UtteranceScenePair(
                 utterance='fep',
                 objects=[obj],
-                lexicon=self.lexicon,
+                lexicon=self.gold_standard_lexicon,
                 probabilistic=False
             ) for obj in ['dalmatian', 'tabby', 'salmon']]
         ]
@@ -401,7 +412,7 @@ class GeneralisationExperiment(experiment.Experiment):
                     [experimental_materials.UtteranceScenePair(
                         utterance='fep',
                         objects=[item],
-                        lexicon=self.lexicon,
+                        lexicon=self.gold_standard_lexicon,
                         probabilistic=False
                     ) for item in trial[cond]]
 
@@ -410,9 +421,9 @@ class GeneralisationExperiment(experiment.Experiment):
         return test_sets
 
     def generate_naturalistic_corpus(self, corpus_path, lexicon, beta, maxtime, n, params):
-        temp_corpus = 'temp_xt_corpus_'
-        temp_corpus += datetime.now().isoformat() + '.dev'
-        temp_corpus = open(temp_corpus, 'w')
+        temp_corpus_path = 'temp_xt_corpus_'
+        temp_corpus_path += datetime.now().isoformat() + '.dev'
+        temp_corpus = open(temp_corpus_path, 'w')
 
         corpus = input.Corpus(corpus_path)
 
@@ -510,6 +521,11 @@ class GeneralisationExperiment(experiment.Experiment):
 
         # store choices for choosing subordinate items
         word_to_list_of_feature_bundles_map = {}
+
+        sup_fs = []
+        basic_fs = []
+        sub_fs = []
+
         hierarchy_words = []
         basic_to_delete = []
         sup_count = len(hierarchy.keys())
@@ -518,6 +534,7 @@ class GeneralisationExperiment(experiment.Experiment):
         for sup in hierarchy:
             word_to_list_of_feature_bundles_map[sup] = []
             sup_features = [sup + '_f' + str(i) for i in range(n)]
+            sup_fs.extend(sup_features)
             hierarchy_words.append(sup)
             for basic in hierarchy[sup]:
                 hierarchy[sup][basic] = list(set(hierarchy[sup][basic]))
@@ -526,9 +543,11 @@ class GeneralisationExperiment(experiment.Experiment):
                 else:
                     word_to_list_of_feature_bundles_map[basic] = []
                     basic_features = [basic + '_f' + str(i) for i in range(n)]
+                    basic_fs.extend(basic_features)
                     hierarchy_words.append(basic)
                     for sub in hierarchy[sup][basic]:
                         sub_features = [sub + '_f' + str(i) for i in range(n)]
+                        sub_fs.extend(sub_features)
                         if sub in hierarchy_words:
                             hierarchy[sup][basic].remove(sub)
                         else:
@@ -588,20 +607,22 @@ class GeneralisationExperiment(experiment.Experiment):
             'num-sub' : sub_count
         })
 
-        return corpus_path, word_to_list_of_feature_bundles_map, hierarchy
+        np.random.shuffle(sup_fs)
+        np.random.shuffle(basic_fs)
+        #np.random.shuffle(sub_fs)
 
-    def generate_naturalistic_training_sets(self, corpus, hierarchy):
+        sup = list(sup_fs)
+        basic = list(basic_fs)
 
-        # test for length
-        sufficient_number_sub_in_basic = []
-        sufficient_number_sub_in_sup = []
-        for sup in hierarchy:
-            for basic in hierarchy[sup]:
-                if len(hierarchy[sup][basic]) >= 5: # 3 for training, 2 for test
-                    sufficient_number_sub_in_basic.append(basic)
-                    sufficient_number_sub_in_sup.append(sup)
+        #sub = list(sub_fs)
+        # assumption: all subordinate features are novel
+        sub = ['sub_f' + str(i) for i in range(100)]
 
-        training_sets_info = []
+        return temp_corpus_path, sup, basic, sub
+
+    def generate_naturalistic_training_sets(self, sup, basic, sub):
+
+        fep_features = []
 
         training_sets = {}
         training_sets['one example'] = []
@@ -609,193 +630,156 @@ class GeneralisationExperiment(experiment.Experiment):
         training_sets['three basic-level examples'] = []
         training_sets['three superordinate examples'] = []
 
-        info = []
+        for i in range(5):
 
-        for sup in hierarchy:
-            if sup in sufficient_number_sub_in_sup:
-                try:
-                    superordinate_matches = np.array(list(set(sufficient_number_sub_in_basic).intersection(np.array(hierarchy[sup].keys()))))
-                    if len(superordinate_matches) >= 5:
-                        print(superordinate_matches)
-                        np.random.shuffle(superordinate_matches)
-                        superordinate_matches = list(superordinate_matches)
-                        basic = superordinate_matches.pop()
+            sup_1 = [sup.pop()]
+            basic_1 = [basic.pop()]
+            sub_1 = [sub.pop()]
 
-                        basic_level_matches = np.array(hierarchy[sup][basic])
-                        np.random.shuffle(basic_level_matches)
-                        basic_level_matches = list(basic_level_matches)
-                        sub = basic_level_matches.pop()
+            fep_sup = sup_1[0]
+            fep_basic = basic_1[0]
+            fep_sub = sub_1[0]
 
-                        training_sets['one example'].append(
-                            [experimental_materials.UtteranceScenePair(
-                                utterance='fep',
-                                objects=[sub],
-                                lexicon=self.lexicon,
-                                probabilistic=False
-                            )]
-                        )
+            training_sets['one example'].append(
+                [experimental_materials.UtteranceScenePair(
+                    utterance='fep',
+                    scene=sup_1+basic_1+sub_1,
+                    lexicon=self.gold_standard_lexicon,
+                    probabilistic=False
+                )]
+            )
 
-                        training_sets['three subordinate examples'].append(
-                            [experimental_materials.UtteranceScenePair(
-                                utterance='fep',
-                                objects=[sub],
-                                lexicon=self.lexicon,
-                                probabilistic=False
-                            )] * 3
-                        )
+            training_sets['three subordinate examples'].append(
+                [experimental_materials.UtteranceScenePair(
+                    utterance='fep',
+                    scene=sup_1+basic_1+sub_1,
+                    lexicon=self.gold_standard_lexicon,
+                    probabilistic=False
+                )] * 3
+            )
 
-                        basic_match_1 = basic_level_matches.pop()
-                        basic_match_2 = basic_level_matches.pop()
+            sub_1 = [sub.pop()]
+            sub_2 = [sub.pop()]
+            sub_3 = [sub.pop()]
 
-                        training_sets['three basic-level examples'].append(
-                            [
-                                experimental_materials.UtteranceScenePair(
-                                    utterance='fep',
-                                    objects=[sub],
-                                    lexicon=self.lexicon,
-                                    probabilistic=False
-                                ),
-                                experimental_materials.UtteranceScenePair(
-                                    utterance='fep',
-                                    objects=[basic_match_1],
-                                    lexicon=self.lexicon,
-                                    probabilistic=False
-                                ),
-                                experimental_materials.UtteranceScenePair(
-                                    utterance='fep',
-                                    objects=[basic_match_2],
-                                    lexicon=self.lexicon,
-                                    probabilistic=False
-                                )
-                            ]
-                        )
+            training_sets['three basic-level examples'].append(
+                [
+                    experimental_materials.UtteranceScenePair(
+                        utterance='fep',
+                        scene=sup_1+basic_1+sub_1,
+                        lexicon=self.gold_standard_lexicon,
+                        probabilistic=False
+                    ),
+                    experimental_materials.UtteranceScenePair(
+                        utterance='fep',
+                        scene=sup_1+basic_1+sub_2,
+                        lexicon=self.gold_standard_lexicon,
+                        probabilistic=False
+                    ),
+                    experimental_materials.UtteranceScenePair(
+                        utterance='fep',
+                        scene=sup_1+basic_1+sub_3,
+                        lexicon=self.gold_standard_lexicon,
+                        probabilistic=False
+                    )
+                ]
+            )
 
-                        sup_match_1 = superordinate_matches.pop()
-                        sup_match_1_basic_level_matches = np.array(hierarchy[sup][sup_match_1])
-                        np.random.shuffle(sup_match_1_basic_level_matches)
-                        sup_match_1_basic_level_matches = list(sup_match_1_basic_level_matches)
-                        sup_match_1_sub = sup_match_1_basic_level_matches.pop()
+            basic_1 = [basic.pop()]
+            basic_2 = [basic.pop()]
+            basic_3 = [basic.pop()]
+            sub_1 = [sub.pop()]
+            sub_2 = [sub.pop()]
+            sub_3 = [sub.pop()]
 
-                        sup_match_2 = superordinate_matches.pop()
-                        sup_match_2_basic_level_matches = np.array(hierarchy[sup][sup_match_2])
-                        np.random.shuffle(sup_match_2_basic_level_matches)
-                        sup_match_2_basic_level_matches = list(sup_match_2_basic_level_matches)
-                        sup_match_2_sub = sup_match_2_basic_level_matches.pop()
+            training_sets['three superordinate examples'].append(
+                [
+                    experimental_materials.UtteranceScenePair(
+                        utterance='fep',
+                        scene=sup_1+basic_1+sub_1,
+                        lexicon=self.gold_standard_lexicon,
+                        probabilistic=False
+                    ),
+                    experimental_materials.UtteranceScenePair(
+                        utterance='fep',
+                        scene=sup_1+basic_2+sub_2,
+                        lexicon=self.gold_standard_lexicon,
+                        probabilistic=False
+                    ),
+                    experimental_materials.UtteranceScenePair(
+                        utterance='fep',
+                        scene=sup_1+basic_3+sub_3,
+                        lexicon=self.gold_standard_lexicon,
+                        probabilistic=False
+                    )
+                ]
+            )
 
-                        training_sets['three superordinate examples'].append(
-                            [
-                                experimental_materials.UtteranceScenePair(
-                                    utterance='fep',
-                                    objects=[sub],
-                                    lexicon=self.lexicon,
-                                    probabilistic=False
-                                ),
-                                experimental_materials.UtteranceScenePair(
-                                    utterance='fep',
-                                    objects=[sup_match_1_sub],
-                                    lexicon=self.lexicon,
-                                    probabilistic=False
-                                ),
-                                experimental_materials.UtteranceScenePair(
-                                    utterance='fep',
-                                    objects=[sup_match_2_sub],
-                                    lexicon=self.lexicon,
-                                    probabilistic=False
-                                )
-                            ]
-                        )
+            fep_features.append((fep_sup, fep_basic, fep_sub))
 
-                        training_sets_info.append((sup, sub, basic_level_matches, superordinate_matches))
+        #pprint.pprint(training_sets)
 
-                except IndexError: # there wasn't enough of something
-                    pass
+        return training_sets, fep_features
 
-        pprint.pprint(training_sets)
-
-        return training_sets, training_sets_info
-
-    def generate_naturalistic_test_sets(self, corpus, hierarchy, training_sets_info):
+    def generate_naturalistic_test_sets(self, sup, basic, sub, fep_features):
 
         test_sets = []
-        for i, (sup, sub, basic_level_matches, superordinate_matches) in enumerate(training_sets_info):
+
+        for i in range(5):
             test_sets.append({})
 
-            test_sets[i]['subordinate matches'] = []
-            test_sets[i]['subordinate matches'] = []
-            test_sets[i]['three basic-level examples'] = []
-            test_sets[i]['three superordinate examples'] = []
+            sup_1 = [fep_features[i][0]]
+            basic_1 = [fep_features[i][1]]
+            sub_1 = [fep_features[i][2]]
 
             test_sets[i]['subordinate matches'] = [
                 experimental_materials.UtteranceScenePair(
                     utterance='fep',
-                    objects=[sub],
-                    lexicon=self.lexicon,
+                    scene=sup_1+basic_1+sub_1,
+                    lexicon=self.gold_standard_lexicon,
                     probabilistic=False
                 )
             ] * 2
 
-            basic_match_1 = basic_level_matches.pop()
-            basic_match_2 = basic_level_matches.pop()
+            sub_1 = [sub.pop()]
+            sub_2 = [sub.pop()]
 
             test_sets[i]['basic-level matches'] = [
                 experimental_materials.UtteranceScenePair(
                     utterance='fep',
-                    objects=[basic_match_1],
-                    lexicon=self.lexicon,
+                    scene=sup_1+basic_1+sub_1,
+                    lexicon=self.gold_standard_lexicon,
                     probabilistic=False
                 ),
                 experimental_materials.UtteranceScenePair(
                     utterance='fep',
-                    objects=[basic_match_2],
-                    lexicon=self.lexicon,
+                    scene=sup_1+basic_1+sub_2,
+                    lexicon=self.gold_standard_lexicon,
                     probabilistic=False
                 )
             ]
 
-            sup_match_1 = superordinate_matches.pop()
-
-            found = False
-            while not found:
-                print('loop3')
-                try:
-                    sup_match_1_basic_level_matches = np.array(hierarchy[sup][sup_match_1])
-                    np.random.shuffle(sup_match_1_basic_level_matches)
-                    sup_match_1_basic_level_matches = list(sup_match_1_basic_level_matches)
-                    sup_match_1_sub = sup_match_1_basic_level_matches.pop()
-                    found = True
-                except IndexError:
-                    pass
-
-            sup_match_2 = superordinate_matches.pop()
-
-            found = False
-            while not found:
-                print('loop4')
-                try:
-                    sup_match_2_basic_level_matches = np.array(hierarchy[sup][sup_match_2])
-                    np.random.shuffle(sup_match_2_basic_level_matches)
-                    sup_match_2_basic_level_matches = list(sup_match_2_basic_level_matches)
-                    sup_match_2_sub = sup_match_2_basic_level_matches.pop()
-                    found = True
-                except IndexError:
-                    pass
+            basic_1 = [basic.pop()]
+            basic_2 = [basic.pop()]
+            sub_1 = [sub.pop()]
+            sub_2 = [sub.pop()]
 
             test_sets[i]['superordinate matches'] = [
                 experimental_materials.UtteranceScenePair(
                     utterance='fep',
-                    objects=[sup_match_1_sub],
-                    lexicon=self.lexicon,
+                    scene=sup_1+basic_1+sub_1,
+                    lexicon=self.gold_standard_lexicon,
                     probabilistic=False
                 ),
                 experimental_materials.UtteranceScenePair(
                     utterance='fep',
-                    objects=[sup_match_2_sub],
-                    lexicon=self.lexicon,
+                    scene=sup_1+basic_2+sub_2,
+                    lexicon=self.gold_standard_lexicon,
                     probabilistic=False
                 )
             ]
 
-        pprint.pprint(test_sets)
+        #pprint.pprint(test_sets)
 
         return test_sets
 
@@ -853,11 +837,12 @@ class GeneralisationExperiment(experiment.Experiment):
         return output_filename
 
     def finalize(self, params, rep):
-        os.remove(self.corpus)
-        os.remove(self.lexicon)
+        #os.remove(self.corpus)
+        #os.remove(self.lexicon)
+        pass
 
 
-def calculate_generalisation_probability(learner, target_word, target_scene_meaning, method='cosine', std=0.0001):
+def calculate_generalisation_probability(learner, target_word, target_scene_meaning, method='cosine', std=0.0001, delta=0.0001, include_target=True, target_word_as_distribution=False):
     """
     Calculate the probability of learner to generalise the target word to the
     target scene.
@@ -873,9 +858,27 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
     """
     def cos(one, two):
         beta = learner._beta
-        return evaluate.calculate_similarity(beta, one, two, CONST.COS)
+        return np.float64(evaluate.calculate_similarity(beta, one, two, CONST.COS))
 
-    lexicon = learner._learned_lexicon
+    def KL_prob(mu1, mu2, sigma1, sigma2):
+        """
+        Compute a 'probabilty' measure for the KL divergence of two univariate
+        Gaussians.
+
+        D_{KL} = \frac{(\mu_1-\mu_2)^2}{2\sigma^2_2} +
+        \frac{1}{2}\left(\frac{\sigma_1^2}{\sigma_2^2} - 1 -
+        \log \frac{\sigma_1^2}{\sigma_2^2}\right)
+
+        p_{KL} = 1-\exp( -D_{KL} )
+
+        """
+        kl = np.divide((mu1 - mu2)**2, 2*np.square(sigma2))
+        kl += np.multiply(1/2, (
+            np.divide(sigma1**2, sigma2**2) -\
+            1 - np.log(np.divide(sigma1**2, sigma2**2))))
+        return 1 - np.exp(-kl)
+
+    lexicon = learner.learned_lexicon()
 
     if method == 'no-word-averaging':
 
@@ -883,57 +886,90 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
     else:
 
-        total = np.float128(0)
+        total = np.float64(0)
 
-        for word in learner._wordsp.all_words(0):
+        words = learner._wordsp.all_words(0)[:]
+        if include_target is False:
+            words.remove(target_word)
 
-            print(word)
+        sum_word_frequency = np.sum([learner._wordsp.frequency(w) for w in words])
+
+        for word in words:
 
             if method == 'cosine' or method == 'cosine-norm':
 
                 cos_y_w = cos(target_scene_meaning, lexicon.meaning(word))
                 cos_target_w = cos(lexicon.meaning(target_word), lexicon.meaning(word))
 
-                p_w = learner._wordsp.frequency(word) / np.sum([learner._wordsp.frequency(w) for w in learner._wordsp.all_words(0)])
+                p_w = learner._wordsp.frequency(word) / sum_word_frequency
 
-                term = np.float128(cos_y_w * cos_target_w * p_w)
+                term = cos_y_w * cos_target_w * p_w
 
                 #print('\t', word, ':', '\tcos_y_w =', cos_y_w, '\tcos_target_w =', cos_target_w, '\tp(w) =', p_w,
                         #'\tterm:', cos_y_w * cos_target_w * p_w)
 
                 if method == 'cosine-norm':
 
-                    denom = np.sum([cos(lexicon.meaning(w), lexicon.meaning(word)) for w in learner._wordsp.all_words(0)])
+                    # this normalisation requires too much time (it is an inner loop over words)
+                    denom = np.sum([cos(lexicon.meaning(w), lexicon.meaning(word)) for w in words])
                     term /= denom
                     term /= denom
 
                 total += term
 
-            elif method == 'gaussian':
+            elif method == 'gaussian-norm':
 
                 target_word_meaning = lexicon.meaning(target_word)
-                y_factor = np.float128(1)
-                target_factor = np.float128(1)
+                y_factor = np.float64(1)
+                target_factor = np.float64(1)
+                delta = np.float64(delta)
+
+                features_to_distributions_map = {}
 
                 for feature in target_scene_meaning.seen_features():
 
-                    mean = lexicon.prob(word, feature)
-                    dist = scipy.stats.norm(loc=mean, scale=std)
+                    try:
+                        dist = features_to_distributions_map[feature]
+                    except KeyError:
+                        mean = lexicon.prob(word, feature)
+                        features_to_distributions_map[feature] = scipy.stats.norm(loc=mean, scale=std)
+                        dist = features_to_distributions_map[feature]
 
-                    y_factor *= dist.pdf(np.float64(target_scene_meaning.prob(feature)))
+                    integral = dist.cdf(np.float64(target_scene_meaning.prob(feature))+delta) -\
+                        dist.cdf(np.float64(target_scene_meaning.prob(feature)))
 
-                for feature in [f for f in lexicon.seen_features(target_word) if lexicon.prob(target_word, f) != lexicon.meaning(target_word).unseen_prob()]:
+                    y_factor *= integral * delta
 
-                    mean = lexicon.prob(word, feature)
-                    dist = scipy.stats.norm(loc=mean, scale=std)
+                for feature in lexicon.seen_features(target_word):
 
-                    target_factor *= dist.pdf(np.float64(target_word_meaning.prob(feature)))
+                    if target_word_as_distribution is False:
+
+                        try:
+                            dist = features_to_distributions_map[feature]
+                        except KeyError:
+                            mean = lexicon.prob(word, feature)
+                            features_to_distributions_map[feature] = scipy.stats.norm(loc=mean, scale=std)
+                            dist = features_to_distributions_map[feature]
+
+                        integral = dist.cdf(np.float64(target_word_meaning.prob(feature))+delta) -\
+                            dist.cdf(np.float64(target_word_meaning.prob(feature)))
+
+                        target_factor *= integral * delta
+
+                    else:
+
+                        import pdb; pdb.set_trace()
+
+                        mu1 = lexicon.prob(word, feature)
+                        mu2 = target_word_meaning.prob(feature)
+                        target_factor *= KL_prob(mu1, mu2, std, std)
 
                 word_freq = learner._wordsp.frequency(word)
 
-                total += np.float128(y_factor * target_factor * word_freq)
+                term = y_factor * target_factor * word_freq
+                term /= sum_word_frequency
 
-                total /= np.sum([learner._wordsp.frequency(w) for w in learner._wordsp.all_words(0)])
+                total += term
 
                 #print('\t', word, ':', '\tfirst factor =', y_factor, '\tsecond factor =', target_factor, '\tword freq =', word_freq)
 
@@ -942,52 +978,104 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
     return total
 
-def bar_chart(results, savename=None, annotation=None):
+def bar_chart(results, savename=None, annotation=None, normalise_over_test_scene=True):
+
     conditions = ['one example',
         'three subordinate examples',
         'three basic-level examples',
         'three superordinate examples'
     ]
 
-    l0 = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
-    err0 = [np.var(results[cond]['subordinate matches']) for cond in conditions]
-    l1 = [np.mean(results[cond]['basic-level matches']) for cond in conditions]
-    err1 = [np.var(results[cond]['basic-level matches']) for cond in conditions]
-    l2 = [np.mean(results[cond]['superordinate matches']) for cond in conditions]
-    err2 = [np.var(results[cond]['superordinate matches']) for cond in conditions]
-
     ind = np.array([2*n for n in range(len(results))])
-    width = 0.5
+    width = 0.25
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+    nrows = int(np.ceil(len(results[conditions[0]]['subordinate matches']) / 2.0))
 
-    p0 = ax.bar(ind,l0,width,color='r',yerr=err0)
-    p1 = ax.bar(ind+width,l1,width,color='g',yerr=err1)
-    p2 = ax.bar(ind+2*width,l2,width,color='b',yerr=err2)
+    fig, axes = plt.subplots(nrows=nrows, ncols=2, sharex=True, sharey=True)
 
-    ax.set_ylabel("generalisation probability")
-    ax.set_xlabel("condition")
+    for i, ax in enumerate(axes.flat):
 
-    xlabels = ('1', '3 sub.', '3 basic', '3 super.')
-    ax.set_xticks(ind + 2 * width)
-    ax.set_xticklabels(xlabels)
+        if i == len(results[conditions[0]]['subordinate matches']):
 
-    box = ax.get_position()
-    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+            ax.set_title('Average over all training-test sets', fontsize='small')
 
-    ax.legend( (p0, p1, p2), ('sub.', 'basic', 'super.'), loc='center left', bbox_to_anchor=(1, 0))
+            l0 = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
+            l1 = [np.mean(results[cond]['basic-level matches']) for cond in conditions]
+            l2 = [np.mean(results[cond]['superordinate matches']) for cond in conditions]
+
+            if normalise_over_test_scene is True:
+
+                l0 = np.array(l0)
+                l1 = np.array(l1)
+                l2 = np.array(l2)
+
+                denom = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
+                denom = np.add(denom, [np.mean(results[cond]['basic-level matches']) for cond in conditions])
+                denom = np.add(denom, [np.mean(results[cond]['superordinate matches']) for cond in conditions])
+
+                l0 /= denom
+                l1 /= denom
+                l2 /= denom
+
+                l0 = list(l0)
+                l1 = list(l1)
+                l2 = list(l2)
+
+            p0 = ax.bar(ind,l0,width,color='r')
+            p1 = ax.bar(ind+width,l1,width,color='g')
+            p2 = ax.bar(ind+2*width,l2,width,color='b')
+
+        elif i > len(results[conditions[0]]['subordinate matches']):
+            pass
+
+        else:
+            l0 = [results[cond]['subordinate matches'][i] for cond in conditions]
+            l1 = [results[cond]['basic-level matches'][i] for cond in conditions]
+            l2 = [results[cond]['superordinate matches'][i] for cond in conditions]
+
+            if normalise_over_test_scene is True:
+
+                l0 = np.array(l0)
+                l1 = np.array(l1)
+                l2 = np.array(l2)
+
+                denom = [results[cond]['subordinate matches'][i] for cond in conditions]
+                denom = np.add(denom, [results[cond]['basic-level matches'][i] for cond in conditions])
+                denom = np.add(denom, [results[cond]['superordinate matches'][i] for cond in conditions])
+
+                l0 /= denom
+                l1 /= denom
+                l2 /= denom
+
+                l0 = list(l0)
+                l1 = list(l1)
+                l2 = list(l2)
+
+            p0 = ax.bar(ind,l0,width,color='r')
+            p1 = ax.bar(ind+width,l1,width,color='g')
+            p2 = ax.bar(ind+2*width,l2,width,color='b')
+
+        xlabels = ('1', '3 sub.', '3 basic', '3 super.')
+        ax.set_xticks(ind + 2 * width)
+        ax.set_xticklabels(xlabels)
+
+    #ax.set_ylabel("gen. prob.")
+    #ax.set_xlabel("condition")
+    plt.ylim((0,1))
+
+    lgd = plt.legend( (p0, p1, p2), ('sub.', 'basic', 'super.'), loc='lower center', bbox_to_anchor=(0, -0.1, 1, 1), bbox_transform=plt.gcf().transFigure )
 
     title = "Generalization scores"
-    ax.set_title(title)
 
     if annotation is not None:
-        fig.text(0.8, 0.3, annotation, ha='center', fontsize='small')
+        title += '\n'+annotation
+
+    fig.suptitle(title)
 
     if savename is None:
         plt.show()
     else:
-        plt.savefig(savename)
+        plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
 if __name__ == "__main__":
     e = GeneralisationExperiment()
