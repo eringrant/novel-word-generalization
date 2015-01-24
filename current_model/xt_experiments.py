@@ -1,21 +1,18 @@
 #!/usr/bin/python
 from __future__ import print_function, division
 
-import copy
 import csv
 from datetime import datetime
-import heapq
-import itertools
+import logging
+import math
 import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import mpmath; mpmath.mp.dps = 50
 import nltk
 from nltk.corpus.reader import CorpusReader
 import numpy as np
-import operator
 import os
 import pickle
-import pprint
 import random
 import scipy.stats
 import xml.etree.cElementTree as ET
@@ -30,7 +27,7 @@ import wmmapping
 import experiment
 import experimental_materials
 
-verbose = True
+latex = True
 
 class GeneralisationExperiment(experiment.Experiment):
 
@@ -77,8 +74,8 @@ class GeneralisationExperiment(experiment.Experiment):
         self.feature_to_level_map = {}
 
         # create the gold-standard lexicon
-        learner_config = learnconfig.LearnerConfig(self.config_path)
-        beta = learner_config.param_float("beta")
+        self.learner_config = learnconfig.LearnerConfig(self.config_path)
+        beta = self.learner_config.param_float("beta")
 
         # get the corpus
         if params['corpus'] == 'generate-simple':
@@ -88,7 +85,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
             # create the learner
             stopwords = []
-            self.learner = learn.Learner(self.gold_standard_lexicon, learner_config, stopwords)
+            self.learner = learn.Learner(self.gold_standard_lexicon, self.learner_config, stopwords)
 
             self.corpus = self.generate_simple_corpus(tree, self.learner._gold_lexicon, params)
             self.training_sets = self.generate_simple_training_sets()
@@ -101,7 +98,7 @@ class GeneralisationExperiment(experiment.Experiment):
             # create the learner
             stopwords = []
             if params['new-learner'] is True:
-                self.learner = learn.Learner(params['lexname'], learner_config, stopwords)
+                self.learner = learn.Learner(params['lexname'], self.learner_config, stopwords)
                 self.learner.process_corpus(self.corpus, params['path'])
                 learner_dump = open(params['learner-path'], "wb")
                 pickle.dump(self.learner, learner_dump)
@@ -115,8 +112,8 @@ class GeneralisationExperiment(experiment.Experiment):
             self.gold_standard_lexicon = self.learner._gold_lexicon
             self.learner = None
 
-            self.training_sets, fep_features = self.generate_naturalistic_training_sets(sup, basic, sub)
-            self.test_sets = self.generate_naturalistic_test_sets(sup, basic, sub, fep_features)
+            self.training_sets, fep_features = self.generate_naturalistic_training_sets(sup, basic, sub, params['num-sets'])
+            self.test_sets = self.generate_naturalistic_test_sets(sup, basic, sub, fep_features, params['num-sets'])
 
         else:
             raise NotImplementedError
@@ -126,15 +123,20 @@ class GeneralisationExperiment(experiment.Experiment):
     def iterate(self, params, rep, n):
 
         results = {}
+        p_fep_fep = {}
 
         for condition in self.training_sets:
             results[condition] = {}
 
             for i, training_set in enumerate(self.training_sets[condition]):
 
-                learner_dump = open(params['learner-path'], "rb")
-                self.learner = pickle.load(learner_dump)
-                learner_dump.close()
+                if params['blank-learner'] is True:
+                    stopwords = []
+                    self.learner = learn.Learner(params['lexname'], self.learner_config, stopwords)
+                else:
+                    learner_dump = open(params['learner-path'], "rb")
+                    self.learner = pickle.load(learner_dump)
+                    learner_dump.close()
 
                 if verbose is True:
                     print('condition:', condition, 'training set:')
@@ -150,9 +152,17 @@ class GeneralisationExperiment(experiment.Experiment):
                         print([(feature, self.learner._learned_lexicon.prob(trial.utterance()[0], feature)) for feature in self.learner._learned_lexicon.seen_features(trial.utterance()[0]) if feature in trial.scene()])
                         print('\n')
 
+                if latex is True:
+                    print('\\subsection{'+condition+'}')
+                    print('\\begin{tabular}{l c c}')
+                    #print('& $\\alpha$ & $f_{dirichlet}(\mathbf{x})$ \\\\')
+                    print('& probs & total & p(fep|fep) \\\\')
+
                 for cond in self.test_sets[i]:
 
-                    take_average = []
+                    take_average = 0
+                    count = 0
+
                     for j in range(len(self.test_sets[i][cond])):
 
                         test_scene = self.test_sets[i][cond][j]
@@ -177,17 +187,31 @@ class GeneralisationExperiment(experiment.Experiment):
                                     1/len(test_scene.scene())
                                 meaning._seen_features.append(feature)
 
-                        gen_prob = calculate_generalisation_probability(
+                        if latex is True:
+                            print(cond + ' & ')
+
+                        gen_prob, p_f_f = calculate_generalisation_probability(
                             self.learner, word, meaning,
                             method=params['calculation-type'],
                             std=params['std'],
                             delta=params['delta-interval'],
                             include_target=params['include-fep-in-loop'],
-                            target_word_as_distribution=params['use-distribution-fep']
+                            target_word_as_distribution=params['use-distribution-fep'],
+                            just_fep=params['just-fep'],
+                            ratio_to_mean=params['ratio-to-mean'],
+                            log=params['log'],
+                            include_unseen_features=params['include-unseen-features']
                             )
-                        take_average.append(gen_prob)
 
-                    gen_prob = np.mean(take_average)
+                        p_fep_fep[condition] = p_f_f
+
+                        take_average = mpmath.fadd(take_average, gen_prob)
+                        count += 1
+
+                        if latex is True:
+                            print('\n')
+
+                    gen_prob = mpmath.fdiv(take_average, count)
 
                     try:
                         results[condition][cond].append(gen_prob)
@@ -195,13 +219,20 @@ class GeneralisationExperiment(experiment.Experiment):
                         results[condition][cond] = []
                         results[condition][cond].append(gen_prob)
 
+                if latex is True:
+                    print('\\end{tabular}')
+                    print('\n')
+
                 # reset the learner after each test set
                 self.learner = None
+
+        if params['compare-to-fep'] is False:
+            p_fep_fep = None
 
         savename = ','.join([key + ':' + str(params[key]) for key in params['graph-annotation']])
         savename += '.png'
         annotation = str(dict((key, value) for (key, value) in params.items() if key in params['graph-annotation']))
-        bar_chart(results, savename=savename, annotation=annotation, normalise_over_test_scene=params['normalise-over-test-scene'])
+        bar_chart(results, p_fep_fep=p_fep_fep, savename=savename, annotation=annotation, normalise_over_test_scene=params['normalise-over-test-scene'])
 
         return results
 
@@ -618,9 +649,14 @@ class GeneralisationExperiment(experiment.Experiment):
         # assumption: all subordinate features are novel
         sub = ['sub_f' + str(i) for i in range(100)]
 
+        #print('Number of superordinate words:', len(hierarchy))
+        #print('Number of basic-level words:', np.sum([len(hierarchy[sup]) for sup in hierarchy]))
+        #print('Number of subordinate words:', np.sum([len(hierarchy[sup][basic]) for basic in hierarchy[sup] for sup in hierarchy]))
+        #raw_input()
+
         return temp_corpus_path, sup, basic, sub
 
-    def generate_naturalistic_training_sets(self, sup, basic, sub):
+    def generate_naturalistic_training_sets(self, sup, basic, sub, num_sets):
 
         fep_features = []
 
@@ -630,20 +666,20 @@ class GeneralisationExperiment(experiment.Experiment):
         training_sets['three basic-level examples'] = []
         training_sets['three superordinate examples'] = []
 
-        for i in range(5):
+        for i in range(num_sets):
 
             sup_1 = [sup.pop()]
             basic_1 = [basic.pop()]
             sub_1 = [sub.pop()]
 
-            fep_sup = sup_1[0]
-            fep_basic = basic_1[0]
-            fep_sub = sub_1[0]
+            fep_sup = [sup_1[0]]
+            fep_basic = [basic_1[0]]
+            fep_sub = [sub_1[0]]
 
             training_sets['one example'].append(
                 [experimental_materials.UtteranceScenePair(
                     utterance='fep',
-                    scene=sup_1+basic_1+sub_1,
+                    scene=fep_sup+fep_basic+fep_sub,
                     lexicon=self.gold_standard_lexicon,
                     probabilistic=False
                 )]
@@ -652,7 +688,7 @@ class GeneralisationExperiment(experiment.Experiment):
             training_sets['three subordinate examples'].append(
                 [experimental_materials.UtteranceScenePair(
                     utterance='fep',
-                    scene=sup_1+basic_1+sub_1,
+                    scene=fep_sup+fep_basic+fep_sub,
                     lexicon=self.gold_standard_lexicon,
                     probabilistic=False
                 )] * 3
@@ -666,19 +702,19 @@ class GeneralisationExperiment(experiment.Experiment):
                 [
                     experimental_materials.UtteranceScenePair(
                         utterance='fep',
-                        scene=sup_1+basic_1+sub_1,
+                        scene=fep_sup+fep_basic+fep_sub,
                         lexicon=self.gold_standard_lexicon,
                         probabilistic=False
                     ),
                     experimental_materials.UtteranceScenePair(
                         utterance='fep',
-                        scene=sup_1+basic_1+sub_2,
+                        scene=fep_sup+fep_basic+sub_2,
                         lexicon=self.gold_standard_lexicon,
                         probabilistic=False
                     ),
                     experimental_materials.UtteranceScenePair(
                         utterance='fep',
-                        scene=sup_1+basic_1+sub_3,
+                        scene=fep_sup+fep_basic+sub_3,
                         lexicon=self.gold_standard_lexicon,
                         probabilistic=False
                     )
@@ -696,46 +732,46 @@ class GeneralisationExperiment(experiment.Experiment):
                 [
                     experimental_materials.UtteranceScenePair(
                         utterance='fep',
-                        scene=sup_1+basic_1+sub_1,
+                        scene=fep_sup+fep_basic+fep_sub,
                         lexicon=self.gold_standard_lexicon,
                         probabilistic=False
                     ),
                     experimental_materials.UtteranceScenePair(
                         utterance='fep',
-                        scene=sup_1+basic_2+sub_2,
+                        scene=fep_sup+basic_2+sub_2,
                         lexicon=self.gold_standard_lexicon,
                         probabilistic=False
                     ),
                     experimental_materials.UtteranceScenePair(
                         utterance='fep',
-                        scene=sup_1+basic_3+sub_3,
+                        scene=fep_sup+basic_3+sub_3,
                         lexicon=self.gold_standard_lexicon,
                         probabilistic=False
                     )
                 ]
             )
 
-            fep_features.append((fep_sup, fep_basic, fep_sub))
+            fep_features.append((fep_sup[0], fep_basic[0], fep_sub[0]))
 
         #pprint.pprint(training_sets)
 
         return training_sets, fep_features
 
-    def generate_naturalistic_test_sets(self, sup, basic, sub, fep_features):
+    def generate_naturalistic_test_sets(self, sup, basic, sub, fep_features, num_sets):
 
         test_sets = []
 
-        for i in range(5):
+        for i in range(num_sets):
             test_sets.append({})
 
-            sup_1 = [fep_features[i][0]]
-            basic_1 = [fep_features[i][1]]
-            sub_1 = [fep_features[i][2]]
+            fep_sup = [fep_features[i][0]]
+            fep_basic = [fep_features[i][1]]
+            fep_sub = [fep_features[i][2]]
 
             test_sets[i]['subordinate matches'] = [
                 experimental_materials.UtteranceScenePair(
                     utterance='fep',
-                    scene=sup_1+basic_1+sub_1,
+                    scene=fep_sup+fep_basic+fep_sub,
                     lexicon=self.gold_standard_lexicon,
                     probabilistic=False
                 )
@@ -747,13 +783,13 @@ class GeneralisationExperiment(experiment.Experiment):
             test_sets[i]['basic-level matches'] = [
                 experimental_materials.UtteranceScenePair(
                     utterance='fep',
-                    scene=sup_1+basic_1+sub_1,
+                    scene=fep_sup+fep_basic+sub_1,
                     lexicon=self.gold_standard_lexicon,
                     probabilistic=False
                 ),
                 experimental_materials.UtteranceScenePair(
                     utterance='fep',
-                    scene=sup_1+basic_1+sub_2,
+                    scene=fep_sup+fep_basic+sub_2,
                     lexicon=self.gold_standard_lexicon,
                     probabilistic=False
                 )
@@ -761,25 +797,41 @@ class GeneralisationExperiment(experiment.Experiment):
 
             basic_1 = [basic.pop()]
             basic_2 = [basic.pop()]
+            basic_3 = [basic.pop()]
+            basic_4 = [basic.pop()]
             sub_1 = [sub.pop()]
             sub_2 = [sub.pop()]
+            sub_3 = [sub.pop()]
+            sub_4 = [sub.pop()]
 
             test_sets[i]['superordinate matches'] = [
                 experimental_materials.UtteranceScenePair(
                     utterance='fep',
-                    scene=sup_1+basic_1+sub_1,
+                    scene=fep_sup+basic_1+sub_1,
                     lexicon=self.gold_standard_lexicon,
                     probabilistic=False
                 ),
                 experimental_materials.UtteranceScenePair(
                     utterance='fep',
-                    scene=sup_1+basic_2+sub_2,
+                    scene=fep_sup+basic_2+sub_2,
+                    lexicon=self.gold_standard_lexicon,
+                    probabilistic=False
+                ),
+                experimental_materials.UtteranceScenePair(
+                    utterance='fep',
+                    scene=fep_sup+basic_3+sub_3,
+                    lexicon=self.gold_standard_lexicon,
+                    probabilistic=False
+                ),
+                experimental_materials.UtteranceScenePair(
+                    utterance='fep',
+                    scene=fep_sup+basic_4+sub_4,
                     lexicon=self.gold_standard_lexicon,
                     probabilistic=False
                 )
             ]
 
-        #pprint.pprint(test_sets)
+        pprint.pprint(test_sets)
 
         return test_sets
 
@@ -842,7 +894,7 @@ class GeneralisationExperiment(experiment.Experiment):
         pass
 
 
-def calculate_generalisation_probability(learner, target_word, target_scene_meaning, method='cosine', std=0.0001, delta=0.0001, include_target=True, target_word_as_distribution=False):
+def calculate_generalisation_probability(learner, target_word, target_scene_meaning, method='cosine', std=0.0001, delta=0.0001, include_target=True, target_word_as_distribution=False, just_fep=False, ratio_to_mean=False, log=False, include_unseen_features=True):
     """
     Calculate the probability of learner to generalise the target word to the
     target scene.
@@ -858,7 +910,11 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
     """
     def cos(one, two):
         beta = learner._beta
-        return np.float64(evaluate.calculate_similarity(beta, one, two, CONST.COS))
+        return evaluate.calculate_similarity(beta, one, two, CONST.COS)
+
+    def norm_prob(x, delta, mu, sigma):
+        return mpmath.fsub(mpmath.ncdf(x+delta, mu=mu, sigma=sigma),
+            mpmath.ncdf(x, mu=mu, sigma=sigma))
 
     def KL_prob(mu1, mu2, sigma1, sigma2):
         """
@@ -872,13 +928,34 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
         p_{KL} = 1-\exp( -D_{KL} )
 
         """
-        kl = np.divide((mu1 - mu2)**2, 2*np.square(sigma2))
-        kl += np.multiply(1/2, (
-            np.divide(sigma1**2, sigma2**2) -\
-            1 - np.log(np.divide(sigma1**2, sigma2**2))))
-        return 1 - np.exp(-kl)
+        numer = mpmath.power(mpmath.fsub(mu1, mu2), 2)
+        denom = mpmath.fmul(2, mpmath.power(sigma2, 2))
+        kl = mpmath.fdiv(numer, denom)
+
+        frac = mpmath.fdiv(mpmath.power(sigma1, 2), mpmath.power(sigma2, 2))
+        term = mpmath.fsub(frac, 1)
+        term = mpmath.fsub(term, mpmath.ln(frac))
+        term = mpmath.fdiv(term, 2)
+
+        kl = mpmath.fadd(kl, term)
+
+        return 1 - mpmath.exp(mpmath.fneg(kl))
+
+    def dirichlet_pdf(x, alpha):
+        """
+        x is a vector of n observations
+        alpha is a vector of n concentration paramters
+
+        """
+        #assert np.sum(x) == 1.0
+        return (mpmath.gamma(mpmath.fsum(alpha)) /
+            reduce(mpmath.fmul, [mpmath.gamma(a) for a in alpha]) *
+            reduce(mpmath.fmul, [mpmath.power(x[i], alpha[i]-1.0) for i in range(len(alpha))]))
 
     lexicon = learner.learned_lexicon()
+
+    #import pdb; pdb.set_trace()
+    import filewriter
 
     if method == 'no-word-averaging':
 
@@ -886,99 +963,259 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
     else:
 
-        total = np.float64(0)
+        total = 0
 
-        words = learner._wordsp.all_words(0)[:]
+        if just_fep is True:
+            words = ['fep']
+        else:
+            words = learner._wordsp.all_words(0)[:]
         if include_target is False:
             words.remove(target_word)
 
-        sum_word_frequency = np.sum([learner._wordsp.frequency(w) for w in words])
+        sum_word_frequency = int(np.sum([learner._wordsp.frequency(w) for w in learner._wordsp.all_words(0)]))
 
         for word in words:
 
+            p_w = mpmath.fdiv(learner._wordsp.frequency(word), sum_word_frequency)
+
             if method == 'cosine' or method == 'cosine-norm':
 
-                cos_y_w = cos(target_scene_meaning, lexicon.meaning(word))
-                cos_target_w = cos(lexicon.meaning(target_word), lexicon.meaning(word))
+                p_fep_fep = mpmath.mpmathify(cos(lexicon.meaning(target_word), lexicon.meaning(target_word)))
+                print('p_fep_fep:', p_fep_fep)
 
-                p_w = learner._wordsp.frequency(word) / sum_word_frequency
+                if include_unseen_features is False:
+                    lexicon.meaning(word)._meaning_probs = \
+                        dict((feature, lexicon.meaning(feature)) for feature in target_scene_meaning.seen_features())
 
-                term = cos_y_w * cos_target_w * p_w
+                cos_y_w = mpmath.mpmathify(cos(target_scene_meaning, lexicon.meaning(word)))
+                #cos_target_w = mpmath.mpmathify(cos(lexicon.meaning(target_word), lexicon.meaning(word)))
+                cos_target_w = 1
+
+                term = mpmath.fmul(mpmath.fmul(cos_y_w, cos_target_w), p_w)
 
                 #print('\t', word, ':', '\tcos_y_w =', cos_y_w, '\tcos_target_w =', cos_target_w, '\tp(w) =', p_w,
                         #'\tterm:', cos_y_w * cos_target_w * p_w)
 
                 if method == 'cosine-norm':
 
+                    #TODO
                     # this normalisation requires too much time (it is an inner loop over words)
                     denom = np.sum([cos(lexicon.meaning(w), lexicon.meaning(word)) for w in words])
-                    term /= denom
-                    term /= denom
+                    term = mpmath.fdiv(term, denom)
+                    term = mpmath.fdiv(term, denom)
 
-                total += term
+                total = mpmath.fadd(total, term)
 
             elif method == 'gaussian-norm':
 
-                target_word_meaning = lexicon.meaning(target_word)
-                y_factor = np.float64(1)
-                target_factor = np.float64(1)
-                delta = np.float64(delta)
+                if log is True:
+                    p_fep_fep = 1
+                else:
+                    p_fep_fep = 0
 
-                features_to_distributions_map = {}
+                for feature in lexicon.meaning(target_word).seen_features():
+                    mean = lexicon.prob(target_word, feature)
+                    prob = norm_prob(target_scene_meaning.prob(feature), delta, mean, std*mean)
+
+                    if log is True:
+                        prob = math.log(prob)
+                        p_fep_fep = mpmath.fadd(y_factor, prob)
+                    else:
+                        p_fep_fep = mpmath.fmul(y_factor, prob)
+
+                if log is True:
+                    p_w = math.log(p_w)
+
+                target_word_meaning = lexicon.meaning(target_word)
+
+                if log is True:
+                    y_factor = 0.0
+                    target_factor = 0.0
+                else:
+                    y_factor = 1.0
+                    target_factor = 1.0
 
                 for feature in target_scene_meaning.seen_features():
 
-                    try:
-                        dist = features_to_distributions_map[feature]
-                    except KeyError:
-                        mean = lexicon.prob(word, feature)
-                        features_to_distributions_map[feature] = scipy.stats.norm(loc=mean, scale=std)
-                        dist = features_to_distributions_map[feature]
+                    mean = lexicon.prob(word, feature)
+                    if ratio_to_mean is True:
+                        prob = norm_prob(target_scene_meaning.prob(feature), delta, mean, std*mean)
+                    else:
+                        prob = norm_prob(target_scene_meaning.prob(feature), delta, mean, std)
 
-                    integral = dist.cdf(np.float64(target_scene_meaning.prob(feature))+delta) -\
-                        dist.cdf(np.float64(target_scene_meaning.prob(feature)))
+                    if log is True:
+                        prob = math.log(prob)
+                        y_factor = mpmath.fadd(y_factor, prob)
 
-                    y_factor *= integral * delta
+                    else:
+                        y_factor = mpmath.fmul(y_factor, prob)
+
+                    #print('\tfeature', feature, '\tmean', mean, '\tprob', prob)
 
                 for feature in lexicon.seen_features(target_word):
 
                     if target_word_as_distribution is False:
 
-                        try:
-                            dist = features_to_distributions_map[feature]
-                        except KeyError:
-                            mean = lexicon.prob(word, feature)
-                            features_to_distributions_map[feature] = scipy.stats.norm(loc=mean, scale=std)
-                            dist = features_to_distributions_map[feature]
+                        mean = lexicon.prob(word, feature)
 
-                        integral = dist.cdf(np.float64(target_word_meaning.prob(feature))+delta) -\
-                            dist.cdf(np.float64(target_word_meaning.prob(feature)))
+                        if ratio_to_mean is True:
+                            prob = norm_prob(target_word_meaning.prob(feature), delta, mean, std*mean)
+                        else:
+                            prob = norm_prob(target_word_meaning.prob(feature), delta, mean, std)
 
-                        target_factor *= integral * delta
+                        if log is True:
+                            prob = math.log(prob)
+                            target_factor = mpmath.fadd(target_factor, prob)
+
+                        else:
+                            target_factor = mpmath.fmul(target_factor, prob)
 
                     else:
 
-                        import pdb; pdb.set_trace()
-
                         mu1 = lexicon.prob(word, feature)
                         mu2 = target_word_meaning.prob(feature)
-                        target_factor *= KL_prob(mu1, mu2, std, std)
 
-                word_freq = learner._wordsp.frequency(word)
+                        #print(feature, '\t', word, mu1, '\t', target_word, mu2)
+                        #raw_input()
 
-                term = y_factor * target_factor * word_freq
-                term /= sum_word_frequency
+                        if ratio_to_mean is True:
+                            target_factor = mpmath.fmul(target_factor, KL_prob(mu1, mu2, std*mu1, std*mu2))
+                        else:
+                            target_factor = mpmath.fmul(target_factor, KL_prob(mu1, mu2, std, std))
 
-                total += term
+                if log is True:
+                    term = mpmath.fadd(mpmath.fadd(y_factor, target_factor), p_w)
+                else:
+                    term = mpmath.fmul(mpmath.fmul(y_factor, target_factor), p_w)
 
-                #print('\t', word, ':', '\tfirst factor =', y_factor, '\tsecond factor =', target_factor, '\tword freq =', word_freq)
+                total = mpmath.fadd(total, term)
 
+                #print('\t', word, ':', '\tfirst factor =', y_factor, '\tsecond factor =', target_factor, '\tword freq =', p_w)
+
+            elif method == 'dirichlet-meanprob':
+
+                x = []
+                alpha = []
+
+                for feature in lexicon.meaning(target_word).seen_features():
+
+                    x.append(lexicon.prob(target_word, feature))
+                    alpha.append(lexicon.prob(target_word, feature))
+
+                x = np.array(x)
+                x /= np.sum(x)
+
+                p_fep_fep = dirichlet_pdf(x, alpha)
+
+                x = []
+                alpha = []
+
+                seen = []
+
+                for feature in target_scene_meaning.seen_features():
+
+                    x.append(target_scene_meaning.prob(feature))
+                    alpha.append(lexicon.prob(word, feature))
+
+                    seen.append(feature)
+
+                if include_unseen_features is True:
+                    for feature in [f for f in learner._features if f not in seen]:
+                        x.append(0.0)
+                        alpha.append(lexicon.prob(word, feature))
+
+                total = dirichlet_pdf(x, alpha)
+
+                if latex is True:
+                    print([filewriter.round_to_sig_digits(x, 4) for x in alpha], '&', filewriter.round_to_sig_digits(total, 4), '\\\\')
+
+            elif method == 'dirichlet-assoc':
+
+                x = []
+                alpha = []
+
+                for feature in lexicon.meaning(target_word).seen_features():
+
+                    x.append(lexicon.prob(target_word, feature))
+                    alpha.append(learner.association(target_word, feature) + learner.get_lambda())
+
+                x = np.array(x)
+                x /= np.sum(x)
+
+                p_fep_fep = dirichlet_pdf(x, alpha)
+
+                x = []
+                alpha = []
+
+                seen = []
+
+                for feature in target_scene_meaning.seen_features():
+
+                    x.append(target_scene_meaning.prob(feature))
+                    alpha.append(learner.association(word, feature) + learner.get_lambda())
+
+                    seen.append(feature)
+
+                if include_unseen_features is True:
+                    for feature in [f for f in learner._features if f not in seen]:
+
+                        x.append(0.0)
+                        alpha.append(learner.association(word, feature) + learner.get_lambda())
+
+                total = dirichlet_pdf(x, alpha)
+
+                if latex is True:
+                    print([filewriter.round_to_sig_digits(x, 4) for x in alpha], '&', filewriter.round_to_sig_digits(total, 4), '\\\\')
+
+            elif method == 'simple':
+
+                if log:
+                    p_fep_fep = 0
+                else:
+                    p_fep_fep = 1
+
+                for feature in lexicon.meaning(target_word).seen_features():
+
+                    if log:
+                        p_fep_fep += np.log(lexicon.prob(target_word, feature))
+                    else:
+                        p_fep_fep *= lexicon.prob(target_word, feature)
+
+                total = 1
+                seen = []
+                numbers = []
+                features = []
+
+                for feature in target_scene_meaning.seen_features():
+
+                    if log:
+                        total += np.log(lexicon.prob(target_word, feature))
+                    else:
+                        total *= lexicon.prob(target_word, feature)
+                        numbers.append(lexicon.prob(target_word, feature))
+                        features.append(feature)
+                    seen.append(feature)
+
+                for feature in [f for f in lexicon.meaning(target_word).seen_features() if f not in seen]:
+
+                    if log:
+                        total += np.log((1 - lexicon.prob(target_word, feature)))
+                    else:
+                        total *= (1 - lexicon.prob(target_word, feature))
+                        numbers.append(1 - lexicon.prob(target_word, feature))
+                        features.append(feature)
+
+                if latex is True:
+                    print([filewriter.round_to_sig_digits(x, 4) for i, x in enumerate(numbers)])
+                    print('&', filewriter.round_to_sig_digits(total, 4))
+                    print('&', p_fep_fep, '\\\\')
             else:
                 raise NotImplementedError
 
-    return total
+    return total, p_fep_fep
 
-def bar_chart(results, savename=None, annotation=None, normalise_over_test_scene=True):
+
+def bar_chart(results, p_fep_fep=None, savename=None, annotation=None, normalise_over_test_scene=True):
 
     conditions = ['one example',
         'three subordinate examples',
@@ -991,77 +1228,140 @@ def bar_chart(results, savename=None, annotation=None, normalise_over_test_scene
 
     nrows = int(np.ceil(len(results[conditions[0]]['subordinate matches']) / 2.0))
 
-    fig, axes = plt.subplots(nrows=nrows, ncols=2, sharex=True, sharey=True)
+    if len(results[conditions[0]]['subordinate matches']) == 1:
 
-    for i, ax in enumerate(axes.flat):
+         l0 = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
+         l1 = [np.mean(results[cond]['basic-level matches']) for cond in conditions]
+         l2 = [np.mean(results[cond]['superordinate matches']) for cond in conditions]
 
-        if i == len(results[conditions[0]]['subordinate matches']):
+         if normalise_over_test_scene is True:
 
-            ax.set_title('Average over all training-test sets', fontsize='small')
+             l0 = np.array(l0)
+             l1 = np.array(l1)
+             l2 = np.array(l2)
 
-            l0 = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
-            l1 = [np.mean(results[cond]['basic-level matches']) for cond in conditions]
-            l2 = [np.mean(results[cond]['superordinate matches']) for cond in conditions]
+             if p_fep_fep is not None:
+                 l0 = [num / p_fep_fep[conditions[i]] for (i, num) in enumerate(l0)]
+                 l1 = [num / p_fep_fep[conditions[i]] for (i, num) in enumerate(l1)]
+                 l2 = [num / p_fep_fep[conditions[i]] for (i, num) in enumerate(l2)]
 
-            if normalise_over_test_scene is True:
+             else:
+                 denom = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
+                 denom = np.add(denom, [np.mean(results[cond]['basic-level matches']) for cond in conditions])
+                 denom = np.add(denom, [np.mean(results[cond]['superordinate matches']) for cond in conditions])
 
-                l0 = np.array(l0)
-                l1 = np.array(l1)
-                l2 = np.array(l2)
+                 try:
+                     l0 /= denom
+                     l1 /= denom
+                     l2 /= denom
+                 except ZeroDivisionError:
+                     pass
 
-                denom = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
-                denom = np.add(denom, [np.mean(results[cond]['basic-level matches']) for cond in conditions])
-                denom = np.add(denom, [np.mean(results[cond]['superordinate matches']) for cond in conditions])
+             l0 = list(l0)
+             l1 = list(l1)
+             l2 = list(l2)
 
-                l0 /= denom
-                l1 /= denom
-                l2 /= denom
+         width = 0.5
+         fig = plt.figure()
+         ax = fig.add_subplot(111)
+         p0 = ax.bar(ind,l0,width,color='r')
+         p1 = ax.bar(ind+width,l1,width,color='g')
+         p2 = ax.bar(ind+2*width,l2,width,color='b')
+         ax.set_ylabel("generalisation probability")
+         ax.set_xlabel("condition")
 
-                l0 = list(l0)
-                l1 = list(l1)
-                l2 = list(l2)
+         m = np.max(l0 + l1 + l2)
 
-            p0 = ax.bar(ind,l0,width,color='r')
-            p1 = ax.bar(ind+width,l1,width,color='g')
-            p2 = ax.bar(ind+2*width,l2,width,color='b')
+    else:
+        fig, axes = plt.subplots(nrows=nrows, ncols=2, sharex=True, sharey=True)
 
-        elif i > len(results[conditions[0]]['subordinate matches']):
-            pass
+        m = 0
 
-        else:
-            l0 = [results[cond]['subordinate matches'][i] for cond in conditions]
-            l1 = [results[cond]['basic-level matches'][i] for cond in conditions]
-            l2 = [results[cond]['superordinate matches'][i] for cond in conditions]
+        for i, ax in enumerate(axes.flat):
 
-            if normalise_over_test_scene is True:
+            if i == len(results[conditions[0]]['subordinate matches']):
 
-                l0 = np.array(l0)
-                l1 = np.array(l1)
-                l2 = np.array(l2)
+                #ax.set_title('Average over all training-test sets', fontsize='small')
 
-                denom = [results[cond]['subordinate matches'][i] for cond in conditions]
-                denom = np.add(denom, [results[cond]['basic-level matches'][i] for cond in conditions])
-                denom = np.add(denom, [results[cond]['superordinate matches'][i] for cond in conditions])
+                l0 = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
+                l1 = [np.mean(results[cond]['basic-level matches']) for cond in conditions]
+                l2 = [np.mean(results[cond]['superordinate matches']) for cond in conditions]
 
-                l0 /= denom
-                l1 /= denom
-                l2 /= denom
+                if normalise_over_test_scene is True:
 
-                l0 = list(l0)
-                l1 = list(l1)
-                l2 = list(l2)
+                    l0 = np.array(l0)
+                    l1 = np.array(l1)
+                    l2 = np.array(l2)
 
-            p0 = ax.bar(ind,l0,width,color='r')
-            p1 = ax.bar(ind+width,l1,width,color='g')
-            p2 = ax.bar(ind+2*width,l2,width,color='b')
+                    denom = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
+                    denom = np.add(denom, [np.mean(results[cond]['basic-level matches']) for cond in conditions])
+                    denom = np.add(denom, [np.mean(results[cond]['superordinate matches']) for cond in conditions])
 
-        xlabels = ('1', '3 sub.', '3 basic', '3 super.')
-        ax.set_xticks(ind + 2 * width)
-        ax.set_xticklabels(xlabels)
+                    try:
+                        l0 /= denom
+                        l1 /= denom
+                        l2 /= denom
+                    except ZeroDivisionError:
+                        pass
+
+                    l0 = list(l0)
+                    l1 = list(l1)
+                    l2 = list(l2)
+
+                p0 = ax.bar(ind,l0,width,color='r')
+                p1 = ax.bar(ind+width,l1,width,color='g')
+                p2 = ax.bar(ind+2*width,l2,width,color='b')
+
+            elif i > len(results[conditions[0]]['subordinate matches']):
+                pass
+
+            else:
+                ax.set_title('Training-test set ' + str(i+1), fontsize='small')
+
+                l0 = [results[cond]['subordinate matches'][i] for cond in conditions]
+                l1 = [results[cond]['basic-level matches'][i] for cond in conditions]
+                l2 = [results[cond]['superordinate matches'][i] for cond in conditions]
+
+                if normalise_over_test_scene is True:
+
+                    l0 = np.array(l0)
+                    l1 = np.array(l1)
+                    l2 = np.array(l2)
+
+                    denom = [results[cond]['subordinate matches'][i] for cond in conditions]
+                    denom = np.add(denom, [results[cond]['basic-level matches'][i] for cond in conditions])
+                    denom = np.add(denom, [results[cond]['superordinate matches'][i] for cond in conditions])
+
+                    try:
+                        l0 /= denom
+                        l1 /= denom
+                        l2 /= denom
+                    except ZeroDivisionError:
+                        pass
+
+                    l0 = list(l0)
+                    l1 = list(l1)
+                    l2 = list(l2)
+
+                else:
+                    new_m = np.max(l0 + l1 + l2)
+                    if new_m > m:
+                        m = new_m
+
+                p0 = ax.bar(ind,l0,width,color='r')
+                p1 = ax.bar(ind+width,l1,width,color='g')
+                p2 = ax.bar(ind+2*width,l2,width,color='b')
+
+            xlabels = ('1', '3 sub.', '3 basic', '3 super.')
+            ax.set_xticks(ind + 2 * width)
+            ax.set_xticklabels(xlabels)
 
     #ax.set_ylabel("gen. prob.")
     #ax.set_xlabel("condition")
-    plt.ylim((0,1))
+    if normalise_over_test_scene is True:
+        plt.ylim((0,1))
+    else:
+        plt.ylim((0,float(m)))
 
     lgd = plt.legend( (p0, p1, p2), ('sub.', 'basic', 'super.'), loc='lower center', bbox_to_anchor=(0, -0.1, 1, 1), bbox_transform=plt.gcf().transFigure )
 
@@ -1070,7 +1370,7 @@ def bar_chart(results, savename=None, annotation=None, normalise_over_test_scene
     if annotation is not None:
         title += '\n'+annotation
 
-    fig.suptitle(title)
+    #fig.suptitle(title)
 
     if savename is None:
         plt.show()
