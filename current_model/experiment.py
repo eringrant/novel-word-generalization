@@ -122,6 +122,8 @@ class Experiment(object):
 
         self.outputs = self.run_experiment(paramlist)
 
+        self.finalize(params)
+
     def run_experiment(self, params):
         paramlist = self.generate_conditions(params)
         for pl in paramlist:
@@ -187,7 +189,7 @@ class Experiment(object):
                         iter_dict.update(return_dict)
                         results.append(iter_dict)
 
-            self.finalize(params, rep)
+            self.finalize_rep(params, rep)
 
         # write intermediate results
         try:
@@ -220,7 +222,11 @@ class Experiment(object):
         ret = {'iteration':n, 'repetition':rep}
         return ret
 
-    def finalize(self, params, rep):
+    def finalize_rep(self, params, rep):
+        """ Optionally implemented by the subclass. """
+        pass
+
+    def finalize(self, params):
         """ Optionally implemented by the subclass. """
         pass
 

@@ -43,10 +43,25 @@ class Meaning:
 
     #BM getSeenPrims
     def seen_features(self):
-        """ Return a set of all features seen so far with this word. """
+        """
+        Return a set of all features seen so far with this word;
+        do not return unseen features.
+
+        Note: The meaning probability of these features will not sum to one.
+
+        """
         return set(self._seen_features)
 
-    #BM getSortedPrims
+    def all_features(self):
+        """
+        Return a set of all features associated with this word,
+        including unseen features.
+
+        Note: The meaning probability of these features will sum to one.
+
+        """
+        return set(self._meaning_probs.keys())
+
     def sorted_features(self):
         """
         Return a list, sorted by probability, of each (prob, feature) seen so
