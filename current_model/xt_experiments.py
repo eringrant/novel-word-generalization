@@ -19,6 +19,7 @@ import xml.etree.cElementTree as ET
 
 import constants as CONST
 import evaluate
+import filewriter
 import input
 import learn
 import learnconfig
@@ -80,6 +81,7 @@ class GeneralisationExperiment(experiment.Experiment):
         # get the corpus
         if params['corpus'] == 'generate-simple':
 
+            # get the location of the hierarchy
             tree = ET.parse(params['hierarchy'])
             self.gold_standard_lexicon = self.create_lexicon_from_etree(tree, beta)
 
@@ -93,7 +95,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
         elif params['corpus'] == 'generate-naturalistic':
 
-            self.corpus, sup, basic, sub = self.generate_naturalistic_corpus(params['corpus-path'], params['lexname'], params['beta'], params['maxtime'], params['num-features'], params)
+            self.corpus, sup, basic, sub = self.generate_naturalistic_corpus(params)
 
             # create the learner
             stopwords = []
@@ -130,32 +132,17 @@ class GeneralisationExperiment(experiment.Experiment):
 
             for i, training_set in enumerate(self.training_sets[condition]):
 
-                if params['blank-learner'] is True:
-                    stopwords = []
-                    self.learner = learn.Learner(params['lexname'], self.learner_config, stopwords)
-                else:
-                    learner_dump = open(params['learner-path'], "rb")
-                    self.learner = pickle.load(learner_dump)
-                    learner_dump.close()
-
-                if verbose is True:
-                    print('condition:', condition, 'training set:')
-                    pprint.pprint(training_set)
-                    print('\n')
+                learner_dump = open(params['learner-path'], "rb")
+                self.learner = pickle.load(learner_dump)
+                learner_dump.close()
 
                 for trial in training_set:
                     self.learner.process_pair(trial.utterance(), trial.scene(),
                                               params['path'], False)
 
-                    if verbose is True:
-                        print('trial fep meaning:')
-                        print([(feature, self.learner._learned_lexicon.prob(trial.utterance()[0], feature)) for feature in self.learner._learned_lexicon.seen_features(trial.utterance()[0]) if feature in trial.scene()])
-                        print('\n')
-
                 if latex is True:
                     print('\\subsection{'+condition+'}')
                     print('\\begin{tabular}{l c c}')
-                    #print('& $\\alpha$ & $f_{dirichlet}(\mathbf{x})$ \\\\')
                     print('& probs & total & p(fep|fep) \\\\')
 
                 for cond in self.test_sets[i]:
@@ -197,10 +184,8 @@ class GeneralisationExperiment(experiment.Experiment):
                             delta=params['delta-interval'],
                             include_target=params['include-fep-in-loop'],
                             target_word_as_distribution=params['use-distribution-fep'],
-                            just_fep=params['just-fep'],
                             ratio_to_mean=params['ratio-to-mean'],
-                            log=params['log'],
-                            include_unseen_features=params['include-unseen-features']
+                            log=params['log']
                             )
 
                         p_fep_fep[condition] = p_f_f
@@ -451,12 +436,12 @@ class GeneralisationExperiment(experiment.Experiment):
 
         return test_sets
 
-    def generate_naturalistic_corpus(self, corpus_path, lexicon, beta, maxtime, n, params):
+    def generate_naturalistic_corpus(self, params):
         temp_corpus_path = 'temp_xt_corpus_'
         temp_corpus_path += datetime.now().isoformat() + '.dev'
         temp_corpus = open(temp_corpus_path, 'w')
 
-        corpus = input.Corpus(corpus_path)
+        corpus = input.Corpus(params['corpus_path'])
 
         word_to_frequency_map = {}
         with open('lemma.al', 'rb') as csvfile:
@@ -469,7 +454,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
         sentence_count = 0
 
-        while sentence_count < maxtime:
+        while sentence_count < params['maxtime']:
             (words, features) = corpus.next_pair()
 
             for word in words:
@@ -525,7 +510,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
                     if len(lowest_to_highest) >= 3: # at least three levels
 
-                        # discard the highest level as it is tooo broad
+                        # discard the highest level as it is too broad
                         # instead, use the second-highest as the superordinate level,
                         # and choose the highest frequency word as the basic level
                         lowest_to_highest.pop(-1)
@@ -566,6 +551,8 @@ class GeneralisationExperiment(experiment.Experiment):
             word_to_list_of_feature_bundles_map[sup] = []
             sup_features = [sup + '_f' + str(i) for i in range(n)]
             sup_fs.extend(sup_features)
+            for feature in sup_features:
+                self.feature_to_level_map[feature] = 'superordinate'
             hierarchy_words.append(sup)
             for basic in hierarchy[sup]:
                 hierarchy[sup][basic] = list(set(hierarchy[sup][basic]))
@@ -575,10 +562,14 @@ class GeneralisationExperiment(experiment.Experiment):
                     word_to_list_of_feature_bundles_map[basic] = []
                     basic_features = [basic + '_f' + str(i) for i in range(n)]
                     basic_fs.extend(basic_features)
+                    for feature in basic_features:
+                        self.feature_to_level_map[feature] = 'basic'
                     hierarchy_words.append(basic)
                     for sub in hierarchy[sup][basic]:
                         sub_features = [sub + '_f' + str(i) for i in range(n)]
                         sub_fs.extend(sub_features)
+                        for feature in sub_features:
+                            self.feature_to_level_map[feature] = 'subordinate'
                         if sub in hierarchy_words:
                             hierarchy[sup][basic].remove(sub)
                         else:
@@ -597,12 +588,12 @@ class GeneralisationExperiment(experiment.Experiment):
         hierarchy_words.sort()
 
         # rewrite the corpus
-        corpus = input.Corpus(corpus_path)
-        lexicon = input.read_gold_lexicon(lexicon, beta)
+        corpus = input.Corpus(params['corpus_path'])
+        lexicon = input.read_gold_lexicon(params['lexicon'], params['beta'])
 
         sentence_count = 0
 
-        while sentence_count < maxtime:
+        while sentence_count < params['maxtime']:
             (words, features) = corpus.next_pair()
 
             scene = ''
@@ -649,11 +640,6 @@ class GeneralisationExperiment(experiment.Experiment):
         # assumption: all subordinate features are novel
         sub = ['sub_f' + str(i) for i in range(100)]
 
-        #print('Number of superordinate words:', len(hierarchy))
-        #print('Number of basic-level words:', np.sum([len(hierarchy[sup]) for sup in hierarchy]))
-        #print('Number of subordinate words:', np.sum([len(hierarchy[sup][basic]) for basic in hierarchy[sup] for sup in hierarchy]))
-        #raw_input()
-
         return temp_corpus_path, sup, basic, sub
 
     def generate_naturalistic_training_sets(self, sup, basic, sub, num_sets):
@@ -668,13 +654,9 @@ class GeneralisationExperiment(experiment.Experiment):
 
         for i in range(num_sets):
 
-            sup_1 = [sup.pop()]
-            basic_1 = [basic.pop()]
-            sub_1 = [sub.pop()]
-
-            fep_sup = [sup_1[0]]
-            fep_basic = [basic_1[0]]
-            fep_sub = [sub_1[0]]
+            fep_sup = [sup.pop()]
+            fep_basic = [basic.pop()]
+            fep_sub = [sub.pop()]
 
             training_sets['one example'].append(
                 [experimental_materials.UtteranceScenePair(
@@ -694,7 +676,6 @@ class GeneralisationExperiment(experiment.Experiment):
                 )] * 3
             )
 
-            sub_1 = [sub.pop()]
             sub_2 = [sub.pop()]
             sub_3 = [sub.pop()]
 
@@ -721,10 +702,9 @@ class GeneralisationExperiment(experiment.Experiment):
                 ]
             )
 
-            basic_1 = [basic.pop()]
             basic_2 = [basic.pop()]
             basic_3 = [basic.pop()]
-            sub_1 = [sub.pop()]
+
             sub_2 = [sub.pop()]
             sub_3 = [sub.pop()]
 
@@ -752,8 +732,6 @@ class GeneralisationExperiment(experiment.Experiment):
             )
 
             fep_features.append((fep_sup[0], fep_basic[0], fep_sub[0]))
-
-        #pprint.pprint(training_sets)
 
         return training_sets, fep_features
 
@@ -831,8 +809,6 @@ class GeneralisationExperiment(experiment.Experiment):
                 )
             ]
 
-        pprint.pprint(test_sets)
-
         return test_sets
 
     def create_lexicon_from_etree(self, tree, beta):
@@ -888,10 +864,10 @@ class GeneralisationExperiment(experiment.Experiment):
 
         return output_filename
 
-    def finalize(self, params, rep):
-        #os.remove(self.corpus)
-        #os.remove(self.lexicon)
-        pass
+    def finalize(self, params):
+        os.remove(self.corpus)
+        os.remove(self.lexicon)
+        os.remove(self.config_path)
 
 
 def calculate_generalisation_probability(learner, target_word, target_scene_meaning, method='cosine', std=0.0001, delta=0.0001, include_target=True, target_word_as_distribution=False, just_fep=False, ratio_to_mean=False, log=False, include_unseen_features=True):
@@ -954,9 +930,6 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
     lexicon = learner.learned_lexicon()
 
-    #import pdb; pdb.set_trace()
-    import filewriter
-
     if method == 'no-word-averaging':
 
         total = cos(target_scene_meaning, lexicon.meaning(target_word))
@@ -965,12 +938,7 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
         total = 0
 
-        if just_fep is True:
-            words = ['fep']
-        else:
-            words = learner._wordsp.all_words(0)[:]
-        if include_target is False:
-            words.remove(target_word)
+        words = learner._wordsp.all_words(0)[:]
 
         sum_word_frequency = int(np.sum([learner._wordsp.frequency(w) for w in learner._wordsp.all_words(0)]))
 
@@ -1174,7 +1142,7 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
                 else:
                     p_fep_fep = 1
 
-                for feature in lexicon.meaning(target_word).seen_features():
+                for feature in lexicon.meaning(target_word).all_features():
 
                     if log:
                         p_fep_fep += np.log(lexicon.prob(target_word, feature))
@@ -1186,7 +1154,7 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
                 numbers = []
                 features = []
 
-                for feature in target_scene_meaning.seen_features():
+                for feature in target_scene_meaning.all_features():
 
                     if log:
                         total += np.log(lexicon.prob(target_word, feature))
@@ -1196,7 +1164,7 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
                         features.append(feature)
                     seen.append(feature)
 
-                for feature in [f for f in lexicon.meaning(target_word).seen_features() if f not in seen]:
+                for feature in [f for f in lexicon.meaning(target_word).all_features() if f not in seen]:
 
                     if log:
                         total += np.log((1 - lexicon.prob(target_word, feature)))

@@ -1,5 +1,5 @@
 import csv
-import tabulate
+#import tabulate
 import numpy as np
 from itertools import groupby
 from operator import itemgetter
@@ -83,7 +83,6 @@ def round_to_sig_digits(x, n):
     try:
         return round(x, -int(floor(log10(abs(x)))) + (n - 1))
     except ValueError:
-        print 'here'
         return x
 
 def sigmoid(x):
