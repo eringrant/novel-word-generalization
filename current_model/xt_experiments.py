@@ -8,13 +8,13 @@ import math
 import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import mpmath; mpmath.mp.dps = 50
-#import nltk
-#from nltk.corpus.reader import CorpusReader
+import nltk
+from nltk.corpus.reader import CorpusReader
 import numpy as np
 import os
 import pickle
 import random
-#import scipy.stats
+import scipy.stats
 import xml.etree.cElementTree as ET
 
 import constants as CONST
@@ -105,7 +105,7 @@ class GeneralisationExperiment(experiment.Experiment):
                 #learner_dump = open(params['learner-path'], "wb")
                 #pickle.dump(self.learner, learner_dump)
                 #learner_dump.close()
-                self.learner = learn.Learner(params['lexname'], learner_config, stopwords)
+                self.learner = learn.Learner(params['lexname'], self.learner_config, stopwords)
                 learner_dump = open(params['learner-path'], "wb")
                 pickle.dump(self.learner, learner_dump)
                 learner_dump.close()
@@ -192,6 +192,22 @@ class GeneralisationExperiment(experiment.Experiment):
                             log=params['log']
                             )
 
+                        if cond == 'subordinate matches':
+                            gen_prob *= (1-self.learner._learned_lexicon.unseen('fep'))
+                            gen_prob *= (1-self.learner._learned_lexicon.unseen('fep'))
+                            print(',')
+                            print(filewriter.round_to_sig_digits(self.learner._learned_lexicon.unseen('fep'), 4))
+                            print(',')
+                            print(filewriter.round_to_sig_digits(self.learner._learned_lexicon.unseen('fep'), 4))
+                        elif cond == 'basic-level matches':
+                            gen_prob *= (1-self.learner._learned_lexicon.unseen('fep'))
+                            print(',')
+                            print(filewriter.round_to_sig_digits(self.learner._learned_lexicon.unseen('fep'), 4))
+                        elif cond == 'superordinate matches':
+                            pass
+                        else:
+                            raise NotImplementedError
+                        print('&', filewriter.round_to_sig_digits(gen_prob, 4), '\\\\')
                         p_fep_fep[condition] = p_f_f
 
                         take_average = mpmath.fadd(take_average, gen_prob)
@@ -445,7 +461,7 @@ class GeneralisationExperiment(experiment.Experiment):
         temp_corpus_path += datetime.now().isoformat() + '.dev'
         temp_corpus = open(temp_corpus_path, 'w')
 
-        corpus = input.Corpus(params['corpus_path'])
+        corpus = input.Corpus(params['corpus-path'])
 
         word_to_frequency_map = {}
         with open('lemma.al', 'rb') as csvfile:
@@ -553,7 +569,7 @@ class GeneralisationExperiment(experiment.Experiment):
         sub_count = 0
         for sup in hierarchy:
             word_to_list_of_feature_bundles_map[sup] = []
-            sup_features = [sup + '_f' + str(i) for i in range(n)]
+            sup_features = [sup + '_f' + str(i) for i in range(params['num-features'])]
             sup_fs.extend(sup_features)
             for feature in sup_features:
                 self.feature_to_level_map[feature] = 'superordinate'
@@ -564,13 +580,13 @@ class GeneralisationExperiment(experiment.Experiment):
                     basic_to_delete.append((sup, basic))
                 else:
                     word_to_list_of_feature_bundles_map[basic] = []
-                    basic_features = [basic + '_f' + str(i) for i in range(n)]
+                    basic_features = [basic + '_f' + str(i) for i in range(params['num-features'])]
                     basic_fs.extend(basic_features)
                     for feature in basic_features:
                         self.feature_to_level_map[feature] = 'basic'
                     hierarchy_words.append(basic)
                     for sub in hierarchy[sup][basic]:
-                        sub_features = [sub + '_f' + str(i) for i in range(n)]
+                        sub_features = [sub + '_f' + str(i) for i in range(params['num-features'])]
                         sub_fs.extend(sub_features)
                         for feature in sub_features:
                             self.feature_to_level_map[feature] = 'subordinate'
@@ -592,8 +608,8 @@ class GeneralisationExperiment(experiment.Experiment):
         hierarchy_words.sort()
 
         # rewrite the corpus
-        corpus = input.Corpus(params['corpus_path'])
-        lexicon = input.read_gold_lexicon(params['lexicon'], params['beta'])
+        corpus = input.Corpus(params['corpus-path'])
+        lexicon = input.read_gold_lexicon(params['lexname'], params['beta'])
 
         sentence_count = 0
 
@@ -870,7 +886,6 @@ class GeneralisationExperiment(experiment.Experiment):
 
     def finalize(self, params):
         os.remove(self.corpus)
-        os.remove(self.lexicon)
         os.remove(self.config_path)
 
 
@@ -1137,7 +1152,7 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
                 total = dirichlet_pdf(x, alpha)
 
                 if latex is True:
-                    print([filewriter.round_to_sig_digits(x, 4) for x in alpha], '&', filewriter.round_to_sig_digits(total, 4), '\\\\')
+                    print([filewriter.round_to_sig_digits(x, 4) for x in alpha])
 
             elif method == 'simple':
 
@@ -1176,6 +1191,17 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
                         total *= (1 - lexicon.prob(target_word, feature))
                         numbers.append(1 - lexicon.prob(target_word, feature))
                         features.append(feature)
+                    seen.append(feature)
+
+                for feature in [f for f in learner._features if f not in seen]:
+
+                    if log:
+                        total += np.log((1 - lexicon.prob(target_word, feature)))
+                    else:
+                        total *= (1 - lexicon.prob(target_word, feature))
+                        numbers.append(1 - lexicon.prob(target_word, feature))
+                        features.append(feature)
+
 
                 if latex is True:
                     print([filewriter.round_to_sig_digits(x, 4) for i, x in enumerate(numbers)])
