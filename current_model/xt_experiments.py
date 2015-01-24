@@ -1037,8 +1037,6 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
                     else:
                         y_factor = mpmath.fmul(y_factor, prob)
 
-                    #print('\tfeature', feature, '\tmean', mean, '\tprob', prob)
-
                 for feature in lexicon.seen_features(target_word):
 
                     if target_word_as_distribution is False:
@@ -1076,8 +1074,6 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
                     term = mpmath.fmul(mpmath.fmul(y_factor, target_factor), p_w)
 
                 total = mpmath.fadd(total, term)
-
-                #print('\t', word, ':', '\tfirst factor =', y_factor, '\tsecond factor =', target_factor, '\tword freq =', p_w)
 
             elif method == 'dirichlet-meanprob':
 
@@ -1179,8 +1175,11 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
                         total += np.log(lexicon.prob(target_word, feature))
                     else:
                         total *= lexicon.prob(target_word, feature)
-                        numbers.append(lexicon.prob(target_word, feature))
                         features.append(feature)
+
+                        if latex is True:
+                            print(feature+':', filewriter.round_to_sig_digits(lexicon.prob(target_word, feature)))
+
                     seen.append(feature)
 
                 for feature in [f for f in lexicon.meaning(target_word).all_features() if f not in seen]:
@@ -1203,10 +1202,13 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
                         features.append(feature)
 
 
+                        if latex is True:
+                            print(feature+':', filewriter.round_to_sig_digits(lexicon.prob(target_word, feature)))
+
                 if latex is True:
-                    print([filewriter.round_to_sig_digits(x, 4) for i, x in enumerate(numbers)])
-                    print('&', filewriter.round_to_sig_digits(total, 4))
-                    print('&', p_fep_fep, '\\\\')
+                    #print('&', filewriter.round_to_sig_digits(total, 4))
+                    #print('&', p_fep_fep, '\\\\')
+                    pass
             else:
                 raise NotImplementedError
 
