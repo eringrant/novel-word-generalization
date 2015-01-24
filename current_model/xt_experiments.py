@@ -101,8 +101,12 @@ class GeneralisationExperiment(experiment.Experiment):
             # create the learner
             stopwords = []
             if params['new-learner'] is True:
+                #self.learner = learn.Learner(params['lexname'], learner_config, stopwords)
+                #self.learner.process_corpus(self.corpus, params['path'])
+                #learner_dump = open(params['learner-path'], "wb")
+                #pickle.dump(self.learner, learner_dump)
+                #learner_dump.close()
                 self.learner = learn.Learner(params['lexname'], learner_config, stopwords)
-                self.learner.process_corpus(self.corpus, params['path'])
                 learner_dump = open(params['learner-path'], "wb")
                 pickle.dump(self.learner, learner_dump)
                 learner_dump.close()
