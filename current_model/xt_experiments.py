@@ -176,10 +176,6 @@ class GeneralisationExperiment(experiment.Experiment):
                     count = 0
 
                     for j in range(len(self.test_sets[i][cond])):
-
-                        print(j)
-                        print(self.test_sets[i][cond])
-                        raw_input()
                         test_scene = self.test_sets[i][cond][j]
                         word = test_scene.utterance()[0]
 
@@ -206,7 +202,7 @@ class GeneralisationExperiment(experiment.Experiment):
                             print(cond + ' & ')
                             print("""\specialcell{""")
 
-                        gen_prob, p_f_f = calculate_generalisation_probability(
+                        gen_prob, p_f_f, feature_count = calculate_generalisation_probability(
                             self.learner, word, meaning,
                             method=params['calculation-type'],
                             std=params['std'],
@@ -217,71 +213,10 @@ class GeneralisationExperiment(experiment.Experiment):
                             log=params['log']
                             )
 
-                        if cond == 'subordinate matches':
-                            for i in range(8):
-                                gen_prob *= (1-self.learner._learned_lexicon.unseen('fep'))
-                            print('unseen sub ftr from basic test item#1:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen sub ftr from basic test item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen sub ftr from sup test item#1:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen basic ftr from sup test item#1:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen sub ftr from sup test item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen basic ftr from sup test item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen sub ftr from sup test item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen basic ftr from sup test item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen sub ftr from sup test item#4:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen basic ftr from sup test item#4:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen sub ftr from basic training item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen sub ftr from basic training item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen sub ftr from sup training item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen basic ftr from sup training item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen sub ftr from sup training item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen basic ftr from sup training item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            if condition == 'one example' or condition == 'three subordinate examples' or condition == 'three basic-level examples':
-                                if condition == 'one example' or condition == 'three subordinate examples':
-                                    print('unseen sub ftr from basic training item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                                    print('unseen basic ftr from basic training item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                                print('unseen sub ftr from sup training item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                                print('unseen basic ftr from sup training item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                                print('unseen sub ftr from sup training item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                                print('unseen basic ftr from sup training item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4))
-                        elif cond == 'basic-level matches':
-                            for i in range(6):
-                                gen_prob *= (1-self.learner._learned_lexicon.unseen('fep'))
-                            print('unseen sub ftr from sup test item#1:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen basic ftr from sup test item#1:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen sub ftr from sup test item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen basic ftr from sup test item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen sub ftr from sup test item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen basic ftr from sup test item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen sub ftr from sup test item#4:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen basic ftr from sup test item#4:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            if condition == 'one example' or condition == 'three subordinate examples' or condition == 'three basic-level examples':
-                                if condition == 'one example' or condition == 'three subordinate examples':
-                                    print('unseen sub ftr from basic training item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                                    print('unseen basic ftr from basic training item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                                print('unseen sub ftr from sup training item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                                print('unseen basic ftr from sup training item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                                print('unseen sub ftr from sup training item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                                print('unseen basic ftr from sup training item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4))
+                        while feature_count < 19:
+                            print('unseen ftr:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
+                            feature_count += 1
 
-                        elif cond == 'superordinate matches':
-                            for i in range(4):
-                                gen_prob *= (1-self.learner._learned_lexicon.unseen('fep'))
-                            print('unseen sub ftr from basic test item#1:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen sub ftr from basic test item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen sub ftr from basic training item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            print('unseen sub ftr from basic training item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            if condition == 'one example' or condition == 'three subordinate examples' or condition == 'three basic-level examples':
-                                if condition == 'one example' or condition == 'three subordinate examples':
-                                    print('unseen sub ftr from basic training item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                                    print('unseen basic ftr from basic training item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                                print('unseen sub ftr from sup training item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                                print('unseen basic ftr from sup training item#2:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                                print('unseen sub ftr from sup training item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                                print('unseen basic ftr from sup training item#3:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4))
-                            pass
-                        else:
-                            raise NotImplementedError
                         print("""}""")
                         print('&', filewriter.round_to_sig_digits(gen_prob, 4), '\\\\')
                         print("""\hline""")
@@ -1231,6 +1166,8 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
             elif method == 'simple':
 
+                feature_count = 0
+
                 if log:
                     p_fep_fep = 0
                 else:
@@ -1250,6 +1187,7 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
                 for feature in target_scene_meaning.all_features():
 
+                    feature_count += 1
                     if log:
                         total += np.log(lexicon.prob(target_word, feature))
                     else:
@@ -1263,6 +1201,7 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
                 for feature in [f for f in lexicon.meaning(target_word).all_features() if f not in seen]:
 
+                    feature_count += 1
                     if log:
                         total += np.log((1 - lexicon.prob(target_word, feature)))
                     else:
@@ -1277,6 +1216,7 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
                 for feature in [f for f in learner._features if f not in seen]:
 
+                    feature_count += 1
                     if log:
                         total += np.log((1 - lexicon.prob(target_word, feature)))
                     else:
@@ -1295,7 +1235,7 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
             else:
                 raise NotImplementedError
 
-    return total, p_fep_fep
+    return total, p_fep_fep, feature_count
 
 
 def bar_chart(results, p_fep_fep=None, savename=None, annotation=None, normalise_over_test_scene=True):
