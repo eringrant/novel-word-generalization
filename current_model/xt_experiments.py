@@ -260,6 +260,9 @@ class GeneralisationExperiment(experiment.Experiment):
         annotation = str(dict((key, value) for (key, value) in params.items() if key in params['graph-annotation']))
         bar_chart(results, savename=savename, annotation=annotation, normalise_over_test_scene=params['normalise-over-test-scene'])
 
+        os.remove(self.config_path)
+        os.remove(self.learner_path)
+
         return results
 
     def generate_training_sets(self, sup, basic, sub, num_sets, num_sub_features=1, num_basic_features=1, num_sup_features=1):
@@ -391,9 +394,6 @@ class GeneralisationExperiment(experiment.Experiment):
         return test_sets
 
     def finalize(self, params):
-        os.remove(self.config_path)
-        os.remove(self.learner_path)
-
         if latex is True:
             print("""\end{document}""")
 
