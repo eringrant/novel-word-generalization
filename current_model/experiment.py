@@ -50,7 +50,7 @@ class Experiment(object):
         self.parse_config()
         self.id = datetime.date.today().isoformat()
         self.csv_header = None # header for results CSV file
-        print 'Default number of cores is ', cpu_count()
+        #print 'Default number of cores is ', cpu_count()
         pass
 
     def parse_cmd_line(self):

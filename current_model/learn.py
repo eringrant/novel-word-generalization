@@ -497,7 +497,6 @@ class Learner:
                 if category_flag:
                     category_denom += category_probs[word][feature]
 
-            #print('alpha', self.alpha(feature))
             denom +=  (self.alpha(feature) * self._epsilon)
             category_denom +=  (self.alpha(feature) * self._epsilon)
 

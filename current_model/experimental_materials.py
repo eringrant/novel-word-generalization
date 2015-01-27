@@ -4,37 +4,11 @@ import copy
 
 import input
 
-class Hierarchy(object):
-
-    def __init__(self):
-
-        def tree(): return defaultdict(tree)
-
-        self._dict = tree()
-
-    def __repr__(self):
-
-        def dicts(t): return {k: dicts(t[k]) for k in t}
-
-        return pprint.pformat(dicts(self._dict))
-
-    def add(self, path):
-        """
-        Add path to this Hierarchy.
-
-        @param path A list of strings.
-        """
-        if isinstance(path, str):
-            path = path.split(',')
-
-        t = self._dict
-        for node in path:
-           t = t[node]
 
 class UtteranceScenePair(object):
 
-    def __init__(self, utterance, scene=None, objects=None, lexicon=None, num_features=None, probabilistic=True,
-            feature_restriction=None):
+    def __init__(self, utterance, scene=None, objects=None, lexicon=None,
+            num_features=None, probabilistic=True, feature_restriction=None):
         """
         Initialise a scene representation.
 
@@ -61,6 +35,8 @@ class UtteranceScenePair(object):
 
         if isinstance(lexicon, str):
             lexicon = input.read_gold_lexicon(lexicon, 10000)
+        elif lexicon is None:
+            assert scene is not None
 
         if scene is not None:
             assert isinstance(scene, list)
@@ -110,7 +86,7 @@ class UtteranceScenePair(object):
                 self._scene = list(set(self._scene))
 
             else:
-                raise Exception
+                raise NotImplementedError
 
     def __repr__(self):
         return 'Utterance: ' + str(self._utterance) + '; Objects in scene: ' + str(self._objects) + '; Scene: ' + str(self._scene)

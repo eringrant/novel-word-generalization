@@ -19,16 +19,16 @@ class Meaning:
 
     """
 
-    def __init__(self, beta, k_sub=1, k_basic=1, k_sup=1):
+    def __init__(self, unseen_sub, unseen_basic, unseen_sup):
         """
         Create a meaning object with each feature being equally likely to be part
         of this meaning with probability 1.0/beta
 
         """
         self._meaning_probs = {}
-        self._unseen_sub = 1./k_sub
-        self._unseen_basic = 1./k_basic
-        self._unseen_sup = 1./k_sup
+        self._unseen_sub = unseen_sub
+        self._unseen_basic = unseen_basic
+        self._unseen_sup = unseen_sup
         self._seen_features = []
 
     #BM getValue
@@ -84,6 +84,7 @@ class Meaning:
 
     def unseen_prob(self):
         """ Return the probability of an unseen feature. """
+        print('who called me?')
         return 0.1
 
     def copy(self, meaning):
@@ -119,13 +120,12 @@ class Lexicon:
 
         """
         self._word_meanings = {}
-        self._beta = beta
-        for w in words:
-            self._word_meanings[w] = Meaning(beta)
+        #self._beta = beta
         self._unseen_sub = 1./k_sub
         self._unseen_basic = 1./k_basic
         self._unseen_sup = 1./k_sup
-
+        for w in words:
+            self._word_meanings[w] = Meaning(unseen_sub=self._unseen_sub, unseen_basic=self._unseen_basic, unseen_sup=self._unseen_sup)
 
     #BM getWords
     def words(self):
@@ -135,7 +135,7 @@ class Lexicon:
     #BM getMeaning
     def meaning(self, word):
         """ Return a copy of the Meaning object corresponding to word. """
-        meaning = Meaning(self._beta)
+        meaning = Meaning(unseen_sub=self._unseen_sub, unseen_basic=self._unseen_basic, unseen_sup=self._unseen_sup)
         if self._word_meanings.has_key(word):
             meaning.copy(self._word_meanings[word])
         return meaning
@@ -159,7 +159,7 @@ class Lexicon:
 
         """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._beta)
+            self._word_meanings[word] = Meaning(unseen_sub=self._unseen_sub, unseen_basic=self._unseen_basic, unseen_sup=self._unseen_sup)
         self._word_meanings[word]._meaning_probs[feature] = prob
 
     #BM getValue
@@ -202,8 +202,7 @@ class Lexicon:
             self._word_meanings[word]._unseen_basic = basic
             self._word_meanings[word]._unseen_sup = sup
         else:
-            meaning = Meaning(self._beta)
-            meaning._unseen = unseen_value
+            meaning = Meaning(unseen_sub=self._unseen_sub, unseen_basic=self._unseen_basic, unseen_sup=self._unseen_sup)
             self._word_meanings[word] = meaning
 
 
