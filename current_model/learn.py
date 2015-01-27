@@ -40,13 +40,17 @@ class Learner:
 
     """
 
-    def __init__(self, lexicon_path, config, stopwords=[]):
+    def __init__(self, lexicon_path, config, stopwords=[], k_sub=None, k_basic=None, k_sup=None):
         """
         Initialize the Learner with all properties from LearnerConfig config,
         using lexicon_path to initialize the gold standard lexicon and
         stopwords_path to read the file of all stop words to ignore.
 
         """
+        self.k_sub = k_sub
+        self.k_basic = k_basic
+        self.k_sup = k_sup
+
         if not os.path.exists(lexicon_path):
             print "Initialization Error -- Lexicon does not exist : "+lexicon_path
             sys.exit(2)
@@ -79,7 +83,7 @@ class Learner:
             print "Using frequency-dependent alpha."
 
         self._epsilon = config.param_float("epsilon")
-        if self._epsilon <= 0:
+        if self._epsilon < 0:
             print "Config Error [epsilon] Must be non-zero positive : "+str(self._epsilon)
             sys.exit(2)
 
@@ -168,7 +172,8 @@ class Learner:
         self._all_features = input.all_features(lexicon_path)
         #print "number of Gold Features", len(self._all_features)
 
-        self._learned_lexicon = wmmapping.Lexicon(self._beta, self._gold_lexicon.words())
+        #self._learned_lexicon = wmmapping.Lexicon(self._beta, self._gold_lexicon.words())
+        self._learned_lexicon = wmmapping.Lexicon(self._beta, ['fep'], k_sub=k_sub, k_basic=k_basic, k_sup=k_sup)
         self._aligns = wmmapping.Alignments(self._alpha)
 
         self._time = 0
@@ -295,6 +300,35 @@ class Learner:
         self._acquisition_scores[word] = sim
         return sim
 
+    ##BM updateWordFProb
+    #def update_meaning_prob(self, word):
+    #    """
+    #    Update the meaning probabilities of word in this learner's lexicon.
+    #    This is done by calculating the association between this word and all
+    #    encountered features - p(f|w) - then normalizing to produce a
+    #    distribution.
+
+    #    """
+    #    Lambda = self.get_lambda()
+
+    #    # Hash computed associations to avoid double calculating
+    #    associations = {}
+
+    #    sum_assoc = 0.0
+    #    for feature in self._features:
+    #        assoc = self.association(word, feature)
+    #        associations[feature] = assoc
+    #        sum_assoc += assoc
+
+    #    sum_assoc += (self._beta * Lambda) # Smoothing
+
+    #    for feature in self._features:
+    #        meaning_prob = (associations[feature] + Lambda) / sum_assoc
+    #        self._learned_lexicon.set_prob(word, feature, meaning_prob)
+
+    #    prob_unseen = Lambda / sum_assoc
+    #    self._learned_lexicon.set_unseen(word, prob_unseen)
+
     #BM updateWordFProb
     def update_meaning_prob(self, word):
         """
@@ -306,24 +340,75 @@ class Learner:
         """
         Lambda = self.get_lambda()
 
-        # Hash computed associations to avoid double calculating
-        associations = {}
-
-        sum_assoc = 0.0
-        for feature in self._features:
-            assoc = self.association(word, feature)
-            associations[feature] = assoc
-            sum_assoc += assoc
-
-        sum_assoc += (self._beta * Lambda) # Smoothing
+        freq = self._wordsp.frequency(word) + 1
+        denom = freq + self._beta * Lambda
 
         for feature in self._features:
-            meaning_prob = (associations[feature] + Lambda) / sum_assoc
+            meaning_prob = (self.association(word, feature) + Lambda) / denom
             self._learned_lexicon.set_prob(word, feature, meaning_prob)
 
-        prob_unseen = Lambda / sum_assoc
-        self._learned_lexicon.set_unseen(word, prob_unseen)
+        prob_unseen = Lambda / denom
+        self._learned_lexicon.set_unseen(word, (prob_unseen, prob_unseen, prob_unseen))
 
+    ##BM updateWordFProb
+    #def update_meaning_prob(self, word):
+    #    """
+    #    Update the meaning probabilities of word in this learner's lexicon.
+    #    This is done by calculating the association between this word and all
+    #    encountered features - p(f|w) - then normalizing to produce a
+    #    distribution.
+
+    #    """
+    #    #TODO: temporary change to calculating alignments
+    #    Lambda = 1
+
+    #    sub_denom = 0.0
+    #    basic_denom = 0.0
+    #    sup_denom = 0.0
+
+    #    for feature in self._features:
+
+    #        if feature.startswith('sub'):
+    #            sub_denom += self.association(word, feature)
+    #        elif feature.startswith('bas'):
+    #            basic_denom += self.association(word, feature)
+    #        elif feature.startswith('sup'):
+    #            sup_denom += self.association(word, feature)
+    #        else:
+    #            raise NotImplementedError
+
+    #    sub_denom += self.k_sub * Lambda
+    #    basic_denom += self.k_basic * Lambda
+    #    sup_denom += self.k_sup * Lambda
+
+    #    for feature in self._features:
+
+    #        if feature.startswith('sub'):
+    #            k = self.k_sub
+    #            denom = sub_denom
+    #        elif feature.startswith('bas'):
+    #            k = self.k_basic
+    #            denom = basic_denom
+    #        elif feature.startswith('sup'):
+    #            k = self.k_sup
+    #            denom = sup_denom
+    #        else:
+    #            raise NotImplementedError
+
+    #        meaning_prob = (self.association(word, feature) + Lambda) / denom
+
+    #        if feature.startswith('sub'):
+    #            self.k_sub = denom
+    #        elif feature.startswith('bas'):
+    #            self.k_basic = denom
+    #        elif feature.startswith('sup'):
+    #            self.k_sup = denom
+    #        else:
+    #            raise NotImplementedError
+
+    #        self._learned_lexicon.set_prob(word, feature, meaning_prob)
+
+    #    self._learned_lexicon.set_unseen(word, (1./self.k_sub, 1./self.k_basic, 1./self.k_sup))
 
     def association(self, word, feature):
         """
@@ -412,6 +497,7 @@ class Learner:
                 if category_flag:
                     category_denom += category_probs[word][feature]
 
+            #print('alpha', self.alpha(feature))
             denom +=  (self.alpha(feature) * self._epsilon)
             category_denom +=  (self.alpha(feature) * self._epsilon)
 

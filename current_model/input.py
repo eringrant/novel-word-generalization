@@ -96,7 +96,8 @@ def read_gold_lexicon(gold_lex_path, beta):
             (feature, prob) = re.findall("([^:]+):", feat)
             gold_lex.set_prob(word, feature, eval(prob))
 
-        gold_lex.set_unseen(word, 0.0)
+        #gold_lex.set_unseen(word, 0.0)
+        gold_lex.set_unseen(word, (0.0, 0.0, 0.0))
 
     f.close()
     return gold_lex

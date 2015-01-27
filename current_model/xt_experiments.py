@@ -65,6 +65,7 @@ class GeneralisationExperiment(experiment.Experiment):
             novelty_decay=self.novelty_decay,
             beta=params['beta'],
             L=(1/params['beta']),
+            #L=(1),
             power=params['power'],
             alpha=params['alpha'],
             epsilon=params['epsilon'],
@@ -87,39 +88,50 @@ class GeneralisationExperiment(experiment.Experiment):
 
             # create the learner
             stopwords = []
-            self.learner = learn.Learner(self.gold_standard_lexicon, self.learner_config, stopwords)
+            self.learner = learn.Learner(self.gold_standard_lexicon, self.learner_config, stopwords,
+                    k_sub=params['k-sub'], k_basic=params['k-basic'], k_sup=params['k-sup'])
 
             self.corpus = self.generate_simple_corpus(tree, self.learner._gold_lexicon, params)
+
+        elif params['corpus'] == 'generate-naturalistic':
+
+            self.corpus, self.sup, self.basic, self.sub = self.generate_naturalistic_corpus(params)
+
+        return True
+
+    def setup(self, params, rep):
+
+        self.learner_path = params['learner-path']
+        self.learner_path += datetime.now().isoformat() + '.pkl'
+
+        if params['corpus'] == 'generate-simple':
             self.training_sets = self.generate_simple_training_sets()
             self.test_sets = self.generate_simple_test_sets()
 
         elif params['corpus'] == 'generate-naturalistic':
-
-            self.corpus, sup, basic, sub = self.generate_naturalistic_corpus(params)
-
             # create the learner
             stopwords = []
             if params['new-learner'] is True:
-                #self.learner = learn.Learner(params['lexname'], learner_config, stopwords)
+                #self.learner = learn.Learner(params['lexname'], self.learner_config, stopwords)
                 #self.learner.process_corpus(self.corpus, params['path'])
-                #learner_dump = open(params['learner-path'], "wb")
+                #learner_dump = open(self.learner_path, "wb")
                 #pickle.dump(self.learner, learner_dump)
                 #learner_dump.close()
-                self.learner = learn.Learner(params['lexname'], self.learner_config, stopwords)
-                learner_dump = open(params['learner-path'], "wb")
+                self.learner = learn.Learner(params['lexname'], self.learner_config, stopwords,
+                    k_sub=params['k-sub'], k_basic=params['k-basic'], k_sup=params['k-sup'])
+                learner_dump = open(self.learner_path, "wb")
                 pickle.dump(self.learner, learner_dump)
                 learner_dump.close()
-
             else:
-                learner_dump = open(params['learner-path'], "rb")
+                learner_dump = open(self.learner_path, "rb")
                 self.learner = pickle.load(learner_dump)
                 learner_dump.close()
 
             self.gold_standard_lexicon = self.learner._gold_lexicon
             self.learner = None
 
-            self.training_sets, fep_features = self.generate_naturalistic_training_sets(sup, basic, sub, params['num-sets'])
-            self.test_sets = self.generate_naturalistic_test_sets(sup, basic, sub, fep_features, params['num-sets'])
+            self.training_sets, fep_features = self.generate_naturalistic_training_sets(self.sup, self.basic, self.sub, params['num-sets'], num_sub_features=params['num-sub-features'], num_basic=params['num-basic-features'], num_sup=params['num-sup-features'])
+            self.test_sets = self.generate_naturalistic_test_sets(self.sup, self.basic, self.sub, fep_features, params['num-sets'], num_sub_features=params['num-sub-features'], num_basic=params['num-basic-features'], num_sup=params['num-sup-features'])
 
         else:
             raise NotImplementedError
@@ -150,7 +162,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
             for i, training_set in enumerate(self.training_sets[condition]):
 
-                learner_dump = open(params['learner-path'], "rb")
+                learner_dump = open(self.learner_path, "rb")
                 self.learner = pickle.load(learner_dump)
                 learner_dump.close()
 
@@ -162,10 +174,11 @@ class GeneralisationExperiment(experiment.Experiment):
                 for trial in training_set:
                     self.learner.process_pair(trial.utterance(), trial.scene(),
                                               params['path'], False)
-                    print(trial.scene(), '&')
-                print("""\\\\\hline""")
+                    if latex is True:
+                        print(str(trial.scene())[1:-1], '&')
 
                 if latex is True:
+                    print("""\\\\\hline""")
                     print('& feature: probability & generalization probability measure  \\\\')
                     print("""\hline""")
                     print("""\hline""")
@@ -213,13 +226,41 @@ class GeneralisationExperiment(experiment.Experiment):
                             log=params['log']
                             )
 
-                        while feature_count < 19:
-                            print('unseen ftr:', filewriter.round_to_sig_digits((1-self.learner._learned_lexicon.unseen('fep')), 4), '\\\\')
-                            feature_count += 1
+                        ## account for all features accross training, test
+                        ## there should be 11 sub, 7 basic, 1 sup
 
-                        print("""}""")
-                        print('&', filewriter.round_to_sig_digits(gen_prob, 4), '\\\\')
-                        print("""\hline""")
+                        #sub_count = 0
+                        #basic_count = 0
+                        #sup_count = 0
+
+                        #for feature in set(trial.scene() + test_scene.scene()):
+                        #    if feature.startswith('sub'):
+                        #        sub_count += 1
+                        #    elif feature.startswith('bas'):
+                        #        basic_count += 1
+                        #    elif feature.startswith('sup'):
+                        #        sup_count += 1
+                        #    else:
+                        #        raise NotImplementedError
+
+                        #assert sup_count == 1
+
+                        #while sub_count < 11:
+                        #    if latex is True:
+                        #        print('unseen ftr:', filewriter.round_to_sig_digits((1-1./params['k-sub']), 4), '\\\\')
+                        #    gen_prob *= (1-1./params['k-sub'])
+                        #    sub_count += 1
+
+                        #while basic_count < 7:
+                        #    if latex is True:
+                        #        print('unseen ftr:', filewriter.round_to_sig_digits((1-1./params['k-basic']), 4), '\\\\')
+                        #    gen_prob *= (1-1./params['k-basic'])
+                        #    basic_count += 1
+
+                        if latex is True:
+                            print("""}""")
+                            print('&', filewriter.round_to_sig_digits(gen_prob, 4), '\\\\')
+                            print("""\hline""")
                         p_fep_fep[condition] = p_f_f
 
                         take_average = mpmath.fadd(take_average, gen_prob)
@@ -285,7 +326,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
             # add the appropriate number of words to the dictionary and choose
             # a random subordinate object
-            for i in range(num_superordinate):
+            for m in range(num_superordinate):
                 subordinate_choices = sup.findall('.//subordinate')
                 choice = subordinate_choices[np.random.randint(
                     len(subordinate_choices))]
@@ -298,7 +339,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
             # add the appropriate number of words to the dictionary and choose
             # a random subordinate object
-            for i in range(num_basic):
+            for m in range(num_basic):
                 subordinate_choices = basic.findall('.//subordinate')
                 choice = subordinate_choices[np.random.randint(
                     len(subordinate_choices))]
@@ -309,7 +350,7 @@ class GeneralisationExperiment(experiment.Experiment):
         for sub in root.findall('.//subordinate'):
 
             label = sub.get('label')
-            words_and_objects.extend([(label, label) for i in range(num_subordinate)])
+            words_and_objects.extend([(label, label) for m in range(num_subordinate)])
 
             sub_count += num_subordinate
 
@@ -663,20 +704,23 @@ class GeneralisationExperiment(experiment.Experiment):
             'num-sub' : sub_count
         })
 
-        np.random.shuffle(sup_fs)
-        np.random.shuffle(basic_fs)
+        #np.random.shuffle(sup_fs)
+        #np.random.shuffle(basic_fs)
         #np.random.shuffle(sub_fs)
 
-        sup = list(sup_fs)
-        basic = list(basic_fs)
-
+        #sup = list(sup_fs)
+        #basic = list(basic_fs)
         #sub = list(sub_fs)
+
         # assumption: all subordinate features are novel
-        sub = ['sub_f' + str(i) for i in range(100)]
+        sub = ['sub_f' + str(i) for i in range(100000)]
+
+        basic = ['basic' + str(i) for i in range(100000)]
+        sup = ['sup_f' + str(i) for i in range(100000)]
 
         return temp_corpus_path, sup, basic, sub
 
-    def generate_naturalistic_training_sets(self, sup, basic, sub, num_sets):
+    def generate_naturalistic_training_sets(self, sup, basic, sub, num_sets, num_sub_features=1, num_basic=1, num_sup=1):
 
         fep_features = []
 
@@ -688,9 +732,9 @@ class GeneralisationExperiment(experiment.Experiment):
 
         for i in range(num_sets):
 
-            fep_sup = [sup.pop()]
-            fep_basic = [basic.pop()]
-            fep_sub = [sub.pop()]
+            fep_sup = [sup.pop() for m in range(num_sup)]
+            fep_basic = [basic.pop() for m in range(num_basic)]
+            fep_sub = [sub.pop() for m in range(num_sub_features)]
 
             training_sets['one example'].append(
                 [experimental_materials.UtteranceScenePair(
@@ -710,8 +754,8 @@ class GeneralisationExperiment(experiment.Experiment):
                 )] * 3
             )
 
-            sub_2 = [sub.pop()]
-            sub_3 = [sub.pop()]
+            sub_2 = [sub.pop() for m in range(num_sub_features)]
+            sub_3 = [sub.pop() for m in range(num_sub_features)]
 
             training_sets['three basic-level examples'].append(
                 [
@@ -736,11 +780,11 @@ class GeneralisationExperiment(experiment.Experiment):
                 ]
             )
 
-            basic_2 = [basic.pop()]
-            basic_3 = [basic.pop()]
+            basic_2 = [basic.pop() for m in range(num_basic)]
+            basic_3 = [basic.pop() for m in range(num_basic)]
 
-            sub_2 = [sub.pop()]
-            sub_3 = [sub.pop()]
+            sub_2 = [sub.pop() for m in range(num_sub_features)]
+            sub_3 = [sub.pop() for m in range(num_sub_features)]
 
             training_sets['three superordinate examples'].append(
                 [
@@ -765,20 +809,20 @@ class GeneralisationExperiment(experiment.Experiment):
                 ]
             )
 
-            fep_features.append((fep_sup[0], fep_basic[0], fep_sub[0]))
+            fep_features.append((fep_sup, fep_basic, fep_sub))
 
         return training_sets, fep_features
 
-    def generate_naturalistic_test_sets(self, sup, basic, sub, fep_features, num_sets):
+    def generate_naturalistic_test_sets(self, sup, basic, sub, fep_features, num_sets, num_sub_features=1, num_basic=1, num_sup=1):
 
         test_sets = []
 
         for i in range(num_sets):
             test_sets.append({})
 
-            fep_sup = [fep_features[i][0]]
-            fep_basic = [fep_features[i][1]]
-            fep_sub = [fep_features[i][2]]
+            fep_sup = fep_features[i][0]
+            fep_basic = fep_features[i][1]
+            fep_sub = fep_features[i][2]
 
             test_sets[i]['subordinate matches'] = [
                 experimental_materials.UtteranceScenePair(
@@ -787,18 +831,12 @@ class GeneralisationExperiment(experiment.Experiment):
                     lexicon=self.gold_standard_lexicon,
                     probabilistic=False
                 )
-            ] * 2
+            ]
 
-            sub_1 = [sub.pop()]
-            sub_2 = [sub.pop()]
+            sub_1 = [sub.pop() for m in range(num_sub_features)]
+            sub_2 = [sub.pop() for m in range(num_sub_features)]
 
             test_sets[i]['basic-level matches'] = [
-                experimental_materials.UtteranceScenePair(
-                    utterance='fep',
-                    scene=fep_sup+fep_basic+sub_1,
-                    lexicon=self.gold_standard_lexicon,
-                    probabilistic=False
-                ),
                 experimental_materials.UtteranceScenePair(
                     utterance='fep',
                     scene=fep_sup+fep_basic+sub_2,
@@ -807,34 +845,16 @@ class GeneralisationExperiment(experiment.Experiment):
                 )
             ]
 
-            basic_1 = [basic.pop()]
-            basic_2 = [basic.pop()]
-            basic_3 = [basic.pop()]
-            basic_4 = [basic.pop()]
-            sub_1 = [sub.pop()]
-            sub_2 = [sub.pop()]
-            sub_3 = [sub.pop()]
-            sub_4 = [sub.pop()]
+            basic_1 = [basic.pop() for m in range(num_basic)]
+            basic_2 = [basic.pop() for m in range(num_basic)]
+            basic_3 = [basic.pop() for m in range(num_basic)]
+            basic_4 = [basic.pop() for m in range(num_basic)]
+            sub_1 = [sub.pop() for m in range(num_sub_features)]
+            sub_2 = [sub.pop() for m in range(num_sub_features)]
+            sub_3 = [sub.pop() for m in range(num_sub_features)]
+            sub_4 = [sub.pop() for m in range(num_sub_features)]
 
             test_sets[i]['superordinate matches'] = [
-                experimental_materials.UtteranceScenePair(
-                    utterance='fep',
-                    scene=fep_sup+basic_1+sub_1,
-                    lexicon=self.gold_standard_lexicon,
-                    probabilistic=False
-                ),
-                experimental_materials.UtteranceScenePair(
-                    utterance='fep',
-                    scene=fep_sup+basic_2+sub_2,
-                    lexicon=self.gold_standard_lexicon,
-                    probabilistic=False
-                ),
-                experimental_materials.UtteranceScenePair(
-                    utterance='fep',
-                    scene=fep_sup+basic_3+sub_3,
-                    lexicon=self.gold_standard_lexicon,
-                    probabilistic=False
-                ),
                 experimental_materials.UtteranceScenePair(
                     utterance='fep',
                     scene=fep_sup+basic_4+sub_4,
@@ -901,9 +921,13 @@ class GeneralisationExperiment(experiment.Experiment):
     def finalize(self, params):
         os.remove(self.corpus)
         os.remove(self.config_path)
+        #os.remove(self.learner_path)
+
+        if latex is True:
+            print("""\end{document}""")
 
 
-def calculate_generalisation_probability(learner, target_word, target_scene_meaning, method='cosine', std=0.0001, delta=0.0001, include_target=True, target_word_as_distribution=False, just_fep=False, ratio_to_mean=False, log=False, include_unseen_features=True):
+def calculate_generalisation_probability(learner, target_word, target_scene_meaning, method='cosine', std=0.0001, delta=0.0001, include_target=True, target_word_as_distribution=False, ratio_to_mean=False, log=False, include_unseen_features=True):
     """
     Calculate the probability of learner to generalise the target word to the
     target scene.
@@ -982,15 +1006,13 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
             if method == 'cosine' or method == 'cosine-norm':
 
                 p_fep_fep = mpmath.mpmathify(cos(lexicon.meaning(target_word), lexicon.meaning(target_word)))
-                print('p_fep_fep:', p_fep_fep)
 
                 if include_unseen_features is False:
                     lexicon.meaning(word)._meaning_probs = \
                         dict((feature, lexicon.meaning(feature)) for feature in target_scene_meaning.seen_features())
 
                 cos_y_w = mpmath.mpmathify(cos(target_scene_meaning, lexicon.meaning(word)))
-                #cos_target_w = mpmath.mpmathify(cos(lexicon.meaning(target_word), lexicon.meaning(word)))
-                cos_target_w = 1
+                cos_target_w = mpmath.mpmathify(cos(lexicon.meaning(target_word), lexicon.meaning(word)))
 
                 term = mpmath.fmul(mpmath.fmul(cos_y_w, cos_target_w), p_w)
 
@@ -1020,9 +1042,9 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
                     if log is True:
                         prob = math.log(prob)
-                        p_fep_fep = mpmath.fadd(y_factor, prob)
+                        p_fep_fep = mpmath.fadd(p_fep_fep, prob)
                     else:
-                        p_fep_fep = mpmath.fmul(y_factor, prob)
+                        p_fep_fep = mpmath.fmul(p_fep_fep, prob)
 
                 if log is True:
                     p_w = math.log(p_w)
@@ -1073,9 +1095,6 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
                         mu1 = lexicon.prob(word, feature)
                         mu2 = target_word_meaning.prob(feature)
-
-                        #print(feature, '\t', word, mu1, '\t', target_word, mu2)
-                        #raw_input()
 
                         if ratio_to_mean is True:
                             target_factor = mpmath.fmul(target_factor, KL_prob(mu1, mu2, std*mu1, std*mu2))
@@ -1166,8 +1185,7 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
             elif method == 'simple':
 
-                feature_count = 0
-
+                num_features = 0
                 if log:
                     p_fep_fep = 0
                 else:
@@ -1187,7 +1205,6 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
                 for feature in target_scene_meaning.all_features():
 
-                    feature_count += 1
                     if log:
                         total += np.log(lexicon.prob(target_word, feature))
                     else:
@@ -1198,10 +1215,10 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
                             print(feature+':', filewriter.round_to_sig_digits(lexicon.prob(target_word, feature), 4),'\\\\')
 
                     seen.append(feature)
+                    num_features += 1
 
                 for feature in [f for f in lexicon.meaning(target_word).all_features() if f not in seen]:
 
-                    feature_count += 1
                     if log:
                         total += np.log((1 - lexicon.prob(target_word, feature)))
                     else:
@@ -1213,10 +1230,10 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
                             print(feature+':', filewriter.round_to_sig_digits(1-lexicon.prob(target_word, feature), 4),'\\\\')
 
                     seen.append(feature)
+                    num_features += 1
 
                 for feature in [f for f in learner._features if f not in seen]:
 
-                    feature_count += 1
                     if log:
                         total += np.log((1 - lexicon.prob(target_word, feature)))
                     else:
@@ -1227,15 +1244,80 @@ def calculate_generalisation_probability(learner, target_word, target_scene_mean
 
                         if latex is True:
                             print(feature+':', filewriter.round_to_sig_digits(1-lexicon.prob(target_word, feature), 4),'\\\\')
+                    num_features += 1
 
                 if latex is True:
                     #print('&', filewriter.round_to_sig_digits(total, 4))
                     #print('&', p_fep_fep, '\\\\')
                     pass
+
+            elif method == 'dirichlet-multiply':
+
+                num_features = None
+                p_fep_fep = None
+                sub_factor, basic_factor, sup_factor = None, None, None
+                other_features = learner._features
+
+                for feature in target_scene_meaning.seen_features():
+                    if feature.startswith('sub'):
+                        sub_factor = learner.association(word, feature) + 1
+                        denom = np.sum([learner.association(word, f) for f in other_features if f.startswith('sub')]) + learner.k_sub
+                        sub_factor /= denom
+                        if latex is True:
+                            print(feature+':', filewriter.round_to_sig_digits(sub_factor, 4),'\\\\')
+                    elif feature.startswith('bas'):
+                        basic_factor = learner.association(word, feature) + 1
+                        denom = np.sum([learner.association(word, f) for f in other_features if f.startswith('basic')]) + learner.k_basic
+                        basic_factor /= denom
+                        if latex is True:
+                            print(feature+':', filewriter.round_to_sig_digits(basic_factor, 4),'\\\\')
+                    elif feature.startswith('sup'):
+                        sup_factor = learner.association(word, feature) + 1
+                        denom = np.sum([learner.association(word, f) for f in other_features if f.startswith('sup')]) + learner.k_sup
+                        sup_factor /= denom
+                        if latex is True:
+                            print(feature+':', filewriter.round_to_sig_digits(sup_factor, 4),'\\\\')
+                    else:
+                        raise NotImplementedError
+
+
+                total = sub_factor * basic_factor * sup_factor
+
+            elif method == 'dirichlet-add':
+
+                num_features = None
+                p_fep_fep = None
+                sub_factor, basic_factor, sup_factor = None, None, None
+                other_features = learner._features
+
+                for feature in target_scene_meaning.seen_features():
+                    if feature.startswith('sub'):
+                        sub_factor = learner.association(word, feature) + 1
+                        denom = np.sum([learner.association(word, f) for f in other_features if f.startswith('sub')]) + learner.k_sub
+                        sub_factor /= denom
+                        if latex is True:
+                            print(feature+':', filewriter.round_to_sig_digits(sub_factor, 4),'\\\\')
+                    elif feature.startswith('bas'):
+                        basic_factor = learner.association(word, feature) + 1
+                        denom = np.sum([learner.association(word, f) for f in other_features if f.startswith('basic')]) + learner.k_basic
+                        basic_factor /= denom
+                        if latex is True:
+                            print(feature+':', filewriter.round_to_sig_digits(basic_factor, 4),'\\\\')
+                    elif feature.startswith('sup'):
+                        sup_factor = learner.association(word, feature) + 1
+                        denom = np.sum([learner.association(word, f) for f in other_features if f.startswith('sup')]) + learner.k_sup
+                        sup_factor /= denom
+                        if latex is True:
+                            print(feature+':', filewriter.round_to_sig_digits(sup_factor, 4),'\\\\')
+                    else:
+                        raise NotImplementedError
+
+                total = sub_factor + basic_factor + sup_factor
+
             else:
                 raise NotImplementedError
 
-    return total, p_fep_fep, feature_count
+    return total, p_fep_fep, num_features
 
 
 def bar_chart(results, p_fep_fep=None, savename=None, annotation=None, normalise_over_test_scene=True):
