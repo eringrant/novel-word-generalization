@@ -82,10 +82,17 @@ class Meaning:
         ranked.sort(reverse=True)
         return ranked
 
-    def unseen_prob(self):
-        """ Return the probability of an unseen feature. """
-        print('who called me?')
-        return 0.1
+    def unseen_prob_sub(self):
+        """ Return the probability of an unseen subordinate feature. """
+        return self._unseen_sub
+
+    def unseen_prob_basic(self):
+        """ Return the probability of an unseen basic feature. """
+        return self._unseen_basic
+
+    def unseen_prob_sup(self):
+        """ Return the probability of an unseen superordinate feature. """
+        return self._unseen_sup
 
     def copy(self, meaning):
         """ Copy the information from Meaning meaning into this meaning. """
@@ -99,7 +106,9 @@ class Meaning:
     def __str__(self):
         """ Format this meaning to print intelligibly."""
         result = str(self.sorted_features()) + " "
-        result += "< " + str(self._unseen) + " >\n"
+        result += "< " + str(self._unseen_sup) + " >\n"
+        result += "< " + str(self._unseen_basic) + " >\n"
+        result += "< " + str(self._unseen_sub) + " >\n"
         return result
 
 
@@ -113,7 +122,8 @@ class Lexicon:
 
     """
 
-    def __init__(self, beta, words, k_sub=1, k_basic=1, k_sup=1):
+    def __init__(self, beta, words, k_sub=1, k_basic=1, k_sup=1, alpha_sub=1,
+            alpha_basic=1, alpha_sup=1):
         """
         Create an empty Lexicon of words, such that each word in words has a
         Meaning with unseen probability 1.0/beta. See Meaning docstring.
@@ -121,9 +131,9 @@ class Lexicon:
         """
         self._word_meanings = {}
         #self._beta = beta
-        self._unseen_sub = 1./k_sub
-        self._unseen_basic = 1./k_basic
-        self._unseen_sup = 1./k_sup
+        self._unseen_sub = alpha_sub/k_sub
+        self._unseen_basic = alpha_basic/k_basic
+        self._unseen_sup = alpha_sup/k_sup
         for w in words:
             self._word_meanings[w] = Meaning(unseen_sub=self._unseen_sub, unseen_basic=self._unseen_basic, unseen_sup=self._unseen_sup)
 
@@ -176,10 +186,17 @@ class Lexicon:
                 return self._word_meanings[word]._unseen_sup
             else:
                 raise NotImplementedError
-        return 0.0
+        if feature.startswith('sub'):
+            return self._unseen_sub
+        elif feature.startswith('bas'):
+            return self._unseen_basic
+        elif feature.startswith('sup'):
+            return self._unseen_sup
+        else:
+            raise NotImplementedError
 
     #BM getUnseen
-    def unseen(self, word):
+    def unseen(self, word, feature):
         """
         Return the probability of an unseen feature being part of the meaning of
          word.
@@ -187,7 +204,14 @@ class Lexicon:
         """
         if word in self._word_meanings:
             return self._word_meanings[word]._unseen
-        return 0.0
+        if feature.startswith('sub'):
+            return self._unseen_sub
+        elif feature.startswith('bas'):
+            return self._unseen_basic
+        elif feature.startswith('sup'):
+            return self._unseen_sup
+        else:
+            raise NotImplementedError
 
     #BM setUnseen
     def set_unseen(self, word, (sub, basic, sup)):

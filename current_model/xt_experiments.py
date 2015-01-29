@@ -28,7 +28,7 @@ import wmmapping
 import experiment
 import experimental_materials
 
-latex = True
+latex = False
 
 class GeneralisationExperiment(experiment.Experiment):
 
@@ -57,6 +57,12 @@ class GeneralisationExperiment(experiment.Experiment):
                                     if len(str(value)) < 6])
         config_filename += '.ini'
 
+
+        try:
+            L = 1/params['beta']
+        except ZeroDivisionError:
+            L = 0
+
         self.config_path = experimental_materials.write_config_file(
             config_filename,
             dummy=params['dummy'],
@@ -65,7 +71,7 @@ class GeneralisationExperiment(experiment.Experiment):
             novelty=self.novelty,
             novelty_decay=self.novelty_decay,
             beta=params['beta'],
-            L=(1/params['beta']),
+            L=L,
             power=params['power'],
             alpha=params['alpha'],
             epsilon=params['epsilon'],
@@ -83,8 +89,12 @@ class GeneralisationExperiment(experiment.Experiment):
 
         # create the learner
         stopwords = []
-        self.learner = learn.Learner(params['lexname'], self.learner_config, stopwords,
-            k_sub=params['k-sub'], k_basic=params['k-basic'], k_sup=params['k-sup'])
+        self.learner = learn.Learner(params['lexname'], self.learner_config,
+            stopwords,
+            k_sub=params['k-sub'], k_basic=params['k-basic'],
+            k_sup=params['k-sup'],
+            alpha_sub=params['alpha-sub'], alpha_basic=params['alpha-basic'],
+            alpha_sup=params['alpha-sub'])
         learner_dump = open(self.learner_path, "wb")
         pickle.dump(self.learner, learner_dump)
         learner_dump.close()
@@ -148,6 +158,10 @@ class GeneralisationExperiment(experiment.Experiment):
                     if latex is True:
                         print('&', str(trial.scene())[1:-1])
 
+                print(condition)
+                print(self.learner._learned_lexicon.meaning('fep'))
+
+
                 if latex is True:
                     print("""\\\\\hline""")
                     print('& feature: probability & generalization probability measure  \\\\')
@@ -191,44 +205,49 @@ class GeneralisationExperiment(experiment.Experiment):
                         gen_prob = calculate_generalisation_probability(
                             self.learner, word, meaning,
                             method=params['calculation-type'],
-                            log=params['log']
+                            log=params['log'],
+                            alpha_sub=params['alpha-sub'],
+                            alpha_basic=params['alpha-basic'],
+                            alpha_sup=params['alpha-sup']
                             )
 
-                        ## account for all features accross training, test
-                        ## there should be 11 sub, 7 basic, 1 sup
+                        if params['include-unseen-features'] is True:
+                            # account for all features accross training, test
+                            # there should be 11 sub, 7 basic, 1 sup
 
-                        #sub_count = 0
-                        #basic_count = 0
-                        #sup_count = 0
+                            sub_count = 1
+                            basic_count = 1
+                            sup_count = 1
 
-                        #for feature in set(trial.scene() + test_scene.scene()):
-                        #    if feature.startswith('sub'):
-                        #        sub_count += 1
-                        #    elif feature.startswith('bas'):
-                        #        basic_count += 1
-                        #    elif feature.startswith('sup'):
-                        #        sup_count += 1
-                        #    else:
-                        #        raise NotImplementedError
+                            while sub_count < 11:
+                                if latex is True:
+                                    print('unseen ftr:', filewriter.round_to_sig_digits((1-1./params['k-sub']), 4), '\\\\')
 
-                        #assert sup_count == 1
+                                if params['calculation-type'] == 'feature-bundles':
+                                    gen_prob *=\
+                                    (1-self.learner._learned_lexicon._unseen_sub)
+                                else:
+                                    gen_prob *= 0.5
+                                sub_count += 1
 
-                        #while sub_count < 11:
-                        #    if latex is True:
-                        #        print('unseen ftr:', filewriter.round_to_sig_digits((1-1./params['k-sub']), 4), '\\\\')
-                        #    gen_prob *= (1-1./params['k-sub'])
-                        #    sub_count += 1
+                            while basic_count < 7:
+                                if latex is True:
+                                    print('unseen ftr:', filewriter.round_to_sig_digits((1-1./params['k-basic']), 4), '\\\\')
 
-                        #while basic_count < 7:
-                        #    if latex is True:
-                        #        print('unseen ftr:', filewriter.round_to_sig_digits((1-1./params['k-basic']), 4), '\\\\')
-                        #    gen_prob *= (1-1./params['k-basic'])
-                        #    basic_count += 1
+                                if params['calculation-type'] == 'feature-bundles':
+                                    gen_prob *=\
+                                    (1-self.learner._learned_lexicon._unseen_basic)
+                                else:
+                                    gen_prob *= 0.5
+                                basic_count += 1
 
-                        #if latex is True:
-                        #    print("""}""")
-                        #    print('&', filewriter.round_to_sig_digits(gen_prob, 4), '\\\\')
-                        #    print("""\hline""")
+                        if latex is True:
+                            print("""}""")
+                            print('&', filewriter.round_to_sig_digits(gen_prob, 4), '\\\\')
+                            print("""\hline""")
+
+                        print(gen_prob)
+                        print('')
 
                         take_average = mpmath.fadd(take_average, gen_prob)
                         count += 1
@@ -399,16 +418,28 @@ class GeneralisationExperiment(experiment.Experiment):
 
 
 def calculate_generalisation_probability(learner, target_word,
-        target_scene_meaning, method='cosine', log=False):
+        target_scene_meaning, method='cosine', log=False,
+        alpha_sub=1, alpha_basic=1, alpha_sup=1):
+
+    def cos(one, two):
+        beta_sub = learner.k_sub
+        beta_basic = learner.k_basic
+        beta_sup = learner.k_sup
+        return evaluate.calculate_similarity(beta_sub, beta_basic, beta_sup, one, two, CONST.COS)
 
     lexicon = learner.learned_lexicon()
+    feature_count = 0
 
-    if method == 'simple':
+    if method == 'cosine':
 
-        total = 1
-        seen = []
-        numbers = []
-        features = []
+        total = cos(target_scene_meaning, lexicon.meaning(target_word))
+
+    elif method == 'simple':
+
+        if log:
+            total = 0
+        else:
+            total = 1
 
         for feature in target_scene_meaning.all_features():
 
@@ -416,102 +447,88 @@ def calculate_generalisation_probability(learner, target_word,
                 total += np.log(lexicon.prob(target_word, feature))
             else:
                 total *= lexicon.prob(target_word, feature)
-                features.append(feature)
 
                 if latex is True:
                     print(feature+':', filewriter.round_to_sig_digits(lexicon.prob(target_word, feature), 4),'\\\\')
 
-            seen.append(feature)
+            feature_count += 1
 
-        for feature in [f for f in lexicon.meaning(target_word).all_features() if f not in seen]:
+    elif method == 'independent-features':
 
-            if log:
-                total += np.log((1 - lexicon.prob(target_word, feature)))
-            else:
-                total *= (1 - lexicon.prob(target_word, feature))
-                numbers.append(1 - lexicon.prob(target_word, feature))
-                features.append(feature)
-
-                if latex is True:
-                    print(feature+':', filewriter.round_to_sig_digits(1-lexicon.prob(target_word, feature), 4),'\\\\')
-
-            seen.append(feature)
-
-        for feature in [f for f in learner._features if f not in seen]:
-
-            if log:
-                total += np.log((1 - lexicon.prob(target_word, feature)))
-            else:
-                total *= (1 - lexicon.prob(target_word, feature))
-                numbers.append(1 - lexicon.prob(target_word, feature))
-                features.append(feature)
-
-
-                if latex is True:
-                    print(feature+':', filewriter.round_to_sig_digits(1-lexicon.prob(target_word, feature), 4),'\\\\')
-
-    elif method == 'dirichlet-multiply':
-
-        other_features = learner._features
+        total = 1
+        alpha = 1
+        beta = 1
 
         for feature in target_scene_meaning.seen_features():
+
+            if feature in learner._features:
+                denom = learner._wordsp.frequency(target_word) + alpha + beta
+                total *= (learner.association(target_word, feature) + alpha) / denom
+
+            else:
+                total *= alpha / (alpha+beta)
+
+            feature_count += 1
+
+    elif method == 'feature-bundles':
+
+        for feature in target_scene_meaning.seen_features():
+
             if feature.startswith('sub'):
-                sub_factor = learner.association(target_word, feature) + learner.get_lambda()
-                #denom = np.sum([learner.association(target_word, f) for f in other_features if f.startswith('sub')]) + learner.k_sub
-                denom = learner._wordsp.frequency(target_word) + 1
+                sub_factor = learner.association(target_word, feature) +\
+                    alpha_sub
+                denom = np.sum([learner.association(target_word, f) +\
+                    alpha_sub for f in learner._features if\
+                    f.startswith('sub')])
+                denom += learner.k_sub * alpha_sub
                 sub_factor /= denom
+
+                assert sub_factor == learner._learned_lexicon.prob('fep', feature)
+
+                print(feature, sub_factor, learner._learned_lexicon.prob('fep', feature))
                 if latex is True:
                     print(feature+':', filewriter.round_to_sig_digits(sub_factor, 4),'\\\\')
 
             elif feature.startswith('bas'):
-                basic_factor = learner.association(target_word, feature) + learner.get_lambda()
-                #denom = np.sum([learner.association(target_word, f) for f in other_features if f.startswith('basic')]) + learner.k_basic
-                denom = learner._wordsp.frequency(target_word) + 1
+                basic_factor = learner.association(target_word, feature) + \
+                    alpha_basic
+                denom = np.sum([learner.association(target_word, f) +\
+                    alpha_basic for f in learner._features if
+                    f.startswith('bas')])
+                denom += learner.k_basic * alpha_basic
                 basic_factor /= denom
                 if latex is True:
                     print(feature+':', filewriter.round_to_sig_digits(basic_factor, 4),'\\\\')
 
+                print(feature, basic_factor, learner._learned_lexicon.prob('fep', feature))
+                assert basic_factor == learner._learned_lexicon.prob('fep', feature)
+
             elif feature.startswith('sup'):
-                sup_factor = learner.association(target_word, feature) + learner.get_lambda()
-                #denom = np.sum([learner.association(target_word, f) for f in other_features if f.startswith('sup')]) + learner.k_sup
-                denom = learner._wordsp.frequency(target_word) + 1
+                sup_factor = learner.association(target_word, feature) +\
+                    alpha_sup
+                denom = np.sum([learner.association(target_word, f) +\
+                    alpha_sup for f in learner._features if\
+                    f.startswith('sup')])
+                denom += learner.k_sup * alpha_sup
                 sup_factor /= denom
                 if latex is True:
                     print(feature+':', filewriter.round_to_sig_digits(sup_factor, 4),'\\\\')
+
+                print(feature, sup_factor, learner._learned_lexicon.prob('fep', feature))
+                try:
+                    assert sup_factor == learner._learned_lexicon.prob('fep', feature)
+                except AssertionError:
+                    import pdb; pdb.set_trace()
+
             else:
                 raise NotImplementedError
 
+            feature_count += 1
+
+        print('sub:', sub_factor, 'basic:', basic_factor, 'sup:', sup_factor)
+
+        assert feature_count == 3
         total = sub_factor * basic_factor * sup_factor
-
-    elif method == 'dirichlet-add':
-
-        other_features = learner._features
-
-        for feature in target_scene_meaning.seen_features():
-            if feature.startswith('sub'):
-                sub_factor = learner.association(target_word, feature) + 1
-                denom = np.sum([learner.association(target_word, f) for f in other_features if f.startswith('sub')]) + learner.k_sub
-                sub_factor /= denom
-                if latex is True:
-                    print(feature+':', filewriter.round_to_sig_digits(sub_factor, 4),'\\\\')
-
-            elif feature.startswith('bas'):
-                basic_factor = learner.association(target_word, feature) + 1
-                denom = np.sum([learner.association(target_word, f) for f in other_features if f.startswith('basic')]) + learner.k_basic
-                basic_factor /= denom
-                if latex is True:
-                    print(feature+':', filewriter.round_to_sig_digits(basic_factor, 4),'\\\\')
-
-            elif feature.startswith('sup'):
-                sup_factor = learner.association(target_word, feature) + 1
-                denom = np.sum([learner.association(target_word, f) for f in other_features if f.startswith('sup')]) + learner.k_sup
-                sup_factor /= denom
-                if latex is True:
-                    print(feature+':', filewriter.round_to_sig_digits(sup_factor, 4),'\\\\')
-            else:
-                raise NotImplementedError
-
-        total = sub_factor + basic_factor + sup_factor
 
     else:
         raise NotImplementedError
