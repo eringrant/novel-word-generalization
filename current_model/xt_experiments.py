@@ -94,7 +94,7 @@ class GeneralisationExperiment(experiment.Experiment):
             k_sub=params['k-sub'], k_basic=params['k-basic'],
             k_sup=params['k-sup'],
             alpha_sub=params['alpha-sub'], alpha_basic=params['alpha-basic'],
-            alpha_sup=params['alpha-sub'])
+            alpha_sup=params['alpha-sup'])
         learner_dump = open(self.learner_path, "wb")
         pickle.dump(self.learner, learner_dump)
         learner_dump.close()
@@ -518,7 +518,8 @@ def calculate_generalisation_probability(learner, target_word,
                 try:
                     assert sup_factor == learner._learned_lexicon.prob('fep', feature)
                 except AssertionError:
-                    import pdb; pdb.set_trace()
+                    #import pdb; pdb.set_trace()
+                    pass
 
             else:
                 raise NotImplementedError
