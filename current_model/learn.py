@@ -377,11 +377,11 @@ class Learner:
         for feature in self._features:
 
             if feature.startswith('sub'):
-                sub_denom += self.association(word, feature) + self.alpha_sub
+                sub_denom += self.association(word, feature)
             elif feature.startswith('bas'):
-                basic_denom += self.association(word, feature) + self.alpha_basic
+                basic_denom += self.association(word, feature)
             elif feature.startswith('sup'):
-                sup_denom += self.association(word, feature) + self.alpha_sup
+                sup_denom += self.association(word, feature)
             else:
                 raise NotImplementedError
 

@@ -161,6 +161,7 @@ class Experiment(object):
             else:
                 pool = Pool(processes=self.options.ncores, maxtasksperchild=2)
                 outputs = pool.map(mp_runrep, explist)
+                pool.close()
 
             return outputs
 

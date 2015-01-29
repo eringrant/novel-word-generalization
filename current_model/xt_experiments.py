@@ -3,6 +3,7 @@ from __future__ import print_function, division
 
 import csv
 from datetime import datetime
+import gc
 import logging
 import math
 import matplotlib; matplotlib.use('Agg')
@@ -84,6 +85,9 @@ class GeneralisationExperiment(experiment.Experiment):
         self.sub = ['sub_f' + str(i) for i in range(100000)]
         self.basic = ['basic' + str(i) for i in range(100000)]
         self.sup = ['sup_f' + str(i) for i in range(100000)]
+
+        self.subordinate_feature_to_basic_level = {}
+
         self.learner_path = params['learner-path']
         self.learner_path += datetime.now().isoformat() + '.pkl'
 
@@ -133,6 +137,7 @@ class GeneralisationExperiment(experiment.Experiment):
         conds = ['one example', 'three subordinate examples',
                 'three basic-level examples',
                 'three superordinate examples']
+
 
         assert set(self.training_sets.keys()) == set(conds)
 
@@ -202,7 +207,7 @@ class GeneralisationExperiment(experiment.Experiment):
                             print(cond + ' & ')
                             print("""\specialcell{""")
 
-                        gen_prob = calculate_generalisation_probability(
+                        gen_prob, feature_count = calculate_generalisation_probability(
                             self.learner, word, meaning,
                             method=params['calculation-type'],
                             log=params['log'],
@@ -246,9 +251,6 @@ class GeneralisationExperiment(experiment.Experiment):
                             print('&', filewriter.round_to_sig_digits(gen_prob, 4), '\\\\')
                             print("""\hline""")
 
-                        print(gen_prob)
-                        print('')
-
                         take_average = mpmath.fadd(take_average, gen_prob)
                         count += 1
 
@@ -256,7 +258,8 @@ class GeneralisationExperiment(experiment.Experiment):
                             print('\n')
 
                     # average the test trials within the category
-                    gen_prob = mpmath.fdiv(take_average, count)
+                    #gen_prob = mpmath.fdiv(take_average, count)
+                    assert count == 1
 
                     try:
                         results[condition][cond].append(gen_prob)
@@ -282,6 +285,8 @@ class GeneralisationExperiment(experiment.Experiment):
         os.remove(self.config_path)
         os.remove(self.learner_path)
 
+        gc.collect()
+
         return results
 
     def generate_training_sets(self, sup, basic, sub, num_sets, num_sub_features=1, num_basic_features=1, num_sup_features=1):
@@ -301,6 +306,8 @@ class GeneralisationExperiment(experiment.Experiment):
             fep_basic = [basic.pop() for m in range(num_basic_features)]
             fep_sub = [sub.pop() for m in range(num_sub_features)]
 
+            self.subordinate_feature_to_basic_level[fep_sub] = fep_basic
+
             training_sets['one example'].append(
                 [experimental_materials.UtteranceScenePair(
                     utterance='fep',
@@ -319,6 +326,9 @@ class GeneralisationExperiment(experiment.Experiment):
 
             sub_2 = [sub.pop() for m in range(num_sub_features)]
             sub_3 = [sub.pop() for m in range(num_sub_features)]
+
+            self.subordinate_feature_to_basic_level[sub_2] = fep_basic
+            self.subordinate_feature_to_basic_level[sub_3] = fep_basic
 
             training_sets['three basic-level examples'].append(
                 [
@@ -341,10 +351,14 @@ class GeneralisationExperiment(experiment.Experiment):
             )
 
             basic_2 = [basic.pop() for m in range(num_basic_features)]
-            basic_3 = [basic.pop() for m in range(num_basic_features)]
-
             sub_4 = [sub.pop() for m in range(num_sub_features)]
+
+            self.subordinate_feature_to_basic_level[sub_4] = basic_2
+
+            basic_3 = [basic.pop() for m in range(num_basic_features)]
             sub_5 = [sub.pop() for m in range(num_sub_features)]
+
+            self.subordinate_feature_to_basic_level[sub_5] = basic_3
 
             training_sets['three superordinate examples'].append(
                 [
@@ -391,6 +405,8 @@ class GeneralisationExperiment(experiment.Experiment):
 
             sub_2 = [sub.pop() for m in range(num_sub_features)]
 
+            self.subordinate_feature_to_basic_level[sub_2] = fep_basic
+
             test_sets[i]['basic-level matches'] = [
                 experimental_materials.UtteranceScenePair(
                     utterance='fep',
@@ -401,6 +417,8 @@ class GeneralisationExperiment(experiment.Experiment):
 
             basic_2 = [basic.pop() for m in range(num_basic_features)]
             sub_3 = [sub.pop() for m in range(num_sub_features)]
+
+            self.subordinate_feature_to_basic_level[sub_3] = basic_2
 
             test_sets[i]['superordinate matches'] = [
                 experimental_materials.UtteranceScenePair(
@@ -472,54 +490,71 @@ def calculate_generalisation_probability(learner, target_word,
 
     elif method == 'feature-bundles':
 
+        sup_factor = 1
+        basic_factor = 1
+        sub_factor = 1
+
+        fep_features = learner._learned_lexicon.seen_features(target_word)
+
+        fep_sub_features = []
+        fep_basic_features = []
+        fep_sup_features = []
+
+        for feature in fep_features:
+            if feature.startswith('sub'):
+                fep_sub_features.append(feature)
+            elif feature.startswith('bas'):
+                fep_basic_features.append(feature)
+            elif feature.startswith('sup'):
+                fep_sup_features.append(feature)
+
+        target_sub_features = []
+        target_basic_features = []
+        target_sup_features = []
+
+        for feature in target_scene_meaning.seen_features():
+            if feature.startswith('sub'):
+                target_sub_features.append(feature)
+            elif feature.startswith('bas'):
+                target_basic_features.append(feature)
+            elif feature.startswith('sup'):
+                target_sup_features.append(feature)
+
         for feature in target_scene_meaning.seen_features():
 
             if feature.startswith('sub'):
-                sub_factor = learner.association(target_word, feature) +\
-                    alpha_sub
-                denom = np.sum([learner.association(target_word, f) +\
-                    alpha_sub for f in learner._features if\
-                    f.startswith('sub')])
-                denom += learner.k_sub * alpha_sub
-                sub_factor /= denom
 
-                assert sub_factor == learner._learned_lexicon.prob('fep', feature)
+                if set(fep_basic_features) & set(target_basic_features):
 
-                print(feature, sub_factor, learner._learned_lexicon.prob('fep', feature))
-                if latex is True:
-                    print(feature+':', filewriter.round_to_sig_digits(sub_factor, 4),'\\\\')
+                    sub_factor *= learner.association(target_word, feature) +\
+                        alpha_sub
+                    denom = np.sum([learner.association(target_word, f)
+                        for f in learner._features if f.startswith('sub')])
+                    denom += learner.k_sub * alpha_sub
+                    sub_factor /= denom
+
+                    if latex is True:
+                        print(feature+':', filewriter.round_to_sig_digits(sub_factor, 4),'\\\\')
 
             elif feature.startswith('bas'):
-                basic_factor = learner.association(target_word, feature) + \
+                basic_factor *= learner.association(target_word, feature) + \
                     alpha_basic
-                denom = np.sum([learner.association(target_word, f) +\
-                    alpha_basic for f in learner._features if
-                    f.startswith('bas')])
+                denom = np.sum([learner.association(target_word, f)
+                    for f in learner._features if f.startswith('bas')])
                 denom += learner.k_basic * alpha_basic
                 basic_factor /= denom
                 if latex is True:
                     print(feature+':', filewriter.round_to_sig_digits(basic_factor, 4),'\\\\')
 
-                print(feature, basic_factor, learner._learned_lexicon.prob('fep', feature))
-                assert basic_factor == learner._learned_lexicon.prob('fep', feature)
-
             elif feature.startswith('sup'):
-                sup_factor = learner.association(target_word, feature) +\
+                sup_factor *= learner.association(target_word, feature) +\
                     alpha_sup
-                denom = np.sum([learner.association(target_word, f) +\
-                    alpha_sup for f in learner._features if\
-                    f.startswith('sup')])
+                denom = np.sum([learner.association(target_word, f)
+                    for f in learner._features if f.startswith('sup')])
                 denom += learner.k_sup * alpha_sup
                 sup_factor /= denom
                 if latex is True:
                     print(feature+':', filewriter.round_to_sig_digits(sup_factor, 4),'\\\\')
-
-                print(feature, sup_factor, learner._learned_lexicon.prob('fep', feature))
-                try:
-                    assert sup_factor == learner._learned_lexicon.prob('fep', feature)
-                except AssertionError:
-                    #import pdb; pdb.set_trace()
-                    pass
 
             else:
                 raise NotImplementedError
@@ -528,13 +563,12 @@ def calculate_generalisation_probability(learner, target_word,
 
         print('sub:', sub_factor, 'basic:', basic_factor, 'sup:', sup_factor)
 
-        assert feature_count == 3
         total = sub_factor * basic_factor * sup_factor
 
     else:
         raise NotImplementedError
 
-    return total
+    return total, feature_count
 
 
 def bar_chart(results, savename=None, annotation=None, normalise_over_test_scene=True):
