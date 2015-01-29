@@ -1,4 +1,7 @@
 #!/usr/bin/python
+
+# python2 xt_experiments.py -o test_results.csv -c xt_experiments.cfg -n 1
+
 from __future__ import print_function, division
 
 import csv
