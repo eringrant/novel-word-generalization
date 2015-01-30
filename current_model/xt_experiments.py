@@ -90,6 +90,7 @@ class GeneralisationExperiment(experiment.Experiment):
         self.sup = ['sup_f' + str(i) for i in range(100000)]
 
         self.subordinate_feature_to_basic_level = {}
+        self.basic_feature_to_subordinates = {}
 
         self.learner_path = params['learner-path']
         self.learner_path += datetime.now().isoformat() + '.pkl'
@@ -160,15 +161,43 @@ class GeneralisationExperiment(experiment.Experiment):
                     print('& training trial 1 & trial 2 & trial 3 \\\\')
 
                 for trial in training_set:
+
+                    sub_features = []
+                    basic_features = []
+                    sup_features = []
+
+                    for feature in trial.scene():
+                        if feature.startswith('sub'):
+                            sub_features.append(feature)
+                        elif feature.startswith('bas'):
+                            basic_features.append(feature)
+                        elif feature.startswith('sup'):
+                            sup_features.append(feature)
+
+                    for feature in basic_features:
+                        try:
+                            self.basic_feature_to_subordinates[feature].extend(sub_features)
+                        except KeyError:
+                            self.basic_feature_to_subordinates[feature] = []
+                            self.basic_feature_to_subordinates[feature].extend(sub_features)
+
+                    for feature in sub_features:
+                        try:
+                            self.subordinate_feature_to_basic_level[feature].extend(basic_features)
+                        except KeyError:
+                            self.subordinate_feature_to_basic_level[feature] = []
+                            self.subordinate_feature_to_basic_level[feature].extend(basic_features)
+
                     self.learner.process_pair(trial.utterance(), trial.scene(),
-                                              params['path'], False)
+                                              params['path'],
+                                              self.subordinate_feature_to_basic_level,
+                                              self.basic_feature_to_subordinates)
 
                     if latex is True:
                         print('&', str(trial.scene())[1:-1])
 
                 print(condition)
                 print(self.learner._learned_lexicon.meaning('fep'))
-
 
                 if latex is True:
                     print("""\\\\\hline""")

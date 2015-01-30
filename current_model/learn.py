@@ -28,7 +28,7 @@ class Learner:
         aligns -- learned Alignments
         wordsp -- WordPropsTable for recording word type statistics
         timesp -- TimePropsFile for recording time step statistics
-        time -- record time steps based on the processing of input utterance-scene
+       time -- record time steps based on the processing of input utterance-scene
             pairs
         vocab -- set of learned words (using a set to enforce uniqueness)
         features -- set of features seen so far (using a set to enforce uniqueness)
@@ -178,6 +178,8 @@ class Learner:
         self._gold_lexicon = input.read_gold_lexicon(lexicon_path, self._beta)
         self._all_features = input.all_features(lexicon_path)
         #print "number of Gold Features", len(self._all_features)
+
+        #TODO AIDA why initialise with all word meanings?
 
         #self._learned_lexicon = wmmapping.Lexicon(self._beta, self._gold_lexicon.words())
         self._learned_lexicon = wmmapping.Lexicon(self._beta, ['fep'],
@@ -361,7 +363,7 @@ class Learner:
     #    self._learned_lexicon.set_unseen(word, (prob_unseen, prob_unseen, prob_unseen))
 
     #BM updateWordFProb
-    def update_meaning_prob(self, word):
+    def update_meaning_prob(self, word, sub_to_basic, basic_to_sub):
         """
         Update the meaning probabilities of word in this learner's lexicon.
         This is done by calculating the association between this word and all
@@ -370,44 +372,70 @@ class Learner:
 
         """
         #TODO: change to calculating alignments
-        sub_denom = 0.0
-        basic_denom = 0.0
-        sup_denom = 0.0
+        basic_unseen_tuples = []
 
         for feature in self._features:
 
             if feature.startswith('sub'):
-                sub_denom += self.association(word, feature)
+
+                count = 0
+                denom = 0
+
+                for f in self._features:
+
+                    if f.startswith('sub') and \
+                    set(sub_to_basic[feature]) & set(sub_to_basic[f]):
+
+                        denom += self.association(word, f)
+                        count += 1
+
+                denom += (self.k_sub - count) * self.alpha_sub
+
+                for basic in sub_to_basic[feature]:
+                    basic_unseen_tuples.append((basic, self.alpha_sub/denom))
+
+                meaning_prob = (self.association(word, feature) + self.alpha_sub) / denom
+                self._learned_lexicon.set_prob(word, feature, meaning_prob)
+
             elif feature.startswith('bas'):
-                basic_denom += self.association(word, feature)
+
+                count = 0
+                basic_denom = 0
+
+                for f in self._features:
+
+                    if f.startswith('basic'):
+                        basic_denom += self.association(word, f)
+                        count += 1
+
+                basic_denom += (self.k_basic - count) * self.alpha_basic
+
+                meaning_prob = (self.association(word, feature) + self.alpha_basic) / basic_denom
+                self._learned_lexicon.set_prob(word, feature, meaning_prob)
+
             elif feature.startswith('sup'):
-                sup_denom += self.association(word, feature)
+
+                count = 0
+                sup_denom = 0
+
+                for f in self._features:
+
+                    if f.startswith('sup'):
+                        sup_denom += self.association(word, f)
+                        count += 1
+
+                meaning_prob = (self.association(word, feature) + self.alpha_sup) / sup_denom
+                self._learned_lexicon.set_prob(word, feature, meaning_prob)
+
+                sup_denom += (self.k_sup - count) * self.alpha_sup
+
             else:
                 raise NotImplementedError
 
-        sub_denom += self.k_sub * self.alpha_sub
-        basic_denom += self.k_basic * self.alpha_basic
-        sup_denom += self.k_sup * self.alpha_sup
-
-        for feature in self._features:
-            if feature.startswith('sub'):
-                denom = sub_denom
-                alpha = self.alpha_sub
-            elif feature.startswith('bas'):
-                denom = basic_denom
-                alpha = self.alpha_basic
-            elif feature.startswith('sup'):
-                denom = sup_denom
-                alpha = self.alpha_sup
-            else:
-                raise NotImplementedError
-
-            meaning_prob = (self.association(word, feature) + alpha) / denom
-
-            self._learned_lexicon.set_prob(word, feature, meaning_prob)
-
-        self._learned_lexicon.set_unseen(word, (self.alpha_sub/sub_denom,
-            self.alpha_basic/basic_denom, self.alpha_sup/sup_denom))
+        self._learned_lexicon.set_unseen(word, 
+            basic_unseen_tuples,
+            self.alpha_basic/basic_denom, 
+            self.alpha_sup/sup_denom))
 
     def association(self, word, feature):
         """
@@ -455,7 +483,7 @@ class Learner:
 
 
     #BM updateMappingTables
-    def calculate_alignments(self, words, features, outdir, category_learner=None):
+    def calculate_alignments(self, words, features, outdir, sub_to_basic, basic_to_sub, category_learner=None):
         """
         Update the alignments for each combination of word-feature pairs from
         the list words and set features.
@@ -486,6 +514,11 @@ class Learner:
 
         # Begin calculating the new alignment of a word given a feature, as:
         # alignment(w|f) = (p(f|w) + ep) / (sum(w' in words)p(f|w') + alpha*ep)
+
+        for feature in features:
+            if feature.startswith('basic'):
+                basic = feature
+
         for feature in features:
             # Normalization term, sum(w' in words) p(f|w')
             denom = 0.0
@@ -493,7 +526,7 @@ class Learner:
 
             # Calculate the normalization terms
             for word in words:
-                denom += self._learned_lexicon.prob(word,feature)
+                denom += self._learned_lexicon.prob(word,feature, basic_feature=feature)
                 if category_flag:
                     category_denom += category_probs[word][feature]
 
@@ -503,7 +536,7 @@ class Learner:
             # Calculate alignment of each word
             for word in words:
                 # alignment(w|f) = (p(f|w) + ep) / normalization
-                alignment = (self._learned_lexicon.prob(word,feature) + self._epsilon) / denom
+                alignment = (self._learned_lexicon.prob(word,feature, basic_feature=basic) + self._epsilon) / denom
 
                 # The weight used in alignment calculation
                 #weight = 0.5  #used in cogsci 2012 paper
@@ -533,7 +566,7 @@ class Learner:
         #BM Added Jul 27 2012 for context statistics issue, FIND BETTER SOLUTION
         # for each word, update p(f|w) distribution
         for word in words:
-            self.update_meaning_prob(word)
+            self.update_meaning_prob(word, sub_to_basic, basic_to_sub)
 
             # Add features to the list of seen features for each word
             self._learned_lexicon.add_seen_features(word, features)
@@ -604,7 +637,7 @@ class Learner:
 
 
     #BM processPair
-    def process_pair(self, words, features, outdir, category_learner=None):
+    def process_pair(self, words, features, outdir, sub_to_basic, basic_to_sub, category_learner=None):
         """
         Process the pair words-features, two lists of words and features,
         respectively, to be learned from.
@@ -626,7 +659,7 @@ class Learner:
             words.append("dummy")
 
         # Calculate the alignment probabilities and learned lexicon probabilities
-        self.calculate_alignments(words, features, outdir, category_learner)
+        self.calculate_alignments(words, features, outdir, sub_to_basic, basic_to_sub, category_learner)
 
         if self._dummy:
             words.remove("dummy")
