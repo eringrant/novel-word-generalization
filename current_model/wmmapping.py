@@ -98,17 +98,19 @@ class Meaning:
         """ Copy the information from Meaning meaning into this meaning. """
         for feature in meaning._meaning_probs.keys():
             self._meaning_probs[feature] = meaning._meaning_probs[feature]
-        self._unseen_sub = meaning._unseen_sub
-        self._unseen_basic = meaning._unseen_basic.deepcopy()
+        self._unseen_sub = meaning._unseen_sub.copy()
+        self._unseen_basic = meaning._unseen_basic
         self._unseen_sup = meaning._unseen_sup
         self._seen_features = meaning._seen_features[:]
 
     def __str__(self):
         """ Format this meaning to print intelligibly."""
-        result = str(self.sorted_features()) + " "
-        result += "< " + str(self._unseen_sup) + " >\n"
-        result += "< " + str(self._unseen_basic) + " >\n"
-        result += "< " + str(self._unseen_sub) + " >\n"
+        result = 'Meaning:\n'
+        for v, f in self.sorted_features():
+            result += '\t' + f + ": " + str(v) + '\n'
+        result += "\tUnseen sup: < " + str(self._unseen_sup) + " >\n"
+        result += "\tUnseen basic < " + str(self._unseen_basic) + " >\n"
+        result += "\tUnseen sub < " + pprint.pformat(self._unseen_sub) + " >\n"
         return result
 
 
@@ -131,9 +133,9 @@ class Lexicon:
         """
         self._word_meanings = {}
         #self._beta = beta
-        self._unseen_sub = alpha_sub/k_sub
-        self._unseen_basic = alpha_basic/k_basic
-        self._unseen_sup = alpha_sup/k_sup
+        self._unseen_sub = 1/k_sub
+        self._unseen_basic = 1/k_basic
+        self._unseen_sup = 1/k_sup
         for w in words:
             self._word_meanings[w] = Meaning(unseen_sub=self._unseen_sub, unseen_basic=self._unseen_basic, unseen_sup=self._unseen_sup)
 
@@ -179,7 +181,10 @@ class Lexicon:
             if feature in self._word_meanings[word]._meaning_probs:
                 return self._word_meanings[word]._meaning_probs[feature]
             if feature.startswith('sub'):
-                return self._word_meanings[word]._unseen_sub[basic_feature]
+                try:
+                    return self._word_meanings[word]._unseen_sub[basic_feature]
+                except KeyError:
+                    return self._unseen_sub
             elif feature.startswith('bas'):
                 return self._word_meanings[word]._unseen_basic
             elif feature.startswith('sup'):

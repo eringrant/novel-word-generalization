@@ -386,7 +386,7 @@ class Learner:
                     if f.startswith('sub') and \
                     set(sub_to_basic[feature]) & set(sub_to_basic[f]):
 
-                        denom += self.association(word, f)
+                        denom += self.association(word, f) + self.alpha_sub
                         count += 1
 
                 denom += (self.k_sub - count) * self.alpha_sub
@@ -405,7 +405,7 @@ class Learner:
                 for f in self._features:
 
                     if f.startswith('basic'):
-                        basic_denom += self.association(word, f)
+                        basic_denom += self.association(word, f) + self.alpha_basic
                         count += 1
 
                 basic_denom += (self.k_basic - count) * self.alpha_basic
@@ -421,21 +421,21 @@ class Learner:
                 for f in self._features:
 
                     if f.startswith('sup'):
-                        sup_denom += self.association(word, f)
+                        sup_denom += self.association(word, f) + self.alpha_sup
                         count += 1
+
+                sup_denom += (self.k_sup - count) * self.alpha_sup
 
                 meaning_prob = (self.association(word, feature) + self.alpha_sup) / sup_denom
                 self._learned_lexicon.set_prob(word, feature, meaning_prob)
 
-                sup_denom += (self.k_sup - count) * self.alpha_sup
-
             else:
                 raise NotImplementedError
 
-        self._learned_lexicon.set_unseen(word, 
+        self._learned_lexicon.set_unseen(word,
             basic_unseen_tuples,
-            self.alpha_basic/basic_denom, 
-            self.alpha_sup/sup_denom))
+            1/basic_denom,
+            1/sup_denom)
 
     def association(self, word, feature):
         """
@@ -526,7 +526,8 @@ class Learner:
 
             # Calculate the normalization terms
             for word in words:
-                denom += self._learned_lexicon.prob(word,feature, basic_feature=feature)
+                denom += self._learned_lexicon.prob(word,feature,
+                        basic_feature=basic)
                 if category_flag:
                     category_denom += category_probs[word][feature]
 
