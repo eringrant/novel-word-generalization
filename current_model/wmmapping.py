@@ -1,4 +1,5 @@
 import math
+import pprint
 
 """
 wmmapping.py
@@ -19,7 +20,8 @@ class Meaning:
 
     """
 
-    def __init__(self, unseen_sub, unseen_basic, unseen_sup):
+    def __init__(self, unseen_sub, unseen_basic, unseen_sup, k_sub, k_basic,
+            k_sup):
         """
         Create a meaning object with each feature being equally likely to be part
         of this meaning with probability 1.0/beta
@@ -29,6 +31,9 @@ class Meaning:
         self._unseen_sub = {}
         self._unseen_basic = unseen_basic
         self._unseen_sup = unseen_sup
+        self.k_sub = k_sub
+        self.k_basic = k_basic
+        self.k_sup = k_sup
         self._seen_features = []
 
     #BM getValue
@@ -42,7 +47,10 @@ class Meaning:
             return self._meaning_probs[feature]
         else:
             if feature.startswith('sub'):
-                return self._unseen_sub[basic_feature]
+                try:
+                    return self._unseen_sub[basic_feature]
+                except KeyError:
+                    return 1./self.k_sub
             elif feature.startswith('bas'):
                 return self._unseen_basic
             elif feature.startswith('sup'):
@@ -133,11 +141,17 @@ class Lexicon:
         """
         self._word_meanings = {}
         #self._beta = beta
-        self._unseen_sub = 1/k_sub
-        self._unseen_basic = 1/k_basic
-        self._unseen_sup = 1/k_sup
+        self.k_sub = k_sub
+        self.k_basic = k_basic
+        self.k_sup = k_sup
+        self._unseen_sub = 1./k_sub
+        self._unseen_basic = 1./k_basic
+        self._unseen_sup = 1./k_sup
         for w in words:
-            self._word_meanings[w] = Meaning(unseen_sub=self._unseen_sub, unseen_basic=self._unseen_basic, unseen_sup=self._unseen_sup)
+            self._word_meanings[w] = Meaning(unseen_sub=self._unseen_sub,
+                    unseen_basic=self._unseen_basic,
+                    unseen_sup=self._unseen_sup,
+                    k_sub = k_sub, k_basic = k_basic, k_sup = k_sup)
 
     #BM getWords
     def words(self):
@@ -147,7 +161,10 @@ class Lexicon:
     #BM getMeaning
     def meaning(self, word):
         """ Return a copy of the Meaning object corresponding to word. """
-        meaning = Meaning(unseen_sub=self._unseen_sub, unseen_basic=self._unseen_basic, unseen_sup=self._unseen_sup)
+        meaning = Meaning(unseen_sub=self._unseen_sub,
+                unseen_basic=self._unseen_basic, unseen_sup=self._unseen_sup,
+                    k_sub=self.k_sub,
+                    k_basic=self.k_basic, k_sup=self.k_sup)
         if self._word_meanings.has_key(word):
             meaning.copy(self._word_meanings[word])
         return meaning
@@ -171,7 +188,10 @@ class Lexicon:
 
         """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(unseen_sub=self._unseen_sub, unseen_basic=self._unseen_basic, unseen_sup=self._unseen_sup)
+            self._word_meanings[word] = Meaning(unseen_sub=self._unseen_sub,
+                    unseen_basic=self._unseen_basic,
+                    unseen_sup=self._unseen_sup, k_sub=self.k_sub,
+                    k_basic=self.k_basic, k_sup=self.k_sup)
         self._word_meanings[word]._meaning_probs[feature] = prob
 
     #BM getValue

@@ -434,8 +434,8 @@ class Learner:
 
         self._learned_lexicon.set_unseen(word,
             basic_unseen_tuples,
-            1/basic_denom,
-            1/sup_denom)
+            1./basic_denom,
+            1./sup_denom)
 
     def association(self, word, feature):
         """

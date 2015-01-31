@@ -169,7 +169,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
                     sub_features = []
                     basic_features = []
-:                   sup_features = []
+                    sup_features = []
 
                     for feature in trial.scene():
                         if feature.startswith('sub'):
@@ -222,7 +222,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
                         # create the Meaning representation of the test scene
                         #meaning = wmmapping.Meaning(self.learner._beta)
-                        meaning = wmmapping.Meaning(0.1, 0.1, 0.1)
+                        meaning = wmmapping.Meaning(0.1, 0.1, 0.1, 1, 1, 1)
                         if params['basic-level-bias'] is not None:
                             # deprecated
                             d = {}
