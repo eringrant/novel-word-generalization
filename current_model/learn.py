@@ -40,22 +40,32 @@ class Learner:
 
     """
 
-    def __init__(self, lexicon_path, config, stopwords=[], k_sub=None,
-            k_basic=None, k_sup=None, alpha_sub=None, alpha_basic=None,
-            alpha_sup=None):
+    def __init__(self, lexicon_path, config, stopwords=[],
+            alpha_sub=None, alpha_basic=None, alpha_sup=None,
+            epsilon_sub=None, epsilon_basic=None, epsilon_sup=None,
+            k_sub=None, k_basic=None, k_sup=None,
+            gamma_sub=None, gamma_basic=None, gamma_sup=None):
         """
-        Initialize the Learner with all properties from LearnerConfig config,
+        Initalize the Learner with all properties from LearnerConfig config,
         using lexicon_path to initialize the gold standard lexicon and
         stopwords_path to read the file of all stop words to ignore.
 
         """
+        self.alpha_sub = alpha_sub
+        self.alpha_basic = alpha_basic
+        self.alpha_sup = alpha_sup
+
+        self.epsilon_sub = epsilon_sub
+        self.epsilon_basic = epsilon_basic
+        self.epsilon_sup = epsilon_sup
+
         self.k_sub = k_sub
         self.k_basic = k_basic
         self.k_sup = k_sup
 
-        self.alpha_sub = alpha_sub
-        self.alpha_basic = alpha_basic
-        self.alpha_sup = alpha_sup
+        self.gamma_sub = gamma_sub
+        self.gamma_basic = gamma_basic
+        self.gamma_sup = gamma_sup
 
         if not os.path.exists(lexicon_path):
             print "Initialization Error -- Lexicon does not exist : "+lexicon_path
@@ -91,8 +101,9 @@ class Learner:
 
         self._epsilon = config.param_float("epsilon")
         if self._epsilon < 0:
-            print "Config Error [epsilon] Must be non-zero positive : "+str(self._epsilon)
-            sys.exit(2)
+            #print "Config Error [epsilon] Must be non-zero positive : "+str(self._epsilon)
+            #sys.exit(2)
+            pass
 
         # Similarity
         self._theta = config.param_float("theta")
@@ -184,8 +195,8 @@ class Learner:
         #self._learned_lexicon = wmmapping.Lexicon(self._beta, self._gold_lexicon.words())
         self._learned_lexicon = wmmapping.Lexicon(self._beta, ['fep'],
                 k_sub=k_sub, k_basic=k_basic, k_sup=k_sup,
-                alpha_sub=self.alpha_sub, alpha_basic=self.alpha_basic,
-                alpha_sup=self.alpha_sup)
+                gamma_sub=self.gamma_sub, gamma_basic=self.gamma_basic,
+                gamma_sup=self.gamma_sup)
         self._aligns = wmmapping.Alignments(self._alpha)
 
         self._time = 0
@@ -218,10 +229,23 @@ class Learner:
         if self._alpha >= 0:
             return self._alpha
         else:
-            alpha =  self._feature_frequencies[feature]
-            #if feature.endswith('f0'):
-                #print feature, alpha
-            return alpha
+            if feature.startswith('sub'):
+                return self.alpha_sub
+            elif feature.startswith('basic'):
+                return self.alpha_basic
+            elif feature.startswith('sup'):
+                return self.alpha_sup
+
+    def epsilon(self, feature):
+        if self._epsilon >= 0:
+            return self._epsilon
+        else:
+            if feature.startswith('sub'):
+                return self.epsilon_sub
+            elif feature.startswith('basic'):
+                return self.epsilon_basic
+            elif feature.startswith('sup'):
+                return self.epsilon_sup
 
     def init_words_graph(self, hubs_num, sim_threshold, hub_type, coupling, lambda0, a0, miu0, sigma0, sampling_method):
         self._words_graph = wgraph.WordsGraph(hubs_num, sim_threshold, hub_type, coupling, lambda0, a0, miu0, sigma0, sampling_method)
@@ -371,6 +395,7 @@ class Learner:
         distribution.
 
         """
+        #import pdb; pdb.set_trace()
         #TODO: change to calculating alignments
         basic_unseen_tuples = []
 
@@ -386,15 +411,15 @@ class Learner:
                     if f.startswith('sub') and \
                     set(sub_to_basic[feature]) & set(sub_to_basic[f]):
 
-                        denom += self.association(word, f) + self.alpha_sub
+                        denom += self.association(word, f) + self.gamma_sub
                         count += 1
 
-                denom += (self.k_sub - count) * self.alpha_sub
+                denom += (self.k_sub - count) * self.gamma_sub
 
                 for basic in sub_to_basic[feature]:
-                    basic_unseen_tuples.append((basic, self.alpha_sub/denom))
+                    basic_unseen_tuples.append((basic, self.gamma_sub/denom))
 
-                meaning_prob = (self.association(word, feature) + self.alpha_sub) / denom
+                meaning_prob = (self.association(word, feature) + self.gamma_sub) / denom
                 self._learned_lexicon.set_prob(word, feature, meaning_prob)
 
             elif feature.startswith('bas'):
@@ -405,12 +430,12 @@ class Learner:
                 for f in self._features:
 
                     if f.startswith('basic'):
-                        basic_denom += self.association(word, f) + self.alpha_basic
+                        basic_denom += self.association(word, f) + self.gamma_basic
                         count += 1
 
-                basic_denom += (self.k_basic - count) * self.alpha_basic
+                basic_denom += (self.k_basic - count) * self.gamma_basic
 
-                meaning_prob = (self.association(word, feature) + self.alpha_basic) / basic_denom
+                meaning_prob = (self.association(word, feature) + self.gamma_basic) / basic_denom
                 self._learned_lexicon.set_prob(word, feature, meaning_prob)
 
             elif feature.startswith('sup'):
@@ -421,12 +446,12 @@ class Learner:
                 for f in self._features:
 
                     if f.startswith('sup'):
-                        sup_denom += self.association(word, f) + self.alpha_sup
+                        sup_denom += self.association(word, f) + self.gamma_sup
                         count += 1
 
-                sup_denom += (self.k_sup - count) * self.alpha_sup
+                sup_denom += (self.k_sup - count) * self.gamma_sup
 
-                meaning_prob = (self.association(word, feature) + self.alpha_sup) / sup_denom
+                meaning_prob = (self.association(word, feature) + self.gamma_sup) / sup_denom
                 self._learned_lexicon.set_prob(word, feature, meaning_prob)
 
             else:
@@ -434,8 +459,8 @@ class Learner:
 
         self._learned_lexicon.set_unseen(word,
             basic_unseen_tuples,
-            self.alpha_basic/basic_denom,
-            self.alpha_sup/sup_denom)
+            self.gamma_basic/basic_denom,
+            self.gamma_sup/sup_denom)
 
     def association(self, word, feature):
         """
@@ -531,13 +556,14 @@ class Learner:
                 if category_flag:
                     category_denom += category_probs[word][feature]
 
-            denom +=  (self.alpha(feature) * self._epsilon)
-            category_denom +=  (self.alpha(feature) * self._epsilon)
+            denom +=  (self.alpha(feature) * self.epsilon(feature))
+            category_denom +=  (self.alpha(feature) * self.epsilon(feature))
 
             # Calculate alignment of each word
             for word in words:
                 # alignment(w|f) = (p(f|w) + ep) / normalization
-                alignment = (self._learned_lexicon.prob(word,feature, basic_feature=basic) + self._epsilon) / denom
+                alignment = (self._learned_lexicon.prob(word,feature,
+                    basic_feature=basic) + self.epsilon(feature)) / denom
 
                 # The weight used in alignment calculation
                 #weight = 0.5  #used in cogsci 2012 paper

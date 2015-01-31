@@ -100,10 +100,10 @@ class GeneralisationExperiment(experiment.Experiment):
         stopwords = []
         self.learner = learn.Learner(params['lexname'], self.learner_config,
             stopwords,
-            k_sub=params['k-sub'], k_basic=params['k-basic'],
-            k_sup=params['k-sup'],
-            alpha_sub=params['alpha-sub'], alpha_basic=params['alpha-basic'],
-            alpha_sup=params['alpha-sup'])
+            alpha_sub=params['alpha-sub'], alpha_basic=params['alpha-basic'], alpha_sup=params['alpha-sup'],
+            epsilon_sub=params['epsilon-sub'], epsilon_basic=params['epsilon-basic'], epsilon_sup=params['epsilon-sup'],
+            k_sub=params['k-sub'], k_basic=params['k-basic'], k_sup=params['k-sup'],
+            gamma_sub=params['gamma-sub'], gamma_basic=params['gamma-basic'], gamma_sup=params['gamma-sup'])
         learner_dump = open(self.learner_path, "wb")
         pickle.dump(self.learner, learner_dump)
         learner_dump.close()
@@ -251,9 +251,9 @@ class GeneralisationExperiment(experiment.Experiment):
                             self.learner, word, meaning,
                             method=params['calculation-type'],
                             log=params['log'],
-                            alpha_sub=params['alpha-sub'],
-                            alpha_basic=params['alpha-basic'],
-                            alpha_sup=params['alpha-sup']
+                            gamma_sub=params['gamma-sub'],
+                            gamma_basic=params['gamma-basic'],
+                            gamma_sup=params['gamma-sup']
                             )
 
                         if params['include-unseen-features'] is True:
@@ -515,7 +515,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
 def calculate_generalisation_probability(learner, target_word,
         target_scene_meaning, method='cosine', log=False,
-        alpha_sub=1, alpha_basic=1, alpha_sup=1):
+        gamma_sub=1, gamma_basic=1, gamma_sup=1):
 
     def cos(one, two):
         beta_sub = learner.k_sub
@@ -546,23 +546,6 @@ def calculate_generalisation_probability(learner, target_word,
 
                 if latex is True:
                     print(feature+':', filewriter.round_to_sig_digits(lexicon.prob(target_word, feature), 4),'\\\\')
-
-            feature_count += 1
-
-    elif method == 'independent-features':
-
-        total = 1
-        alpha = 1
-        beta = 1
-
-        for feature in target_scene_meaning.seen_features():
-
-            if feature in learner._features:
-                denom = learner._wordsp.frequency(target_word) + alpha + beta
-                total *= (learner.association(target_word, feature) + alpha) / denom
-
-            else:
-                total *= alpha / (alpha+beta)
 
             feature_count += 1
 

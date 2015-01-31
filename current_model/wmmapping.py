@@ -132,8 +132,8 @@ class Lexicon:
 
     """
 
-    def __init__(self, beta, words, k_sub=1, k_basic=1, k_sup=1, alpha_sub=1,
-            alpha_basic=1, alpha_sup=1):
+    def __init__(self, beta, words, k_sub=1, k_basic=1, k_sup=1, gamma_sub=1,
+            gamma_basic=1, gamma_sup=1):
         """
         Create an empty Lexicon of words, such that each word in words has a
         Meaning with unseen probability 1.0/beta. See Meaning docstring.
