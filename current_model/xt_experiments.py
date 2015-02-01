@@ -7,6 +7,7 @@ from __future__ import print_function, division
 import csv
 from datetime import datetime
 import gc
+import itertools
 import logging
 import math
 import matplotlib; matplotlib.use('Agg')
@@ -15,6 +16,7 @@ import mpmath; mpmath.mp.dps = 50
 import nltk
 from nltk.corpus.reader import CorpusReader
 import numpy as np
+import operator
 import os
 import pickle
 import pprint
@@ -153,6 +155,8 @@ class GeneralisationExperiment(experiment.Experiment):
         for condition in conds:
 
             results[condition] = {}
+            for cond in self.test_sets[0]:
+                results[condition][cond] = []
 
             for i, training_set in enumerate(self.training_sets[condition]):
 
@@ -166,6 +170,7 @@ class GeneralisationExperiment(experiment.Experiment):
                     print('& training trial 1 & trial 2 & trial 3 \\\\')
 
                 for trial in training_set:
+
 
                     sub_features = []
                     basic_features = []
@@ -211,41 +216,56 @@ class GeneralisationExperiment(experiment.Experiment):
                     print("""\hline""")
                     print("""\hline""")
 
-                for cond in self.test_sets[i]:
+                other_test_objects = [[self.test_sets[i][cond][n] for n
+                    in range(len(self.test_sets[i][cond]))] for cond in
+                    self.test_sets[i]]
 
-                    take_average = 0
-                    count = 0
+                other_test_objects =\
+                    list(itertools.chain(*other_test_objects))
 
-                    for j in range(len(self.test_sets[i][cond])):
-                        test_scene = self.test_sets[i][cond][j]
-                        word = test_scene.utterance()[0]
+                subset_to_gen_prob_map = {}
+
+                for z in itertools.chain.from_iterable(itertools.combinations(other_test_objects,
+                    r) for r in range(1, len(other_test_objects)+1)):
+
+                    subset = list(z)
+                    subset.extend(training_set)
+
+                    subset_string = [str(obj) for obj in subset]
+                    subset_string.sort()
+                    subset_string = ', '.join(subset_string)
+
+                    gen_probs = []
+
+                    for obj in subset:
 
                         # create the Meaning representation of the test scene
-                        #meaning = wmmapping.Meaning(self.learner._beta)
                         meaning = wmmapping.Meaning(0.1, 0.1, 0.1, 1, 1, 1)
                         if params['basic-level-bias'] is not None:
                             # deprecated
                             d = {}
-                            for feature in test_scene.scene():
+                            for feature in obj.scene():
                                 if self.feature_to_level_map[feature] == 'basic-level':
                                     d[feature] = params['basic-level-bias']
                                 else:
                                     d[feature] = 1
-                            for feature in test_scene.scene():
+                            for feature in obj.scene():
                                 meaning._meaning_probs[feature] = \
                                     d[feature]/sum([v for (f,v) in d.items()])
                                 meaning._seen_features.append(feature)
                         else:
-                            for feature in test_scene.scene():
+                            for feature in obj.scene():
                                 meaning._meaning_probs[feature] = \
-                                    1/len(test_scene.scene())
+                                    1/len(obj.scene())
                                 meaning._seen_features.append(feature)
 
                         if latex is True:
                             print(cond + ' & ')
                             print("""\specialcell{""")
 
-                        print('\t' + cond + ':')
+                        #print('\t' + cond + ':')
+
+                        word = 'fep'
 
                         gen_prob, feature_count = calculate_generalisation_probability(
                             self.learner, word, meaning,
@@ -253,68 +273,81 @@ class GeneralisationExperiment(experiment.Experiment):
                             log=params['log'],
                             alpha_sub=params['alpha-sub'],
                             alpha_basic=params['alpha-basic'],
-                            alpha_sup=params['alpha-sup']
+                            alpha_sup=params['alpha-sup'],
                             )
 
-                        if params['include-unseen-features'] is True:
-                            # account for all features accross training, test
-                            # there should be 11 sub, 7 basic, 1 sup
+                        gen_probs.append(gen_prob)
 
-                            sub_count = 1
-                            basic_count = 1
-                            sup_count = 1
+                    if params['aggregate-function'] == 'product':
+                        n = reduce(operator.mul, gen_probs, 1)
+                    elif params['aggregate-function'] == 'sum':
+                        n = np.sum(gen_probs)
+                    elif params['aggregate-function'] == 'mean':
+                        n = np.mean(gen_probs)
+                    else:
+                        raise NotImplementedError
 
-                            while sub_count < 11:
-                                if latex is True:
-                                    print('unseen ftr:', filewriter.round_to_sig_digits((1-1./params['k-sub']), 4), '\\\\')
+                    subset_to_gen_prob_map[subset_string] = n
 
-                                if params['calculation-type'] == 'feature-bundles':
-                                    gen_prob *=\
-                                    (1-self.learner._learned_lexicon._unseen_sub)
-                                else:
-                                    gen_prob *= 0.5
-                                sub_count += 1
+                #pprint.pprint(subset_to_gen_prob_map)
 
-                            while basic_count < 7:
-                                if latex is True:
-                                    print('unseen ftr:', filewriter.round_to_sig_digits((1-1./params['k-basic']), 4), '\\\\')
+                denom = np.sum(subset_to_gen_prob_map.values())
 
-                                if params['calculation-type'] == 'feature-bundles':
-                                    gen_prob *=\
-                                    (1-self.learner._learned_lexicon._unseen_basic)
-                                else:
-                                    gen_prob *= 0.5
-                                basic_count += 1
+                for cond in self.test_sets[i]:
 
-                        if latex is True:
-                            print("""}""")
-                            print('&', filewriter.round_to_sig_digits(gen_prob, 4), '\\\\')
-                            print("""\hline""")
+                    if cond == 'subordinate matches':
+                        s = 'subordinate test object'
+                    elif cond == 'basic-level matches':
+                        s = 'basic-level test object'
+                    elif cond == 'superordinate matches':
+                        s = 'superordinate test object'
 
-                        print('\t\tgeneralisation probability:', gen_prob)
+                    count = 0
 
-                        take_average = mpmath.fadd(take_average, gen_prob)
-                        count += 1
+                    numerators = []
 
-                        if latex is True:
-                            print('\n')
+                    for j in range(len(self.test_sets[i][cond])):
 
-                    # average the test trials within the category
-                    #gen_prob = mpmath.fdiv(take_average, count)
-                    assert count == 1
+                        test_scene = self.test_sets[i][cond][j]
+                        terms = []
 
-                    try:
-                        results[condition][cond].append(gen_prob)
-                    except KeyError:
-                        results[condition][cond] = []
-                        results[condition][cond].append(gen_prob)
+                        c = 0
 
-                if latex is True:
-                    print('\\end{tabular}')
-                    print('\n')
+                        #pprint.pprint(sorted(subset_to_gen_prob_map.items(), key=operator.itemgetter(1)))
+                        #raw_input()
+
+                        suspicious_sets = []
+
+                        for subset in subset_to_gen_prob_map:
+
+                            #if str(test_scene) in subset:
+                            if s in subset:
+
+                                terms.append(subset_to_gen_prob_map[subset])
+                                c += 1
+
+                            else:
+                                suspicious_sets.append((subset,
+                                    subset_to_gen_prob_map[subset]))
+
+                        #pprint.pprint(sorted(suspicious_sets, key=operator.itemgetter(1)))
+                        #raw_input()
+                        print(cond, 'number of subsets picked', c)
+                        ##print(cond, np.sum(numerators), denom)
+
+                        numerators.append(np.sum(terms))
+
+
+                    gen_prob = np.mean(numerators) / denom
+                    results[condition][cond].append(gen_prob)
 
                 # reset the learner after each training set
                 self.learner = None
+
+            for cond in self.test_sets[0]:
+                results[condition][cond] = [np.mean(results[condition][cond])]
+
+        pprint.pprint(results)
 
         if latex is True:
             print('\\end{document}')
@@ -465,6 +498,13 @@ class GeneralisationExperiment(experiment.Experiment):
 
             test_sets[i]['subordinate matches'] = [
                 experimental_materials.UtteranceScenePair(
+                    details='subordinate test object 1',
+                    utterance='fep',
+                    scene=fep_sup+fep_basic+fep_sub,
+                    probabilistic=False
+                ),
+                experimental_materials.UtteranceScenePair(
+                    details='subordinate test object 2',
                     utterance='fep',
                     scene=fep_sup+fep_basic+fep_sub,
                     probabilistic=False
@@ -472,8 +512,15 @@ class GeneralisationExperiment(experiment.Experiment):
             ]
 
             sub_2 = [sub.pop() for m in range(num_sub_features)]
+            sub_3 = [sub.pop() for m in range(num_sub_features)]
 
             for f in sub_2:
+                try:
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+                except KeyError:
+                    self.subordinate_feature_to_basic_level[f] = []
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+            for f in sub_3:
                 try:
                     self.subordinate_feature_to_basic_level[f].extend(fep_basic)
                 except KeyError:
@@ -482,26 +529,76 @@ class GeneralisationExperiment(experiment.Experiment):
 
             test_sets[i]['basic-level matches'] = [
                 experimental_materials.UtteranceScenePair(
+                    details='basic-level test object 1',
                     utterance='fep',
                     scene=fep_sup+fep_basic+sub_2,
+                    probabilistic=False
+                ),
+                experimental_materials.UtteranceScenePair(
+                    details='basic-level test object 2',
+                    utterance='fep',
+                    scene=fep_sup+fep_basic+sub_3,
                     probabilistic=False
                 )
             ]
 
             basic_2 = [basic.pop() for m in range(num_basic_features)]
-            sub_3 = [sub.pop() for m in range(num_sub_features)]
+            sub_4 = [sub.pop() for m in range(num_sub_features)]
+            basic_3 = [basic.pop() for m in range(num_basic_features)]
+            sub_5 = [sub.pop() for m in range(num_sub_features)]
+            basic_4 = [basic.pop() for m in range(num_basic_features)]
+            sub_6 = [sub.pop() for m in range(num_sub_features)]
+            basic_5 = [basic.pop() for m in range(num_basic_features)]
+            sub_7 = [sub.pop() for m in range(num_sub_features)]
 
-            for f in sub_3:
+            for f in sub_4:
                 try:
                     self.subordinate_feature_to_basic_level[f].extend(basic_2)
                 except KeyError:
                     self.subordinate_feature_to_basic_level[f] = []
                     self.subordinate_feature_to_basic_level[f].extend(basic_2)
+            for f in sub_5:
+                try:
+                    self.subordinate_feature_to_basic_level[f].extend(basic_3)
+                except KeyError:
+                    self.subordinate_feature_to_basic_level[f] = []
+                    self.subordinate_feature_to_basic_level[f].extend(basic_3)
+            for f in sub_6:
+                try:
+                    self.subordinate_feature_to_basic_level[f].extend(basic_4)
+                except KeyError:
+                    self.subordinate_feature_to_basic_level[f] = []
+                    self.subordinate_feature_to_basic_level[f].extend(basic_4)
+            for f in sub_7:
+                try:
+                    self.subordinate_feature_to_basic_level[f].extend(basic_5)
+                except KeyError:
+                    self.subordinate_feature_to_basic_level[f] = []
+                    self.subordinate_feature_to_basic_level[f].extend(basic_5)
 
             test_sets[i]['superordinate matches'] = [
                 experimental_materials.UtteranceScenePair(
+                    details='superordinate test object 1',
                     utterance='fep',
-                    scene=fep_sup+basic_2+sub_3,
+                    scene=fep_sup+basic_2+sub_4,
+                    probabilistic=False
+                ),
+                #experimental_materials.UtteranceScenePair(
+                #    details='superordinate test object 2',
+                #    utterance='fep',
+                #    scene=fep_sup+basic_3+sub_5,
+                #    probabilistic=False
+                #),
+                #experimental_materials.UtteranceScenePair(
+                #    details='superordinate test object 3',
+                #    utterance='fep',
+                #    scene=fep_sup+basic_4+sub_6,
+                #    probabilistic=False
+                #),
+                experimental_materials.UtteranceScenePair(
+                    details='superordinate test object 4',
+                    utterance='fep',
+                    scene=fep_sup+basic_5+sub_7,
                     probabilistic=False
                 )
             ]
@@ -514,7 +611,8 @@ class GeneralisationExperiment(experiment.Experiment):
 
 
 def calculate_generalisation_probability(learner, target_word,
-        target_scene_meaning, method='cosine', log=False,
+        target_scene_meaning,
+        method='cosine', log=False,
         alpha_sub=1, alpha_basic=1, alpha_sup=1):
 
     def cos(one, two):
@@ -633,11 +731,10 @@ def calculate_generalisation_probability(learner, target_word,
 
             feature_count += 1
 
-        print('\t\tsub feature:', sub_factor, '\n\t\tbasic feature:', basic_factor,
-                '\n\t\tsup feature:', sup_factor)
+        #print('\t\tsub feature:', sub_factor, '\n\t\tbasic feature:', basic_factor,
+        #        '\n\t\tsup feature:', sup_factor)
 
         total = sub_factor * basic_factor * sup_factor
-
     else:
         raise NotImplementedError
 
