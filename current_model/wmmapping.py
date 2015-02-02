@@ -323,6 +323,19 @@ class Alignments:
         alignments[1][time] = alignment
         alignments[0] += alignment
 
+    def add_multiplicative_alignment(self, word, feature, time, alignment):
+        """
+        Add (time, alignment) to the probabilities for word-feature pair and
+        update the sum alignment probability with alignment.
+
+        """
+        wf = word + " " + feature
+        if wf not in self._probs:
+            self.create_entry(word, feature)
+        alignments = self._probs[wf]
+        alignments[1][time] = alignment
+        alignments[0] = alignments[0]**2 + alignment
+
     def add_decay_sum(self, word, feature, time, alignment, decay):
         """
         Calculate the association, using an alternative forgetting sum, for the

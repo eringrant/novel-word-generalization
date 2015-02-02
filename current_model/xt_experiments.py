@@ -300,8 +300,7 @@ class GeneralisationExperiment(experiment.Experiment):
                             print('\n')
 
                     # average the test trials within the category
-                    #gen_prob = mpmath.fdiv(take_average, count)
-                    assert count == 1
+                    gen_prob = mpmath.fdiv(take_average, count)
 
                     try:
                         results[condition][cond].append(gen_prob)
@@ -316,13 +315,18 @@ class GeneralisationExperiment(experiment.Experiment):
                 # reset the learner after each training set
                 self.learner = None
 
+        pprint.pprint(results)
         if latex is True:
             print('\\end{document}')
 
-        savename = ','.join([key + ':' + str(params[key]) for key in params['graph-annotation']])
+        savename  = 'new_gamma_function_plots/'
+        savename += ','.join([key + ':' + str(params[key]) for key in params['graph-annotation']])
         savename += '.png'
         annotation = str(dict((key, value) for (key, value) in params.items() if key in params['graph-annotation']))
-        bar_chart(results, savename=savename, annotation=annotation, normalise_over_test_scene=params['normalise-over-test-scene'])
+        bar_chart(results, savename=savename, annotation=annotation,
+                normalise_over_test_scene=params['normalise-over-test-scene'],
+                subtract_null_hypothesis=1./(params['k-sub']**2*params['k-sup']*params['k-basic']) if
+                params['subtract-null-hypothesis'] is True else None)
 
         os.remove(self.config_path)
         os.remove(self.learner_path)
@@ -347,6 +351,7 @@ class GeneralisationExperiment(experiment.Experiment):
             fep_sup = [sup.pop() for m in range(num_sup_features)]
             fep_basic = [basic.pop() for m in range(num_basic_features)]
             fep_sub = [sub.pop() for m in range(num_sub_features)]
+            fep_sub_sub = [sub.pop() for m in range(num_sub_features)]
 
             for f in fep_sub:
                 try:
@@ -358,22 +363,61 @@ class GeneralisationExperiment(experiment.Experiment):
             training_sets['one example'].append(
                 [experimental_materials.UtteranceScenePair(
                     utterance='fep',
-                    scene=fep_sup+fep_basic+fep_sub,
+                    scene=fep_sup+fep_basic+fep_sub+fep_sub_sub,
                     probabilistic=False
                 )]
             )
 
+            fep_sub_sub_1 = [sub.pop() for m in range(num_sub_features)]
+            fep_sub_sub_2 = [sub.pop() for m in range(num_sub_features)]
+            fep_sub_sub_3 = [sub.pop() for m in range(num_sub_features)]
+
+            for f in fep_sub_sub_1:
+                try:
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+                except KeyError:
+                    self.subordinate_feature_to_basic_level[f] = []
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+            for f in fep_sub_sub_2:
+                try:
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+                except KeyError:
+                    self.subordinate_feature_to_basic_level[f] = []
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+            for f in fep_sub_sub_3:
+                try:
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+                except KeyError:
+                    self.subordinate_feature_to_basic_level[f] = []
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+
             training_sets['three subordinate examples'].append(
                 [experimental_materials.UtteranceScenePair(
                     utterance='fep',
-                    scene=fep_sup+fep_basic+fep_sub,
+                    scene=fep_sup+fep_basic+fep_sub+fep_sub_sub_1,
                     probabilistic=False
-                )] * 3
+                ),
+                experimental_materials.UtteranceScenePair(
+                    utterance='fep',
+                    scene=fep_sup+fep_basic+fep_sub+fep_sub_sub_2,
+                    probabilistic=False
+                ),
+                experimental_materials.UtteranceScenePair(
+                    utterance='fep',
+                    scene=fep_sup+fep_basic+fep_sub+fep_sub_sub_3,
+                    probabilistic=False
+                )]
             )
 
-            sub_2 = [sub.pop() for m in range(num_sub_features)]
-            sub_3 = [sub.pop() for m in range(num_sub_features)]
+            sub_2 = [sub.pop() for m in 2*range(num_sub_features)]
+            sub_3 = [sub.pop() for m in 2*range(num_sub_features)]
 
+            for f in fep_sub_sub_1:
+                try:
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+                except KeyError:
+                    self.subordinate_feature_to_basic_level[f] = []
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
             for f in sub_2:
                 try:
                     self.subordinate_feature_to_basic_level[f].extend(fep_basic)
@@ -392,7 +436,7 @@ class GeneralisationExperiment(experiment.Experiment):
                 [
                     experimental_materials.UtteranceScenePair(
                         utterance='fep',
-                        scene=fep_sup+fep_basic+fep_sub,
+                        scene=fep_sup+fep_basic+fep_sub+fep_sub_sub,
                         probabilistic=False
                     ),
                     experimental_materials.UtteranceScenePair(
@@ -409,7 +453,7 @@ class GeneralisationExperiment(experiment.Experiment):
             )
 
             basic_2 = [basic.pop() for m in range(num_basic_features)]
-            sub_4 = [sub.pop() for m in range(num_sub_features)]
+            sub_4 = [sub.pop() for m in 2*range(num_sub_features)]
 
             for f in sub_4:
                 try:
@@ -419,7 +463,7 @@ class GeneralisationExperiment(experiment.Experiment):
                     self.subordinate_feature_to_basic_level[f].extend(basic_2)
 
             basic_3 = [basic.pop() for m in range(num_basic_features)]
-            sub_5 = [sub.pop() for m in range(num_sub_features)]
+            sub_5 = [sub.pop() for m in 2*range(num_sub_features)]
 
             for f in sub_5:
                 try:
@@ -461,19 +505,36 @@ class GeneralisationExperiment(experiment.Experiment):
 
             fep_sup = fep_features[i][0]
             fep_basic = fep_features[i][1]
-            fep_sub = fep_features[i][2]
+            #fep_sub = fep_features[i][2]
+            fep_sub = [fep_features[i][2][0]]
+            sub_6 = [sub.pop() for m in range(num_sub_features)]
+            sub_7 = [sub.pop() for m in range(num_sub_features)]
 
             test_sets[i]['subordinate matches'] = [
                 experimental_materials.UtteranceScenePair(
+                    details='subordinate test object 1',
                     utterance='fep',
-                    scene=fep_sup+fep_basic+fep_sub,
+                    scene=fep_sup+fep_basic+fep_sub+sub_6,
+                    probabilistic=False
+                ),
+                experimental_materials.UtteranceScenePair(
+                    details='subordinate test object 2',
+                    utterance='fep',
+                    scene=fep_sup+fep_basic+fep_sub+sub_7,
                     probabilistic=False
                 )
             ]
 
-            sub_2 = [sub.pop() for m in range(num_sub_features)]
+            sub_2 = [sub.pop() for m in 2*range(num_sub_features)]
+            sub_3 = [sub.pop() for m in 2*range(num_sub_features)]
 
             for f in sub_2:
+                try:
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+                except KeyError:
+                    self.subordinate_feature_to_basic_level[f] = []
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+            for f in sub_3:
                 try:
                     self.subordinate_feature_to_basic_level[f].extend(fep_basic)
                 except KeyError:
@@ -482,26 +543,76 @@ class GeneralisationExperiment(experiment.Experiment):
 
             test_sets[i]['basic-level matches'] = [
                 experimental_materials.UtteranceScenePair(
+                    details='basic-level test object 1',
                     utterance='fep',
                     scene=fep_sup+fep_basic+sub_2,
+                    probabilistic=False
+                ),
+                experimental_materials.UtteranceScenePair(
+                    details='basic-level test object 2',
+                    utterance='fep',
+                    scene=fep_sup+fep_basic+sub_3,
                     probabilistic=False
                 )
             ]
 
             basic_2 = [basic.pop() for m in range(num_basic_features)]
-            sub_3 = [sub.pop() for m in range(num_sub_features)]
+            sub_4 = [sub.pop() for m in 2*range(num_sub_features)]
+            basic_3 = [basic.pop() for m in range(num_basic_features)]
+            sub_5 = [sub.pop() for m in 2*range(num_sub_features)]
+            basic_4 = [basic.pop() for m in range(num_basic_features)]
+            sub_6 = [sub.pop() for m in 2*range(num_sub_features)]
+            basic_5 = [basic.pop() for m in range(num_basic_features)]
+            sub_7 = [sub.pop() for m in 2*range(num_sub_features)]
 
-            for f in sub_3:
+            for f in sub_4:
                 try:
                     self.subordinate_feature_to_basic_level[f].extend(basic_2)
                 except KeyError:
                     self.subordinate_feature_to_basic_level[f] = []
                     self.subordinate_feature_to_basic_level[f].extend(basic_2)
+            for f in sub_5:
+                try:
+                    self.subordinate_feature_to_basic_level[f].extend(basic_3)
+                except KeyError:
+                    self.subordinate_feature_to_basic_level[f] = []
+                    self.subordinate_feature_to_basic_level[f].extend(basic_3)
+            for f in sub_6:
+                try:
+                    self.subordinate_feature_to_basic_level[f].extend(basic_4)
+                except KeyError:
+                    self.subordinate_feature_to_basic_level[f] = []
+                    self.subordinate_feature_to_basic_level[f].extend(basic_4)
+            for f in sub_7:
+                try:
+                    self.subordinate_feature_to_basic_level[f].extend(basic_5)
+                except KeyError:
+                    self.subordinate_feature_to_basic_level[f] = []
+                    self.subordinate_feature_to_basic_level[f].extend(basic_5)
 
             test_sets[i]['superordinate matches'] = [
                 experimental_materials.UtteranceScenePair(
+                    details='superordinate test object 1',
                     utterance='fep',
-                    scene=fep_sup+basic_2+sub_3,
+                    scene=fep_sup+basic_2+sub_4,
+                    probabilistic=False
+                ),
+                #experimental_materials.UtteranceScenePair(
+                #    details='superordinate test object 2',
+                #    utterance='fep',
+                #    scene=fep_sup+basic_3+sub_5,
+                #    probabilistic=False
+                #),
+                #experimental_materials.UtteranceScenePair(
+                #    details='superordinate test object 3',
+                #    utterance='fep',
+                #    scene=fep_sup+basic_4+sub_6,
+                #    probabilistic=False
+                #),
+                experimental_materials.UtteranceScenePair(
+                    details='superordinate test object 4',
+                    utterance='fep',
+                    scene=fep_sup+basic_5+sub_7,
                     probabilistic=False
                 )
             ]
@@ -511,7 +622,6 @@ class GeneralisationExperiment(experiment.Experiment):
     def finalize(self, params):
         if latex is True:
             print("""\end{document}""")
-
 
 def calculate_generalisation_probability(learner, target_word,
         target_scene_meaning, method='cosine', log=False,
@@ -587,12 +697,17 @@ def calculate_generalisation_probability(learner, target_word,
             if feature.startswith('bas'):
                 basic = feature
 
+        total = 1
+
         for feature in target_scene_meaning.seen_features():
 
             if feature.startswith('sub'):
 
                 sub_factor = learner._learned_lexicon.meaning(target_word).prob(feature,
                         basic_feature=basic)
+                total *= sub_factor
+
+                print('\t\tsub feature:', sub_factor)
 
                 if latex is True:
                     print(feature+':', filewriter.round_to_sig_digits(sub_factor, 4),'\\\\')
@@ -600,6 +715,9 @@ def calculate_generalisation_probability(learner, target_word,
             elif feature.startswith('bas'):
 
                 basic_factor = learner._learned_lexicon.meaning(target_word).prob(feature)
+                total *= basic_factor
+
+                print('\t\tbasic feature:', basic_factor)
 
                 if latex is True:
                     print(feature+':', filewriter.round_to_sig_digits(basic_factor, 4),'\\\\')
@@ -607,6 +725,9 @@ def calculate_generalisation_probability(learner, target_word,
             elif feature.startswith('sup'):
 
                 sup_factor = learner._learned_lexicon.meaning(target_word).prob(feature)
+                total *= sup_factor
+
+                print('\t\tsup feature:', sup_factor)
 
                 if latex is True:
                     print(feature+':', filewriter.round_to_sig_digits(sup_factor, 4),'\\\\')
@@ -616,18 +737,14 @@ def calculate_generalisation_probability(learner, target_word,
 
             feature_count += 1
 
-        print('\t\tsub feature:', sub_factor, '\n\t\tbasic feature:', basic_factor,
-                '\n\t\tsup feature:', sup_factor)
-
-        total = sub_factor * basic_factor * sup_factor
-
     else:
         raise NotImplementedError
 
     return total, feature_count
 
 
-def bar_chart(results, savename=None, annotation=None, normalise_over_test_scene=True):
+def bar_chart(results, savename=None, annotation=None,
+        normalise_over_test_scene=True, subtract_null_hypothesis=None):
 
     conditions = ['one example',
         'three subordinate examples',
@@ -642,41 +759,55 @@ def bar_chart(results, savename=None, annotation=None, normalise_over_test_scene
 
     if len(results[conditions[0]]['subordinate matches']) == 1:
 
-         l0 = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
-         l1 = [np.mean(results[cond]['basic-level matches']) for cond in conditions]
-         l2 = [np.mean(results[cond]['superordinate matches']) for cond in conditions]
+        l0 = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
+        l1 = [np.mean(results[cond]['basic-level matches']) for cond in conditions]
+        l2 = [np.mean(results[cond]['superordinate matches']) for cond in conditions]
 
-         if normalise_over_test_scene is True:
+        if normalise_over_test_scene is True:
 
-             l0 = np.array(l0)
-             l1 = np.array(l1)
-             l2 = np.array(l2)
+            l0 = np.array(l0)
+            l1 = np.array(l1)
+            l2 = np.array(l2)
 
-             denom = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
-             denom = np.add(denom, [np.mean(results[cond]['basic-level matches']) for cond in conditions])
-             denom = np.add(denom, [np.mean(results[cond]['superordinate matches']) for cond in conditions])
+            denom = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
+            denom = np.add(denom, [np.mean(results[cond]['basic-level matches']) for cond in conditions])
+            denom = np.add(denom, [np.mean(results[cond]['superordinate matches']) for cond in conditions])
 
-             try:
-                 l0 /= denom
-                 l1 /= denom
-                 l2 /= denom
-             except ZeroDivisionError:
-                 pass
+            try:
+                l0 /= denom
+                l1 /= denom
+                l2 /= denom
+            except ZeroDivisionError:
+                pass
 
-             l0 = list(l0)
-             l1 = list(l1)
-             l2 = list(l2)
+            l0 = list(l0)
+            l1 = list(l1)
+            l2 = list(l2)
 
-         width = 0.5
-         fig = plt.figure()
-         ax = fig.add_subplot(111)
-         p0 = ax.bar(ind,l0,width,color='r')
-         p1 = ax.bar(ind+width,l1,width,color='g')
-         p2 = ax.bar(ind+2*width,l2,width,color='b')
-         ax.set_ylabel("generalisation probability")
-         ax.set_xlabel("condition")
+        elif subtract_null_hypothesis is not None:
 
-         m = np.max(l0 + l1 + l2)
+            l0 = np.array(l0)
+            l1 = np.array(l1)
+            l2 = np.array(l2)
+
+            l0 -= subtract_null_hypothesis
+            l1 -= subtract_null_hypothesis
+            l2 -= subtract_null_hypothesis
+
+            l0 = list(l0)
+            l1 = list(l1)
+            l2 = list(l2)
+
+        width = 0.5
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        p0 = ax.bar(ind,l0,width,color='r')
+        p1 = ax.bar(ind+width,l1,width,color='g')
+        p2 = ax.bar(ind+2*width,l2,width,color='b')
+        ax.set_ylabel("generalisation probability")
+        ax.set_xlabel("condition")
+
+        m = np.max(l0 + l1 + l2)
 
     else:
         fig, axes = plt.subplots(nrows=nrows, ncols=2, sharex=True, sharey=True)
@@ -709,6 +840,27 @@ def bar_chart(results, savename=None, annotation=None, normalise_over_test_scene
                         l2 /= denom
                     except ZeroDivisionError:
                         pass
+
+                    l0 = list(l0)
+                    l1 = list(l1)
+                    l2 = list(l2)
+
+
+                elif subtract_null_hypothesis is not None:
+
+                    l0 = np.array(l0)
+                    l1 = np.array(l1)
+                    l2 = np.array(l2)
+
+                    print(l0)
+                    raw_input()
+
+                    l0 -= subtract_null_hypothesis
+                    l1 -= subtract_null_hypothesis
+                    l2 -= subtract_null_hypothesis
+
+                    print(l0)
+                    raw_input()
 
                     l0 = list(l0)
                     l1 = list(l1)
@@ -781,7 +933,11 @@ def bar_chart(results, savename=None, annotation=None, normalise_over_test_scene
     if savename is None:
         plt.show()
     else:
-        plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
+        if l2[3] > 0.0001 and float(l0[3] / l1[3]) in range(1, 2) and
+            float(l1[3] / l2[3]) in range(1, 2):
+            plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
+        else:
+            print("""Didn't save a plot.""")
 
 if __name__ == "__main__":
     e = GeneralisationExperiment()

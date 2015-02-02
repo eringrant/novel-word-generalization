@@ -247,6 +247,21 @@ class Learner:
             elif feature.startswith('sup'):
                 return self.epsilon_sup
 
+    def gamma(self, feature, sub_to_basic):
+
+        if feature.startswith('sub'):
+            t = len([f for f in self._features if f.startswith('sub')])
+            #set(sub_to_basic[feature]) & set(sub_to_basic[f])])
+            return self.gamma_sub * t**2
+
+        elif feature.startswith('basic'):
+            t = len([f for f in self._features if f.startswith('basic')])
+            return self.gamma_basic * t**2
+
+        elif feature.startswith('sup'):
+            t = len([f for f in self._features if f.startswith('sup')])
+            return self.gamma_sup * t**2
+
     def init_words_graph(self, hubs_num, sim_threshold, hub_type, coupling, lambda0, a0, miu0, sigma0, sampling_method):
         self._words_graph = wgraph.WordsGraph(hubs_num, sim_threshold, hub_type, coupling, lambda0, a0, miu0, sigma0, sampling_method)
 
@@ -411,15 +426,16 @@ class Learner:
                     if f.startswith('sub') and \
                     set(sub_to_basic[feature]) & set(sub_to_basic[f]):
 
-                        denom += self.association(word, f) + self.gamma_sub
+                        denom += self.association(word, f) + self.gamma(feature, sub_to_basic)
                         count += 1
 
-                denom += (self.k_sub - count) * self.gamma_sub
+                denom += (self.k_sub - count) * self.gamma(feature, sub_to_basic)
 
                 for basic in sub_to_basic[feature]:
-                    basic_unseen_tuples.append((basic, self.gamma_sub/denom))
+                    basic_unseen_tuples.append((basic, self.gamma(feature, sub_to_basic)/denom))
 
-                meaning_prob = (self.association(word, feature) + self.gamma_sub) / denom
+                meaning_prob = (self.association(word, feature) +
+                        self.gamma(feature, sub_to_basic)) / denom
                 self._learned_lexicon.set_prob(word, feature, meaning_prob)
 
             elif feature.startswith('bas'):
@@ -430,12 +446,14 @@ class Learner:
                 for f in self._features:
 
                     if f.startswith('basic'):
-                        basic_denom += self.association(word, f) + self.gamma_basic
+                        basic_denom += self.association(word, f) +\
+                        self.gamma(feature, sub_to_basic)
                         count += 1
 
-                basic_denom += (self.k_basic - count) * self.gamma_basic
+                basic_denom += (self.k_basic - count) * self.gamma(feature, sub_to_basic)
 
-                meaning_prob = (self.association(word, feature) + self.gamma_basic) / basic_denom
+                meaning_prob = (self.association(word, feature) +\
+                        self.gamma(feature, sub_to_basic)) / basic_denom
                 self._learned_lexicon.set_prob(word, feature, meaning_prob)
 
             elif feature.startswith('sup'):
@@ -446,12 +464,14 @@ class Learner:
                 for f in self._features:
 
                     if f.startswith('sup'):
-                        sup_denom += self.association(word, f) + self.gamma_sup
+                        sup_denom += self.association(word, f) +\
+                        self.gamma(feature, sub_to_basic)
                         count += 1
 
-                sup_denom += (self.k_sup - count) * self.gamma_sup
+                sup_denom += (self.k_sup - count) * self.gamma(feature, sub_to_basic)
 
-                meaning_prob = (self.association(word, feature) + self.gamma_sup) / sup_denom
+                meaning_prob = (self.association(word, feature) +
+                        self.gamma(feature, sub_to_basic)) / sup_denom
                 self._learned_lexicon.set_prob(word, feature, meaning_prob)
 
             else:
@@ -459,8 +479,8 @@ class Learner:
 
         self._learned_lexicon.set_unseen(word,
             basic_unseen_tuples,
-            self.gamma_basic/basic_denom,
-            self.gamma_sup/sup_denom)
+            self.gamma('basic', sub_to_basic)/basic_denom,
+            self.gamma('sup', sub_to_basic)/sup_denom)
 
     def association(self, word, feature):
         """
@@ -587,6 +607,7 @@ class Learner:
                                                alignment, self._forget_decay)
                 else:
                     self._aligns.add_alignment(word, feature, self._time, alignment)
+                    #self._aligns.add_multiplicative_alignment(word, feature, self._time, alignment)
             # End alignment calculation for each word
         # End alignment calculation for each feature
 
