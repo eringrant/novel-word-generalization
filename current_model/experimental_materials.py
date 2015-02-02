@@ -7,7 +7,7 @@ import input
 
 class UtteranceScenePair(object):
 
-    def __init__(self, utterance, scene=None, objects=None, lexicon=None,
+    def __init__(self, utterance, details='', scene=None, objects=None, lexicon=None,
             num_features=None, probabilistic=True, feature_restriction=None):
         """
         Initialise a scene representation.
@@ -31,6 +31,7 @@ class UtteranceScenePair(object):
 
         self._scene = []
         self._objects = objects
+        self._details = details
         self._referent_to_features_map = {}
 
         if isinstance(lexicon, str):
@@ -88,8 +89,12 @@ class UtteranceScenePair(object):
             else:
                 raise NotImplementedError
 
-    def __repr__(self):
-        return 'Utterance: ' + str(self._utterance) + '; Objects in scene: ' + str(self._objects) + '; Scene: ' + str(self._scene)
+    def __eq__(self, other):
+        return sorted(self._scene()) == sorted(other._scene()) and \
+            sorted(self._utterance()) == sorted(other._utterance())
+
+    def __str__(self):
+        return str(self._details) + '; Utterance: ' + str(sorted(self._utterance)) + '; Scene: ' + str(sorted(self._scene))
 
     def scene(self):
         return self._scene[:]

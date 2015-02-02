@@ -380,6 +380,7 @@ class GeneralisationExperiment(experiment.Experiment):
             fep_sup = [sup.pop() for m in range(num_sup_features)]
             fep_basic = [basic.pop() for m in range(num_basic_features)]
             fep_sub = [sub.pop() for m in range(num_sub_features)]
+            fep_sub_sub = [sub.pop() for m in range(num_sub_features)]
 
             for f in fep_sub:
                 try:
@@ -396,16 +397,49 @@ class GeneralisationExperiment(experiment.Experiment):
                 )]
             )
 
+            fep_sub_sub_1 = [sub.pop() for m in range(num_sub_features)]
+            fep_sub_sub_2 = [sub.pop() for m in range(num_sub_features)]
+            fep_sub_sub_3 = [sub.pop() for m in range(num_sub_features)]
+
+            for f in fep_sub_sub_1:
+                try:
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+                except KeyError:
+                    self.subordinate_feature_to_basic_level[f] = []
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+            for f in fep_sub_sub_2:
+                try:
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+                except KeyError:
+                    self.subordinate_feature_to_basic_level[f] = []
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+            for f in fep_sub_sub_3:
+                try:
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+                except KeyError:
+                    self.subordinate_feature_to_basic_level[f] = []
+                    self.subordinate_feature_to_basic_level[f].extend(fep_basic)
+
             training_sets['three subordinate examples'].append(
                 [experimental_materials.UtteranceScenePair(
                     utterance='fep',
-                    scene=fep_sup+fep_basic+fep_sub,
+                    scene=fep_sup+fep_basic+fep_sub+fep_sub_sub_1,
                     probabilistic=False
-                )] * 3
+                )],
+                [experimental_materials.UtteranceScenePair(
+                    utterance='fep',
+                    scene=fep_sup+fep_basic+fep_sub+fep_sub_sub_2,
+                    probabilistic=False
+                )],
+                [experimental_materials.UtteranceScenePair(
+                    utterance='fep',
+                    scene=fep_sup+fep_basic+fep_sub+fep_sub_sub_3,
+                    probabilistic=False
+                )]
             )
 
-            sub_2 = [sub.pop() for m in range(num_sub_features)]
-            sub_3 = [sub.pop() for m in range(num_sub_features)]
+            sub_2 = [sub.pop() for m in 2*range(num_sub_features)]
+            sub_3 = [sub.pop() for m in 2*range(num_sub_features)]
 
             for f in sub_2:
                 try:
@@ -442,7 +476,7 @@ class GeneralisationExperiment(experiment.Experiment):
             )
 
             basic_2 = [basic.pop() for m in range(num_basic_features)]
-            sub_4 = [sub.pop() for m in range(num_sub_features)]
+            sub_4 = [sub.pop() for m in 2*range(num_sub_features)]
 
             for f in sub_4:
                 try:
@@ -452,7 +486,7 @@ class GeneralisationExperiment(experiment.Experiment):
                     self.subordinate_feature_to_basic_level[f].extend(basic_2)
 
             basic_3 = [basic.pop() for m in range(num_basic_features)]
-            sub_5 = [sub.pop() for m in range(num_sub_features)]
+            sub_5 = [sub.pop() for m in 2*range(num_sub_features)]
 
             for f in sub_5:
                 try:
@@ -494,25 +528,28 @@ class GeneralisationExperiment(experiment.Experiment):
 
             fep_sup = fep_features[i][0]
             fep_basic = fep_features[i][1]
-            fep_sub = fep_features[i][2]
+            #fep_sub = fep_features[i][2]
+            fep_sub = [fep_features[i][2][0]]
+            sub_6 = [sub.pop() for m in range(num_sub_features)]
+            sub_7 = [sub.pop() for m in range(num_sub_features)]
 
             test_sets[i]['subordinate matches'] = [
                 experimental_materials.UtteranceScenePair(
                     details='subordinate test object 1',
                     utterance='fep',
-                    scene=fep_sup+fep_basic+fep_sub,
+                    scene=fep_sup+fep_basic+fep_sub+sub_6,
                     probabilistic=False
                 ),
                 experimental_materials.UtteranceScenePair(
                     details='subordinate test object 2',
                     utterance='fep',
-                    scene=fep_sup+fep_basic+fep_sub,
+                    scene=fep_sup+fep_basic+fep_sub+sub_7,
                     probabilistic=False
                 )
             ]
 
-            sub_2 = [sub.pop() for m in range(num_sub_features)]
-            sub_3 = [sub.pop() for m in range(num_sub_features)]
+            sub_2 = [sub.pop() for m in 2*range(num_sub_features)]
+            sub_3 = [sub.pop() for m in 2*range(num_sub_features)]
 
             for f in sub_2:
                 try:
@@ -543,13 +580,13 @@ class GeneralisationExperiment(experiment.Experiment):
             ]
 
             basic_2 = [basic.pop() for m in range(num_basic_features)]
-            sub_4 = [sub.pop() for m in range(num_sub_features)]
+            sub_4 = [sub.pop() for m in 2*range(num_sub_features)]
             basic_3 = [basic.pop() for m in range(num_basic_features)]
-            sub_5 = [sub.pop() for m in range(num_sub_features)]
+            sub_5 = [sub.pop() for m in 2*range(num_sub_features)]
             basic_4 = [basic.pop() for m in range(num_basic_features)]
-            sub_6 = [sub.pop() for m in range(num_sub_features)]
+            sub_6 = [sub.pop() for m in 2*range(num_sub_features)]
             basic_5 = [basic.pop() for m in range(num_basic_features)]
-            sub_7 = [sub.pop() for m in range(num_sub_features)]
+            sub_7 = [sub.pop() for m in 2*range(num_sub_features)]
 
             for f in sub_4:
                 try:
