@@ -41,28 +41,32 @@ class Learner:
     """
 
     def __init__(self, lexicon_path, config, stopwords=[],
-            alpha_sub=None, alpha_basic=None, alpha_sup=None,
-            epsilon_sub=None, epsilon_basic=None, epsilon_sup=None,
-            k_sub=None, k_basic=None, k_sup=None,
-            gamma_sub=None, gamma_basic=None, gamma_sup=None):
+            alpha_bottom=None, alpha_sub=None, alpha_basic=None, alpha_sup=None,
+            epsilon_bottom=None, epsilon_sub=None, epsilon_basic=None, epsilon_sup=None,
+            k_bottom=None, k_sub=None, k_basic=None, k_sup=None,
+            gamma_bottom=None, gamma_sub=None, gamma_basic=None, gamma_sup=None):
         """
         Initalize the Learner with all properties from LearnerConfig config,
         using lexicon_path to initialize the gold standard lexicon and
         stopwords_path to read the file of all stop words to ignore.
 
         """
+        self.alpha_bottom = alpha_bottom
         self.alpha_sub = alpha_sub
         self.alpha_basic = alpha_basic
         self.alpha_sup = alpha_sup
 
+        self.epsilon_bottom = epsilon_bottom
         self.epsilon_sub = epsilon_sub
         self.epsilon_basic = epsilon_basic
         self.epsilon_sup = epsilon_sup
 
+        self.k_bottom = k_bottom
         self.k_sub = k_sub
         self.k_basic = k_basic
         self.k_sup = k_sup
 
+        self.gamma_bottom = gamma_bottom
         self.gamma_sub = gamma_sub
         self.gamma_basic = gamma_basic
         self.gamma_sup = gamma_sup
@@ -186,17 +190,17 @@ class Learner:
 
         # End configuration based on config
 
-        self._gold_lexicon = input.read_gold_lexicon(lexicon_path, self._beta)
-        self._all_features = input.all_features(lexicon_path)
+        #self._gold_lexicon = input.read_gold_lexicon(lexicon_path, self._beta)
+        #self._all_features = input.all_features(lexicon_path)
         #print "number of Gold Features", len(self._all_features)
 
         #TODO AIDA why initialise with all word meanings?
 
         #self._learned_lexicon = wmmapping.Lexicon(self._beta, self._gold_lexicon.words())
         self._learned_lexicon = wmmapping.Lexicon(self._beta, ['fep'],
-                k_sub=k_sub, k_basic=k_basic, k_sup=k_sup,
-                gamma_sub=self.gamma_sub, gamma_basic=self.gamma_basic,
-                gamma_sup=self.gamma_sup)
+                k_bottom=k_bottom, k_sub=k_sub, k_basic=k_basic, k_sup=k_sup,
+                gamma_bottom=self.gamma_bottom, gamma_sub=self.gamma_sub,
+                gamma_basic=self.gamma_basic, gamma_sup=self.gamma_sup)
         self._aligns = wmmapping.Alignments(self._alpha)
 
         self._time = 0
@@ -229,7 +233,9 @@ class Learner:
         if self._alpha >= 0:
             return self._alpha
         else:
-            if feature.startswith('sub'):
+            if feature.startswith('bottom'):
+                return self.alpha_bottom
+            elif feature.startswith('sub'):
                 return self.alpha_sub
             elif feature.startswith('basic'):
                 return self.alpha_basic
@@ -240,16 +246,22 @@ class Learner:
         if self._epsilon >= 0:
             return self._epsilon
         else:
-            if feature.startswith('sub'):
+            if feature.startswith('bottom'):
+                return self.epsilon_bottom
+            elif feature.startswith('sub'):
                 return self.epsilon_sub
             elif feature.startswith('basic'):
                 return self.epsilon_basic
             elif feature.startswith('sup'):
                 return self.epsilon_sup
 
-    def gamma(self, feature, sub_to_basic):
+    def gamma(self, feature):
 
-        if feature.startswith('sub'):
+        if feature.startswith('bottom'):
+            t = len([f for f in self._features if f.startswith('bottom')])
+            return self.gamma_bottom * t**2
+
+        elif feature.startswith('sub'):
             t = len([f for f in self._features if f.startswith('sub')])
             #set(sub_to_basic[feature]) & set(sub_to_basic[f])])
             return self.gamma_sub * t**2
@@ -402,7 +414,7 @@ class Learner:
     #    self._learned_lexicon.set_unseen(word, (prob_unseen, prob_unseen, prob_unseen))
 
     #BM updateWordFProb
-    def update_meaning_prob(self, word, sub_to_basic, basic_to_sub):
+    def update_meaning_prob(self, word, bottom_to_sub, sub_to_basic):
         """
         Update the meaning probabilities of word in this learner's lexicon.
         This is done by calculating the association between this word and all
@@ -412,11 +424,34 @@ class Learner:
         """
         #import pdb; pdb.set_trace()
         #TODO: change to calculating alignments
+        sub_unseen_tuples = []
         basic_unseen_tuples = []
 
         for feature in self._features:
 
-            if feature.startswith('sub'):
+            if feature.startswith('bottom'):
+
+                count = 0
+                denom = 0
+
+                for f in self._features:
+
+                    if f.startswith('bottom') and \
+                    set(bottom_to_sub[feature]) & set(bottom_to_sub[f]):
+
+                        denom += self.association(word, f) + self.gamma(feature)
+                        count += 1
+
+                denom += (self.k_bottom - count) * self.gamma(feature)
+
+                for sub in bottom_to_sub[feature]:
+                    sub_unseen_tuples.append((sub, self.gamma(feature)/denom))
+
+                meaning_prob = (self.association(word, feature) +
+                        self.gamma(feature)) / denom
+                self._learned_lexicon.set_prob(word, feature, meaning_prob)
+
+            elif feature.startswith('sub'):
 
                 count = 0
                 denom = 0
@@ -426,16 +461,16 @@ class Learner:
                     if f.startswith('sub') and \
                     set(sub_to_basic[feature]) & set(sub_to_basic[f]):
 
-                        denom += self.association(word, f) + self.gamma(feature, sub_to_basic)
+                        denom += self.association(word, f) + self.gamma(feature)
                         count += 1
 
-                denom += (self.k_sub - count) * self.gamma(feature, sub_to_basic)
+                denom += (self.k_sub - count) * self.gamma(feature)
 
                 for basic in sub_to_basic[feature]:
-                    basic_unseen_tuples.append((basic, self.gamma(feature, sub_to_basic)/denom))
+                    basic_unseen_tuples.append((basic, self.gamma(feature)/denom))
 
                 meaning_prob = (self.association(word, feature) +
-                        self.gamma(feature, sub_to_basic)) / denom
+                        self.gamma(feature)) / denom
                 self._learned_lexicon.set_prob(word, feature, meaning_prob)
 
             elif feature.startswith('bas'):
@@ -447,13 +482,13 @@ class Learner:
 
                     if f.startswith('basic'):
                         basic_denom += self.association(word, f) +\
-                        self.gamma(feature, sub_to_basic)
+                        self.gamma(feature)
                         count += 1
 
-                basic_denom += (self.k_basic - count) * self.gamma(feature, sub_to_basic)
+                basic_denom += (self.k_basic - count) * self.gamma(feature)
 
                 meaning_prob = (self.association(word, feature) +\
-                        self.gamma(feature, sub_to_basic)) / basic_denom
+                        self.gamma(feature)) / basic_denom
                 self._learned_lexicon.set_prob(word, feature, meaning_prob)
 
             elif feature.startswith('sup'):
@@ -465,22 +500,23 @@ class Learner:
 
                     if f.startswith('sup'):
                         sup_denom += self.association(word, f) +\
-                        self.gamma(feature, sub_to_basic)
+                        self.gamma(feature)
                         count += 1
 
-                sup_denom += (self.k_sup - count) * self.gamma(feature, sub_to_basic)
+                sup_denom += (self.k_sup - count) * self.gamma(feature)
 
                 meaning_prob = (self.association(word, feature) +
-                        self.gamma(feature, sub_to_basic)) / sup_denom
+                        self.gamma(feature)) / sup_denom
                 self._learned_lexicon.set_prob(word, feature, meaning_prob)
 
             else:
                 raise NotImplementedError
 
         self._learned_lexicon.set_unseen(word,
+            sub_unseen_tuples,
             basic_unseen_tuples,
-            self.gamma('basic', sub_to_basic)/basic_denom,
-            self.gamma('sup', sub_to_basic)/sup_denom)
+            self.gamma('basic')/basic_denom,
+            self.gamma('sup')/sup_denom)
 
     def association(self, word, feature):
         """
@@ -528,7 +564,7 @@ class Learner:
 
 
     #BM updateMappingTables
-    def calculate_alignments(self, words, features, outdir, sub_to_basic, basic_to_sub, category_learner=None):
+    def calculate_alignments(self, words, features, outdir, bottom_to_sub, sub_to_basic, category_learner=None):
         """
         Update the alignments for each combination of word-feature pairs from
         the list words and set features.
@@ -614,7 +650,7 @@ class Learner:
         #BM Added Jul 27 2012 for context statistics issue, FIND BETTER SOLUTION
         # for each word, update p(f|w) distribution
         for word in words:
-            self.update_meaning_prob(word, sub_to_basic, basic_to_sub)
+            self.update_meaning_prob(word, bottom_to_sub, sub_to_basic)
 
             # Add features to the list of seen features for each word
             self._learned_lexicon.add_seen_features(word, features)
@@ -685,7 +721,7 @@ class Learner:
 
 
     #BM processPair
-    def process_pair(self, words, features, outdir, sub_to_basic, basic_to_sub, category_learner=None):
+    def process_pair(self, words, features, outdir, bottom_to_sub, sub_to_basic, category_learner=None):
         """
         Process the pair words-features, two lists of words and features,
         respectively, to be learned from.
@@ -707,7 +743,7 @@ class Learner:
             words.append("dummy")
 
         # Calculate the alignment probabilities and learned lexicon probabilities
-        self.calculate_alignments(words, features, outdir, sub_to_basic, basic_to_sub, category_learner)
+        self.calculate_alignments(words, features, outdir, bottom_to_sub, sub_to_basic, category_learner)
 
         if self._dummy:
             words.remove("dummy")

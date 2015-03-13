@@ -20,7 +20,7 @@ class Meaning:
 
     """
 
-    def __init__(self, unseen_sub, unseen_basic, unseen_sup, k_sub, k_basic,
+    def __init__(self, unseen_bottom, unseen_sub, unseen_basic, unseen_sup, k_bottom,k_sub, k_basic,
             k_sup):
         """
         Create a meaning object with each feature being equally likely to be part
@@ -28,16 +28,18 @@ class Meaning:
 
         """
         self._meaning_probs = {}
+        self._unseen_bottom = {}
         self._unseen_sub = {}
         self._unseen_basic = unseen_basic
         self._unseen_sup = unseen_sup
+        self.k_bottom = k_bottom
         self.k_sub = k_sub
         self.k_basic = k_basic
         self.k_sup = k_sup
         self._seen_features = []
 
     #BM getValue
-    def prob(self, feature, basic_feature=None):
+    def prob(self, feature, sub_feature=None, basic_feature=None):
         """
         Return the probability of this word having feature as part of its
         meaning.
@@ -46,7 +48,12 @@ class Meaning:
         if feature in self._meaning_probs:
             return self._meaning_probs[feature]
         else:
-            if feature.startswith('sub'):
+            if feature.startswith('bottom'):
+                try:
+                    return self._unseen_bottom[sub_feature]
+                except KeyError:
+                    return 1./self.k_bottom
+            elif feature.startswith('sub'):
                 try:
                     return self._unseen_sub[basic_feature]
                 except KeyError:
@@ -90,6 +97,10 @@ class Meaning:
         ranked.sort(reverse=True)
         return ranked
 
+    def unseen_prob_bottom(self, sub_feature):
+        """ Return the probability of an unseen sub-subordinate feature. """
+        return self._unseen_bottom[sub_feature]
+
     def unseen_prob_sub(self, basic_feature):
         """ Return the probability of an unseen subordinate feature. """
         return self._unseen_sub[basic_feature]
@@ -106,6 +117,7 @@ class Meaning:
         """ Copy the information from Meaning meaning into this meaning. """
         for feature in meaning._meaning_probs.keys():
             self._meaning_probs[feature] = meaning._meaning_probs[feature]
+        self._unseen_bottom = meaning._unseen_bottom.copy()
         self._unseen_sub = meaning._unseen_sub.copy()
         self._unseen_basic = meaning._unseen_basic
         self._unseen_sup = meaning._unseen_sup
@@ -119,6 +131,7 @@ class Meaning:
         result += "\tUnseen sup: < " + str(self._unseen_sup) + " >\n"
         result += "\tUnseen basic < " + str(self._unseen_basic) + " >\n"
         result += "\tUnseen sub < " + pprint.pformat(self._unseen_sub) + " >\n"
+        result += "\tUnseen bottom < " + pprint.pformat(self._unseen_bottom) + " >\n"
         return result
 
 
@@ -132,8 +145,8 @@ class Lexicon:
 
     """
 
-    def __init__(self, beta, words, k_sub=1, k_basic=1, k_sup=1, gamma_sub=1,
-            gamma_basic=1, gamma_sup=1):
+    def __init__(self, beta, words, k_bottom=1, k_sub=1, k_basic=1,
+            k_sup=1, gamma_bottom=1, gamma_sub=1, gamma_basic=1, gamma_sup=1):
         """
         Create an empty Lexicon of words, such that each word in words has a
         Meaning with unseen probability 1.0/beta. See Meaning docstring.
@@ -141,17 +154,22 @@ class Lexicon:
         """
         self._word_meanings = {}
         #self._beta = beta
+        self.k_bottom = k_bottom
         self.k_sub = k_sub
         self.k_basic = k_basic
         self.k_sup = k_sup
+        self._unseen_bottom = 1./k_bottom
         self._unseen_sub = 1./k_sub
         self._unseen_basic = 1./k_basic
         self._unseen_sup = 1./k_sup
         for w in words:
-            self._word_meanings[w] = Meaning(unseen_sub=self._unseen_sub,
+            self._word_meanings[w] = Meaning(
+                    unseen_bottom=self._unseen_bottom,
+                    unseen_sub=self._unseen_sub,
                     unseen_basic=self._unseen_basic,
                     unseen_sup=self._unseen_sup,
-                    k_sub = k_sub, k_basic = k_basic, k_sup = k_sup)
+                    k_bottom = k_bottom, k_sub = k_sub,
+                    k_basic = k_basic, k_sup = k_sup)
 
     #BM getWords
     def words(self):
@@ -161,8 +179,9 @@ class Lexicon:
     #BM getMeaning
     def meaning(self, word):
         """ Return a copy of the Meaning object corresponding to word. """
-        meaning = Meaning(unseen_sub=self._unseen_sub,
+        meaning = Meaning(unseen_bottom=self._unseen_bottom, unseen_sub=self._unseen_sub,
                 unseen_basic=self._unseen_basic, unseen_sup=self._unseen_sup,
+                    k_bottom=self.k_bottom,
                     k_sub=self.k_sub,
                     k_basic=self.k_basic, k_sup=self.k_sup)
         if self._word_meanings.has_key(word):
@@ -188,19 +207,27 @@ class Lexicon:
 
         """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(unseen_sub=self._unseen_sub,
+            self._word_meanings[word] = Meaning(
+                    unseen_bottom=self._unseen_bottom,
+                    unseen_sub=self._unseen_sub,
                     unseen_basic=self._unseen_basic,
-                    unseen_sup=self._unseen_sup, k_sub=self.k_sub,
+                    unseen_sup=self._unseen_sup,
+                    k_bottom=self.k_bottom, k_sub=self.k_sub,
                     k_basic=self.k_basic, k_sup=self.k_sup)
         self._word_meanings[word]._meaning_probs[feature] = prob
 
     #BM getValue
-    def prob(self, word, feature, basic_feature=None):
+    def prob(self, word, feature, sub_feature=None, basic_feature=None):
         """ Return the probability of feature being part of the meaning of word. """
         if word in self._word_meanings:
             if feature in self._word_meanings[word]._meaning_probs:
                 return self._word_meanings[word]._meaning_probs[feature]
-            if feature.startswith('sub'):
+            if feature.startswith('bottom'):
+                try:
+                    return self._word_meanings[word]._unseen_bottom[sub_feature]
+                except KeyError:
+                    return self._unseen_bottom
+            elif feature.startswith('sub'):
                 try:
                     return self._word_meanings[word]._unseen_sub[basic_feature]
                 except KeyError:
@@ -211,7 +238,9 @@ class Lexicon:
                 return self._word_meanings[word]._unseen_sup
             else:
                 raise NotImplementedError
-        if feature.startswith('sub'):
+        if feature.startswith('bottom'):
+            return self._unseen_bottom[sub_feature]
+        elif feature.startswith('sub'):
             return self._unseen_sub[basic_feature]
         elif feature.startswith('bas'):
             return self._unseen_basic
@@ -221,7 +250,7 @@ class Lexicon:
             raise NotImplementedError
 
     #BM getUnseen
-    def unseen(self, word, feature, basic_feature=None):
+    def unseen(self, word, feature, sub_feature=None, basic_feature=None):
         """
         Return the probability of an unseen feature being part of the meaning of
          word.
@@ -229,7 +258,9 @@ class Lexicon:
         """
         if word in self._word_meanings:
             return self._word_meanings[word]._unseen
-        if feature.startswith('sub'):
+        if feature.startswith('bottom'):
+            return self._unseen_bottom[sub_feature]
+        elif feature.startswith('sub'):
             return self._unseen_sub[basic_feature]
         elif feature.startswith('bas'):
             return self._unseen_basic
@@ -239,7 +270,7 @@ class Lexicon:
             raise NotImplementedError
 
     #BM setUnseen
-    def set_unseen(self, word, sub, basic, sup):
+    def set_unseen(self, word, bottom, sub, basic, sup):
         """
         Set the probability of an unseen feature being part of the meaning of
         word to unseen_value.
@@ -247,6 +278,8 @@ class Lexicon:
         """
         if word in self._word_meanings:
             #self._word_meanings[word]._unseen = unseen_value
+            for (sub_feature, prob) in bottom:
+                self._word_meanings[word]._unseen_bottom[sub_feature] = prob
             for (basic_feature, prob) in sub:
                 self._word_meanings[word]._unseen_sub[basic_feature] = prob
             self._word_meanings[word]._unseen_basic = basic
