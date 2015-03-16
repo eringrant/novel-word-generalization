@@ -132,8 +132,8 @@ class Lexicon:
 
     """
 
-    def __init__(self, beta, words, k_sub=1, k_basic=1, k_sup=1, alpha_sub=1,
-            alpha_basic=1, alpha_sup=1):
+    def __init__(self, beta, words, k_sub=1, k_basic=1, k_sup=1, gamma_sub=1,
+            gamma_basic=1, gamma_sup=1):
         """
         Create an empty Lexicon of words, such that each word in words has a
         Meaning with unseen probability 1.0/beta. See Meaning docstring.
@@ -322,6 +322,19 @@ class Alignments:
         alignments = self._probs[wf]
         alignments[1][time] = alignment
         alignments[0] += alignment
+
+    def add_multiplicative_alignment(self, word, feature, time, alignment):
+        """
+        Add (time, alignment) to the probabilities for word-feature pair and
+        update the sum alignment probability with alignment.
+
+        """
+        wf = word + " " + feature
+        if wf not in self._probs:
+            self.create_entry(word, feature)
+        alignments = self._probs[wf]
+        alignments[1][time] = alignment
+        alignments[0] = alignments[0]**2 + alignment
 
     def add_decay_sum(self, word, feature, time, alignment, decay):
         """
