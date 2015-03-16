@@ -10,7 +10,6 @@ import input
 import wmmapping
 import statistics
 import evaluate
-import wgraph
 """
 learn.py
 
@@ -23,89 +22,26 @@ class Learner:
 
     """
 
-    def __init__(self, config):
+    def __init__(self, gamma, k):
         """
 
         """
-        if config is None:
-            print "Initialization Error -- Config required"
-            sys.exit(2)
-
-        # Begin configuration of the learner based on config
-
         # Smoothing
-        self._gamma = config.param_float("gamma")
-        if self._gamma < 0:
-            print "Config Error [gamma] Must be non-zero positive : "+str(self._gamma)
-            sys.exit(2)
-
-        self._k = config.param_float("k")
-        if self._k < 0:
-            print "Config Error [k] Must be non-zero positive : "+str(self._k)
-            sys.exit(2)
-
-        # End configuration based on config
+        self._gamma = gamma
+        self._k = k
 
         self._learned_lexicon = wmmapping.Lexicon([], self._gamma, self._k)
         self._aligns = wmmapping.Alignments(self._gamma)
 
-        self._time = 0
-        self._vocab = set()
-        self._features = set()
-        self._feature_frequencies = {}
-        self._acquisition_scores = {}
-        self._last_time = {}
-
     def gamma(self, word, feature):
         return self._learner_lexicon.gamma(word, feature)
-        #return self.gamma_sub * t**2
 
     def k(self):
         return self._k
-        #return self.gamma_sub * t**2
-
-    def get_lambda(self):
-        """ Return a lambda smoothing factor. """
-        if self._lambda < 1 and self._lambda > 0:
-            return self._lambda
-
-        return 1.0 / (1 + self._time**self._power)
 
     def learned_lexicon(self):
         """ Return a copy of the learned Lexicon. """
         return copy.deepcopy(self._learned_lexicon)
-
-    def update_meaning_prob(self, word):
-        """
-        Update the meaning probabilities of word in this learner's lexicon.
-        This is done by calculating the association between this word and all
-        encountered features - p(f|w) - then normalizing to produce a
-        distribution.
-
-        """
-        for feature in self._features:
-
-            sibling_features = self.sibling_features(word, feature)
-
-            count = 0
-            denom = 0
-
-            for f in sibling_features:
-
-                denom += self.association(word, f)
-                count += 1
-
-                denom += self.k() * self.gamma(word, feature)
-
-                # TODO: recalculate unseen probability to be gamma / denom
-                # for this feature group
-
-                meaning_prob = (self.association(word, feature) +
-                        self.gamma(word, feature)) / denom
-                self._learned_lexicon.set_prob(word, feature, meaning_prob)
-
-    def sibling_features(self, word, feature):
-        return self._learned_lexicon.sibling_features(word, feature)
 
     def association(self, word, feature):
         """
@@ -123,6 +59,8 @@ class Learner:
         # alignment(w|f) = p(f|w) / sum(w' in words)p(f|w')
 
         for feature in features:
+
+            #import pdb; pdb.set_trace()
 
             # Normalization term, sum(w' in words) p(f|w')
             denom = 0.0
@@ -172,23 +110,26 @@ class Learner:
                 self._feature_frequencies[feature] += 1
 
         # add the features to the hierarchy in the correct order
-        self._learned_lexicon.add_features_to_hierarchy(features)
+        for word in words:
+            self._learned_lexicon.add_features_to_hierarchy(word, features)
 
         # calculate the alignment probabilities and update the associations for
         # all word-feature pairs
-        self.calculate_alignments(words, features)
+        self.calculate_alignments(words, features, outdir)
 
-        if self._stats_flag:
-            t = self._time
+    def generalisation_prob(self, word, scene):
 
-            for word in words:
-                # Update word statistics
-                if not self._wordsp.has_word(word):
-                    learned_c = self.learned_count(self._postags)
-                    self._wordsp.add_word(word, t, learned_c)
-                else:
-                    self._wordsp.inc_frequency(word)
-                self._wordsp.update_last_time(word, t)
+        self._learned_lexicon.add_features_to_hierarchy(word, scene)
+
+        gen_prob = 1.
+
+        for feature in scene:
+
+            prob = self._learned_lexicon.prob(word, feature)
+            print "\t\tFeature:", feature, "\tProb:", prob
+            gen_prob *= prob
+
+        return gen_prob
 
     def process_corpus(self, corpus_path, outdir, corpus=None):
         """
@@ -226,33 +167,9 @@ class Learner:
             if self._time % 1000 == 0:
                 print self._time
 
-            # Record statistics - average acquisition and similarity scores
-            if self._stats_flag:
-                self.record_statistics(corpus_path, words, novel_nouns,
-                                       noun_count, outdir)
-            # Record Context statistics
-            if self._context_stats_flag:
-                sims = self.calculate_similarity_scores(words)
-                comps = self.calculate_comprehension_scores(words)
-                self._contextsp.add_context(set(words), self._time, sims, comps)
-
             (words, features) = corpus.next_pair()
 
         # End processing words-sentences pairs from corpus
-
-        if self._stats_flag:
-            # Write statistics to files
-            self._wordsp.write(corpus_path, outdir, str(self._time))
-            self._timesp.write(corpus_path, outdir, str(self._time))
-        if self._context_stats_flag:
-            words = self._contextsp._words.keys()
-            sims = self.calculate_similarity_scores(words)
-            comps = self.calculate_comprehension_scores(words)
-            for word in words:
-                self._contextsp.add_similarity(word, sims[word])
-                self._contextsp.add_comprehension(word, comps[word])
-            # Write the statistics to files
-            self._contextsp.write(corpus_path, outdir)
 
         if close_corpus:
             corpus.close()

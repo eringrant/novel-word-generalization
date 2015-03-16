@@ -31,6 +31,9 @@ class Feature:
     def __ne__(self, other):
         return self._name != other
 
+    def __repr__(self):
+        return "Feature: " + str(self._name) + "; Association: " + str(self._association)
+
     def name(self):
         return self._name
 
@@ -72,48 +75,46 @@ class FeatureGroup:
     def __ne__(self, other):
         return self._feature != other
 
-    def prob(self, feature):
+    def __repr__(self):
+        return "Feature group for: " + self._feature.__repr__() + "; Members: " +  str(self._members)
+
+    def prob(self, gamma, feature):
         if feature in self._members:
-            denom = self._k * self._gamma
+            denom = self._k * gamma
             denom += sum([f.node_association() for f in self._members])
-            return
+            num = find(lambda fg: fg == feature, self._members)
+            num = num.node_association()
+            num += gamma
+            return num / denom
 
         else:
-            return self.unseen_prob()
+            return self.unseen_prob(gamma)
 
     def node_association(self):
         return self._feature.association()
 
-    def unseen_prob(self):
+    def update_node_association(self, alignment):
+        return self._feature.update_association(alignment)
+
+    def unseen_prob(self, gamma):
         """
         Compute the unseen probability of this feature group using the
         associations stored in the Features .
 
         """
-        denom = self._k * self._gamma
+        denom = self._k * gamma
         denom += sum([f.node_association() for f in self._members])
-        return self._gamma/denom
+        return gamma/denom
 
     def add_feature(self, feature):
         fg = FeatureGroup(feature, self._gamma, self._k)
-        self._children.append(fg)
+        self._members.append(fg)
+
         return fg
 
-    def prob_feature_pairs(self):
-        #TODO
-        pass
-
-    def sibling_features(self, feature):
-        if feature in self._features:
-            return set(self._features.keys())
-        elif not self._features: # no features in this group
-            return None
-        else:
-            pass
-            # TODO: what was i gonna do here
-
     def update_association(self, feature, alignment):
-        self._features[feature].update_association(alignment)
+        to_update = find(lambda fg: fg == feature, self._members)
+        to_update.update_node_association(alignment)
 
 
 class Meaning:
@@ -132,10 +133,12 @@ class Meaning:
         self._word = word
         self._seen_features = []
 
-        self._root = FeatureGroup(gamma, k)
+        self._root = FeatureGroup(None, gamma, k)
 
         # hash the features by name to the feature group that contains them
         self._feature_to_feature_group_map = {}
+        self._level_to_feature_groups_map = {}
+        self._feature_to_level_map = {}
 
         self._gamma = gamma
         self._k = k
@@ -151,19 +154,30 @@ class Meaning:
 
         """
         fg = self._root
+        level = 0
         for feature in features:
-            if not feature in parent_feature_group:
-                fg = parent_feature_group.add_feature(feature)
-                self._features[feature] = parent_feature_group
+            if not feature in fg:
+                new_fg = fg.add_feature(feature)
                 self._feature_to_feature_group_map[feature] = fg
-            fg = self._feature_to_feature_group_map[feature]
+                try:
+                    self._level_to_feature_groups_map[level].append(fg)
+                except KeyError:
+                    self._level_to_feature_groups_map[level] = []
+                    if fg not in self._level_to_feature_groups_map[level]:
+                        self._level_to_feature_groups_map[level].append(fg)
+                self._feature_to_level_map[feature] = level
+            else:
+                new_fg = find(lambda f: f == feature, fg._members)
+            fg = new_fg
+            level += 1
 
     def prob(self, feature):
         """
         Return the probability of feature given this Meaning's word.
 
         """
-        return self._feature_to_feature_group_map[feature].prob(feature)
+        g = self.gamma(feature)
+        return self._feature_to_feature_group_map[feature].prob(g, feature)
 
     def set_prob(self, feature, prob):
         """
@@ -204,11 +218,19 @@ class Meaning:
         self._feature_to_feature_group_map[feature].update_association(feature,
                 alignment)
 
+    def gamma(self, feature):
+        level = self._feature_to_level_map[feature]
+        fgs = self._level_to_feature_groups_map[level]
+        count = 0
+        for fg in fgs:
+            #count += len([f for f in fg._members if f.node_association() > 0])
+            count += len([f for f in fg._members])
+        count = max(count, 1)
+        return self._gamma * (count**2)
+
     def __str__(self):
         """ Format this meaning to print intelligibly."""
-        # TODO
-        pass
-
+        return str(self._root)
 
 class Lexicon:
     """
@@ -240,13 +262,13 @@ class Lexicon:
 
         """
         if word not in self._word_meanings:
-            self._word_meanings[word] = meaning(self._gamma, self._k, word=word)
+            self._word_meanings[word] = Meaning(self._gamma, self._k, word=word)
         self._word_meanings[word].add_features_to_hierarchy(features)
 
     def gamma(self, word, feature):
         """ Return the probability of feature being part of the meaning of word. """
         if word not in self._word_meanings:
-            self._word_meanings[word] = meaning(self._gamma, self._k, word=word)
+            self._word_meanings[word] = Meaning(self._gamma, self._k, word=word)
         self._word_meanings[word].gamma(feature)
 
     def words(self):
@@ -256,7 +278,7 @@ class Lexicon:
     def meaning(self, word):
         """ Return a copy of the Meaning object corresponding to word. """
         if word in self._word_meanings:
-            return copy.deepcopy(self._word_meanings[word])
+            return self._word_meanings[word]
         return Meaning(self._gamma, self._k, word=word)
 
     def add_seen_features(self, word, features):
@@ -267,14 +289,14 @@ class Lexicon:
     def seen_features(self, word):
         """ Return a set of features encountered - so far - with word. """
         if word in self._word_meanings:
-            return self._word_meanings[word].seen_features()
+             self._word_meanings[word].seen_features()
         return set()
 
     def prob(self, word, feature):
         """ Return the probability of feature being part of the meaning of word. """
         if word not in self._word_meanings:
             self._word_meanings[word] = Meaning(self._gamma, self._k, word=word)
-        self._word_meanings[word].prob(feature)
+        return self._word_meanings[word].prob(feature)
 
     def set_prob(self, word, feature, prob):
         """
@@ -297,8 +319,8 @@ class Lexicon:
 
         """
         if word not in self._word_meanings:
-            self._word_meanings[word] = meaning(self._gamma, self._k, word=word)
-        self._word_meanings[word].update_association(feature)
+            self._word_meanings[word] = Meaning(self._gamma, self._k, word=word)
+        self._word_meanings[word].update_association(feature, alignment)
 
 
 class Alignments:
@@ -423,3 +445,10 @@ class Alignments:
         self._probs[wf] = []
         self._probs[wf].append(0.0)
         self._probs[wf].append({})
+
+
+def find(f, seq):
+    """Return first item in sequence where f(item) == True."""
+    for item in seq:
+        if f(item):
+            return item
