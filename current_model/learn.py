@@ -6,7 +6,7 @@ import os
 import re
 import sys
 
-import input
+#import input
 import wmmapping
 """
 learn.py

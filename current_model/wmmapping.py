@@ -97,11 +97,18 @@ class FeatureGroup:
 
     def prob(self, feature):
         if feature in self._members:
-            denom = self._k * self.gamma()
-            denom += sum([f.node_association() for f in self._members])
-            numer = find(lambda fg: fg == feature, self._members)
-            numer = numer.node_association()
+            denom = sum([f.node_association() for f in self._members])
+            num = find(lambda fg: fg == feature, self._members)
+            numer = num.node_association()
             numer += self.gamma()
+
+            gamma = self.gamma()
+            print("\t\t\t("+str(num.node_association()) + " + " +\
+                str(gamma) + ") / (" + str(denom) + " + " +\
+                str(self._k) + "*" + str(gamma) + ")")
+
+            denom += self._k * self.gamma()
+
             return numer / denom
 
         else:
