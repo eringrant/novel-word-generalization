@@ -1,396 +1,282 @@
 #!/usr/bin/python
 
-# python2 xt_experiments.py -o test_results.csv -c xt_experiments.cfg -n 1
+# python2 articulated_hierarchy_experiments.py -o test_results.csv -c articulated_hierarchy_experiments.cfg -n 1
 
 from __future__ import print_function, division
 
-import csv
-from datetime import datetime
-import gc
-import logging
-import math
 import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import mpmath; mpmath.mp.dps = 50
-import nltk
-from nltk.corpus.reader import CorpusReader
+import mpmath; mpmath.mp.dps = 100
 import numpy as np
-import os
-import pickle
 import pprint
-import random
-import scipy.stats
-import xml.etree.cElementTree as ET
 
-import constants as CONST
-import evaluate
-import filewriter
-import input
 import learn
-import learnconfig
-import wmmapping
 
 import experiment
 import experimental_materials
 
 latex = False
 
-def test_learner(gamma, k):
+class GeneralisationExperiment(experiment.Experiment)
 
-    # run seat experiments (3 levels)
-    seat_training_sets = {}
-    seat_training_sets['one example'] = []
-    seat_training_sets['three subordinate examples'] = []
-    seat_training_sets['three basic-level examples'] = []
-    seat_training_sets['three superordinate examples'] = []
+    def setup(self, params, rep):
+        """ Runs in each child process. """
+        self.gamma = params['gamma']
+        self.k = params['k']
 
-    seat_fep_features = ['seat11', 'seat21', 'seat31', 'instance1']
-    seat_sub2_features = ['seat11', 'seat21', 'seat31', 'instance2']
-    seat_sub3_features = ['seat11', 'seat21', 'seat31', 'instance3']
+        training_sets, test_sets = generate_training_and_test_sets(
+            params['num-sup-levels'],
+            params['num-basic-levels'],
+            params['num-sub-levels'],
+            params['num-instance-levels'],
+            params['num-features']
+        )
 
-    seat_sub_match_features = ['seat11', 'seat21', 'seat31', 'instance4']
+        conds = ['one example',
+                'three subordinate examples',
+                'three basic-level examples',
+                'three superordinate examples'
+        ]
 
-    seat_basic2_features = ['seat11', 'seat21', 'seat33', 'instance6']
-    seat_basic3_features = ['seat11', 'seat21', 'seat34', 'instance7']
+        results = {}
 
-    seat_basic_match_features = ['seat11', 'seat21', 'seat35', 'instance8']
+        for condition in conds:
 
-    seat_sup2_features = ['seat11', 'seat23', 'seat37', 'instance10']
-    seat_sup3_features = ['seat11', 'seat24', 'seat38', 'instance11']
+            results[condition] = {}
 
-    seat_sup_match_features = ['seat11', 'seat25', 'seat39', 'instance12']
+            for training_set in training_sets[condition]:`
 
-    seat_training_sets['one example'].append(
+                learner = learn.Learner(self.gamma, self.k)
+
+                for trial in training_set:
+
+                    learner.process_pair(trial.utterance(), trial.scene(), './')
+
+                print('============================================')
+                print('Condition: ' + condition)
+                print(str(learner._learned_lexicon.meaning('fep')))
+
+                for cond in test_sets:
+
+                    print("\tMatch: " + cond)
+
+                    take_average = 0
+                    count = 0
+
+                    for j in range(len(test_sets[cond])):
+                        test_scene = test_sets[cond][j]
+                        word = test_scene.utterance()[0]
+                        scene = test_scene.scene()
+
+                        gen_prob = learner.generalisation_prob(word, scene)
+
+                        take_average = mpmath.fadd(take_average, gen_prob)
+                        count += 1
+
+                    # average the test trials within the category
+                    gen_prob = mpmath.fdiv(take_average, count)
+
+                    try:
+                        results[condition][cond].append(gen_prob)
+                    except KeyError:
+                        results[condition][cond] = []
+                        results[condition][cond].append(gen_prob)
+
+        #pprint.pprint(results)
+
+        savename  = 'articulated_hierarchy_experiments/'
+        savename += 'gamma_' + str(gamma) + ',k_' + str(k)
+        savename += ',n_sup_lvls_' + str(params['num-sup-levels'])
+        savename += ',n_basic_lvls_' + str(params['num-basic-levels'])
+        savename += ',n_sub_lvls_' + str(params['num-sub-levels'])
+        savename += ',n_inst_lvls_' + str(params['num-inst-levels'])
+        savename += '.png'
+
+        null_hypothesis = params['num-sup-levels'] + \
+            params['num-basic-levels'] + params['num-sub-levels'] + \
+            params['num-instance-levels'] + params['num-sub-levels']
+        null_hypothesis *= params['num-features']
+        null_hypothesis = mpmath.power(k, null_hypothesis)
+        null_hypothesis = mpmath.fdiv(1., num_hypothesis)
+
+        bar_chart(results, savename=savename,
+            normalise_over_test_scene=True,
+            subtract_null_hypothesis=null_hypothesis)
+
+def generate_training_and_test_sets(num_sup_levels, num_basic_levels, num_sub_levels,
+        num_instance_levels, num_features):
+    """
+
+    """
+    # generate training examples
+    fep_sup_features = []
+    fep_bas_features = []
+    fep_sub_features = []
+    fep_instance_features = []
+
+    for n in range(1, num_sup_levels+1):
+        fep_sup_features += ['fsup' + str(n) + str(i) + '1' for i in range(1, num_features+1)]
+    for n in range(1, num_basic_levels+1):
+        fep_bas_features += ['fbas' + str(n) + str(i) + '1' for i in range(1, num_features+1)]
+    for n in range(1, num_sub_levels+1):
+        fep_sub_features += ['fsub' + str(n) + str(i) + '1' for i in range(1, num_features+1)]
+    for n in range(1, num_instance_levels+1):
+        fep_instance_features += ['finstance' + str(n) + str(i) + '1' for i in range(1, num_features+1)]
+
+    fep_features = fep_sup_features + fep_bas_features + fep_sub_features + fep_instance_features
+
+    sub_example_2_features = fep_sup_features[:] + fep_bas_features[:] + fep_sub_features[:]
+    for n in range(1, num_instance_levels+1):
+        sub_example_2_features += ['finstance' + str(n) + str(i) + '2' for i in range(1, num_features+1)])
+    sub_example_3_features = fep_sup_features[:] + fep_bas_features[:] + fep_sub_features[:]
+    for n in range(1, num_instance_levels+1):
+        sub_example_3_features += ['finstance' + str(n) + str(i) + '3' for i in range(1, num_features+1)])
+
+    bas_example_2_features = fep_sup_features[:] + fep_bas_features[:]
+    for n in range(1, num_sub_levels+1):
+        bas_example_2_features += ['fsub' + str(n) + str(i) + '2' for i in range(1, num_features+1)])
+    for n in range(1, num_instance_levels+1):
+        bas_example_2_features += ['finstance' + str(n) + str(i) + '4' for i in range(1, num_features+1)])
+    bas_example_3_features = fep_sup_features[:] + fep_bas_features[:]
+    for n in range(1, num_sub_levels+1):
+        bas_example_3_features += ['fsub' + str(n) + str(i) + '3' for i in range(1, num_features+1)])
+    for n in range(1, num_instance_levels+1):
+        bas_example_3_features += ['finstance' + str(n) + str(i) + '5' for i in range(1, num_features+1)])
+
+    sup_example_2_features = fep_sup_features[:]
+    for n in range(1, num_basic_levels+1):
+        sup_example_2_features += ['fbasic' + str(n) + str(i) + '2' for i in range(1, num_features+1)])
+    for n in range(1, num_sub_levels+1):
+        sup_example_2_features += ['fsub' + str(n) + str(i) + '4' for i in range(1, num_features+1)])
+    for n in range(1, num_instance_levels+1):
+        sup_example_2_features += ['finstance' + str(n) + str(i) + '6' for i in range(1, num_features+1)])
+    sup_example_3_features = fep_sup_features[:]
+    for n in range(1, num_basic_levels+1):
+        sup_example_3_features += ['fbasic' + str(n) + str(i) + '3' for i in range(1, num_features+1)])
+    for n in range(1, num_sub_levels+1):
+        sup_example_3_features += ['fsub' + str(n) + str(i) + '5' for i in range(1, num_features+1)])
+    for n in range(1, num_instance_levels+1):
+        sup_example_3_features += ['finstance' + str(n) + str(i) + '7' for i in range(1, num_features+1)])
+
+    training_sets = {}
+    training_sets['one example'] = []
+    training_sets['three subordinate examples'] = []
+    training_sets['three basic-level examples'] = []
+    training_sets['three superordinate examples'] = []
+
+    training_sets['one example'].append(
         [experimental_materials.UtteranceScenePair(
             utterance='fep',
-            scene=seat_fep_features,
+            scene=fep_features,
             probabilistic=False
         )]
     )
 
-    seat_training_sets['three subordinate examples'].append(
+    training_sets['three subordinate examples'].append(
         [experimental_materials.UtteranceScenePair(
             utterance='fep',
-            scene=seat_fep_features,
+            scene=fep_features,
             probabilistic=False
         ),
         experimental_materials.UtteranceScenePair(
             utterance='fep',
-            scene=seat_sub2_features,
+            scene=sub_example_2_features,
             probabilistic=False
         ),
         experimental_materials.UtteranceScenePair(
             utterance='fep',
-            scene=seat_sub3_features,
+            scene=sub_example_3_features,
             probabilistic=False
         )]
     )
 
-    seat_training_sets['three basic-level examples'].append(
+    training_sets['three basic-level examples'].append(
         [
             experimental_materials.UtteranceScenePair(
                 utterance='fep',
-                scene=seat_fep_features,
+                scene=fep_features,
                 probabilistic=False
             ),
             experimental_materials.UtteranceScenePair(
                 utterance='fep',
-                scene=seat_basic2_features,
+                scene=basic_example_2_features,
                 probabilistic=False
             ),
             experimental_materials.UtteranceScenePair(
                 utterance='fep',
-                scene=seat_basic3_features,
+                scene=basic_example_3_features,
                 probabilistic=False
             )
         ]
     )
 
-    seat_training_sets['three superordinate examples'].append(
+    training_sets['three superordinate examples'].append(
         [
             experimental_materials.UtteranceScenePair(
                 utterance='fep',
-                scene=seat_fep_features,
+                scene=fep_features,
                 probabilistic=False
             ),
             experimental_materials.UtteranceScenePair(
                 utterance='fep',
-                scene=seat_sup2_features,
+                scene=sup_example_2_features,
                 probabilistic=False
             ),
             experimental_materials.UtteranceScenePair(
                 utterance='fep',
-                scene=seat_sup3_features,
+                scene=sup_example_3_features,
                 probabilistic=False
             )
         ]
     )
 
-    seat_test_sets = []
-    seat_test_sets.append({})
+    # generate test matches
+    sub_match_features = fep_sup_features[:] + fep_bas_features[:] + fep_sub_features[:]
+    for n in range(1, num_instance_levels+1):
+        sub_match_features += ['finstance' + str(n) + str(i) + '8' for i in range(1, num_features+1)]
 
-    i = 0
+    basic_match_features = fep_sup_features[:] + fep_bas_features[:]
+    for n in range(1, num_sub_levels+1):
+        basic_match_features += ['fsub' + str(n) + str(i) + '6' for i in range(1, num_features+1)]
+    for n in range(1, num_instance_levels+1):
+        basic_match_features += ['finstance' + str(n) + str(i) + '9' for i in range(1, num_features+1)]
 
-    seat_test_sets[i]['subordinate matches'] = [
+    sup_match_features = fep_sup_features[:]
+    for n in range(1, num_basic_levels+1):
+        sup_match_features += ['fsup' + str(n) + str(i) + '4' for i in range(1, num_features+1)]
+    for n in range(1, num_sub_levels+1):
+        sup_match_features += ['fsub' + str(n) + str(i) + '7' for i in range(1, num_features+1)]
+    for n in range(1, num_instance_levels+1):
+        sup_match_features += ['finstance' + str(n) + str(i) + '10' for i in range(1, num_features+1)]
+
+    test_sets = {}
+
+    test_sets['subordinate matches'] = [
         experimental_materials.UtteranceScenePair(
-            details='subordinate test object 1',
+            details='subordinate test object',
             utterance='fep',
-            scene=seat_sub_match_features,
+            scene=sub_match_features,
             probabilistic=False
         )
     ]
 
-    seat_test_sets[i]['basic-level matches'] = [
+    test_sets['basic-level matches'] = [
         experimental_materials.UtteranceScenePair(
-            details='basic-level test object 1',
+            details='basic-level test object',
             utterance='fep',
-            scene=seat_basic_match_features,
+            scene=basic_match_features,
             probabilistic=False
         )
     ]
 
-    seat_test_sets[i]['superordinate matches'] = [
+    test_sets['superordinate matches'] = [
         experimental_materials.UtteranceScenePair(
-            details='superordinate test object 1',
+            details='superordinate test object',
             utterance='fep',
-            scene=seat_sup_match_features,
+            scene=sup_match_features,
             probabilistic=False
         )
     ]
-
-
-    conds = ['one example', 'three subordinate examples',
-            'three basic-level examples',
-            'three superordinate examples']
-
-    seat_results = {}
-
-    for condition in conds:
-
-        seat_results[condition] = {}
-
-        for i, training_set in enumerate(seat_training_sets[condition]):
-
-            learner = learn.Learner(gamma, k)
-
-            for trial in training_set:
-
-                learner.process_pair(trial.utterance(), trial.scene(), './')
-
-            print('============================================')
-            print('Condition: ' + condition)
-            print(str(learner._learned_lexicon.meaning('fep')))
-
-            for cond in seat_test_sets[i]:
-
-                print("\tMatch: " + cond)
-
-                take_average = 0
-                count = 0
-
-                for j in range(len(seat_test_sets[i][cond])):
-                    test_scene = seat_test_sets[i][cond][j]
-                    word = test_scene.utterance()[0]
-                    scene = test_scene.scene()
-
-                    gen_prob = learner.generalisation_prob(word, scene)
-
-                    take_average = mpmath.fadd(take_average, gen_prob)
-                    count += 1
-
-                # average the test trials within the category
-                gen_prob = mpmath.fdiv(take_average, count)
-
-                try:
-                    seat_results[condition][cond].append(gen_prob)
-                except KeyError:
-                    seat_results[condition][cond] = []
-                    seat_results[condition][cond].append(gen_prob)
-
-    #pprint.pprint(seat_results)
-
-    savename  = 'seats_and_containers_experiments/'
-    savename += 'seats_gamma_' + str(gamma) + '_k_' + str(k) + '.png'
-    annotation = 'gamma = ' + str(gamma) + '; k = ' + str(k)
-    bar_chart(seat_results, savename=savename, annotation=annotation,
-        normalise_over_test_scene=True,
-        subtract_null_hypothesis=1./k**4)
-
-    # run container experiments (3 levels)
-    container_training_sets = {}
-    container_training_sets['one example'] = []
-    container_training_sets['three subordinate examples'] = []
-    container_training_sets['three basic-level examples'] = []
-    container_training_sets['three superordinate examples'] = []
-
-    container_fep_features = ['container11', 'container21', 'container31', 'container41', 'container51', 'instance11', 'instance21']
-    container_sub2_features = ['container11', 'container21', 'container31', 'container41', 'container51', 'instance12', 'instance22']
-    container_sub3_features = ['container11', 'container21', 'container31', 'container41', 'container51', 'instance13', 'instance23']
-
-    container_sub_match_features = ['container11', 'container21', 'container31', 'container41', 'container51', 'instance14', 'instance24']
-
-    container_basic2_features = ['container11', 'container21', 'container31', 'container43', 'container53', 'instance16', 'instance26']
-    container_basic3_features = ['container11', 'container21', 'container31', 'container44', 'container54', 'instance17', 'instance27']
-
-    container_basic_match_features = ['container11', 'container21', 'container31', 'container45', 'container55', 'instance18', 'instance28']
-
-    container_sup2_features = ['container11', 'container23', 'container33', 'container47', 'container57', 'instance110', 'instance210']
-    container_sup3_features = ['container11', 'container24', 'container34', 'container48', 'container58', 'instance111', 'instance211']
-
-    container_sup_match_features = ['container11', 'container25', 'container35', 'container49', 'container59', 'instance112', 'instance212']
-
-    container_training_sets['one example'].append(
-        [experimental_materials.UtteranceScenePair(
-            utterance='fep',
-            scene=container_fep_features,
-            probabilistic=False
-        )]
-    )
-
-    container_training_sets['three subordinate examples'].append(
-        [experimental_materials.UtteranceScenePair(
-            utterance='fep',
-            scene=container_fep_features,
-            probabilistic=False
-        ),
-        experimental_materials.UtteranceScenePair(
-            utterance='fep',
-            scene=container_sub2_features,
-            probabilistic=False
-        ),
-        experimental_materials.UtteranceScenePair(
-            utterance='fep',
-            scene=container_sub3_features,
-            probabilistic=False
-        )]
-    )
-
-    container_training_sets['three basic-level examples'].append(
-        [
-            experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                scene=container_fep_features,
-                probabilistic=False
-            ),
-            experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                scene=container_basic2_features,
-                probabilistic=False
-            ),
-            experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                scene=container_basic3_features,
-                probabilistic=False
-            )
-        ]
-    )
-
-    container_training_sets['three superordinate examples'].append(
-        [
-            experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                scene=container_fep_features,
-                probabilistic=False
-            ),
-            experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                scene=container_sup2_features,
-                probabilistic=False
-            ),
-            experimental_materials.UtteranceScenePair(
-                utterance='fep',
-                scene=container_sup3_features,
-                probabilistic=False
-            )
-        ]
-    )
-
-    container_test_sets = []
-    container_test_sets.append({})
-
-    i = 0
-
-    container_test_sets[i]['subordinate matches'] = [
-        experimental_materials.UtteranceScenePair(
-            details='subordinate test object 1',
-            utterance='fep',
-            scene=container_sub_match_features,
-            probabilistic=False
-        )
-    ]
-
-    container_test_sets[i]['basic-level matches'] = [
-        experimental_materials.UtteranceScenePair(
-            details='basic-level test object 1',
-            utterance='fep',
-            scene=container_basic_match_features,
-            probabilistic=False
-        )
-    ]
-
-    container_test_sets[i]['superordinate matches'] = [
-        experimental_materials.UtteranceScenePair(
-            details='superordinate test object 1',
-            utterance='fep',
-            scene=container_sup_match_features,
-            probabilistic=False
-        )
-    ]
-
-
-    conds = ['one example', 'three subordinate examples',
-            'three basic-level examples',
-            'three superordinate examples']
-
-    container_results = {}
-
-    for condition in conds:
-
-        container_results[condition] = {}
-
-        for i, training_set in enumerate(container_training_sets[condition]):
-
-            learner = learn.Learner(gamma, k)
-
-            for trial in training_set:
-
-                learner.process_pair(trial.utterance(), trial.scene(), './')
-
-            print('============================================')
-            print('Condition: ' + condition)
-
-            for cond in container_test_sets[i]:
-
-                take_average = 0
-                count = 0
-
-                for j in range(len(container_test_sets[i][cond])):
-                    test_scene = container_test_sets[i][cond][j]
-                    word = test_scene.utterance()[0]
-                    scene = test_scene.scene()
-
-
-                    gen_prob = learner.generalisation_prob(word, scene)
-
-                    take_average = mpmath.fadd(take_average, gen_prob)
-                    count += 1
-
-                # average the test trials within the category
-                gen_prob = mpmath.fdiv(take_average, count)
-
-                try:
-                    container_results[condition][cond].append(gen_prob)
-                except KeyError:
-                    container_results[condition][cond] = []
-                    container_results[condition][cond].append(gen_prob)
-
-
-    savename  = 'seats_and_containers_experiments/'
-    savename += 'containers_gamma_' + str(gamma) + '_k_' + str(k) + '.png'
-    annotation = 'gamma = ' + str(gamma) + '; k = ' + str(k)
-    bar_chart(container_results, savename=savename, annotation=annotation,
-        normalise_over_test_scene=True,
-        subtract_null_hypothesis=1./k**4)
 
 def bar_chart(results, savename=None, annotation=None,
         normalise_over_test_scene=True, subtract_null_hypothesis=None):
@@ -585,13 +471,5 @@ def bar_chart(results, savename=None, annotation=None,
         plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
 if __name__ == "__main__":
-
-    ks = [0.1, 0.5, 1, 2, 5, 10, 20]
-    gammas = [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10, 20]
-
-
-    #for k in ks:
-    #    for gamma in gammas:
-    #        test_learner(gamma, k)
-
-    test_learner(0.5, 5)
+    e = GeneralisationExpeirment()
+    e.start()
