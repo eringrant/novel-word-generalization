@@ -59,11 +59,12 @@ class FeatureGroup:
 
     """
 
-    def __init__(self, feature_name, gamma, k):
+    def __init__(self, feature_name, gamma, k, meaning):
         self._gamma = gamma
         self._k = k
         self._members = []
         self._feature = Feature(name=feature_name)
+        self._meaning = meaning # the meaning hierarchy
 
     def __contains__(self, feature):
         """ Check if feature is a member of this FeatureGroup. """
@@ -79,14 +80,21 @@ class FeatureGroup:
         return "Feature group for: " + self._feature.__repr__() + ";\n\tMembers: " +  str(self._members)
 
     def add_feature(self, feature):
-        fg = FeatureGroup(feature, self._gamma, self._k)
+        fg = FeatureGroup(feature, self._gamma, self._k, self._meaning)
         self._members.append(fg)
         return fg
 
+    # implementation for which gamma is a function of types across the level of
+    # a hierarchy
     def gamma(self):
-        count = len([f for f in self._members if f.node_association() > 0])
-        count = max(count, 1)
-        return self._gamma * (count**2)
+        raise Exception # shouldn't be called
+
+    # implementation for which gamma is a function of types within a feature
+    # group
+    #def gamma(self):
+    #    count = len([f for f in self._members if f.node_association() > 0])
+    #    count = max(count, 1)
+    #    return self._gamma * (count**2)
 
     def node_association(self):
         return self._feature.association()
@@ -94,27 +102,57 @@ class FeatureGroup:
     def update_node_association(self, alignment):
         return self._feature.update_association(alignment)
 
-    def prob(self, feature):
+    # implementation for which gamma is a function of types across the level of
+    # a hierarchy
+    def prob(self, feature, gamma):
         if feature in self._members:
-            denom = self._k * self.gamma()
+            denom = self._k * gamma
             denom += sum([f.node_association() for f in self._members])
             numer = find(lambda fg: fg == feature, self._members)
             numer = numer.node_association()
-            numer += self.gamma()
+            numer += gamma
             return numer / denom
 
         else:
             return self.unseen_prob()
 
-    def unseen_prob(self):
+    # implementation for which gamma is a function of types within a feature
+    # group
+    #def prob(self, feature):
+    #    if feature in self._members:
+    #        denom = self._k * self.gamma()
+    #        denom += sum([f.node_association() for f in self._members])
+    #        numer = find(lambda fg: fg == feature, self._members)
+    #        numer = numer.node_association()
+    #        numer += self.gamma()
+    #        return numer / denom
+
+    #    else:
+    #        return self.unseen_prob()
+
+    # implementation for which gamma is a function of types across the level of
+    # a hierarchy
+    def unseen_prob(self, gamma):
         """
         Compute the unseen probability of this feature group using the
         associations stored in the Features .
 
         """
-        denom = self._k * self.gamma()
+        denom = self._k * gamma
         denom += sum([f.node_association() for f in self._members])
-        return self.gamma()/denom
+        return gamma/denom
+
+    # implementation for which gamma is a function of types within a feature
+    # group
+    #def unseen_prob(self, gamma):
+    #    """
+    #    Compute the unseen probability of this feature group using the
+    #    associations stored in the Features .
+
+    #    """
+    #    denom = self._k * self.gamma()
+    #    denom += sum([f.node_association() for f in self._members])
+    #    return self.gamma()/denom
 
     def update_association(self, feature, alignment):
         to_update = find(lambda fg: fg == feature, self._members)
@@ -142,15 +180,15 @@ class Meaning:
         self._seen_features = []
 
         # the root of the hierarchy
-        self._root = FeatureGroup(None, gamma, k)
+        self._root = FeatureGroup(None, gamma, k, self)
 
         # hash maps for computational efficiency
         self._feature_to_feature_group_map = {}
         self._level_to_feature_groups_map = {}
         self._feature_to_level_map = {}
 
+    # TODO
     def __deepcopy__(self, memo):
-        # TODO
         return Meaning(copy.deepcopy(self.name, memo))
 
     def __str__(self):
@@ -176,7 +214,8 @@ class Meaning:
                 self._feature_to_feature_group_map[feature] = fg
 
                 try:
-                    self._level_to_feature_groups_map[level].append(fg)
+                    if fg not in self._level_to_feature_groups_map[level]:
+                        self._level_to_feature_groups_map[level].append(fg)
                 except KeyError:
                     self._level_to_feature_groups_map[level] = []
                     if fg not in self._level_to_feature_groups_map[level]:
@@ -189,36 +228,48 @@ class Meaning:
             fg = new_fg
             level += 1
 
-    # implementation for which gamma is a function of types across the level of
-    # a hierarchy
-    #def gamma(self, feature):
-    #    """
-    #    Return the updated gamma parameter for feature in this Meaning.
-
-
-    #    """
-    #    level = self._feature_to_level_map[feature]
-    #    fgs = self._level_to_feature_groups_map[level]
-    #    count = 0
-    #    for fg in fgs:
-    #        #count += len([f for f in fg._members if f.node_association() > 0])
-    #        count += len([f for f in fg._members])
-    #    count = max(count, 1)
-    #    return self._gamma * (count**2)
-
+    # implementation for which gamma is a function of types across a specific
+    # level of a hierarchy
     def gamma(self, feature):
         """
         Return the updated gamma parameter for feature in this Meaning.
 
         """
-        return self._feature_to_feature_group_map[feature].gamma()
+        level = self._feature_to_level_map[feature]
+        fgs = self._level_to_feature_groups_map[level]
+        count = 0
+        for fg in fgs:
+            count += len([f for f in fg._members if f.node_association() > 0])
+        count = max(count, 1)
+        return self._gamma * (count**2)
 
+    # implementation for which gamma is a function of types within a feature
+    # group
+    #def gamma(self, feature):
+    #    """
+    #    Return the updated gamma parameter for feature in this Meaning.
+
+    #    """
+    #    return self._feature_to_feature_group_map[feature].gamma()
+
+    # implementation for which gamma is a function of types across a specific
+    # level of a hierarchy
     def prob(self, feature):
         """
         Return the probability of feature given this Meaning's word.
 
         """
-        return self._feature_to_feature_group_map[feature].prob(feature)
+        return self._feature_to_feature_group_map[feature].prob(feature,
+                self.gamma(feature))
+
+    # implementation for which gamma is a function of types within a feature
+    # group
+    #def prob(self, feature):
+    #    """
+    #    Return the probability of feature given this Meaning's word.
+
+    #    """
+    #    return self._feature_to_feature_group_map[feature].prob(feature)
 
     def seen_features(self):
         """

@@ -68,6 +68,7 @@ class GeneralisationExperiment(experiment.Experiment):
                         word = test_scene.utterance()[0]
                         scene = test_scene.scene()
 
+                        #import pdb; pdb.set_trace()
                         gen_prob = learner.generalisation_prob(word, scene)
 
                         take_average = mpmath.fadd(take_average, gen_prob)
