@@ -17,12 +17,12 @@ import experimental_materials
 
 latex = False
 
-class GeneralisationExperiment(experiment.Experiment)
+class GeneralisationExperiment(experiment.Experiment):
 
     def setup(self, params, rep):
         """ Runs in each child process. """
-        self.gamma = params['gamma']
-        self.k = params['k']
+        gamma = params['gamma']
+        k = params['k']
 
         training_sets, test_sets = generate_training_and_test_sets(
             params['num-sup-levels'],
@@ -44,9 +44,9 @@ class GeneralisationExperiment(experiment.Experiment)
 
             results[condition] = {}
 
-            for training_set in training_sets[condition]:`
+            for training_set in training_sets[condition]:
 
-                learner = learn.Learner(self.gamma, self.k)
+                learner = learn.Learner(gamma, k)
 
                 for trial in training_set:
 
@@ -54,7 +54,7 @@ class GeneralisationExperiment(experiment.Experiment)
 
                 print('============================================')
                 print('Condition: ' + condition)
-                print(str(learner._learned_lexicon.meaning('fep')))
+                print(learner._learned_lexicon.meaning('fep'))
 
                 for cond in test_sets:
 
@@ -89,7 +89,7 @@ class GeneralisationExperiment(experiment.Experiment)
         savename += ',n_sup_lvls_' + str(params['num-sup-levels'])
         savename += ',n_basic_lvls_' + str(params['num-basic-levels'])
         savename += ',n_sub_lvls_' + str(params['num-sub-levels'])
-        savename += ',n_inst_lvls_' + str(params['num-inst-levels'])
+        savename += ',n_inst_lvls_' + str(params['num-instance-levels'])
         savename += '.png'
 
         null_hypothesis = params['num-sup-levels'] + \
@@ -97,7 +97,7 @@ class GeneralisationExperiment(experiment.Experiment)
             params['num-instance-levels'] + params['num-sub-levels']
         null_hypothesis *= params['num-features']
         null_hypothesis = mpmath.power(k, null_hypothesis)
-        null_hypothesis = mpmath.fdiv(1., num_hypothesis)
+        null_hypothesis = mpmath.fdiv(1., null_hypothesis)
 
         bar_chart(results, savename=savename,
             normalise_over_test_scene=True,
@@ -127,36 +127,36 @@ def generate_training_and_test_sets(num_sup_levels, num_basic_levels, num_sub_le
 
     sub_example_2_features = fep_sup_features[:] + fep_bas_features[:] + fep_sub_features[:]
     for n in range(1, num_instance_levels+1):
-        sub_example_2_features += ['finstance' + str(n) + str(i) + '2' for i in range(1, num_features+1)])
+        sub_example_2_features += ['finstance' + str(n) + str(i) + '2' for i in range(1, num_features+1)]
     sub_example_3_features = fep_sup_features[:] + fep_bas_features[:] + fep_sub_features[:]
     for n in range(1, num_instance_levels+1):
-        sub_example_3_features += ['finstance' + str(n) + str(i) + '3' for i in range(1, num_features+1)])
+        sub_example_3_features += ['finstance' + str(n) + str(i) + '3' for i in range(1, num_features+1)]
 
-    bas_example_2_features = fep_sup_features[:] + fep_bas_features[:]
+    basic_example_2_features = fep_sup_features[:] + fep_bas_features[:]
     for n in range(1, num_sub_levels+1):
-        bas_example_2_features += ['fsub' + str(n) + str(i) + '2' for i in range(1, num_features+1)])
+        basic_example_2_features += ['fsub' + str(n) + str(i) + '2' for i in range(1, num_features+1)]
     for n in range(1, num_instance_levels+1):
-        bas_example_2_features += ['finstance' + str(n) + str(i) + '4' for i in range(1, num_features+1)])
-    bas_example_3_features = fep_sup_features[:] + fep_bas_features[:]
+        basic_example_2_features += ['finstance' + str(n) + str(i) + '4' for i in range(1, num_features+1)]
+    basic_example_3_features = fep_sup_features[:] + fep_bas_features[:]
     for n in range(1, num_sub_levels+1):
-        bas_example_3_features += ['fsub' + str(n) + str(i) + '3' for i in range(1, num_features+1)])
+        basic_example_3_features += ['fsub' + str(n) + str(i) + '3' for i in range(1, num_features+1)]
     for n in range(1, num_instance_levels+1):
-        bas_example_3_features += ['finstance' + str(n) + str(i) + '5' for i in range(1, num_features+1)])
+        basic_example_3_features += ['finstance' + str(n) + str(i) + '5' for i in range(1, num_features+1)]
 
     sup_example_2_features = fep_sup_features[:]
     for n in range(1, num_basic_levels+1):
-        sup_example_2_features += ['fbasic' + str(n) + str(i) + '2' for i in range(1, num_features+1)])
+        sup_example_2_features += ['fbasic' + str(n) + str(i) + '2' for i in range(1, num_features+1)]
     for n in range(1, num_sub_levels+1):
-        sup_example_2_features += ['fsub' + str(n) + str(i) + '4' for i in range(1, num_features+1)])
+        sup_example_2_features += ['fsub' + str(n) + str(i) + '4' for i in range(1, num_features+1)]
     for n in range(1, num_instance_levels+1):
-        sup_example_2_features += ['finstance' + str(n) + str(i) + '6' for i in range(1, num_features+1)])
+        sup_example_2_features += ['finstance' + str(n) + str(i) + '6' for i in range(1, num_features+1)]
     sup_example_3_features = fep_sup_features[:]
     for n in range(1, num_basic_levels+1):
-        sup_example_3_features += ['fbasic' + str(n) + str(i) + '3' for i in range(1, num_features+1)])
+        sup_example_3_features += ['fbasic' + str(n) + str(i) + '3' for i in range(1, num_features+1)]
     for n in range(1, num_sub_levels+1):
-        sup_example_3_features += ['fsub' + str(n) + str(i) + '5' for i in range(1, num_features+1)])
+        sup_example_3_features += ['fsub' + str(n) + str(i) + '5' for i in range(1, num_features+1)]
     for n in range(1, num_instance_levels+1):
-        sup_example_3_features += ['finstance' + str(n) + str(i) + '7' for i in range(1, num_features+1)])
+        sup_example_3_features += ['finstance' + str(n) + str(i) + '7' for i in range(1, num_features+1)]
 
     training_sets = {}
     training_sets['one example'] = []
@@ -243,7 +243,7 @@ def generate_training_and_test_sets(num_sup_levels, num_basic_levels, num_sub_le
 
     sup_match_features = fep_sup_features[:]
     for n in range(1, num_basic_levels+1):
-        sup_match_features += ['fsup' + str(n) + str(i) + '4' for i in range(1, num_features+1)]
+        sup_match_features += ['fbasic' + str(n) + str(i) + '4' for i in range(1, num_features+1)]
     for n in range(1, num_sub_levels+1):
         sup_match_features += ['fsub' + str(n) + str(i) + '7' for i in range(1, num_features+1)]
     for n in range(1, num_instance_levels+1):
@@ -277,6 +277,8 @@ def generate_training_and_test_sets(num_sup_levels, num_basic_levels, num_sub_le
             probabilistic=False
         )
     ]
+
+    return training_sets, test_sets
 
 def bar_chart(results, savename=None, annotation=None,
         normalise_over_test_scene=True, subtract_null_hypothesis=None):
@@ -387,15 +389,9 @@ def bar_chart(results, savename=None, annotation=None,
                     l1 = np.array(l1)
                     l2 = np.array(l2)
 
-                    print(l0)
-                    raw_input()
-
                     l0 -= subtract_null_hypothesis
                     l1 -= subtract_null_hypothesis
                     l2 -= subtract_null_hypothesis
-
-                    print(l0)
-                    raw_input()
 
                     l0 = list(l0)
                     l1 = list(l1)
@@ -471,5 +467,5 @@ def bar_chart(results, savename=None, annotation=None,
         plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
 if __name__ == "__main__":
-    e = GeneralisationExpeirment()
+    e = GeneralisationExperiment()
     e.start()

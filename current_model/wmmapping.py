@@ -76,7 +76,7 @@ class FeatureGroup:
         return self._feature != other
 
     def __repr__(self):
-        return "Feature group for: " + self._feature.__repr__() + "; Members: " +  str(self._members)
+        return "Feature group for: " + self._feature.__repr__() + ";\n\tMembers: " +  str(self._members)
 
     def add_feature(self, feature):
         fg = FeatureGroup(feature, self._gamma, self._k)
@@ -96,11 +96,11 @@ class FeatureGroup:
 
     def prob(self, feature):
         if feature in self._members:
-            denom = self._k * self._gamma
+            denom = self._k * self.gamma()
             denom += sum([f.node_association() for f in self._members])
             numer = find(lambda fg: fg == feature, self._members)
             numer = numer.node_association()
-            numer += self._gamma
+            numer += self.gamma()
             return numer / denom
 
         else:
@@ -112,9 +112,9 @@ class FeatureGroup:
         associations stored in the Features .
 
         """
-        denom = self._k * self_gamma
+        denom = self._k * self.gamma()
         denom += sum([f.node_association() for f in self._members])
-        return self._gamma/denom
+        return self.gamma()/denom
 
     def update_association(self, feature, alignment):
         to_update = find(lambda fg: fg == feature, self._members)
@@ -218,8 +218,7 @@ class Meaning:
         Return the probability of feature given this Meaning's word.
 
         """
-        g = self.gamma(feature)
-        return self._feature_to_feature_group_map[feature].prob(g, feature)
+        return self._feature_to_feature_group_map[feature].prob(feature)
 
     def seen_features(self):
         """
@@ -278,6 +277,7 @@ class Lexicon:
             self._word_meanings[word] = Meaning(self._gamma, self._k, word=word)
         self._word_meanings[word].gamma(feature)
 
+    # TODO: not implemented correctly
     def meaning(self, word):
         """ Return a copy of the Meaning object corresponding to word. """
         if word in self._word_meanings:
@@ -314,3 +314,8 @@ class Lexicon:
         """ Return a set of all words in this lexicon. """
         return set(self._word_meanings.keys())
 
+def find(f, seq):
+    """ Return first item in sequence where f(item) == True. """
+    for item in seq:
+        if f(item):
+            return item

@@ -29,7 +29,6 @@ class Learner:
         self._k = k
 
         self._learned_lexicon = wmmapping.Lexicon([], self._gamma, self._k)
-        self._aligns = wmmapping.Alignments(self._gamma)
 
     def gamma(self, word, feature):
         return self._learner_lexicon.gamma(word, feature)
