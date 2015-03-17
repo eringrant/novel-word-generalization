@@ -1,0 +1,155 @@
+============================================
+Condition: one example
+Feature group for: Feature: None; Association: 0.0;
+	Members: [Feature group for: Feature: fsup111; Association: 1.0;
+	Members: [Feature group for: Feature: fbas111; Association: 1.0;
+	Members: [Feature group for: Feature: fsub111; Association: 1.0;
+	Members: [Feature group for: Feature: finstance111; Association: 1.0;
+	Members: []]]]]
+	Match: subordinate matches
+			(1.0 + 0.5) / (1.0 + 5.0*0.5)
+		Feature: fsup111 	Prob: 0.428571428571
+			(1.0 + 0.5) / (1.0 + 5.0*0.5)
+		Feature: fbas111 	Prob: 0.428571428571
+			(1.0 + 0.5) / (1.0 + 5.0*0.5)
+		Feature: fsub111 	Prob: 0.428571428571
+			(0.0 + 0.5) / (1.0 + 5.0*0.5)
+		Feature: finstance118 	Prob: 0.142857142857
+	Match: basic-level matches
+			(1.0 + 0.5) / (1.0 + 5.0*0.5)
+		Feature: fsup111 	Prob: 0.428571428571
+			(1.0 + 0.5) / (1.0 + 5.0*0.5)
+		Feature: fbas111 	Prob: 0.428571428571
+			(0.0 + 0.5) / (1.0 + 5.0*0.5)
+		Feature: fsub116 	Prob: 0.142857142857
+			(0.0 + 0.5) / (0.0 + 5.0*0.5)
+		Feature: finstance119 	Prob: 0.2
+	Match: superordinate matches
+			(1.0 + 0.5) / (1.0 + 5.0*0.5)
+		Feature: fsup111 	Prob: 0.428571428571
+			(0.0 + 0.5) / (1.0 + 5.0*0.5)
+		Feature: fbasic114 	Prob: 0.142857142857
+			(0.0 + 0.5) / (0.0 + 5.0*0.5)
+		Feature: fsub117 	Prob: 0.2
+			(0.0 + 0.5) / (0.0 + 5.0*0.5)
+		Feature: finstance1110 	Prob: 0.2
+			(0.0 + 0.5) / (0.0 + 5.0*0.5)
+============================================
+Condition: three subordinate examples
+Feature group for: Feature: None; Association: 0.0;
+	Members: [Feature group for: Feature: fsup111; Association: 3.0;
+	Members: [Feature group for: Feature: fbas111; Association: 3.0;
+	Members: [Feature group for: Feature: fsub111; Association: 3.0;
+	Members: [Feature group for: Feature: finstance111; Association: 1.0;
+	Members: [], Feature group for: Feature: finstance112; Association: 1.0;
+	Members: [], Feature group for: Feature: finstance113; Association: 1.0;
+	Members: []]]]]
+	Match: subordinate matches
+			(3.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fsup111 	Prob: 0.636363636364
+			(3.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fbas111 	Prob: 0.636363636364
+			(3.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fsub111 	Prob: 0.636363636364
+			(0.0 + 4.5) / (3.0 + 5.0*4.5)
+		Feature: finstance118 	Prob: 0.176470588235
+	Match: basic-level matches
+			(3.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fsup111 	Prob: 0.636363636364
+			(3.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fbas111 	Prob: 0.636363636364
+			(0.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fsub116 	Prob: 0.0909090909091
+			(0.0 + 4.5) / (0.0 + 5.0*4.5)
+		Feature: finstance119 	Prob: 0.2
+	Match: superordinate matches
+			(3.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fsup111 	Prob: 0.636363636364
+			(0.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fbasic114 	Prob: 0.0909090909091
+			(0.0 + 0.5) / (0.0 + 5.0*0.5)
+		Feature: fsub117 	Prob: 0.2
+			(0.0 + 4.5) / (0.0 + 5.0*4.5)
+		Feature: finstance1110 	Prob: 0.2
+			(0.0 + 0.5) / (0.0 + 5.0*0.5)
+============================================
+Condition: three basic-level examples
+Feature group for: Feature: None; Association: 0.0;
+	Members: [Feature group for: Feature: fsup111; Association: 3.0;
+	Members: [Feature group for: Feature: fbas111; Association: 3.0;
+	Members: [Feature group for: Feature: fsub111; Association: 1.0;
+	Members: [Feature group for: Feature: finstance111; Association: 1.0;
+	Members: []], Feature group for: Feature: fsub112; Association: 1.0;
+	Members: [Feature group for: Feature: finstance114; Association: 1.0;
+	Members: []], Feature group for: Feature: fsub113; Association: 1.0;
+	Members: [Feature group for: Feature: finstance115; Association: 1.0;
+	Members: []]]]]
+	Match: subordinate matches
+			(3.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fsup111 	Prob: 0.636363636364
+			(3.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fbas111 	Prob: 0.636363636364
+			(1.0 + 4.5) / (3.0 + 5.0*4.5)
+		Feature: fsub111 	Prob: 0.21568627451
+			(0.0 + 4.5) / (1.0 + 5.0*4.5)
+		Feature: finstance118 	Prob: 0.191489361702
+	Match: basic-level matches
+			(3.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fsup111 	Prob: 0.636363636364
+			(3.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fbas111 	Prob: 0.636363636364
+			(0.0 + 4.5) / (3.0 + 5.0*4.5)
+		Feature: fsub116 	Prob: 0.176470588235
+			(0.0 + 4.5) / (0.0 + 5.0*4.5)
+		Feature: finstance119 	Prob: 0.2
+	Match: superordinate matches
+			(3.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fsup111 	Prob: 0.636363636364
+			(0.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fbasic114 	Prob: 0.0909090909091
+			(0.0 + 4.5) / (0.0 + 5.0*4.5)
+		Feature: fsub117 	Prob: 0.2
+			(0.0 + 4.5) / (0.0 + 5.0*4.5)
+		Feature: finstance1110 	Prob: 0.2
+			(0.0 + 0.5) / (0.0 + 5.0*0.5)
+============================================
+Condition: three superordinate examples
+Feature group for: Feature: None; Association: 0.0;
+	Members: [Feature group for: Feature: fsup111; Association: 3.0;
+	Members: [Feature group for: Feature: fbas111; Association: 1.0;
+	Members: [Feature group for: Feature: fsub111; Association: 1.0;
+	Members: [Feature group for: Feature: finstance111; Association: 1.0;
+	Members: []]], Feature group for: Feature: fbasic112; Association: 1.0;
+	Members: [Feature group for: Feature: fsub114; Association: 1.0;
+	Members: [Feature group for: Feature: finstance116; Association: 1.0;
+	Members: []]], Feature group for: Feature: fbasic113; Association: 1.0;
+	Members: [Feature group for: Feature: fsub115; Association: 1.0;
+	Members: [Feature group for: Feature: finstance117; Association: 1.0;
+	Members: []]]]]
+	Match: subordinate matches
+			(3.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fsup111 	Prob: 0.636363636364
+			(1.0 + 4.5) / (3.0 + 5.0*4.5)
+		Feature: fbas111 	Prob: 0.21568627451
+			(1.0 + 4.5) / (1.0 + 5.0*4.5)
+		Feature: fsub111 	Prob: 0.234042553191
+			(0.0 + 4.5) / (1.0 + 5.0*4.5)
+		Feature: finstance118 	Prob: 0.191489361702
+	Match: basic-level matches
+			(3.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fsup111 	Prob: 0.636363636364
+			(1.0 + 4.5) / (3.0 + 5.0*4.5)
+		Feature: fbas111 	Prob: 0.21568627451
+			(0.0 + 4.5) / (1.0 + 5.0*4.5)
+		Feature: fsub116 	Prob: 0.191489361702
+			(0.0 + 4.5) / (0.0 + 5.0*4.5)
+		Feature: finstance119 	Prob: 0.2
+	Match: superordinate matches
+			(3.0 + 0.5) / (3.0 + 5.0*0.5)
+		Feature: fsup111 	Prob: 0.636363636364
+			(0.0 + 4.5) / (3.0 + 5.0*4.5)
+		Feature: fbasic114 	Prob: 0.176470588235
+			(0.0 + 4.5) / (0.0 + 5.0*4.5)
+		Feature: fsub117 	Prob: 0.2
+			(0.0 + 4.5) / (0.0 + 5.0*4.5)
+		Feature: finstance1110 	Prob: 0.2
