@@ -79,8 +79,8 @@ class FeatureGroup:
     def __repr__(self):
         return "Feature group for: " + self._feature.__repr__() + ";\n\tMembers: " +  str(self._members)
 
-    def add_feature(self, feature):
-        fg = FeatureGroup(feature, self._gamma, self._k, self._meaning)
+    def add_feature(self, feature, gamma):
+        fg = FeatureGroup(feature, gamma, self._k, self._meaning)
         self._members.append(fg)
         return fg
 
@@ -165,7 +165,7 @@ class Meaning:
         """ Format this meaning to print intelligibly."""
         return str(self._root)
 
-    def add_features_to_hierarchy(self, features):
+    def add_features_to_hierarchy(self, features, gamma):
         """
         Add features to the hierarchy, assuming that the features are  ordered
         from highest superordinate to lowest subordinate feature.
@@ -176,11 +176,11 @@ class Meaning:
 
         # add the features one-by-one to their corresponding level of the
         # hierarchy
-        for feature in features:
+        for i, feature in enumerate(features):
 
             if not feature in fg:
                 # this feature is novel (at this level of the hierarchy)
-                new_fg = fg.add_feature(feature)
+                new_fg = fg.add_feature(feature, gamma[i])
                 self._feature_to_feature_group_map[feature] = fg
 
                 try:
@@ -239,17 +239,21 @@ class Lexicon:
 
     """
 
-    def __init__(self, words, gamma, k):
+    def __init__(self, words, gamma_sup, gamma_basic, gamma_sub, gamma_instance, k):
         """
         TODO
 
         """
-        self._gamma = gamma
+        self._gamma_sup = gamma_sup
+        self._gamma_basic = gamma_basic
+        self._gamma_sub = gamma_sub
+        self._gamma_instance = gamma_instance
         self._k = k
 
         self._word_meanings = {}
-        for word in words:
-            self._word_meanings[w] = Meaning(gamma, k, word=word)
+
+        #for word in words:
+        #    self._word_meanings[w] = Meaning(gamma, k, word=word)
 
     def add_features_to_hierarchy(self, word, features):
         """
@@ -260,13 +264,16 @@ class Lexicon:
 
         """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, word=word)
-        self._word_meanings[word].add_features_to_hierarchy(features)
+            self._word_meanings[word] = Meaning(self._gamma_sup, self._k, word=word)
+        self._word_meanings[word].add_features_to_hierarchy(features,
+            [self._gamma_sup, self._gamma_basic, self._gamma_sub,
+            self._gamma_instance]
+        )
 
     def gamma(self, word, feature):
         """ Return the probability of feature being part of the meaning of word. """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, word=word)
+            self._word_meanings[word] = Meaning(self._gamma_sup, self._k, word=word)
         self._word_meanings[word].gamma(feature)
 
     # TODO: not implemented correctly
@@ -274,12 +281,12 @@ class Lexicon:
         """ Return a copy of the Meaning object corresponding to word. """
         if word in self._word_meanings:
             return self._word_meanings[word]
-        return Meaning(self._gamma, self._k, word=word)
+        return Meaning(self._gamma_sup, self._k, word=word)
 
     def prob(self, word, feature):
         """ Return the probability of feature being part of the meaning of word. """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, word=word)
+            self._word_meanings[word] = Meaning(self._gamma_sup, self._k, word=word)
         return self._word_meanings[word].prob(feature)
 
     def add_seen_features(self, word, features):
@@ -299,7 +306,7 @@ class Lexicon:
 
         """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, word=word)
+            self._word_meanings[word] = Meaning(self._gamma_sup, self._k, word=word)
         self._word_meanings[word].update_association(feature, alignment)
 
     def words(self):

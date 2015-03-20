@@ -20,15 +20,23 @@ class Learner:
 
     """
 
-    def __init__(self, gamma, k):
+    def __init__(self, gamma_sup, gamma_basic, gamma_sub, gamma_instance, k):
         """
 
         """
         # Smoothing
-        self._gamma = gamma
+        self._gamma_sup = gamma_sup
+        self._gamma_basic = gamma_basic
+        self._gamma_sub = gamma_sub
+        self._gamma_instance = gamma_instance
         self._k = k
 
-        self._learned_lexicon = wmmapping.Lexicon([], self._gamma, self._k)
+        self._learned_lexicon = wmmapping.Lexicon([],
+            self._gamma_sup,
+            self._gamma_basic,
+            self._gamma_sub,
+            self._gamma_instance,
+            self._k)
 
     def gamma(self, word, feature):
         return self._learner_lexicon.gamma(word, feature)
@@ -41,8 +49,7 @@ class Learner:
         return copy.deepcopy(self._learned_lexicon)
 
     def calculate_alignments(self, words, features, outdir):
-        """
-        Update the alignments for each combination of word-feature pairs from
+        """ Update the alignments for each combination of word-feature pairs from
         the list words and set features.
 
         """

@@ -21,7 +21,10 @@ class GeneralisationExperiment(experiment.Experiment):
 
     def setup(self, params, rep):
         """ Runs in each child process. """
-        gamma = params['gamma']
+        gamma_sup = params['gamma-sup']
+        gamma_basic = params['gamma-basic']
+        gamma_sub = params['gamma-sub']
+        gamma_instance = params['gamma-instance']
         k = params['k']
 
         training_sets, test_sets = generate_training_and_test_sets(
@@ -46,7 +49,12 @@ class GeneralisationExperiment(experiment.Experiment):
 
             for training_set in training_sets[condition]:
 
-                learner = learn.Learner(gamma, k)
+                learner = learn.Learner(
+                    gamma_sup,
+                    gamma_basic,
+                    gamma_sub,
+                    gamma_instance,
+                    k)
 
                 for trial in training_set:
 
@@ -85,12 +93,16 @@ class GeneralisationExperiment(experiment.Experiment):
 
         #pprint.pprint(results)
 
-        savename  = 'articulated_hierarchy_experiments/'
-        savename += 'gamma_' + str(gamma) + ',k_' + str(k)
-        savename += ',n_sup_lvls_' + str(params['num-sup-levels'])
-        savename += ',n_basic_lvls_' + str(params['num-basic-levels'])
-        savename += ',n_sub_lvls_' + str(params['num-sub-levels'])
-        savename += ',n_inst_lvls_' + str(params['num-instance-levels'])
+        savename  = 'articulated_hierarchy_experiments_fg_gamma/'
+        savename += 'gammasup_' + str(gamma_sup)
+        savename += 'gammabasic_' + str(gamma_basic)
+        savename += 'gammasub_' + str(gamma_sub)
+        savename += 'gammainst_' + str(gamma_instance)
+        savename += ',k_' + str(k)
+        #savename += ',n_sup_lvls_' + str(params['num-sup-levels'])
+        #savename += ',n_basic_lvls_' + str(params['num-basic-levels'])
+        #savename += ',n_sub_lvls_' + str(params['num-sub-levels'])
+        #savename += ',n_inst_lvls_' + str(params['num-instance-levels'])
         savename += '.png'
 
         null_hypothesis = params['num-sup-levels'] + \
