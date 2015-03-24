@@ -55,13 +55,13 @@ class Learner:
 
             # Calculate the normalization terms
             for word in words:
-                denom += self._learned_lexicon.prob(word, feature)
+                denom += self._learned_lexicon.prob(word, feature, p=False)
 
             # Calculate alignment of each word
             for word in words:
 
                 # alignment(w|f) = p(f|w) / normalization
-                alignment = self._learned_lexicon.prob(word, feature) / denom
+                alignment = self._learned_lexicon.prob(word, feature, p=False) / denom
 
                 # assoc_t(f, w) = assoc_{t-1}(f, w) + P(a | u, f)
                 self._learned_lexicon.update_association(word, feature,
@@ -108,7 +108,7 @@ class Learner:
 
         for feature in scene:
 
-            prob = self._learned_lexicon.prob(word, feature)
+            prob = self._learned_lexicon.prob(word, feature, p=True)
             gen_prob *= prob
 
             print "\t\tFeature:", feature, "\tProb:", prob

@@ -93,25 +93,23 @@ class FeatureGroup:
     def update_node_association(self, alignment):
         return self._feature.update_association(alignment)
 
-    def prob(self, feature, gamma):
+    def prob(self, feature, gamma, denom, p=False):
         if feature in self._members:
-
-            denom = sum([f.node_association() for f in self._members])
 
             numer = find(lambda fg: fg == feature, self._members)
             num = numer.node_association()
             num += gamma
 
-            print("\t\t\t("+str(numer.node_association()) + " + " +\
-                str(gamma) + ") / (" + str(denom) + " + " +\
-                str(self._k) + "*" + str(gamma) + ")")
-            denom += self._k * gamma
+            if p:
+                print("\t\t\t("+str(numer.node_association()) + " + " +\
+                    str(gamma) + ") / " + str(denom))
 
             return num / denom
 
         else:
             return self.unseen_prob()
 
+    # this method is not presently used
     def unseen_prob(self, gamma):
         """
         Compute the unseen probability of this feature group using the
@@ -209,13 +207,31 @@ class Meaning:
         count = max(count, 1)
         return self._gamma * (count**2)
 
-    def prob(self, feature):
+    def denom(self, feature):
+        """
+        Return the denominator for the probability calculation for feature in
+        this Meaning.
+
+        """
+        level = self._feature_to_level_map[feature]
+        fgs = self._level_to_feature_groups_map[level]
+        denom = 0
+        for fg in [fgs[0]]:
+            if sum([f.node_association() for f in fg._members]) > 0 or len(fgs) == 1:
+                #print('add ' + str([f.node_association() for f in fg._members]))
+                denom += sum([f.node_association() for f in fg._members])
+        denom += self._k * self.gamma(feature)
+        #print('add ' + str(self._k) + ' * ' +  str(self.gamma(feature)))
+        #print('denom:', denom)
+        return denom
+
+    def prob(self, feature, p=False):
         """
         Return the probability of feature given this Meaning's word.
 
         """
         return self._feature_to_feature_group_map[feature].prob(feature,
-                self.gamma(feature))
+                self.gamma(feature), self.denom(feature), p=p)
 
     def seen_features(self):
         """
@@ -281,11 +297,11 @@ class Lexicon:
             return self._word_meanings[word]
         return Meaning(self._gamma, self._k, word=word)
 
-    def prob(self, word, feature):
+    def prob(self, word, feature, p=False):
         """ Return the probability of feature being part of the meaning of word. """
         if word not in self._word_meanings:
             self._word_meanings[word] = Meaning(self._gamma, self._k, word=word)
-        return self._word_meanings[word].prob(feature)
+        return self._word_meanings[word].prob(feature, p=p)
 
     def add_seen_features(self, word, features):
         """ Add to the list of features encountered so far with word. """
