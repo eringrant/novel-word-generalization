@@ -49,22 +49,22 @@ class GeneralisationExperiment(experiment.Experiment):
 
             for training_set in training_sets[condition]:
 
-                learner = learn.Learner(
-                    gamma_sup,
-                    gamma_basic,
-                    gamma_sub,
-                    gamma_instance,
-                    k)
-
-                for trial in training_set:
-
-                    learner.process_pair(trial.utterance(), trial.scene(), './')
-
                 print('============================================')
                 print('Condition: ' + condition)
-                print(learner._learned_lexicon.meaning('fep'))
 
                 for cond in test_sets:
+                    learner = learn.Learner(
+                        gamma_sup,
+                        gamma_basic,
+                        gamma_sub,
+                        gamma_instance,
+                        k)
+
+                    for trial in training_set:
+
+                        learner.process_pair(trial.utterance(), trial.scene(), './')
+
+                    print(learner._learned_lexicon.meaning('fep'))
 
                     print("\tMatch: " + cond)
 
