@@ -101,8 +101,10 @@ class FeatureGroup:
             num += gamma
 
             if p:
-                print("\t\t\t("+str(numer.node_association()) + " + " +\
-                    str(gamma) + ") / " + str(denom))
+                print '\t\tFeature: ', feature
+                print "\t\t\tp(f|w) computation:\t\t", "("+str(numer.node_association()) + " + " +\
+                    str(gamma) + ") / " + str(denom)
+                print "\t\t\tp(f|w):\t\t\t\t\t", str(num / denom)
 
             return num / denom
 
@@ -216,7 +218,7 @@ class Meaning:
         level = self._feature_to_level_map[feature]
         fgs = self._level_to_feature_groups_map[level]
         denom = 0
-        for fg in [fgs[0]]:
+        for fg in fgs:
             if sum([f.node_association() for f in fg._members]) > 0 or len(fgs) == 1:
                 #print('add ' + str([f.node_association() for f in fg._members]))
                 denom += sum([f.node_association() for f in fg._members])

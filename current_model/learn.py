@@ -111,8 +111,6 @@ class Learner:
             prob = self._learned_lexicon.prob(word, feature, p=True)
             gen_prob *= prob
 
-            print "\t\tFeature:", feature, "\tProb:", prob
-
         return gen_prob
 
     def process_corpus(self, corpus_path, outdir, corpus=None):

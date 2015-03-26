@@ -48,6 +48,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
                 print('============================================')
                 print('Condition: ' + condition)
+                print('============================================')
 
                 for cond in test_sets:
 
@@ -57,9 +58,11 @@ class GeneralisationExperiment(experiment.Experiment):
 
                         learner.process_pair(trial.utterance(), trial.scene(), './')
 
-                    print(learner._learned_lexicon.meaning('fep'))
-
                     print("\tMatch: " + cond)
+                    print('--------------------------------------------')
+
+                    print(learner._learned_lexicon.meaning('fep'))
+                    print('--------------------------------------------')
 
                     take_average = 0
                     count = 0
@@ -71,6 +74,8 @@ class GeneralisationExperiment(experiment.Experiment):
 
                         #import pdb; pdb.set_trace()
                         gen_prob = learner.generalisation_prob(word, scene)
+                        print()
+                        print("\tGeneralisation probability:", '\t', gen_prob)
 
                         take_average = mpmath.fadd(take_average, gen_prob)
                         count += 1
@@ -84,14 +89,16 @@ class GeneralisationExperiment(experiment.Experiment):
                         results[condition][cond] = []
                         results[condition][cond].append(gen_prob)
 
+                    print('--------------------------------------------')
+
         #pprint.pprint(results)
 
         savename  = 'articulated_hierarchy_experiments_level_gamma_level_assoc/'
         savename += 'gamma_' + str(gamma) + ',k_' + str(k)
-        #savename += ',n_sup_lvls_' + str(params['num-sup-levels'])
-        #savename += ',n_basic_lvls_' + str(params['num-basic-levels'])
-        #savename += ',n_sub_lvls_' + str(params['num-sub-levels'])
-        #savename += ',n_inst_lvls_' + str(params['num-instance-levels'])
+        savename += ',n_sup_lvls_' + str(params['num-sup-levels'])
+        savename += ',n_basic_lvls_' + str(params['num-basic-levels'])
+        savename += ',n_sub_lvls_' + str(params['num-sub-levels'])
+        savename += ',n_inst_lvls_' + str(params['num-instance-levels'])
         savename += '.png'
 
         null_hypothesis = params['num-sup-levels'] + \
@@ -102,7 +109,7 @@ class GeneralisationExperiment(experiment.Experiment):
         null_hypothesis = mpmath.fdiv(1., null_hypothesis)
 
         bar_chart(results, savename=savename,
-            normalise_over_test_scene=False,
+            normalise_over_test_scene=True,
             subtract_null_hypothesis=null_hypothesis)
 
 def generate_training_and_test_sets(num_sup_levels, num_basic_levels, num_sub_levels,
