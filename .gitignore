@@ -100,3 +100,6 @@ sympy-plots-for-*.tex/
 *.xdy
 # python
 *.pyc
+
+# private stuff to not upload to GitHub
+*.private
