@@ -11,6 +11,7 @@ import numpy as np
 import pickle
 import pprint
 import pydot
+import re
 
 import learn
 
@@ -36,7 +37,6 @@ class GeneralisationExperiment(experiment.Experiment):
                 'three basic-level examples',
                 'three superordinate examples'
         ]
-
         results = {}
 
         for condition in conds:
@@ -55,7 +55,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
                     for trial in training_set:
 
-                        learner.process_pair(trial.utterance(), trial.scene(), './')
+                        learner.process_pair(trial.utterance(), list(reversed(trial.scene())), './')
 
                     print("\tMatch: " + cond)
                     print('--------------------------------------------')
@@ -72,7 +72,7 @@ class GeneralisationExperiment(experiment.Experiment):
                         word = test_scene.utterance()[0]
                         scene = test_scene.scene()
 
-                        gen_prob = learner.generalisation_prob(word, scene)
+                        gen_prob = learner.generalisation_prob(word, list(reversed(scene)))
                         print()
                         print("\tGeneralisation probability:", '\t', gen_prob)
 
@@ -401,30 +401,55 @@ def visualise_training_and_test_sets(training_sets, test_sets):
     num_sets = len(training_sets[conds[0]])
     assert num_sets == len(test_sets['subordinate matches'])
 
-    for i in range(num_sets):
-
-        graph = pydot.Dot(graph_type='graph')
+    for training_set_num in range(num_sets):
 
         for condition in conds:
 
-            training_set = training_sets[condition][i]
+            graph = pydot.Dot(graph_type='graph', ranksep=0.2, resolution=96)
+            graph = set_graph_defaults(graph)
+            training_set = training_sets[condition][training_set_num]
 
             for trial in training_set:
 
-                    for trial in training_set:
+                d = todict(reversed(trial.scene())) #TODO: backwards
+                graph = visit(graph, d)
 
-                        d = todict(trial.scene())
-                        graph = visit(graph, d)
+            graph.write_png('hierarchy_' + str(training_set_num) + '_' + replace_with_underscores(str(condition)) + '_training_set.png')
 
-    graph.write_png('hierarchy.png')
+        for cond in test_sets:
 
-def todict(lst, d=0):
-    if d > len(lst):
-        return {}
-    return {a[d]: todict([x for x in lst if x[d] == a[d]], d+1) for a in lst}
+            graph = pydot.Dot(graph_type='graph', ranksep=0.2, resolution=96)
+            graph = set_graph_defaults(graph)
+
+            for match_num in range(len(test_sets[cond][training_set_num])):
+
+                test_item = test_sets[cond][training_set_num][match_num]
+                d = todict(reversed(test_item.scene())) #TODO: backwards
+                graph = visit(graph, d)
+
+            graph.write_png('hierarchy_' + str(training_set_num) + '_' + replace_with_underscores(str(cond)) + '_test_set.png')
+
+def set_graph_defaults(graph):
+    graph.set_node_defaults(shape='oval', fixedsize='true',height=.20, width=.60, fontsize=8)
+    return graph
+
+def replace_with_underscores(s):
+    s = re.sub(r"[^\w\s-]", '', s)
+    s = re.sub(r"\s+", '_', s)
+    return s
+
+def todict(lst):
+    d = {}
+    current_level = d
+    for part in lst:
+        if part not in current_level:
+            current_level[part] = {}
+        current_level = current_level[part]
+    return d
 
 def draw(graph, parent_name, child_name):
     edge = pydot.Edge(parent_name, child_name)
+    edge.set_len(0.1)
     graph.add_edge(edge)
     return graph
 
