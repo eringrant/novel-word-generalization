@@ -11,6 +11,10 @@ import numpy as np
 import pickle
 import pprint
 import pydot
+import nltk
+from nltk.corpus import brown
+from nltk.probability import *
+
 
 import learn
 
@@ -21,13 +25,16 @@ latex = False
 
 class GeneralisationExperiment(experiment.Experiment):
 
+    def pre_setup(self, params):
+        self.freqd = generate_frequency_distribution()
+        return True
+
     def setup(self, params, rep):
         """ Runs in each child process. """
         gamma = params['gamma']
         k = params['k']
 
-        #import pdb; pdb.set_trace()
-        training_sets, test_sets = generate_training_and_test_sets()
+        training_sets, test_sets = generate_training_and_test_sets(self.freqd, params['freq'])
 
         visualise_training_and_test_sets(training_sets, test_sets)
 
@@ -101,7 +108,7 @@ class GeneralisationExperiment(experiment.Experiment):
             labels=['animals', 'vegetables', 'vehicles']
         )
 
-def generate_training_and_test_sets():
+def generate_training_and_test_sets(freqd, p):
     """
 
     """
@@ -166,16 +173,21 @@ def generate_training_and_test_sets():
         ['sports_car.n.01', 'berlin.n.03', 'hearse.n.01', 'gypsy_cab.n.01']
     ])
 
+    #import pdb; pdb.set_trace()
     # convert to scene representation
     for cond in training_sets:
         reps = []
         for i in range(len(training_sets[cond])):
             rep = []
             for item in training_sets[cond][i]:
+                l = []
+                for f in list(reversed(feature_map[item])):
+                    if freqd.freq(f.split('.')[0].replace('_', ' ')) > p:
+                        l.append(f)
                 rep.append(
                     experimental_materials.UtteranceScenePair(
                         utterance='fep',
-                        scene=list(reversed(feature_map[item])), #TODO: fix -- it's backwards
+                        scene=l,
                         probabilistic=False
                     )
                 )
@@ -187,10 +199,14 @@ def generate_training_and_test_sets():
         for i in range(len(test_sets[cond])):
             rep = []
             for item in test_sets[cond][i]:
+                l = []
+                for f in list(reversed(feature_map[item])):
+                    if freqd.freq(f.split('.')[0].replace('_', ' ')) > p:
+                        l.append(f)
                 rep.append(
                     experimental_materials.UtteranceScenePair(
                         utterance='fep',
-                        scene=list(reversed(feature_map[item])),
+                        scene=l,
                         probabilistic=False
                     )
                 )
@@ -441,6 +457,16 @@ def visit(graph, node, parent=None):
             # drawing the label using a distinct name
             graph = draw(graph, k, k+'_'+v)
     return graph
+
+def generate_frequency_distribution():
+
+    words = FreqDist()
+
+    for sentence in brown.sents():
+        for word in sentence:
+            words[word.lower()] += 1
+
+    return words
 
 
 if __name__ == "__main__":
