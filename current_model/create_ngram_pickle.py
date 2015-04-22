@@ -1,52 +1,72 @@
 #!/usr/bin/env python
 
+import cProfile
 import logging
+import nltk
 import pickle
 import sys
 
 from argparse import ArgumentParser
 from google_ngram_downloader import readline_google_store
 from itertools import groupby
-
+from string import rstrip
 
 
 def script(data_path, out_path, **kwargs):
 
-    import pdb; pdb.set_trace()
-
     freq_dict = {}
 
     with open(data_path) as f:
-        words = f.readlines()
+        wordnet_leaf_nodes = map(rstrip, f)
 
-    words.sort()
+    wn = nltk.corpus.WordNetCorpusReader(nltk.data.find('corpora/wordnet'), None)
 
-    for letter, group in groupby(words, key=lambda x: x[0]):
+    grams = []
+
+    for leaf in wordnet_leaf_nodes:
+        assert leaf not in grams
+
+        features = []
+        s = wn.synset(leaf)
+
+        while s.hypernyms():
+            features.append(str(s.name().split('.')[0].replace('_', ' ')))
+            s = s.hypernyms()[0]
+        features.append(str(s.name().split('.')[0].replace('_', ' ')))
+
+        grams.extend(features)
+
+    grams = list(set(grams))
+    grams.sort()
+
+    for letter, group in groupby(grams, key=lambda x: x[0]):
         group = list(group)
 
         # cannot deal with n-grams for n >= 3
-        if any([len(gram.split(' ')) > 2 for gram in words]):
+        if any([len(gram.split(' ')) > 2 for gram in group]):
             raise NotImplementedError
 
         # deal with 1-grams
-        for one_gram in [gram for gram in words if len(gram.split(' ')) == 1]:
+        for one_gram in [gram for gram in group if len(gram.split(' ')) == 1]:
             freq_dict[one_gram] = 0
 
         _, _, records = next(readline_google_store(ngram_len=1,indices=letter))
+
         for record in records:
-            if str(record.ngram) in freq_dict:
-                freq_dict[str(record.ngram)] += record.match_count
+            gram = record.ngram.encode('ascii', 'ignore')
+            if gram in freq_dict:
+                freq_dict[gram] += record.match_count
 
         # deal with 2-grams
-        if any([len(gram.split(' ')) == 2 for gram in words]):
-            for two_gram in [gram for gram in words if len(gram.split(' ')) == 2]:
+        if any([len(gram.split(' ')) == 2 for gram in group]):
+            for two_gram in [gram for gram in group if len(gram.split(' ')) == 2]:
                 indices = two_gram.split(' ')[0][0] + two_gram.split(' ')[1][0]
                 _, _, records = next(readline_google_store(ngram_len=2,indices=indices))
 
                 freq_dict[two_gram] = 0
 
                 for record in records:
-                    if str(record.ngram) == two_gram:
+                    if record.ngram.encode('ascii', 'ignore') == two_gram:
                         freq_dict[two_gram] += record.match_count
 
     with open(out_path, 'wb') as f:
@@ -71,4 +91,4 @@ def main(args = sys.argv[1:]):
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    cProfile.run('sys.exit(main())')
