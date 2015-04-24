@@ -1,0 +1,308 @@
+(dp0
+S'bell pepper'
+p1
+I141869
+sS'living thing'
+p2
+I432152
+sS'vertebrate'
+p3
+I958482
+sS'wheeled vehicle'
+p4
+I34308
+sS'entity'
+p5
+I7959569
+sS'lettuce'
+p6
+I1161041
+sS'green pepper'
+p7
+I137215
+sS'motorcycle'
+p8
+I863977
+sS'tandem trailer'
+p9
+I375
+sS'trailer truck'
+p10
+I10306
+sS'sports car'
+p11
+I190644
+sS'garbage truck'
+p12
+I25955
+sS'horse'
+p13
+I28947896
+sS'aquatic mammal'
+p14
+I3134
+sS'toy dog'
+p15
+I13082
+sS'hearse'
+p16
+I299604
+sS'cayenne'
+p17
+I354419
+sS'piciform bird'
+p18
+I0
+sS'gherkin'
+p19
+I14279
+sS'beagle'
+p20
+I311415
+sS'pinniped mammal'
+p21
+I0
+sS'whole'
+p22
+I132198611
+sS'root vegetable'
+p23
+I9706
+sS'crisphead lettuce'
+p24
+I922
+sS'limousine'
+p25
+I418332
+sS'pumpkin'
+p26
+I723607
+sS'workhorse'
+p27
+I71781
+sS'eared seal'
+p28
+I847
+sS'pembroke'
+p29
+I789978
+sS'shallot'
+p30
+I70503
+sS'artifact'
+p31
+I1110903
+sS'berlin'
+p32
+I15281626
+sS'brown bear'
+p33
+I91711
+sS'hot pepper'
+p34
+I55285
+sS'chili'
+p35
+I892862
+sS'king charles spaniel'
+p36
+I0
+sS'placental'
+p37
+I796981
+sS'equine'
+p38
+I403654
+sS'greens'
+p39
+I1571177
+sS'onion'
+p40
+I2276052
+sS'gypsy cab'
+p41
+I2666
+sS'solid'
+p42
+I23487631
+sS'car'
+p43
+I35783631
+sS'grizzly'
+p44
+I546860
+sS'tabby'
+p45
+I200834
+sS'motor vehicle'
+p46
+I1067202
+sS'cat'
+p47
+I11392061
+sS'matter'
+p48
+I99014641
+sS'dump truck'
+p49
+I39804
+sS'mammal'
+p50
+I826825
+sS'chordate'
+p51
+I30781
+sS'cab'
+p52
+I2683792
+sS'carnivore'
+p53
+I152270
+sS'toucanet'
+p54
+I1350
+sS'fire engine'
+p55
+I120934
+sS'trail bike'
+p56
+I3664
+sS'canine'
+p57
+I1072842
+sS'uruguay potato'
+p58
+I0
+sS'ladder truck'
+p59
+I9084
+sS'carrot'
+p60
+I905253
+sS'even-toed ungulate'
+p61
+I0
+sS'seal'
+p62
+I7956289
+sS'toucan'
+p63
+I45418
+sS'domestic cat'
+p64
+I48864
+sS'hound'
+p65
+I961872
+sS'hippopotamus'
+p66
+I267597
+sS'container'
+p67
+I4477433
+sS'salad green'
+p68
+I3509
+sS'subcompact'
+p69
+I19635
+sS'feline'
+p70
+I421273
+sS'self-propelled vehicle'
+p71
+I0
+sS'toy spaniel'
+p72
+I3146
+sS'california sea lion'
+p73
+I0
+sS'food'
+p74
+I72069381
+sS'animal'
+p75
+I33461074
+sS'vegetable'
+p76
+I6126434
+sS'bird'
+p77
+I15480859
+sS'pepper'
+p78
+I4534229
+sS'physical entity'
+p79
+I39325
+sS'object'
+p80
+I59584257
+sS'produce'
+p81
+I47692091
+sS'cucumber'
+p82
+I680340
+sS'bear'
+p83
+I28198856
+sS'organism'
+p84
+I7709916
+sS'pimento'
+p85
+I67490
+sS'transporter'
+p86
+I393439
+sS'dalmatian'
+p87
+I163095
+sS'shih-tzu'
+p88
+I0
+sS'ungulate'
+p89
+I54945
+sS'tabasco'
+p90
+I200434
+sS'corgi'
+p91
+I39490
+sS'hunting dog'
+p92
+I46594
+sS'sea lion'
+p93
+I109986
+sS'potato'
+p94
+I3709371
+sS'farm horse'
+p95
+I6464
+sS'dog'
+p96
+I19917535
+sS'truck'
+p97
+I7137071
+sS'sweet pepper'
+p98
+I19746
+sS'liver-spotted dalmatian'
+p99
+I0
+sS'instrumentality'
+p100
+I598998
+sS'odd-toed ungulate'
+p101
+I0
+sS'solanaceous vegetable'
+p102
+I70
+s.

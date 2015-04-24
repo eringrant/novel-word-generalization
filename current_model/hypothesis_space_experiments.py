@@ -35,9 +35,12 @@ class GeneralisationExperiment(experiment.Experiment):
         gamma = params['gamma']
         k = params['k']
 
-        training_sets, test_sets = generate_training_and_test_sets(self.freqd, params['freq'])
+        uni_freq = params['unigram-frequency']
+        bi_freq = params['bigram-frequency']
 
-        visualise_training_and_test_sets(training_sets, test_sets)
+        training_sets, test_sets = generate_training_and_test_sets(self.freqd, params['freq'], uni_freq, bi_freq)
+
+        visualise_training_and_test_sets(training_sets, test_sets, uni_freq, bi_freq)
 
         conds = ['one example',
                 'three subordinate examples',
@@ -101,6 +104,8 @@ class GeneralisationExperiment(experiment.Experiment):
 
         savename  = 'hypothesis_space_experiments/'
         savename += 'gamma_' + str(gamma) + ',k_' + str(k)
+        savename += '_uni_' + str(params['unigram-frequency'])
+        savename += '_bi_' + params['bigram-frequency']
         savename += '.png'
 
         bar_chart(results, savename=savename,
@@ -108,7 +113,7 @@ class GeneralisationExperiment(experiment.Experiment):
             labels=['animals', 'vegetables', 'vehicles']
         )
 
-def generate_training_and_test_sets(freqd, p):
+def generate_training_and_test_sets(freqd, p, uni_freq, bi_freq):
     """
 
     """
@@ -182,7 +187,7 @@ def generate_training_and_test_sets(freqd, p):
             for item in training_sets[cond][i]:
                 l = []
                 for f in list(reversed(feature_map[item])):
-                    if freqd.freq(f.split('.')[0].replace('_', ' ')) > p:
+                    if exceeds_frequency_threshold(f.split('.')[0].replace('_', ' '), uni_freq, bi_freq):
                         l.append(f)
                 rep.append(
                     experimental_materials.UtteranceScenePair(
@@ -201,7 +206,7 @@ def generate_training_and_test_sets(freqd, p):
             for item in test_sets[cond][i]:
                 l = []
                 for f in list(reversed(feature_map[item])):
-                    if freqd.freq(f.split('.')[0].replace('_', ' ')) > p:
+                    if exceeds_frequency_threshold(f.split('.')[0].replace('_', ' '), uni_freq, bi_freq):
                         l.append(f)
                 rep.append(
                     experimental_materials.UtteranceScenePair(
@@ -217,6 +222,28 @@ def generate_training_and_test_sets(freqd, p):
         f.write(pprint.pformat(training_sets))
         f.write(pprint.pformat(test_sets))
     return training_sets, test_sets
+
+def exceeds_frequency_threshold(gram, uni_freq, bi_freq):
+    with open('all_ngrams.pkl') as f:
+        a = pickle.load(f)
+
+    if a[gram] == 0:
+        return False
+
+    if len(gram.split(' ')) == 1:
+        if a[gram] > uni_freq:
+            return True
+        else:
+            return False
+
+    elif len(gram.split(' ')) == 2:
+        if a[gram] > bi_freq:
+            return True
+        else:
+            return False
+
+    else:
+        return False
 
 def bar_chart(results, savename=None, annotation=None,
         normalise_over_test_scene=True, subtract_null_hypothesis=None,
@@ -406,7 +433,7 @@ def bar_chart(results, savename=None, annotation=None,
     else:
         plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
-def visualise_training_and_test_sets(training_sets, test_sets):
+def visualise_training_and_test_sets(training_sets, test_sets, uni, bi):
 
     conds = ['one example',
             'three subordinate examples',
@@ -443,7 +470,7 @@ def visualise_training_and_test_sets(training_sets, test_sets):
                 d = todict(reversed(test_item.scene())) #TODO: backwards
                 graph = visit(graph, d)
 
-            graph.write_png('hierarchy_' + str(training_set_num) + '_' + replace_with_underscores(str(cond)) + '_test_set.png')
+            graph.write_png('hierarchy_' + 'uni_' + str(uni) + '_bi_' + bi + '_' + str(training_set_num) + '_' + replace_with_underscores(str(cond)) + '_test_set.png')
 
 def set_graph_defaults(graph):
     graph.set_node_defaults(shape='oval', fixedsize='true',height=.20, width=.60, fontsize=8)
