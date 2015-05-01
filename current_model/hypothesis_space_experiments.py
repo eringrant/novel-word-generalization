@@ -8,12 +8,10 @@ import matplotlib; matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import mpmath; mpmath.mp.dps = 100
 import numpy as np
+import os
 import pickle
 import pprint
 import pydot
-import nltk
-from nltk.corpus import brown
-from nltk.probability import *
 import re
 
 
@@ -24,11 +22,8 @@ import experimental_materials
 
 latex = False
 
-class GeneralisationExperiment(experiment.Experiment):
 
-    def pre_setup(self, params):
-        self.freqd = generate_frequency_distribution()
-        return True
+class GeneralisationExperiment(experiment.Experiment):
 
     def setup(self, params, rep):
         """ Runs in each child process. """
@@ -38,9 +33,11 @@ class GeneralisationExperiment(experiment.Experiment):
         uni_freq = params['unigram-frequency']
         bi_freq = params['bigram-frequency']
 
-        training_sets, test_sets = generate_training_and_test_sets(self.freqd, params['freq'], uni_freq, bi_freq)
+        hierarchy_save_directory = params['hierarchy-save-directory']
 
-        visualise_training_and_test_sets(training_sets, test_sets, uni_freq, bi_freq)
+        training_sets, test_sets = generate_training_and_test_sets(uni_freq, bi_freq)
+
+        visualise_training_and_test_sets(training_sets, test_sets, hierarchy_save_directory, uni_freq, bi_freq, params['name'])
 
         conds = ['one example',
                 'three subordinate examples',
@@ -102,18 +99,21 @@ class GeneralisationExperiment(experiment.Experiment):
 
         #pprint.pprint(results)
 
-        savename  = 'hypothesis_space_experiments/'
-        savename += 'gamma_' + str(gamma) + ',k_' + str(k)
-        savename += '_uni_' + str(params['unigram-frequency'])
-        savename += '_bi_' + params['bigram-frequency']
-        savename += '.png'
+        title = 'results'
+        title += ',' + params['name']
+        title += ',' + 'uni_' + str(uni_freq)
+        title += ',' + 'bi_' + str(bi_freq)
+        title += ',' + 'gamma_' + str(gamma)
+        title += ',' + 'k_' + str(k)
+        title += '.png'
+        title = os.path.join(params['save_directory'], title)
 
-        bar_chart(results, savename=savename,
+        bar_chart(results, savename=title,
             normalise_over_test_scene=True,
             labels=['animals', 'vegetables', 'vehicles']
         )
 
-def generate_training_and_test_sets(freqd, p, uni_freq, bi_freq):
+def generate_training_and_test_sets(uni_freq, bi_freq):
     """
 
     """
@@ -433,7 +433,7 @@ def bar_chart(results, savename=None, annotation=None,
     else:
         plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
-def visualise_training_and_test_sets(training_sets, test_sets, uni, bi):
+def visualise_training_and_test_sets(training_sets, test_sets, save_directory, uni, bi, freq_corpus):
 
     conds = ['one example',
             'three subordinate examples',
@@ -457,7 +457,15 @@ def visualise_training_and_test_sets(training_sets, test_sets, uni, bi):
                 d = todict(reversed(trial.scene())) #TODO: backwards
                 graph = visit(graph, d)
 
-            graph.write_png('hierarchy_' + str(training_set_num) + '_' + replace_with_underscores(str(condition)) + '_training_set.png')
+            title = 'hierarchy'
+            title += ',' + freq_corpus
+            title += ',' + 'uni_' + str(uni)
+            title += ',' + 'bi_' + str(bi)
+            title += ',' + str(training_set_num)
+            title += ',' + replace_with_underscores(str(condition))
+            title += 'test_set.png'
+            title = os.path.join(save_directory, title)
+            graph.write_png(title)
 
         for cond in test_sets:
 
@@ -470,7 +478,15 @@ def visualise_training_and_test_sets(training_sets, test_sets, uni, bi):
                 d = todict(reversed(test_item.scene())) #TODO: backwards
                 graph = visit(graph, d)
 
-            graph.write_png('hierarchy_' + 'uni_' + str(uni) + '_bi_' + bi + '_' + str(training_set_num) + '_' + replace_with_underscores(str(cond)) + '_test_set.png')
+            title = 'hierarchy_'
+            title += freq_corpus + '_'
+            title += 'uni_' + str(uni) + '_'
+            title += 'bi_' + bi + '_'
+            title += str(training_set_num) + '_'
+            title += replace_with_underscores(str(cond)) + '_'
+            title += 'test_set.png'
+            title = os.path.join(save_directory, title)
+            graph.write_png(title)
 
 def set_graph_defaults(graph):
     graph.set_node_defaults(shape='oval', fixedsize='true',height=.20, width=.60, fontsize=8)
@@ -509,16 +525,6 @@ def visit(graph, node, parent=None):
             # drawing the label using a distinct name
             graph = draw(graph, k, k+'_'+v)
     return graph
-
-def generate_frequency_distribution():
-
-    words = FreqDist()
-
-    for sentence in brown.sents():
-        for word in sentence:
-            words[word.lower()] += 1
-
-    return words
 
 
 if __name__ == "__main__":
