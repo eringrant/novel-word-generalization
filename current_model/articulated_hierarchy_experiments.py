@@ -99,7 +99,6 @@ class GeneralisationExperiment(experiment.Experiment):
         savename += ',n_basic_lvls_' + str(params['num-basic-levels'])
         savename += ',n_sub_lvls_' + str(params['num-sub-levels'])
         savename += ',n_inst_lvls_' + str(params['num-instance-levels'])
-        savename += '.png'
 
         null_hypothesis = params['num-sup-levels'] + \
             params['num-basic-levels'] + params['num-sub-levels'] + \
@@ -108,7 +107,9 @@ class GeneralisationExperiment(experiment.Experiment):
         null_hypothesis = mpmath.power(k, null_hypothesis)
         null_hypothesis = mpmath.fdiv(1., null_hypothesis)
 
-        bar_chart(results, savename=savename,
+        overwrite_results(results, savename + '.dat')
+
+        bar_chart(results, savename=savename + '.png',
             normalise_over_test_scene=True,
             subtract_null_hypothesis=null_hypothesis)
 
@@ -475,6 +476,37 @@ def bar_chart(results, savename=None, annotation=None,
     else:
         plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
+def overwrite_results(results, savename):
+
+    conditions = [
+        'one example',
+        'three subordinate examples',
+        'three basic-level examples',
+        'three superordinate examples'
+    ]
+
+    abbrev_condition_names = {
+        'one example' : '1 ex.',
+        'three subordinate examples' : '3 sub.',
+        'three basic-level examples' : '3 basic',
+        'three superordinate examples' : '3 super.'
+    }
+
+    with open(savename, 'w') as f:
+        f.write("condition,sub. match,basic match,super. match\n")
+        for condition in conditions:
+            f.write(abbrev_condition_names[condition])
+            f.write(',')
+            f.write(str(np.mean(results[condition]['subordinate matches'])))
+            f.write(',')
+            f.write(str(np.mean(results[condition]['basic-level matches'])))
+            f.write(',')
+            f.write(str(np.mean(results[condition]['superordinate matches'])))
+            f.write("\n")
+
+    print('Wrote results out to', savename)
+
 if __name__ == "__main__":
     e = GeneralisationExperiment()
     e.start()
+
