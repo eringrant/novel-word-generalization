@@ -46,16 +46,21 @@ class GeneralisationExperiment(experiment.Experiment):
         ]
         results = {}
 
+        # loop through the training conditions
         for condition in conds:
 
             results[condition] = {}
 
+            # loop through the different training sets (e.g., animals, vegetables, vehicles)
             for training_set_num, training_set in enumerate(training_sets[condition]):
 
+                print('********************************************')
+                print("TRAINING SET NUMBER", training_set_num)
                 print('============================================')
                 print('Condition: ' + condition)
                 print('============================================')
 
+                # loop through the test conditions
                 for cond in test_sets:
 
                     learner = learn.Learner(gamma, k)
@@ -67,16 +72,13 @@ class GeneralisationExperiment(experiment.Experiment):
                     print("\tMatch: " + cond)
                     print('--------------------------------------------')
 
-                    print('Learned meaning of fep:')
-                    print(learner._learned_lexicon.meaning('fep'))
-                    print('--------------------------------------------')
-
                     take_average = 0
                     count = 0
 
+                    # loop though the test objects
                     for j in range(len(test_sets[cond][training_set_num])):
                         test_scene = test_sets[cond][training_set_num][j]
-                        word = test_scene.utterance()[0]
+                        word = test_scene.utterance()[0] # asssume the test utterance is a single word
                         scene = test_scene.scene()
 
                         gen_prob = learner.generalisation_prob(word, list(reversed(scene)))
@@ -106,10 +108,10 @@ class GeneralisationExperiment(experiment.Experiment):
         title += ',' + 'gamma_' + str(gamma)
         title += ',' + 'k_' + str(k)
         title += '.png'
-        title = os.path.join(params['save_directory'], title)
+        title = os.path.join(params['results-save-directory'], title)
 
-        bar_chart(results, savename=title,
-            normalise_over_test_scene=True,
+        bar_chart(
+            results, savename=title, normalise_over_test_scene=True,
             labels=['animals', 'vegetables', 'vehicles']
         )
 
@@ -481,7 +483,7 @@ def visualise_training_and_test_sets(training_sets, test_sets, save_directory, u
             title = 'hierarchy_'
             title += freq_corpus + '_'
             title += 'uni_' + str(uni) + '_'
-            title += 'bi_' + bi + '_'
+            title += 'bi_' + str(bi) + '_'
             title += str(training_set_num) + '_'
             title += replace_with_underscores(str(cond)) + '_'
             title += 'test_set.png'
