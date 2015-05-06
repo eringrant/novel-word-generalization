@@ -35,7 +35,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
         hierarchy_save_directory = params['hierarchy-save-directory']
 
-        training_sets, test_sets = generate_training_and_test_sets(uni_freq, bi_freq)
+        training_sets, test_sets = generate_training_and_test_sets(uni_freq, bi_freq, params['fix-leaf-feature'])
 
         visualise_training_and_test_sets(training_sets, test_sets, hierarchy_save_directory, uni_freq, bi_freq, params['name'])
 
@@ -52,9 +52,9 @@ class GeneralisationExperiment(experiment.Experiment):
 
             for training_set_num, training_set in enumerate(training_sets[condition]):
 
-                print('============================================')
-                print('Condition: ' + condition)
-                print('============================================')
+                #print('============================================')
+                #print('Condition: ' + condition)
+                #print('============================================')
 
                 for cond in test_sets:
 
@@ -64,12 +64,12 @@ class GeneralisationExperiment(experiment.Experiment):
 
                         learner.process_pair(trial.utterance(), list(reversed(trial.scene())), './')
 
-                    print("\tMatch: " + cond)
-                    print('--------------------------------------------')
+                    #print("\tMatch: " + cond)
+                    #print('--------------------------------------------')
 
-                    print('Learned meaning of fep:')
-                    print(learner._learned_lexicon.meaning('fep'))
-                    print('--------------------------------------------')
+                    #print('Learned meaning of fep:')
+                    #print(learner._learned_lexicon.meaning('fep'))
+                    #print('--------------------------------------------')
 
                     take_average = 0
                     count = 0
@@ -80,8 +80,8 @@ class GeneralisationExperiment(experiment.Experiment):
                         scene = test_scene.scene()
 
                         gen_prob = learner.generalisation_prob(word, list(reversed(scene)))
-                        print()
-                        print("\tGeneralisation probability:", '\t', gen_prob)
+                        #print()
+                        #print("\tGeneralisation probability:", '\t', gen_prob)
 
                         take_average = mpmath.fadd(take_average, gen_prob)
                         count += 1
@@ -95,25 +95,26 @@ class GeneralisationExperiment(experiment.Experiment):
                         results[condition][cond] = []
                         results[condition][cond].append(gen_prob)
 
-                    print('--------------------------------------------')
+                    #print('--------------------------------------------')
 
         #pprint.pprint(results)
 
         title = 'results'
-        title += ',' + params['name']
+        title += ',' + replace_with_underscores(params['name'])
         title += ',' + 'uni_' + str(uni_freq)
         title += ',' + 'bi_' + str(bi_freq)
         title += ',' + 'gamma_' + str(gamma)
         title += ',' + 'k_' + str(k)
+        title += ',' + 'flf_' + str(params['fix-leaf-feature'])
         title += '.png'
-        title = os.path.join(params['save_directory'], title)
+        title = os.path.join(params['results-save-directory'], title)
 
         bar_chart(results, savename=title,
             normalise_over_test_scene=True,
             labels=['animals', 'vegetables', 'vehicles']
         )
 
-def generate_training_and_test_sets(uni_freq, bi_freq):
+def generate_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feature):
     """
 
     """
@@ -186,8 +187,10 @@ def generate_training_and_test_sets(uni_freq, bi_freq):
             rep = []
             for item in training_sets[cond][i]:
                 l = []
-                for f in list(reversed(feature_map[item])):
-                    if exceeds_frequency_threshold(f.split('.')[0].replace('_', ' '), uni_freq, bi_freq):
+                for j, f in enumerate(list(reversed(feature_map[item]))):
+                    if j == 0 and fix_leaf_feature:
+                        l.append(f)
+                    elif exceeds_frequency_threshold(f.split('.')[0].replace('_', ' '), uni_freq, bi_freq):
                         l.append(f)
                 rep.append(
                     experimental_materials.UtteranceScenePair(
@@ -458,12 +461,12 @@ def visualise_training_and_test_sets(training_sets, test_sets, save_directory, u
                 graph = visit(graph, d)
 
             title = 'hierarchy'
-            title += ',' + freq_corpus
+            title += ',' + replace_with_underscores(freq_corpus)
             title += ',' + 'uni_' + str(uni)
             title += ',' + 'bi_' + str(bi)
-            title += ',' + str(training_set_num)
+            title += ',' 'train_set_num_' + str(training_set_num)
             title += ',' + replace_with_underscores(str(condition))
-            title += 'test_set.png'
+            title += ',' + 'training_set.png'
             title = os.path.join(save_directory, title)
             graph.write_png(title)
 
@@ -478,13 +481,13 @@ def visualise_training_and_test_sets(training_sets, test_sets, save_directory, u
                 d = todict(reversed(test_item.scene())) #TODO: backwards
                 graph = visit(graph, d)
 
-            title = 'hierarchy_'
-            title += freq_corpus + '_'
-            title += 'uni_' + str(uni) + '_'
-            title += 'bi_' + bi + '_'
-            title += str(training_set_num) + '_'
-            title += replace_with_underscores(str(cond)) + '_'
-            title += 'test_set.png'
+            title = 'hierarchy'
+            title += ',' + replace_with_underscores(freq_corpus)
+            title += ',' + 'uni_' + str(uni)
+            title += ',' + 'bi_' + str(bi)
+            title += ',' 'train_set_num_' + str(training_set_num)
+            title += ',' + replace_with_underscores(str(cond))
+            title += ',' + 'test_set.png'
             title = os.path.join(save_directory, title)
             graph.write_png(title)
 
