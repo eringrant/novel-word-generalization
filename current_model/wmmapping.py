@@ -136,13 +136,15 @@ class Meaning:
 
     """
 
-    def __init__(self, gamma, k, word=None):
+    def __init__(self, gamma, k, modified_gamma=True, flat_hierarchy=False, word=None):
         """
         TODO
 
         """
         self._gamma = gamma
         self._k = k
+        self._modified_gamma = modified_gamma
+        self._flat_hierarchy = flat_hierarchy
 
         self._word = word
         self._seen_features = []
@@ -188,7 +190,12 @@ class Meaning:
                     self._level_to_feature_groups_map[level] = []
                     if fg not in self._level_to_feature_groups_map[level]:
                         self._level_to_feature_groups_map[level].append(fg)
-                self._feature_to_level_map[feature] = level
+
+                # hack to put everything on the same level
+                if self._flat_hierarchy:
+                    self._feature_to_level_map[feature] = 1
+                else:
+                    self._feature_to_level_map[feature] = level
 
             else:
                 new_fg = find(lambda f: f == feature, fg._members)
@@ -201,13 +208,16 @@ class Meaning:
         Return the updated gamma parameter for feature in this Meaning.
 
         """
-        level = self._feature_to_level_map[feature]
-        fgs = self._level_to_feature_groups_map[level]
-        count = 0
-        for fg in fgs:
-            count += len([f for f in fg._members if f.node_association() > 0])
-        count = max(count, 1)
-        return self._gamma * (count**2)
+        if self._modified_gamma:
+            level = self._feature_to_level_map[feature]
+            fgs = self._level_to_feature_groups_map[level]
+            count = 0
+            for fg in fgs:
+                count += len([f for f in fg._members if f.node_association() > 0])
+            count = max(count, 1)
+            return self._gamma * (count**2)
+        else:
+            return self._gamma
 
     def denom(self, feature):
         """
@@ -251,6 +261,7 @@ class Meaning:
         self._feature_to_feature_group_map[feature].update_association(feature,
             alignment)
 
+
 class Lexicon:
     """
     A Lexicon object maps words to Meaning objects.
@@ -262,17 +273,21 @@ class Lexicon:
 
     """
 
-    def __init__(self, words, gamma, k):
+    def __init__(self, words, gamma, k, modified_gamma, flat_hierarchy):
         """
         TODO
 
         """
         self._gamma = gamma
         self._k = k
+        self._modified_gamma = modified_gamma
+        self._flat_hierarchy = flat_hierarchy
+
+        self._max_depth = 0
 
         self._word_meanings = {}
         for word in words:
-            self._word_meanings[w] = Meaning(gamma, k, word=word)
+            self._word_meanings[word] = Meaning(gamma, k, self._modified_gamma, self._flat_hierarchy, word=word)
 
     def add_features_to_hierarchy(self, word, features):
         """
@@ -283,13 +298,16 @@ class Lexicon:
 
         """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, word=word)
+            self._word_meanings[word] = Meaning(self._gamma, self._k, self._modified_gamma, self._flat_hierarchy, word=word)
         self._word_meanings[word].add_features_to_hierarchy(features)
+
+        if len(features) > self._max_depth:
+            self._max_depth = len(features)
 
     def gamma(self, word, feature):
         """ Return the probability of feature being part of the meaning of word. """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, word=word)
+            self._word_meanings[word] = Meaning(self._gamma, self._k, self._modified_gamma, self._flat_hierarchy, word=word)
         self._word_meanings[word].gamma(feature)
 
     # TODO: not implemented correctly
@@ -297,12 +315,12 @@ class Lexicon:
         """ Return a copy of the Meaning object corresponding to word. """
         if word in self._word_meanings:
             return self._word_meanings[word]
-        return Meaning(self._gamma, self._k, word=word)
+        return Meaning(self._gamma, self._k, self._modified_gamma, self._flat_hierarchy, word=word)
 
     def prob(self, word, feature, p=False):
         """ Return the probability of feature being part of the meaning of word. """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, word=word)
+            self._word_meanings[word] = Meaning(self._gamma, self._k, self._modified_gamma, self._flat_hierarchy, word=word)
         return self._word_meanings[word].prob(feature, p=p)
 
     def add_seen_features(self, word, features):
@@ -322,7 +340,7 @@ class Lexicon:
 
         """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, word=word)
+            self._word_meanings[word] = Meaning(self._gamma, self._k, self._modified_gamma, self._flat_hierarchy, word=word)
         self._word_meanings[word].update_association(feature, alignment)
 
     def words(self):

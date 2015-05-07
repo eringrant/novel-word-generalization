@@ -63,7 +63,7 @@ class GeneralisationExperiment(experiment.Experiment):
                 # loop through the test conditions
                 for cond in test_sets:
 
-                    learner = learn.Learner(gamma, k)
+                    learner = learn.Learner(gamma, k, modified_gamma=params['modified-gamma'], flat_hierarchy=params['flat-hierarchy'])
 
                     for trial in training_set:
 
@@ -81,7 +81,19 @@ class GeneralisationExperiment(experiment.Experiment):
                         word = test_scene.utterance()[0] # asssume the test utterance is a single word
                         scene = test_scene.scene()
 
-                        gen_prob = learner.generalisation_prob(word, list(reversed(scene)))
+                        if params['gen-prob'] == 'cosine':
+                            raise NotImplementedError
+                            #learner.process_pair('test', list(reversed(scene)))
+                            #meaning1 = learner.meaning('fep')
+                            #meaning2 = learner.meaning('test')
+                            #gen_prob = learner.sim_cos
+                        elif params['gen-prob'] == 'product, fixed levels':
+                            gen_prob = learner.generalisation_prob(word, list(reversed(scene)), fixed_levels=True)
+                        elif params['gen-prob'] == 'product, variable levels':
+                            gen_prob = learner.generalisation_prob(word, list(reversed(scene)), fixed_levels=False)
+                        else:
+                            raise NotImplementedError
+
                         #print()
                         #print("\tGeneralisation probability:", '\t', gen_prob)
 
@@ -108,11 +120,13 @@ class GeneralisationExperiment(experiment.Experiment):
         title += ',' + 'gamma_' + str(gamma)
         title += ',' + 'k_' + str(k)
         title += ',' + 'flf_' + str(params['fix-leaf-feature'])
-        title += '.png'
+        title += ',' + 'mod-gamma_' + str(params['modified-gamma'])
+        title += ',' + 'flat-hier_' + str(params['flat-hierarchy'])
+        title += ',' + 'gen-prob_' + str(params['gen-prob'])
         title = os.path.join(params['results-save-directory'], title)
 
         bar_chart(
-            results, savename=title, normalise_over_test_scene=True,
+            results, savename=title + '.png', normalise_over_test_scene=True,
             labels=['animals', 'vegetables', 'vehicles']
         )
 
@@ -531,6 +545,35 @@ def visit(graph, node, parent=None):
             graph = draw(graph, k, k+'_'+v)
     return graph
 
+def overwrite_results(results, savename):
+
+    conditions = [
+        'one example',
+        'three subordinate examples',
+        'three basic-level examples',
+        'three superordinate examples'
+    ]
+
+    abbrev_condition_names = {
+        'one example' : '1 ex.',
+        'three subordinate examples' : '3 sub.',
+        'three basic-level examples' : '3 basic',
+        'three superordinate examples' : '3 super.'
+    }
+
+    with open(savename, 'w') as f:
+        f.write("condition,sub. match,basic match,super. match\n")
+        for condition in conditions:
+            f.write(abbrev_condition_names[condition])
+            f.write(',')
+            f.write(str(np.mean(results[condition]['subordinate matches'])))
+            f.write(',')
+            f.write(str(np.mean(results[condition]['basic-level matches'])))
+            f.write(',')
+            f.write(str(np.mean(results[condition]['superordinate matches'])))
+            f.write("\n")
+
+    print('Wrote results out to', savename)
 
 if __name__ == "__main__":
     e = GeneralisationExperiment()

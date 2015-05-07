@@ -20,15 +20,17 @@ class Learner:
 
     """
 
-    def __init__(self, gamma, k):
+    def __init__(self, gamma, k, modified_gamma=True, flat_hierarchy=False):
         """
 
         """
         # Smoothing
         self._gamma = gamma
         self._k = k
+        self._modified_gamma = modified_gamma
+        self._flat_hierarchy = flat_hierarchy
 
-        self._learned_lexicon = wmmapping.Lexicon([], self._gamma, self._k)
+        self._learned_lexicon = wmmapping.Lexicon([], self._gamma, self._k, self._modified_gamma, self._flat_hierarchy)
 
     def gamma(self, word, feature):
         return self._learner_lexicon.gamma(word, feature)
@@ -93,15 +95,23 @@ class Learner:
         # all word-feature pairs
         self.calculate_alignments(words, features, outdir)
 
-    def generalisation_prob(self, word, scene):
+    def generalisation_prob(self, word, scene, fixed_levels=False):
         """
         Calculate the probability of this learner to generalise word to scene.
         Assume that scene is a set of features, in hierarchical order, from
         highest superordinate level to lowest subordinate level.
 
         """
+
+        # hack to equalise the number of levels in the feature hierarchy
+        if fixed_levels:
+            l = len(scene)
+            for i in range(self._learned_lexicon._max_depth - l):
+                scene.append('dummy')
+
         # add features to the hierarchy so that novel features are in the
         # correct position
+        # doesn't change meaning probability
         self._learned_lexicon.add_features_to_hierarchy(word, scene)
 
         gen_prob = 1.
@@ -111,7 +121,10 @@ class Learner:
             prob = self._learned_lexicon.prob(word, feature, p=True)
             gen_prob *= prob
 
+
         return gen_prob
+
+
 
     def process_corpus(self, corpus_path, outdir, corpus=None):
         """
@@ -141,3 +154,35 @@ class Learner:
 
         if close_corpus:
             corpus.close()
+
+def cosine(beta, meaning1, meaning2):
+    """
+    Calculate and return the similarity score using the Cosine method, comparing
+    the probabilities within Meaning of first word and Meaning of second word as the vectors.
+    beta is used as a smoothing factor.
+
+    features contain all the features of the gold lexicon.
+    """
+    features = meaning1.seen_features() | meaning2.seen_features()
+
+    meaning1_vec = numpy.zeros(len(features))
+    meaning2_vec = numpy.zeros(len(features))
+
+    i = 0
+    for feature in features:
+        meaning1_vec[i] = meaning1.prob(feature)
+        meaning2_vec[i] = meaning2.prob(feature)
+        i += 1
+
+    cos = numpy.dot(meaning1_vec, meaning2_vec)
+
+    seen_count = len(features)
+    cos += (beta - seen_count) * meaning1.unseen_prob() * meaning2.unseen_prob()
+
+    x = math.sqrt(numpy.dot(meaning1_vec, meaning1_vec) \
+    + (pow(meaning1.unseen_prob(), 2) * (beta - seen_count)))
+
+    y = math.sqrt(numpy.dot(meaning2_vec, meaning2_vec) \
+    + (pow(meaning2.unseen_prob(), 2) * (beta - seen_count)))
+
+    return  cos / (x * y)
