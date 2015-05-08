@@ -191,17 +191,16 @@ class Meaning:
                     if fg not in self._level_to_feature_groups_map[level]:
                         self._level_to_feature_groups_map[level].append(fg)
 
-                # hack to put everything on the same level
-                if self._flat_hierarchy:
-                    self._feature_to_level_map[feature] = 1
-                else:
-                    self._feature_to_level_map[feature] = level
+                self._feature_to_level_map[feature] = level
 
             else:
                 new_fg = find(lambda f: f == feature, fg._members)
 
             fg = new_fg
-            level += 1
+
+            # if false, a hack to put everything on the same level
+            if not self._flat_hierarchy:
+                level += 1
 
     def gamma(self, feature):
         """

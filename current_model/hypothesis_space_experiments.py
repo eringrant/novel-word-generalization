@@ -69,8 +69,8 @@ class GeneralisationExperiment(experiment.Experiment):
 
                         learner.process_pair(trial.utterance(), list(reversed(trial.scene())), './')
 
-                    #print("\tMatch: " + cond)
-                    #print('--------------------------------------------')
+                    print("\tMatch: " + cond)
+                    print('--------------------------------------------')
 
                     take_average = 0
                     count = 0
@@ -94,8 +94,8 @@ class GeneralisationExperiment(experiment.Experiment):
                         else:
                             raise NotImplementedError
 
-                        #print()
-                        #print("\tGeneralisation probability:", '\t', gen_prob)
+                        print()
+                        print("\tGeneralisation probability:", '\t', gen_prob)
 
                         take_average = mpmath.fadd(take_average, gen_prob)
                         count += 1
@@ -109,7 +109,7 @@ class GeneralisationExperiment(experiment.Experiment):
                         results[condition][cond] = []
                         results[condition][cond].append(gen_prob)
 
-                    #print('--------------------------------------------')
+                    print('--------------------------------------------')
 
         #pprint.pprint(results)
 
