@@ -66,6 +66,9 @@ class FeatureGroup:
         self._feature = Feature(name=feature_name)
         self._meaning = meaning # the meaning hierarchy
 
+        # for defining an iterator
+        self._index = 0
+
     def __contains__(self, feature):
         """ Check if feature is a member of this FeatureGroup. """
         return any([f == feature for f in self._members])
@@ -78,6 +81,19 @@ class FeatureGroup:
 
     def __repr__(self):
         return "Feature group for: " + self._feature.__repr__() + ";\n\tMembers: " +  str(self._members)
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        if self._index >= len(self._members):
+            raise StopIteration
+        else:
+            self._index += 1
+            return self._members[self._index - 1]
+
+    def is_empty(self):
+        return len(self._members) == 0
 
     def add_feature(self, feature):
         fg = FeatureGroup(feature, self._gamma, self._k, self._meaning)
@@ -105,6 +121,7 @@ class FeatureGroup:
                 print "\t\t\tp(f|w) computation:\t\t", "("+str(numer.node_association()) + " + " +\
                     str(gamma) + ") / " + str(denom)
                 print "\t\t\tp(f|w):\t\t\t\t\t", str(num / denom)
+
 
             return num / denom
 
@@ -165,9 +182,31 @@ class Meaning:
         """ Format this meaning to print intelligibly."""
         return str(self._root)
 
+
+    def retrieve_list_of_traversals(self):
+
+        def traversal(feature_group):
+            if feature_group.is_empty():
+                return [[feature_group._feature.name()]]
+
+            collect = []
+            for f in feature_group._members:
+
+                collect.extend([[f._feature.name()] + tail for tail in traversal(f)])
+
+            return collect
+
+        feature_group = self._root
+
+        feature_lists = []
+        for f in feature_group:
+            feature_lists.extend([[f._feature.name()] + tail for tail in traversal(f)])
+
+        return feature_lists
+
     def add_features_to_hierarchy(self, features):
         """
-        Add features to the hierarchy, assuming that the features are  ordered
+        Add features to the hierarchy, assuming that the features are ordered
         from highest superordinate to lowest subordinate feature.
 
         """

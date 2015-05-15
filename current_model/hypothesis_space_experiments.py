@@ -35,9 +35,22 @@ class GeneralisationExperiment(experiment.Experiment):
 
         hierarchy_save_directory = params['hierarchy-save-directory']
 
-        training_sets, test_sets = generate_training_and_test_sets(uni_freq, bi_freq, params['fix-leaf-feature'])
+        if params['hierarchy'] == 'articulated':
+            training_sets, test_sets = generate_articulated_training_and_test_sets(uni_freq, bi_freq, params['fix-leaf-feature'])
+        elif params['hierarchy'] == 'simple':
+            training_sets, test_sets = generate_simple_training_and_test_sets(
+                        params['num-sup-levels'],
+                        params['num-basic-levels'],
+                        params['num-sub-levels'],
+                        params['num-instance-levels'],
+                        params['num-features']
+                    )
+        else:
+            raise NotImplementedError
 
-        visualise_training_and_test_sets(training_sets, test_sets, hierarchy_save_directory, uni_freq, bi_freq, params['name'])
+        visualise_training_and_test_sets(training_sets, test_sets,
+            hierarchy_save_directory, uni_freq, bi_freq, params['name'],
+            params['hierarchy'])
 
         conds = ['one example',
                 'three subordinate examples',
@@ -67,7 +80,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
                     for trial in training_set:
 
-                        learner.process_pair(trial.utterance(), list(reversed(trial.scene())), './')
+                        learner.process_pair(trial.utterance(), trial.scene(), './')
 
                     print("\tMatch: " + cond)
                     print('--------------------------------------------')
@@ -81,16 +94,47 @@ class GeneralisationExperiment(experiment.Experiment):
                         word = test_scene.utterance()[0] # asssume the test utterance is a single word
                         scene = test_scene.scene()
 
+                        print(scene)
+
                         if params['gen-prob'] == 'cosine':
-                            raise NotImplementedError
-                            #learner.process_pair('test', list(reversed(scene)))
-                            #meaning1 = learner.meaning('fep')
-                            #meaning2 = learner.meaning('test')
-                            #gen_prob = learner.sim_cos
+
+                            word = ['test']
+
+                            # represent the test scene with a Meaning
+                            learner.process_pair(word, scene, './')
+
+                            meaning1 = learner._learned_lexicon.meaning('fep')
+                            meaning2 = learner._learned_lexicon.meaning(word[0])
+
+                            print('meaning1')
+                            print(meaning1)
+                            raw_input()
+
+                            print('meaning2')
+                            print(meaning2)
+                            raw_input()
+
+                            # hack: add all the training set features to avoid
+                            # hashing errors
+                            for c in conds:
+                                for ts in training_sets[c]:
+                                    for t in ts:
+                                        print('scene', t.scene())
+                                        meaning2.add_features_to_hierarchy(t.scene())
+
+                            # hack: similarly, add all the training set features to avoid
+                            # hashing errors
+                            for c in test_sets:
+                                for k in range(len(test_sets[cond][training_set_num])):
+                                    ts = test_sets[cond][training_set_num][k]
+                                    meaning1.add_features_to_hierarchy(ts.scene())
+
+                            gen_prob = learn.cosine(meaning1, meaning2)
+
                         elif params['gen-prob'] == 'product, fixed levels':
-                            gen_prob = learner.generalisation_prob(word, list(reversed(scene)), fixed_levels=True)
+                            gen_prob = learner.generalisation_prob(word, scene, fixed_levels=True)
                         elif params['gen-prob'] == 'product, variable levels':
-                            gen_prob = learner.generalisation_prob(word, list(reversed(scene)), fixed_levels=False)
+                            gen_prob = learner.generalisation_prob(word, scene, fixed_levels=False)
                         else:
                             raise NotImplementedError
 
@@ -123,14 +167,201 @@ class GeneralisationExperiment(experiment.Experiment):
         title += ',' + 'mod-gamma_' + str(params['modified-gamma'])
         title += ',' + 'flat-hier_' + str(params['flat-hierarchy'])
         title += ',' + 'gen-prob_' + str(params['gen-prob'])
+        title += ',' + 'struct_' + str(params['hierarchy'])
         title = os.path.join(params['results-save-directory'], title)
 
-        bar_chart(
-            results, savename=title + '.png', normalise_over_test_scene=True,
-            labels=['animals', 'vegetables', 'vehicles']
-        )
+        if params['gen-prob'] == 'cosine':
+            bar_chart(
+                results, savename=title + '.png', normalise_over_test_scene=False,
+                labels=['animals', 'vegetables', 'vehicles']
+            )
+        else:
+            bar_chart(
+                results, savename=title + '.png', normalise_over_test_scene=True,
+                labels=['animals', 'vegetables', 'vehicles']
+            )
 
-def generate_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feature):
+def generate_simple_training_and_test_sets(num_sup_levels, num_basic_levels, num_sub_levels,
+        num_instance_levels, num_features):
+    """
+
+    """
+    # generate training examples
+    fep_sup_features = []
+    fep_bas_features = []
+    fep_sub_features = []
+    fep_instance_features = []
+
+    for n in range(1, num_sup_levels+1):
+        fep_sup_features += ['fsup' + str(n) + str(i) + '1' for i in range(1, num_features+1)]
+    for n in range(1, num_basic_levels+1):
+        fep_bas_features += ['fbas' + str(n) + str(i) + '1' for i in range(1, num_features+1)]
+    for n in range(1, num_sub_levels+1):
+        fep_sub_features += ['fsub' + str(n) + str(i) + '1' for i in range(1, num_features+1)]
+    for n in range(1, num_instance_levels+1):
+        fep_instance_features += ['finstance' + str(n) + str(i) + '1' for i in range(1, num_features+1)]
+
+    fep_features = fep_sup_features + fep_bas_features + fep_sub_features + fep_instance_features
+
+    sub_example_2_features = fep_sup_features[:] + fep_bas_features[:] + fep_sub_features[:]
+    for n in range(1, num_instance_levels+1):
+        sub_example_2_features += ['finstance' + str(n) + str(i) + '2' for i in range(1, num_features+1)]
+    sub_example_3_features = fep_sup_features[:] + fep_bas_features[:] + fep_sub_features[:]
+    for n in range(1, num_instance_levels+1):
+        sub_example_3_features += ['finstance' + str(n) + str(i) + '3' for i in range(1, num_features+1)]
+
+    basic_example_2_features = fep_sup_features[:] + fep_bas_features[:]
+    for n in range(1, num_sub_levels+1):
+        basic_example_2_features += ['fsub' + str(n) + str(i) + '2' for i in range(1, num_features+1)]
+    for n in range(1, num_instance_levels+1):
+        basic_example_2_features += ['finstance' + str(n) + str(i) + '4' for i in range(1, num_features+1)]
+    basic_example_3_features = fep_sup_features[:] + fep_bas_features[:]
+    for n in range(1, num_sub_levels+1):
+        basic_example_3_features += ['fsub' + str(n) + str(i) + '3' for i in range(1, num_features+1)]
+    for n in range(1, num_instance_levels+1):
+        basic_example_3_features += ['finstance' + str(n) + str(i) + '5' for i in range(1, num_features+1)]
+
+    sup_example_2_features = fep_sup_features[:]
+    for n in range(1, num_basic_levels+1):
+        sup_example_2_features += ['fbasic' + str(n) + str(i) + '2' for i in range(1, num_features+1)]
+    for n in range(1, num_sub_levels+1):
+        sup_example_2_features += ['fsub' + str(n) + str(i) + '4' for i in range(1, num_features+1)]
+    for n in range(1, num_instance_levels+1):
+        sup_example_2_features += ['finstance' + str(n) + str(i) + '6' for i in range(1, num_features+1)]
+    sup_example_3_features = fep_sup_features[:]
+    for n in range(1, num_basic_levels+1):
+        sup_example_3_features += ['fbasic' + str(n) + str(i) + '3' for i in range(1, num_features+1)]
+    for n in range(1, num_sub_levels+1):
+        sup_example_3_features += ['fsub' + str(n) + str(i) + '5' for i in range(1, num_features+1)]
+    for n in range(1, num_instance_levels+1):
+        sup_example_3_features += ['finstance' + str(n) + str(i) + '7' for i in range(1, num_features+1)]
+
+    training_sets = {}
+    training_sets['one example'] = []
+    training_sets['three subordinate examples'] = []
+    training_sets['three basic-level examples'] = []
+    training_sets['three superordinate examples'] = []
+
+    training_sets['one example'].append(
+        [experimental_materials.UtteranceScenePair(
+            utterance='fep',
+            scene=fep_features,
+            probabilistic=False
+        )]
+    )
+
+    training_sets['three subordinate examples'].append(
+        [experimental_materials.UtteranceScenePair(
+            utterance='fep',
+            scene=fep_features,
+            probabilistic=False
+        ),
+        experimental_materials.UtteranceScenePair(
+            utterance='fep',
+            scene=sub_example_2_features,
+            probabilistic=False
+        ),
+        experimental_materials.UtteranceScenePair(
+            utterance='fep',
+            scene=sub_example_3_features,
+            probabilistic=False
+        )]
+    )
+
+    training_sets['three basic-level examples'].append(
+        [
+            experimental_materials.UtteranceScenePair(
+                utterance='fep',
+                scene=fep_features,
+                probabilistic=False
+            ),
+            experimental_materials.UtteranceScenePair(
+                utterance='fep',
+                scene=basic_example_2_features,
+                probabilistic=False
+            ),
+            experimental_materials.UtteranceScenePair(
+                utterance='fep',
+                scene=basic_example_3_features,
+                probabilistic=False
+            )
+        ]
+    )
+
+    training_sets['three superordinate examples'].append(
+        [
+            experimental_materials.UtteranceScenePair(
+                utterance='fep',
+                scene=fep_features,
+                probabilistic=False
+            ),
+            experimental_materials.UtteranceScenePair(
+                utterance='fep',
+                scene=sup_example_2_features,
+                probabilistic=False
+            ),
+            experimental_materials.UtteranceScenePair(
+                utterance='fep',
+                scene=sup_example_3_features,
+                probabilistic=False
+            )
+        ]
+    )
+
+    # generate test matches
+    sub_match_features = fep_sup_features[:] + fep_bas_features[:] + fep_sub_features[:]
+    for n in range(1, num_instance_levels+1):
+        sub_match_features += ['finstance' + str(n) + str(i) + '8' for i in range(1, num_features+1)]
+
+    basic_match_features = fep_sup_features[:] + fep_bas_features[:]
+    for n in range(1, num_sub_levels+1):
+        basic_match_features += ['fsub' + str(n) + str(i) + '6' for i in range(1, num_features+1)]
+    for n in range(1, num_instance_levels+1):
+        basic_match_features += ['finstance' + str(n) + str(i) + '9' for i in range(1, num_features+1)]
+
+    sup_match_features = fep_sup_features[:]
+    for n in range(1, num_basic_levels+1):
+        sup_match_features += ['fbasic' + str(n) + str(i) + '4' for i in range(1, num_features+1)]
+    for n in range(1, num_sub_levels+1):
+        sup_match_features += ['fsub' + str(n) + str(i) + '7' for i in range(1, num_features+1)]
+    for n in range(1, num_instance_levels+1):
+        sup_match_features += ['finstance' + str(n) + str(i) + '10' for i in range(1, num_features+1)]
+
+    test_sets = {}
+    test_sets['subordinate matches'] = []
+    test_sets['basic-level matches'] = []
+    test_sets['superordinate matches'] = []
+
+    test_sets['subordinate matches'].append([
+        experimental_materials.UtteranceScenePair(
+            details='subordinate test object',
+            utterance='fep',
+            scene=sub_match_features,
+            probabilistic=False
+        )
+    ])
+
+    test_sets['basic-level matches'].append([
+        experimental_materials.UtteranceScenePair(
+            details='basic-level test object',
+            utterance='fep',
+            scene=basic_match_features,
+            probabilistic=False
+        )
+    ])
+
+    test_sets['superordinate matches'].append([
+        experimental_materials.UtteranceScenePair(
+            details='superordinate test object',
+            utterance='fep',
+            scene=sup_match_features,
+            probabilistic=False
+        )
+    ])
+
+    return training_sets, test_sets
+
+def generate_articulated_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feature):
     """
 
     """
@@ -195,7 +426,6 @@ def generate_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feature):
         ['sports_car.n.01', 'berlin.n.03', 'hearse.n.01', 'gypsy_cab.n.01']
     ])
 
-    #import pdb; pdb.set_trace()
     # convert to scene representation
     for cond in training_sets:
         reps = []
@@ -203,8 +433,8 @@ def generate_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feature):
             rep = []
             for item in training_sets[cond][i]:
                 l = []
-                for j, f in enumerate(list(reversed(feature_map[item]))):
-                    if j == 0 and fix_leaf_feature:
+                for j, f in enumerate(feature_map[item]):
+                    if j + 1 == len(feature_map[item]) and fix_leaf_feature:
                         l.append(f)
                     elif exceeds_frequency_threshold(f.split('.')[0].replace('_', ' '), uni_freq, bi_freq):
                         l.append(f)
@@ -224,8 +454,10 @@ def generate_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feature):
             rep = []
             for item in test_sets[cond][i]:
                 l = []
-                for f in list(reversed(feature_map[item])):
-                    if exceeds_frequency_threshold(f.split('.')[0].replace('_', ' '), uni_freq, bi_freq):
+                for f in feature_map[item]:
+                    if j + 1 == len(feature_map[item]) and fix_leaf_feature:
+                        l.append(f)
+                    elif exceeds_frequency_threshold(f.split('.')[0].replace('_', ' '), uni_freq, bi_freq):
                         l.append(f)
                 rep.append(
                     experimental_materials.UtteranceScenePair(
@@ -452,7 +684,7 @@ def bar_chart(results, savename=None, annotation=None,
     else:
         plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
-def visualise_training_and_test_sets(training_sets, test_sets, save_directory, uni, bi, freq_corpus):
+def visualise_training_and_test_sets(training_sets, test_sets, save_directory, uni, bi, freq_corpus, struct):
 
     conds = ['one example',
             'three subordinate examples',
@@ -473,13 +705,14 @@ def visualise_training_and_test_sets(training_sets, test_sets, save_directory, u
 
             for trial in training_set:
 
-                d = todict(reversed(trial.scene())) #TODO: backwards
+                d = todict(trial.scene())
                 graph = visit(graph, d)
 
             title = 'hierarchy'
             title += ',' + replace_with_underscores(freq_corpus)
             title += ',' + 'uni_' + str(uni)
             title += ',' + 'bi_' + str(bi)
+            title += ',' + 'struct_' + str(struct)
             title += ',' 'train_set_num_' + str(training_set_num)
             title += ',' + replace_with_underscores(str(condition))
             title += ',' + 'training_set.png'
@@ -491,16 +724,19 @@ def visualise_training_and_test_sets(training_sets, test_sets, save_directory, u
             graph = pydot.Dot(graph_type='graph', ranksep=0.2, resolution=96)
             graph = set_graph_defaults(graph)
 
-            for match_num in range(len(test_sets[cond][training_set_num])):
-
-                test_item = test_sets[cond][training_set_num][match_num]
-                d = todict(reversed(test_item.scene())) #TODO: backwards
-                graph = visit(graph, d)
+            try:
+                for match_num in range(len(test_sets[cond][training_set_num])):
+                    test_item = test_sets[cond][training_set_num][match_num]
+                    d = todict(test_item.scene())
+                    graph = visit(graph, d)
+            except Exception:
+                import pdb; pdb.set_trace()
 
             title = 'hierarchy'
             title += ',' + replace_with_underscores(freq_corpus)
             title += ',' + 'uni_' + str(uni)
             title += ',' + 'bi_' + str(bi)
+            title += ',' + 'struct_' + str(struct)
             title += ',' 'train_set_num_' + str(training_set_num)
             title += ',' + replace_with_underscores(str(cond))
             title += ',' + 'test_set.png'

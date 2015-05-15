@@ -3,7 +3,6 @@ import logging
 import math
 import numpy
 import os
-import re
 import sys
 
 #import input
@@ -121,10 +120,7 @@ class Learner:
             prob = self._learned_lexicon.prob(word, feature, p=True)
             gen_prob *= prob
 
-
         return gen_prob
-
-
 
     def process_corpus(self, corpus_path, outdir, corpus=None):
         """
@@ -155,7 +151,7 @@ class Learner:
         if close_corpus:
             corpus.close()
 
-def cosine(beta, meaning1, meaning2):
+def cosine(meaning1, meaning2):
     """
     Calculate and return the similarity score using the Cosine method, comparing
     the probabilities within Meaning of first word and Meaning of second word as the vectors.
@@ -176,13 +172,13 @@ def cosine(beta, meaning1, meaning2):
 
     cos = numpy.dot(meaning1_vec, meaning2_vec)
 
-    seen_count = len(features)
-    cos += (beta - seen_count) * meaning1.unseen_prob() * meaning2.unseen_prob()
+    #seen_count = len(features)
+    #cos += (beta - seen_count) * meaning1.unseen_prob() * meaning2.unseen_prob()
 
-    x = math.sqrt(numpy.dot(meaning1_vec, meaning1_vec) \
-    + (pow(meaning1.unseen_prob(), 2) * (beta - seen_count)))
+    x = math.sqrt(numpy.dot(meaning1_vec, meaning1_vec))
+    #+ (pow(meaning1.unseen_prob(), 2) * (beta - seen_count)))
 
-    y = math.sqrt(numpy.dot(meaning2_vec, meaning2_vec) \
-    + (pow(meaning2.unseen_prob(), 2) * (beta - seen_count)))
+    y = math.sqrt(numpy.dot(meaning2_vec, meaning2_vec))
+    #+ (pow(meaning2.unseen_prob(), 2) * (beta - seen_count)))
 
     return  cos / (x * y)
