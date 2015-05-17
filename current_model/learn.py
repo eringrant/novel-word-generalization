@@ -170,8 +170,6 @@ def cosine(meaning1, meaning2):
         meaning2_vec[i] = meaning2.prob(feature)
         i += 1
 
-    import pdb; pdb.set_trace()
-
     cos = numpy.dot(meaning1_vec, meaning2_vec)
 
     #seen_count = len(features)

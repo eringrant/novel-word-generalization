@@ -104,6 +104,7 @@ class GeneralisationExperiment(experiment.Experiment):
                             meaning1 = learner._learned_lexicon.meaning('fep')
                             meaning2 = learner._learned_lexicon.meaning(word[0])
 
+
                             # hack: add all the training set features to avoid
                             # hashing errors
                             for c in conds:
@@ -442,6 +443,7 @@ def generate_articulated_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feat
         for i in range(len(test_sets[cond])):
             rep = []
             for item in test_sets[cond][i]:
+                l = []
                 for j, f in enumerate(feature_map[item]):
                     if j + 1 == len(feature_map[item]) and fix_leaf_feature:
                         l.append(f)
