@@ -122,7 +122,6 @@ class FeatureGroup:
                     str(gamma) + ") / " + str(denom)
                 print "\t\t\tp(f|w):\t\t\t\t\t", str(num / denom)
 
-
             return num / denom
 
         else:

@@ -78,7 +78,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
                     learner = learn.Learner(gamma, k, modified_gamma=params['modified-gamma'], flat_hierarchy=params['flat-hierarchy'])
 
-                    for trial in training_set:
+                    for i,trial in enumerate(training_set):
 
                         learner.process_pair(trial.utterance(), trial.scene(), './')
 
@@ -91,10 +91,8 @@ class GeneralisationExperiment(experiment.Experiment):
                     # loop though the test objects
                     for j in range(len(test_sets[cond][training_set_num])):
                         test_scene = test_sets[cond][training_set_num][j]
-                        word = test_scene.utterance()[0] # asssume the test utterance is a single word
+                        word = test_scene.utterance()[0] # assume the test utterance is a single word
                         scene = test_scene.scene()
-
-                        print(scene)
 
                         if params['gen-prob'] == 'cosine':
 
@@ -106,27 +104,18 @@ class GeneralisationExperiment(experiment.Experiment):
                             meaning1 = learner._learned_lexicon.meaning('fep')
                             meaning2 = learner._learned_lexicon.meaning(word[0])
 
-                            print('meaning1')
-                            print(meaning1)
-                            raw_input()
-
-                            print('meaning2')
-                            print(meaning2)
-                            raw_input()
-
                             # hack: add all the training set features to avoid
                             # hashing errors
                             for c in conds:
                                 for ts in training_sets[c]:
                                     for t in ts:
-                                        print('scene', t.scene())
                                         meaning2.add_features_to_hierarchy(t.scene())
 
-                            # hack: similarly, add all the training set features to avoid
+                            # hack: similarly, add all the test set features to avoid
                             # hashing errors
                             for c in test_sets:
-                                for k in range(len(test_sets[cond][training_set_num])):
-                                    ts = test_sets[cond][training_set_num][k]
+                                for m in range(len(test_sets[cond][training_set_num])):
+                                    ts = test_sets[cond][training_set_num][m]
                                     meaning1.add_features_to_hierarchy(ts.scene())
 
                             gen_prob = learn.cosine(meaning1, meaning2)
@@ -453,8 +442,7 @@ def generate_articulated_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feat
         for i in range(len(test_sets[cond])):
             rep = []
             for item in test_sets[cond][i]:
-                l = []
-                for f in feature_map[item]:
+                for j, f in enumerate(feature_map[item]):
                     if j + 1 == len(feature_map[item]) and fix_leaf_feature:
                         l.append(f)
                     elif exceeds_frequency_threshold(f.split('.')[0].replace('_', ' '), uni_freq, bi_freq):
@@ -482,13 +470,13 @@ def exceeds_frequency_threshold(gram, uni_freq, bi_freq):
         return False
 
     if len(gram.split(' ')) == 1:
-        if a[gram] > uni_freq:
+        if a[gram] > uni_freq or uni_freq == float('-inf'):
             return True
         else:
             return False
 
     elif len(gram.split(' ')) == 2:
-        if a[gram] > bi_freq:
+        if a[gram] > bi_freq or bi_freq == float('-inf'):
             return True
         else:
             return False
