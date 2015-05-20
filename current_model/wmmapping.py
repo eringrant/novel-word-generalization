@@ -128,15 +128,13 @@ class FeatureGroup:
             return self.unseen_prob()
 
     # this method is not presently used
-    def unseen_prob(self, gamma):
+    def unseen_prob(self, feature, gamma, denom, p=False):
         """
         Compute the unseen probability of this feature group using the
         associations stored in the Features .
 
         """
-        denom = self._k * gamma
-        denom += sum([f.node_association() for f in self._members])
-        return gamma/denom
+        raise NotImplementedError
 
     def update_association(self, feature, alignment):
         to_update = find(lambda fg: fg == feature, self._members)
@@ -226,8 +224,7 @@ class Meaning:
                         self._level_to_feature_groups_map[level].append(fg)
                 except KeyError:
                     self._level_to_feature_groups_map[level] = []
-                    if fg not in self._level_to_feature_groups_map[level]:
-                        self._level_to_feature_groups_map[level].append(fg)
+                    self._level_to_feature_groups_map[level].append(fg)
 
                 self._feature_to_level_map[feature] = level
 
@@ -252,7 +249,7 @@ class Meaning:
             for fg in fgs:
                 count += len([f for f in fg._members if f.node_association() > 0])
             count = max(count, 1)
-            return self._gamma * (count**2)
+            return self._gamma * ((count+1)**4)
         else:
             return self._gamma
 
@@ -298,6 +295,16 @@ class Meaning:
         self._feature_to_feature_group_map[feature].update_association(feature,
             alignment)
 
+    def get_level(self, feature):
+        return self._feature_to_level_map[feature]
+
+    def unseen_prob_by_level(self, level):
+        fgs = self._level_to_feature_groups_map[level]
+        # pick the first one arbitrarily
+        fg = fgs[0]._members[0]
+        feature = fg._feature.name()
+
+        return self.gamma(feature) / self.denom(feature)
 
 class Lexicon:
     """

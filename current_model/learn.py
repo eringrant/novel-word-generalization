@@ -151,7 +151,7 @@ class Learner:
         if close_corpus:
             corpus.close()
 
-def cosine(meaning1, meaning2):
+def cosine(k, meaning1, meaning2):
     """
     Calculate and return the similarity score using the Cosine method, comparing
     the probabilities within Meaning of first word and Meaning of second word as the vectors.
@@ -164,21 +164,44 @@ def cosine(meaning1, meaning2):
     meaning1_vec = numpy.zeros(len(features))
     meaning2_vec = numpy.zeros(len(features))
 
+    # hash the level counts of the features
+    level_counts = {}
+
     i = 0
+
     for feature in features:
         meaning1_vec[i] = meaning1.prob(feature)
-        meaning2_vec[i] = meaning2.prob(feature)
+
+        #meaning2_vec[i] = meaning2.prob(feature)
+
+        # hack: set all but gold standard meaning probability features to zero
+        if feature in meaning2.seen_features():
+            meaning2_vec[i] = 1.0
+        else:
+            meaning2_vec[i] = 0.0
+
         i += 1
 
+#        level = max(meaning1.get_level(feature), meaning2.get_level(feature))
+#
+#        try:
+#            level_counts[level] += 1
+#        except KeyError:
+#            level_counts[level] = 0
+#            level_counts[level] += 1
+#
+#    assert not -1 in level_counts
+#
     cos = numpy.dot(meaning1_vec, meaning2_vec)
-
-    #seen_count = len(features)
-    #cos += (beta - seen_count) * meaning1.unseen_prob() * meaning2.unseen_prob()
-
-    x = math.sqrt(numpy.dot(meaning1_vec, meaning1_vec))
-    #+ (pow(meaning1.unseen_prob(), 2) * (beta - seen_count)))
-
-    y = math.sqrt(numpy.dot(meaning2_vec, meaning2_vec))
-    #+ (pow(meaning2.unseen_prob(), 2) * (beta - seen_count)))
+    x = numpy.dot(meaning1_vec, meaning1_vec)
+    y = numpy.dot(meaning2_vec, meaning2_vec)
+#
+#    for level in level_counts:
+#        cos += (k - level_counts[level]) * meaning1.unseen_prob_by_level(level) * meaning2.unseen_prob_by_level(level)
+#        x += pow(meaning1.unseen_prob_by_level(level), 2) * (k - level_counts[level])
+#        y += pow(meaning2.unseen_prob_by_level(level), 2) * (k - level_counts[level])
+#
+    x = math.sqrt(x)
+    y = math.sqrt(y)
 
     return  cos / (x * y)

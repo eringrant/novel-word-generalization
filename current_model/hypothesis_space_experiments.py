@@ -104,7 +104,6 @@ class GeneralisationExperiment(experiment.Experiment):
                             meaning1 = learner._learned_lexicon.meaning('fep')
                             meaning2 = learner._learned_lexicon.meaning(word[0])
 
-
                             # hack: add all the training set features to avoid
                             # hashing errors
                             for c in conds:
@@ -119,11 +118,11 @@ class GeneralisationExperiment(experiment.Experiment):
                                     ts = test_sets[cond][training_set_num][m]
                                     meaning1.add_features_to_hierarchy(ts.scene())
 
-                            gen_prob = learn.cosine(meaning1, meaning2)
+                            gen_prob = learn.cosine(k, meaning1, meaning2)
 
-                        elif params['gen-prob'] == 'product, fixed levels':
+                        elif params['gen-prob'] == 'product-fixed-levels':
                             gen_prob = learner.generalisation_prob(word, scene, fixed_levels=True)
-                        elif params['gen-prob'] == 'product, variable levels':
+                        elif params['gen-prob'] == 'product-variable-levels':
                             gen_prob = learner.generalisation_prob(word, scene, fixed_levels=False)
                         else:
                             raise NotImplementedError
@@ -163,13 +162,16 @@ class GeneralisationExperiment(experiment.Experiment):
         if params['gen-prob'] == 'cosine':
             bar_chart(
                 results, savename=title + '.png', normalise_over_test_scene=False,
-                labels=['animals', 'vegetables', 'vehicles']
+                labels=['animals', 'vegetables', 'vehicles'],
+                y_limit=(0.5, 1.0)
             )
         else:
             bar_chart(
                 results, savename=title + '.png', normalise_over_test_scene=True,
                 labels=['animals', 'vegetables', 'vehicles']
             )
+
+        overwrite_results(results, title + '.dat')
 
 def generate_simple_training_and_test_sets(num_sup_levels, num_basic_levels, num_sub_levels,
         num_instance_levels, num_features):
@@ -488,7 +490,7 @@ def exceeds_frequency_threshold(gram, uni_freq, bi_freq):
 
 def bar_chart(results, savename=None, annotation=None,
         normalise_over_test_scene=True, subtract_null_hypothesis=None,
-        labels=None):
+        labels=None, y_limit=None):
 
     conditions = ['one example',
         'three subordinate examples',
@@ -548,8 +550,12 @@ def bar_chart(results, savename=None, annotation=None,
         p0 = ax.bar(ind,l0,width,color='r')
         p1 = ax.bar(ind+width,l1,width,color='g')
         p2 = ax.bar(ind+2*width,l2,width,color='b')
+
         ax.set_ylabel("generalisation probability")
         ax.set_xlabel("condition")
+
+        if y_limit:
+            ax.set_ylim(y_limit)
 
         m = np.max(l0 + l1 + l2)
 
@@ -653,9 +659,14 @@ def bar_chart(results, savename=None, annotation=None,
             ax.set_xticks(ind + 2 * width)
             ax.set_xticklabels(xlabels)
 
+            if y_limit:
+                ax.set_ylim(y_limit)
+
     #ax.set_ylabel("gen. prob.")
     #ax.set_xlabel("condition")
-    if normalise_over_test_scene is True:
+    if y_limit:
+        plt.ylim(y_limit)
+    elif normalise_over_test_scene is True:
         plt.ylim((0,1))
     else:
         plt.ylim((0,float(m)))
