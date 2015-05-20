@@ -150,13 +150,14 @@ class Meaning:
 
     """
 
-    def __init__(self, gamma, k, modified_gamma=True, flat_hierarchy=False, word=None):
+    def __init__(self, gamma, k, p, modified_gamma=True, flat_hierarchy=False, word=None):
         """
         TODO
 
         """
         self._gamma = gamma
         self._k = k
+        self._p = p
         self._modified_gamma = modified_gamma
         self._flat_hierarchy = flat_hierarchy
 
@@ -178,7 +179,6 @@ class Meaning:
     def __str__(self):
         """ Format this meaning to print intelligibly."""
         return str(self._root)
-
 
     def retrieve_list_of_traversals(self):
 
@@ -249,7 +249,7 @@ class Meaning:
             for fg in fgs:
                 count += len([f for f in fg._members if f.node_association() > 0])
             count = max(count, 1)
-            return self._gamma * ((count+1)**4)
+            return self._gamma * (count**self._p)
         else:
             return self._gamma
 
@@ -317,13 +317,14 @@ class Lexicon:
 
     """
 
-    def __init__(self, words, gamma, k, modified_gamma, flat_hierarchy):
+    def __init__(self, words, gamma, k, p, modified_gamma, flat_hierarchy):
         """
         TODO
 
         """
         self._gamma = gamma
         self._k = k
+        self._p = p
         self._modified_gamma = modified_gamma
         self._flat_hierarchy = flat_hierarchy
 
@@ -331,7 +332,7 @@ class Lexicon:
 
         self._word_meanings = {}
         for word in words:
-            self._word_meanings[word] = Meaning(gamma, k, self._modified_gamma, self._flat_hierarchy, word=word)
+            self._word_meanings[word] = Meaning(gamma, k, p, self._modified_gamma, self._flat_hierarchy, word=word)
 
     def add_features_to_hierarchy(self, word, features):
         """
@@ -342,7 +343,7 @@ class Lexicon:
 
         """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, self._modified_gamma, self._flat_hierarchy, word=word)
+            self._word_meanings[word] = Meaning(self._gamma, self._k, self._p, self._modified_gamma, self._flat_hierarchy, word=word)
         self._word_meanings[word].add_features_to_hierarchy(features)
 
         if len(features) > self._max_depth:
@@ -351,7 +352,7 @@ class Lexicon:
     def gamma(self, word, feature):
         """ Return the probability of feature being part of the meaning of word. """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, self._modified_gamma, self._flat_hierarchy, word=word)
+            self._word_meanings[word] = Meaning(self._gamma, self._k, self._p, self._modified_gamma, self._flat_hierarchy, word=word)
         self._word_meanings[word].gamma(feature)
 
     # TODO: not implemented correctly
@@ -359,12 +360,12 @@ class Lexicon:
         """ Return a copy of the Meaning object corresponding to word. """
         if word in self._word_meanings:
             return self._word_meanings[word]
-        return Meaning(self._gamma, self._k, self._modified_gamma, self._flat_hierarchy, word=word)
+        return Meaning(self._gamma, self._k, self._p, self._modified_gamma, self._flat_hierarchy, word=word)
 
     def prob(self, word, feature, p=False):
         """ Return the probability of feature being part of the meaning of word. """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, self._modified_gamma, self._flat_hierarchy, word=word)
+            self._word_meanings[word] = Meaning(self._gamma, self._k, self._p, self._modified_gamma, self._flat_hierarchy, word=word)
         return self._word_meanings[word].prob(feature, p=p)
 
     def add_seen_features(self, word, features):
@@ -384,10 +385,7 @@ class Lexicon:
 
         """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, self._modified_gamma, self._flat_hierarchy, word=word)
-        self._word_meanings[word].update_association(feature, alignment)
-
-    def words(self):
+            self._word_meanings[word] = Meaning(self._gamma, self._k, self._p, self._modified_gamma, self._flat_hierarchy, word=word)
         """ Return a set of all words in this lexicon. """
         return set(self._word_meanings.keys())
 

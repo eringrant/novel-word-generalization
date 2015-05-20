@@ -19,17 +19,18 @@ class Learner:
 
     """
 
-    def __init__(self, gamma, k, modified_gamma=True, flat_hierarchy=False):
+    def __init__(self, gamma, k, p, modified_gamma=True, flat_hierarchy=False):
         """
 
         """
         # Smoothing
         self._gamma = gamma
         self._k = k
+        self._p = p
         self._modified_gamma = modified_gamma
         self._flat_hierarchy = flat_hierarchy
 
-        self._learned_lexicon = wmmapping.Lexicon([], self._gamma, self._k, self._modified_gamma, self._flat_hierarchy)
+        self._learned_lexicon = wmmapping.Lexicon([], self._gamma, self._k, self._p, self._modified_gamma, self._flat_hierarchy)
 
     def gamma(self, word, feature):
         return self._learner_lexicon.gamma(word, feature)

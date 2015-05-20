@@ -29,6 +29,7 @@ class GeneralisationExperiment(experiment.Experiment):
         """ Runs in each child process. """
         gamma = params['gamma']
         k = params['k']
+        p = params['p']
 
         uni_freq = params['unigram-frequency']
         bi_freq = params['bigram-frequency']
@@ -76,7 +77,7 @@ class GeneralisationExperiment(experiment.Experiment):
                 # loop through the test conditions
                 for cond in test_sets:
 
-                    learner = learn.Learner(gamma, k, modified_gamma=params['modified-gamma'], flat_hierarchy=params['flat-hierarchy'])
+                    learner = learn.Learner(gamma, k, p, modified_gamma=params['modified-gamma'], flat_hierarchy=params['flat-hierarchy'])
 
                     for i,trial in enumerate(training_set):
 
@@ -118,6 +119,8 @@ class GeneralisationExperiment(experiment.Experiment):
                                     ts = test_sets[cond][training_set_num][m]
                                     meaning1.add_features_to_hierarchy(ts.scene())
 
+                            import pdb; pdb.set_trace()
+
                             gen_prob = learn.cosine(k, meaning1, meaning2)
 
                         elif params['gen-prob'] == 'product-fixed-levels':
@@ -152,6 +155,7 @@ class GeneralisationExperiment(experiment.Experiment):
         title += ',' + 'bi_' + str(bi_freq)
         title += ',' + 'gamma_' + str(gamma)
         title += ',' + 'k_' + str(k)
+        title += ',' + 'p_' + str(p)
         title += ',' + 'flf_' + str(params['fix-leaf-feature'])
         title += ',' + 'mod-gamma_' + str(params['modified-gamma'])
         title += ',' + 'flat-hier_' + str(params['flat-hierarchy'])
