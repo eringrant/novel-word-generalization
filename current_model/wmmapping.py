@@ -59,9 +59,16 @@ class FeatureGroup:
 
     """
 
-    def __init__(self, feature_name, gamma, k, meaning):
-        self._gamma = gamma
-        self._k = k
+    def __init__(self, feature_name, gamma_sup, gamma_basic, gamma_sub, gamma_instance,
+            k_sup, k_basic, k_sub, k_instance, meaning):
+        self._gamma_sup = gamma_sup
+        self._gamma_basic = gamma_basic
+        self._gamma_sub = gamma_sub
+        self._gamma_instance = gamma_instance
+        self._k_sup = k_sup
+        self._k_basic = k_basic
+        self._k_sub = k_sub
+        self._k_instance = k_instance
         self._members = []
         self._feature = Feature(name=feature_name)
         self._meaning = meaning # the meaning hierarchy
@@ -96,7 +103,16 @@ class FeatureGroup:
         return len(self._members) == 0
 
     def add_feature(self, feature):
-        fg = FeatureGroup(feature, self._gamma, self._k, self._meaning)
+        fg = FeatureGroup(feature,
+        self._gamma_sup,
+        self._gamma_basic,
+        self._gamma_sub,
+        self._gamma_instance,
+        self._k_sup,
+        self._k_basic,
+        self._k_sub,
+        self._k_instance,
+        self._meaning)
         self._members.append(fg)
         return fg
 
@@ -150,14 +166,22 @@ class Meaning:
 
     """
 
-    def __init__(self, gamma, k, p, modified_gamma=True, flat_hierarchy=False, word=None):
+    def __init__(self,
+        gamma_sup, gamma_basic, gamma_sub, gamma_instance,
+        k_sup, k_basic, k_sub, k_instance,
+        modified_gamma=True, flat_hierarchy=False, word=None):
         """
         TODO
 
         """
-        self._gamma = gamma
-        self._k = k
-        self._p = p
+        self._gamma_sup = gamma_sup
+        self._gamma_basic = gamma_basic
+        self._gamma_sub = gamma_sub
+        self._gamma_instance = gamma_instance
+        self._k_sup = k_sup
+        self._k_basic = k_basic
+        self._k_sub = k_sub
+        self._k_instance = k_instance
         self._modified_gamma = modified_gamma
         self._flat_hierarchy = flat_hierarchy
 
@@ -165,7 +189,10 @@ class Meaning:
         self._seen_features = []
 
         # the root of the hierarchy
-        self._root = FeatureGroup(None, gamma, k, self)
+        self._root = FeatureGroup(None,
+        gamma_sup, gamma_basic, gamma_sub, gamma_instance,
+        k_sup, k_basic, k_sub, k_instance,
+        self)
 
         # hash maps for computational efficiency
         self._feature_to_feature_group_map = {}
@@ -249,9 +276,24 @@ class Meaning:
             for fg in fgs:
                 count += len([f for f in fg._members if f.node_association() > 0])
             count = max(count, 1)
-            return self._gamma * (count**self._p)
+
+            # find which gamma to use
+            if feature.startswith('fsup'):
+                gamma = self._gamma_sup
+            elif feature.startswith('fbas'):
+                gamma = self._gamma_basic
+            elif feature.startswith('fsub'):
+                gamma = self._gamma_sub
+            elif feature.startswith('finstance'):
+                gamma = self._gamma_instance
+            else:
+                print(feature)
+                raw_input()
+                raise NotImplementedError
+
+            return gamma * (count**2)
         else:
-            return self._gamma
+            raise NotImplementedError
 
     def denom(self, feature):
         """
@@ -266,7 +308,20 @@ class Meaning:
             if sum([f.node_association() for f in fg._members]) > 0 or len(fgs) == 1:
                 #print('add ' + str([f.node_association() for f in fg._members]))
                 denom += sum([f.node_association() for f in fg._members])
-        denom += self._k * self.gamma(feature)
+
+        # find which k to use
+        if feature.startswith('fsup'):
+            k = self._k_sup
+        elif feature.startswith('fbas'):
+            k = self._k_basic
+        elif feature.startswith('fsub'):
+            k = self._k_sub
+        elif feature.startswith('finstance'):
+            k = self._k_instance
+        else:
+            raise NotImplementedError
+
+        denom += k * self.gamma(feature)
         #print('add ' + str(self._k) + ' * ' +  str(self.gamma(feature)))
         #print('denom:', denom)
         return denom
@@ -317,14 +372,22 @@ class Lexicon:
 
     """
 
-    def __init__(self, words, gamma, k, p, modified_gamma, flat_hierarchy):
+    def __init__(self, words,
+        gamma_sup, gamma_basic, gamma_sub, gamma_instance,
+        k_sup, k_basic, k_sub, k_instance,
+        modified_gamma, flat_hierarchy):
         """
         TODO
 
         """
-        self._gamma = gamma
-        self._k = k
-        self._p = p
+        self._gamma_sup = gamma_sup
+        self._gamma_basic = gamma_basic
+        self._gamma_sub = gamma_sub
+        self._gamma_instance = gamma_instance
+        self._k_sup = k_sup
+        self._k_basic = k_basic
+        self._k_sub = k_sub
+        self._k_instance = k_instance
         self._modified_gamma = modified_gamma
         self._flat_hierarchy = flat_hierarchy
 
@@ -332,7 +395,16 @@ class Lexicon:
 
         self._word_meanings = {}
         for word in words:
-            self._word_meanings[word] = Meaning(gamma, k, p, self._modified_gamma, self._flat_hierarchy, word=word)
+            self._word_meanings[word] = Meaning(
+                self._gamma_sup,
+                self._gamma_basic,
+                self._gamma_sub,
+                self._gamma_instance,
+                self._k_sup,
+                self._k_basic,
+                self._k_sub,
+                self._k_instance,
+                self._modified_gamma, self._flat_hierarchy, word=word)
 
     def add_features_to_hierarchy(self, word, features):
         """
@@ -343,7 +415,16 @@ class Lexicon:
 
         """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, self._p, self._modified_gamma, self._flat_hierarchy, word=word)
+            self._word_meanings[word] = Meaning(
+                self._gamma_sup,
+                self._gamma_basic,
+                self._gamma_sub,
+                self._gamma_instance,
+                self._k_sup,
+                self._k_basic,
+                self._k_sub,
+                self._k_instance,
+                self._modified_gamma, self._flat_hierarchy, word=word)
         self._word_meanings[word].add_features_to_hierarchy(features)
 
         if len(features) > self._max_depth:
@@ -352,7 +433,16 @@ class Lexicon:
     def gamma(self, word, feature):
         """ Return the probability of feature being part of the meaning of word. """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, self._p, self._modified_gamma, self._flat_hierarchy, word=word)
+            self._word_meanings[word] = Meaning(
+                self._gamma_sup,
+                self._gamma_basic,
+                self._gamma_sub,
+                self._gamma_instance,
+                self._k_sup,
+                self._k_basic,
+                self._k_sub,
+                self._k_instance,
+            self._modified_gamma, self._flat_hierarchy, word=word)
         self._word_meanings[word].gamma(feature)
 
     # TODO: not implemented correctly
@@ -360,12 +450,30 @@ class Lexicon:
         """ Return a copy of the Meaning object corresponding to word. """
         if word in self._word_meanings:
             return self._word_meanings[word]
-        return Meaning(self._gamma, self._k, self._p, self._modified_gamma, self._flat_hierarchy, word=word)
+        return Meaning(
+                self._gamma_sup,
+                self._gamma_basic,
+                self._gamma_sub,
+                self._gamma_instance,
+                self._k_sup,
+                self._k_basic,
+                self._k_sub,
+                self._k_instance,
+        self._modified_gamma, self._flat_hierarchy, word=word)
 
     def prob(self, word, feature, p=False):
         """ Return the probability of feature being part of the meaning of word. """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, self._p, self._modified_gamma, self._flat_hierarchy, word=word)
+            self._word_meanings[word] = Meaning(
+                self._gamma_sup,
+                self._gamma_basic,
+                self._gamma_sub,
+                self._gamma_instance,
+                self._k_sup,
+                self._k_basic,
+                self._k_sub,
+                self._k_instance,
+                self._modified_gamma, self._flat_hierarchy, word=word)
         return self._word_meanings[word].prob(feature, p=p)
 
     def add_seen_features(self, word, features):
@@ -385,7 +493,19 @@ class Lexicon:
 
         """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(self._gamma, self._k, self._p, self._modified_gamma, self._flat_hierarchy, word=word)
+            self._word_meanings[word] = Meaning(
+                self._gamma_sup,
+                self._gamma_basic,
+                self._gamma_sub,
+                self._gamma_instance,
+                self._k_sup,
+                self._k_basic,
+                self._k_sub,
+                self._k_instance,
+            self._modified_gamma, self._flat_hierarchy, word=word)
+        self._word_meanings[word].update_association(feature, alignment)
+
+    def words(self):
         """ Return a set of all words in this lexicon. """
         return set(self._word_meanings.keys())
 

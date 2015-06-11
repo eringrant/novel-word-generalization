@@ -27,9 +27,14 @@ class GeneralisationExperiment(experiment.Experiment):
 
     def setup(self, params, rep):
         """ Runs in each child process. """
-        gamma = params['gamma']
-        k = params['k']
-        p = params['p']
+        gamma_sup = params['gamma-sup']
+        gamma_basic = params['gamma-basic']
+        gamma_sub = params['gamma-sub']
+        gamma_instance = params['gamma-instance']
+        k_sup = params['k-sup']
+        k_basic = params['k-basic']
+        k_sub = params['k-sub']
+        k_instance = params['k-instance']
 
         uni_freq = params['unigram-frequency']
         bi_freq = params['bigram-frequency']
@@ -77,7 +82,10 @@ class GeneralisationExperiment(experiment.Experiment):
                 # loop through the test conditions
                 for cond in test_sets:
 
-                    learner = learn.Learner(gamma, k, p, modified_gamma=params['modified-gamma'], flat_hierarchy=params['flat-hierarchy'])
+                    learner = learn.Learner(
+                    gamma_sup, gamma_basic, gamma_sub, gamma_instance,
+                    k_sup, k_basic, k_sub, k_instance,
+                    modified_gamma=params['modified-gamma'], flat_hierarchy=params['flat-hierarchy'])
 
                     for i,trial in enumerate(training_set):
 
@@ -150,32 +158,41 @@ class GeneralisationExperiment(experiment.Experiment):
         #pprint.pprint(results)
 
         title = 'results'
-        title += ',' + replace_with_underscores(params['name'])
-        title += ',' + 'uni_' + str(uni_freq)
-        title += ',' + 'bi_' + str(bi_freq)
-        title += ',' + 'gamma_' + str(gamma)
-        title += ',' + 'k_' + str(k)
-        title += ',' + 'p_' + str(p)
-        title += ',' + 'flf_' + str(params['fix-leaf-feature'])
-        title += ',' + 'mod-gamma_' + str(params['modified-gamma'])
-        title += ',' + 'flat-hier_' + str(params['flat-hierarchy'])
-        title += ',' + 'gen-prob_' + str(params['gen-prob'])
+        #title += ',' + replace_with_underscores(params['name'])
+        #title += ',' + 'uni_' + str(uni_freq)
+        #title += ',' + 'bi_' + str(bi_freq)
+        title += ',' + 'gammasup_' + str(gamma_sup)
+        title += ',' + 'gammabasic_' + str(gamma_basic)
+        title += ',' + 'gammasub_' + str(gamma_sub)
+        title += ',' + 'gammainstance_' + str(gamma_instance)
+        title += ',' + 'ksup_' + str(k_sup)
+        title += ',' + 'kbasic_' + str(k_basic)
+        title += ',' + 'ksub_' + str(k_sub)
+        title += ',' + 'kinstance_' + str(k_instance)
+        #title += ',' + 'flf_' + str(params['fix-leaf-feature'])
+        #title += ',' + 'mod-gamma_' + str(params['modified-gamma'])
+        #title += ',' + 'flat-hier_' + str(params['flat-hierarchy'])
+        #title += ',' + 'gen-prob_' + str(params['gen-prob'])
         title += ',' + 'struct_' + str(params['hierarchy'])
         title = os.path.join(params['results-save-directory'], title)
 
-        if params['gen-prob'] == 'cosine':
-            bar_chart(
-                results, savename=title + '.png', normalise_over_test_scene=False,
-                labels=['animals', 'vegetables', 'vehicles'],
-                y_limit=(0.5, 1.0)
-            )
-        else:
-            bar_chart(
-                results, savename=title + '.png', normalise_over_test_scene=True,
-                labels=['animals', 'vegetables', 'vehicles']
-            )
+        #if gamma_sup == gamma_basic and gamma_basic == gamma_sub and gamma_sub == gamma_instance and \
+        #k_sup == k_basic and k_basic == k_sub and k_sub == k_instance:
+        if True:
 
-        overwrite_results(results, title + '.dat')
+            if params['gen-prob'] == 'cosine':
+                bar_chart(
+                    results, savename=title + '.png', normalise_over_test_scene=False,
+                    labels=['animals', 'vegetables', 'vehicles'],
+                    y_limit=(0.5, 1.0)
+                )
+            else:
+                bar_chart(
+                    results, savename=title + '.png', normalise_over_test_scene=True,
+                    labels=['animals', 'vegetables', 'vehicles']
+                )
+
+            overwrite_results(results, title + '.dat')
 
 def generate_simple_training_and_test_sets(num_sup_levels, num_basic_levels, num_sub_levels,
         num_instance_levels, num_features):
@@ -687,7 +704,11 @@ def bar_chart(results, savename=None, annotation=None,
     if savename is None:
         plt.show()
     else:
-        plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
+        # add check for significant results
+        #if l0[0] < 0.69:
+        if True:
+
+            plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
 def visualise_training_and_test_sets(training_sets, test_sets, save_directory, uni, bi, freq_corpus, struct):
 
@@ -805,13 +826,17 @@ def overwrite_results(results, savename):
     with open(savename, 'w') as f:
         f.write("condition,sub. match,basic match,super. match\n")
         for condition in conditions:
+            normalisation = \
+                np.mean(results[condition]['subordinate matches']) + \
+                np.mean(results[condition]['basic-level matches']) + \
+                np.mean(results[condition]['superordinate matches'])
             f.write(abbrev_condition_names[condition])
             f.write(',')
-            f.write(str(np.mean(results[condition]['subordinate matches'])))
+            f.write(str(np.mean(results[condition]['subordinate matches'])/normalisation))
             f.write(',')
-            f.write(str(np.mean(results[condition]['basic-level matches'])))
+            f.write(str(np.mean(results[condition]['basic-level matches'])/normalisation))
             f.write(',')
-            f.write(str(np.mean(results[condition]['superordinate matches'])))
+            f.write(str(np.mean(results[condition]['superordinate matches'])/normalisation))
             f.write("\n")
 
     print('Wrote results out to', savename)
