@@ -495,7 +495,7 @@ def overwrite_results(results, savename):
     with open(savename, 'w') as f:
         f.write("condition,sub. match,basic match,super. match\n")
         for condition in conditions:
-            f.write(abbrev_condition_names[condition])
+            f.write(condition)
             f.write(',')
             f.write(str(np.mean(results[condition]['subordinate matches'])))
             f.write(',')
