@@ -35,6 +35,10 @@ class GeneralisationExperiment(experiment.Experiment):
         k_basic = params['k-basic']
         k_sub = params['k-sub']
         k_instance = params['k-instance']
+        p_sup = params['p-sup']
+        p_basic = params['p-basic']
+        p_sub = params['p-sub']
+        p_instance = params['p-instance']
 
         uni_freq = params['unigram-frequency']
         bi_freq = params['bigram-frequency']
@@ -42,7 +46,13 @@ class GeneralisationExperiment(experiment.Experiment):
         hierarchy_save_directory = params['hierarchy-save-directory']
 
         if params['hierarchy'] == 'articulated':
-            training_sets, test_sets = generate_articulated_training_and_test_sets(uni_freq, bi_freq, params['fix-leaf-feature'])
+            training_sets, test_sets =\
+            generate_articulated_training_and_test_sets(uni_freq, bi_freq,
+                params['fix-leaf-feature'], type=params['leaf-node-type'])
+        elif params['hierarchy'] == 'xt_hierarchy':
+            training_sets, test_sets =\
+            generate_xt_hypothesis_space_training_and_test_sets(uni_freq, bi_freq,
+                params['fix-leaf-feature'], type=params['leaf-node-type'])
         elif params['hierarchy'] == 'simple':
             training_sets, test_sets = generate_simple_training_and_test_sets(
                         params['num-sup-levels'],
@@ -54,10 +64,10 @@ class GeneralisationExperiment(experiment.Experiment):
         else:
             raise NotImplementedError
 
-        visualise_training_and_test_sets(training_sets, test_sets,
-            hierarchy_save_directory, uni_freq, bi_freq, params['name'],
-            params['hierarchy'])
-
+#        visualise_training_and_test_sets(training_sets, test_sets,
+#            hierarchy_save_directory, uni_freq, bi_freq, params['name'],
+#            params['hierarchy'])
+#
         conds = ['one example',
                 'three subordinate examples',
                 'three basic-level examples',
@@ -85,6 +95,7 @@ class GeneralisationExperiment(experiment.Experiment):
                     learner = learn.Learner(
                     gamma_sup, gamma_basic, gamma_sub, gamma_instance,
                     k_sup, k_basic, k_sub, k_instance,
+                    p_sup, p_basic, p_sub, p_instance,
                     modified_gamma=params['modified-gamma'], flat_hierarchy=params['flat-hierarchy'])
 
                     for i,trial in enumerate(training_set):
@@ -161,6 +172,10 @@ class GeneralisationExperiment(experiment.Experiment):
         #title += ',' + replace_with_underscores(params['name'])
         #title += ',' + 'uni_' + str(uni_freq)
         #title += ',' + 'bi_' + str(bi_freq)
+        title += ',' + 'psup_' + str(p_sup)
+        title += ',' + 'pbasic_' + str(p_basic)
+        title += ',' + 'psub_' + str(p_sub)
+        title += ',' + 'pinstance_' + str(p_instance)
         title += ',' + 'gammasup_' + str(gamma_sup)
         title += ',' + 'gammabasic_' + str(gamma_basic)
         title += ',' + 'gammasub_' + str(gamma_sub)
@@ -183,13 +198,13 @@ class GeneralisationExperiment(experiment.Experiment):
             if params['gen-prob'] == 'cosine':
                 bar_chart(
                     results, savename=title + '.png', normalise_over_test_scene=False,
-                    labels=['animals', 'vegetables', 'vehicles'],
+                    labels=['vegetables', 'vehicles', 'animals'],
                     y_limit=(0.5, 1.0)
                 )
             else:
                 bar_chart(
                     results, savename=title + '.png', normalise_over_test_scene=True,
-                    labels=['animals', 'vegetables', 'vehicles']
+                    labels=['vegetables', 'vehicles', 'animals']
                 )
 
             overwrite_results(results, title + '.dat')
@@ -374,7 +389,107 @@ def generate_simple_training_and_test_sets(num_sup_levels, num_basic_levels, num
 
     return training_sets, test_sets
 
-def generate_articulated_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feature):
+def generate_xt_hypothesis_space_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feature, type=1):
+    """
+
+    """
+    # access the feature mappings
+    with open('xt_hypothesis_space_feature_map.pkl', 'rb') as f:
+        feature_map = pickle.load(f)
+
+    # organise the sets
+    training_sets = {}
+    training_sets['one example'] = []
+    training_sets['three subordinate examples'] = []
+    training_sets['three basic-level examples'] = []
+    training_sets['three superordinate examples'] = []
+
+    training_sets['one example'].extend([
+        ['16'],
+        ['31'],
+        ['1'],
+    ])
+
+    training_sets['three subordinate examples'].extend([
+        ['16', '17', '18'],
+        ['31', '32', '33'],
+        ['1', '2', '3'],
+    ])
+
+    training_sets['three basic-level examples'].extend([
+        ['16', '21', '22'],
+        ['31', '36', '37'],
+        ['1', '6', '7'],
+    ])
+
+    training_sets['three superordinate examples'].extend([
+        ['16', '25', '26'],
+        ['31', '40', '41'],
+        ['1', '10', '11'],
+    ])
+
+    test_sets = {}
+    test_sets['subordinate matches'] = []
+    test_sets['basic-level matches'] = []
+    test_sets['superordinate matches'] = []
+
+    test_sets['subordinate matches'].extend([
+        ['19', '20'],
+        ['34', '35'],
+        ['4', '5'],
+    ])
+
+    test_sets['basic-level matches'].extend([
+        ['23', '24'],
+        ['38', '39'],
+        ['8', '9'],
+    ])
+
+    test_sets['superordinate matches'].extend([
+        ['27', '28', '29', '30'],
+        ['42', '43', '44', '45'],
+        ['12', '13', '14', '15'],
+    ])
+
+    # convert to scene representation
+    for cond in training_sets:
+        reps = []
+        for i in range(len(training_sets[cond])):
+            rep = []
+            for item in training_sets[cond][i]:
+                l = feature_map[item][:]
+                rep.append(
+                    experimental_materials.UtteranceScenePair(
+                        utterance='fep',
+                        scene=l,
+                        probabilistic=False
+                    )
+                )
+            reps.append(rep)
+        training_sets[cond] = reps
+
+    for cond in test_sets:
+        reps = []
+        for i in range(len(test_sets[cond])):
+            rep = []
+            for item in test_sets[cond][i]:
+                l = feature_map[item][:]
+                rep.append(
+                    experimental_materials.UtteranceScenePair(
+                        utterance='fep',
+                        scene=l,
+                        probabilistic=False
+                    )
+                )
+            reps.append(rep)
+        test_sets[cond] = reps
+
+    with open('xt_hypothesis_space_sets.txt', 'w') as f:
+        f.write(pprint.pformat(training_sets))
+        f.write(pprint.pformat(test_sets))
+    return training_sets, test_sets
+
+def generate_articulated_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feature, type=1):
     """
 
     """
@@ -389,55 +504,108 @@ def generate_articulated_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feat
     training_sets['three basic-level examples'] = []
     training_sets['three superordinate examples'] = []
 
-    training_sets['one example'].extend([
-        ['liver-spotted_dalmatian.n.01'],
-        ['green_pepper.n.01'],
-        ['ladder_truck.n.01']
-    ])
+    if type == 1:  # animals, vegetables and vehicles
+        training_sets['one example'].extend([
+            ['liver-spotted_dalmatian.n.01'],
+            ['green_pepper.n.01'],
+            ['ladder_truck.n.01']
+        ])
 
-    training_sets['three subordinate examples'].extend([
-        ['liver-spotted_dalmatian.n.01', 'liver-spotted_dalmatian.n.01',
-            'liver-spotted_dalmatian.n.01'],
-        ['green_pepper.n.01', 'green_pepper.n.01', 'green_pepper.n.01'],
-        ['ladder_truck.n.01', 'ladder_truck.n.01', 'ladder_truck.n.01']
-    ])
+        training_sets['three subordinate examples'].extend([
+            ['liver-spotted_dalmatian.n.01', 'liver-spotted_dalmatian.n.01',
+                'liver-spotted_dalmatian.n.01'],
+            ['green_pepper.n.01', 'green_pepper.n.01', 'green_pepper.n.01'],
+            ['ladder_truck.n.01', 'ladder_truck.n.01', 'ladder_truck.n.01']
+        ])
 
-    training_sets['three basic-level examples'].extend([
-        ['liver-spotted_dalmatian.n.01', 'shih-tzu.n.01', 'beagle.n.01'],
-        ['green_pepper.n.01', 'cayenne.n.03', 'bell_pepper.n.02'],
-        ['ladder_truck.n.01', 'garbage_truck.n.01', 'tandem_trailer.n.01']
-    ])
+        training_sets['three basic-level examples'].extend([
+            ['liver-spotted_dalmatian.n.01', 'shih-tzu.n.01', 'beagle.n.01'],
+            ['green_pepper.n.01', 'cayenne.n.03', 'bell_pepper.n.02'],
+            ['ladder_truck.n.01', 'garbage_truck.n.01', 'tandem_trailer.n.01']
+        ])
 
-    training_sets['three superordinate examples'].extend([
-        ['liver-spotted_dalmatian.n.01', 'hippopotamus.n.01', 'toucanet.n.01'],
-        ['green_pepper.n.01', 'uruguay_potato.n.02', 'gherkin.n.02'],
-        ['ladder_truck.n.01', 'trail_bike.n.01', 'subcompact.n.01']
-    ])
+        training_sets['three superordinate examples'].extend([
+            ['liver-spotted_dalmatian.n.01', 'hippopotamus.n.01', 'toucanet.n.01'],
+            ['green_pepper.n.01', 'uruguay_potato.n.02', 'gherkin.n.02'],
+            ['ladder_truck.n.01', 'trail_bike.n.01', 'subcompact.n.01']
+        ])
 
-    test_sets = {}
-    test_sets['subordinate matches'] = []
-    test_sets['basic-level matches'] = []
-    test_sets['superordinate matches'] = []
+        test_sets = {}
+        test_sets['subordinate matches'] = []
+        test_sets['basic-level matches'] = []
+        test_sets['superordinate matches'] = []
 
-    test_sets['subordinate matches'].extend([
-        ['liver-spotted_dalmatian.n.01'],
-        ['green_pepper.n.01'],
-        ['ladder_truck.n.01']
-    ])
+        test_sets['subordinate matches'].extend([
+            ['liver-spotted_dalmatian.n.01'],
+            ['green_pepper.n.01'],
+            ['ladder_truck.n.01']
+        ])
 
-    test_sets['basic-level matches'].extend([
-        ['king_charles_spaniel.n.01', 'pembroke.n.01'],
-        ['tabasco.n.03', 'pimento.n.02'],
-        ['dump_truck.n.01', 'transporter.n.01']
-    ])
+        test_sets['basic-level matches'].extend([
+            ['king_charles_spaniel.n.01', 'pembroke.n.01'],
+            ['tabasco.n.03', 'pimento.n.02'],
+            ['dump_truck.n.01', 'transporter.n.01']
+        ])
 
-    test_sets['superordinate matches'].extend([
-        ['tabby.n.01', 'grizzly.n.01', 'california_sea_lion.n.01',
-            'farm_horse.n.01'],
-        ['carrot.n.03', 'crisphead_lettuce.n.01', 'shallot.n.03',
-            'pumpkin.n.02'],
-        ['sports_car.n.01', 'berlin.n.03', 'hearse.n.01', 'gypsy_cab.n.01']
-    ])
+        test_sets['superordinate matches'].extend([
+            ['tabby.n.01', 'grizzly.n.01', 'california_sea_lion.n.01',
+                'farm_horse.n.01'],
+            ['carrot.n.03', 'crisphead_lettuce.n.01', 'shallot.n.03',
+                'pumpkin.n.02'],
+            ['sports_car.n.01', 'berlin.n.03', 'hearse.n.01', 'gypsy_cab.n.01']
+        ])
+
+    elif type == 2:  # clothing, containers and seats
+        training_sets['one example'].extend([
+            ['dress_shirt.n.01'],  # clothing
+            ['cigar_box.n.01'],  # containers
+            ['ladder-back.n.01']  # seats
+        ])
+
+        training_sets['three subordinate examples'].extend([
+            ['dress_shirt.n.01']*3,
+            ['cigar_box.n.01']*3,
+            ['ladder-back.n.01']*3
+        ])
+
+        training_sets['three basic-level examples'].extend([
+            ['dress_shirt.n.01', 'polo_shirt.n.01', 'dashiki.n.01'],
+            ['cigar_box.n.01', 'mailbox.n.01', 'shoebox.n.02'],
+            ['ladder-back.n.01', 'lawn_chair.n.01', "captain's_chair.n.01"]
+        ])
+
+        training_sets['three superordinate examples'].extend([
+            ['dress_shirt.n.01', 'sable_coat.n.01', 'chino.n.01'],
+            ['cigar_box.n.01', 'beer_glass.n.01', 'garbage.n.03'],
+            ['ladder-back.n.01', 'park_bench.n.01', 'daybed.n.01']
+        ])
+
+        test_sets = {}
+        test_sets['subordinate matches'] = []
+        test_sets['basic-level matches'] = []
+        test_sets['superordinate matches'] = []
+
+        test_sets['subordinate matches'].extend([
+            ['dress_shirt.n.01'],
+            ['cigar_box.n.01'],
+            ['ladder-back.n.01']
+        ])
+
+        test_sets['basic-level matches'].extend([
+            ['tank_top.n.01', 'kurta.n.01'],
+            ['matchbox.n.01', 'cereal_box.n.01'],
+            ['swivel_chair.n.01', 'boston_rocker.n.01']
+        ])
+
+        test_sets['superordinate matches'].extend([
+            ['pajama.n.01', 'full_skirt.n.01', 'oilskin.n.01', 'pea_jacket.n.01'],
+            ['planter.n.03', 'ashtray.n.01', 'goblet.n.01', 'shot_glass.n.01'],
+            ['settee.n.02', 'pew.n.01', 'settle.n.01', 'love_seat.n.01']
+        ])
+
+
+    else:
+        raise NotImplementedError
 
     # convert to scene representation
     for cond in training_sets:
@@ -488,7 +656,8 @@ def generate_articulated_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feat
     return training_sets, test_sets
 
 def exceeds_frequency_threshold(gram, uni_freq, bi_freq):
-    with open('all_ngrams.pkl') as f:
+    #with open('all_ngrams.pkl') as f:
+    with open('google_ngrams_freq.pkl') as f:
         a = pickle.load(f)
 
     if a[gram] == 0:

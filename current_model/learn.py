@@ -22,6 +22,7 @@ class Learner:
     def __init__(self,
         gamma_sup, gamma_basic, gamma_sub, gamma_instance,
         k_sup, k_basic, k_sub, k_instance,
+        p_sup, p_basic, p_sub, p_instance,
                  modified_gamma=True, flat_hierarchy=False):
         """
 
@@ -34,6 +35,10 @@ class Learner:
         self._k_basic = k_basic
         self._k_sub = k_sub
         self._k_instance = k_instance
+        self._p_sup = p_sup
+        self._p_basic = p_basic
+        self._p_sub = p_sub
+        self._p_instance = p_instance
         self._modified_gamma = modified_gamma
         self._flat_hierarchy = flat_hierarchy
 
@@ -46,6 +51,10 @@ class Learner:
                 self._k_basic,
                 self._k_sub,
                 self._k_instance,
+                self._p_sup,
+                self._p_basic,
+                self._p_sub,
+                self._p_instance,
             self._modified_gamma, self._flat_hierarchy)
 
     def gamma(self, word, feature):

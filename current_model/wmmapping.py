@@ -1,6 +1,5 @@
 import copy
-import math
-import pprint
+import re
 
 """
 wmmapping.py
@@ -169,6 +168,7 @@ class Meaning:
     def __init__(self,
         gamma_sup, gamma_basic, gamma_sub, gamma_instance,
         k_sup, k_basic, k_sub, k_instance,
+        p_sup, p_basic, p_sub, p_instance,
         modified_gamma=True, flat_hierarchy=False, word=None):
         """
         TODO
@@ -182,6 +182,10 @@ class Meaning:
         self._k_basic = k_basic
         self._k_sub = k_sub
         self._k_instance = k_instance
+        self._p_sup = p_sup
+        self._p_basic = p_basic
+        self._p_sub = p_sub
+        self._p_instance = p_instance
         self._modified_gamma = modified_gamma
         self._flat_hierarchy = flat_hierarchy
 
@@ -278,20 +282,34 @@ class Meaning:
             count = max(count, 1)
 
             # find which gamma to use
-            if feature.startswith('fsup'):
-                gamma = self._gamma_sup
-            elif feature.startswith('fbas'):
-                gamma = self._gamma_basic
-            elif feature.startswith('fsub'):
-                gamma = self._gamma_sub
-            elif feature.startswith('finstance'):
+            if feature.startswith("UNIQ"):
+                print("using instance gamma for", feature)
                 gamma = self._gamma_instance
+                p = self._p_instance
+            elif int(re.match('.*?([0-9]+)$', feature).group(1)) <= 10:
+                gamma = self._gamma_sub
+                print("using sub gamma for", feature)
+                p = self._p_sub
+            elif int(re.match('.*?([0-9]+)$', feature).group(1)) <= 20:
+                gamma = self._gamma_basic
+                print("using basic gamma for", feature)
+                p = self._p_basic
+            elif int(re.match('.*?([0-9]+)$', feature).group(1)) <= 50:
+                print("using sup gamma for ", feature)
+                gamma = self._gamma_sup
+                p = self._p_sup
             else:
-                print(feature)
-                raw_input()
+                #print(int(re.match('.*?([0-9]+)$', feature).group(1)))
+                #raw_input()
                 raise NotImplementedError
 
-            return gamma * (count**2)
+                # TODO: hack
+                #gamma = self._gamma_sup
+
+            print("using p=", p)
+            print("so gamma=", gamma*(count**p))
+
+            return gamma * (count**p)
         else:
             raise NotImplementedError
 
@@ -319,7 +337,10 @@ class Meaning:
         elif feature.startswith('finstance'):
             k = self._k_instance
         else:
-            raise NotImplementedError
+            #raise NotImplementedError
+
+            # TODO: hack
+            k = self._k_sup
 
         denom += k * self.gamma(feature)
         #print('add ' + str(self._k) + ' * ' +  str(self.gamma(feature)))
@@ -375,6 +396,7 @@ class Lexicon:
     def __init__(self, words,
         gamma_sup, gamma_basic, gamma_sub, gamma_instance,
         k_sup, k_basic, k_sub, k_instance,
+        p_sup, p_basic, p_sub, p_instance,
         modified_gamma, flat_hierarchy):
         """
         TODO
@@ -388,6 +410,10 @@ class Lexicon:
         self._k_basic = k_basic
         self._k_sub = k_sub
         self._k_instance = k_instance
+        self._p_sup = p_sup
+        self._p_basic = p_basic
+        self._p_sub = p_sub
+        self._p_instance = p_instance
         self._modified_gamma = modified_gamma
         self._flat_hierarchy = flat_hierarchy
 
@@ -404,6 +430,10 @@ class Lexicon:
                 self._k_basic,
                 self._k_sub,
                 self._k_instance,
+                self._p_sup,
+                self._p_basic,
+                self._p_sub,
+                self._p_instance,
                 self._modified_gamma, self._flat_hierarchy, word=word)
 
     def add_features_to_hierarchy(self, word, features):
@@ -424,6 +454,10 @@ class Lexicon:
                 self._k_basic,
                 self._k_sub,
                 self._k_instance,
+                self._p_sup,
+                self._p_basic,
+                self._p_sub,
+                self._p_instance,
                 self._modified_gamma, self._flat_hierarchy, word=word)
         self._word_meanings[word].add_features_to_hierarchy(features)
 
@@ -442,6 +476,10 @@ class Lexicon:
                 self._k_basic,
                 self._k_sub,
                 self._k_instance,
+                self._p_sup,
+                self._p_basic,
+                self._p_sub,
+                self._p_instance,
             self._modified_gamma, self._flat_hierarchy, word=word)
         self._word_meanings[word].gamma(feature)
 
@@ -459,6 +497,10 @@ class Lexicon:
                 self._k_basic,
                 self._k_sub,
                 self._k_instance,
+                self._p_sup,
+                self._p_basic,
+                self._p_sub,
+                self._p_instance,
         self._modified_gamma, self._flat_hierarchy, word=word)
 
     def prob(self, word, feature, p=False):
@@ -473,6 +515,10 @@ class Lexicon:
                 self._k_basic,
                 self._k_sub,
                 self._k_instance,
+                self._p_sup,
+                self._p_basic,
+                self._p_sub,
+                self._p_instance,
                 self._modified_gamma, self._flat_hierarchy, word=word)
         return self._word_meanings[word].prob(feature, p=p)
 
@@ -502,6 +548,10 @@ class Lexicon:
                 self._k_basic,
                 self._k_sub,
                 self._k_instance,
+                self._p_sup,
+                self._p_basic,
+                self._p_sub,
+                self._p_instance,
             self._modified_gamma, self._flat_hierarchy, word=word)
         self._word_meanings[word].update_association(feature, alignment)
 
