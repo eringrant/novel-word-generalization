@@ -61,6 +61,8 @@ class GeneralisationExperiment(experiment.Experiment):
                         params['num-instance-levels'],
                         params['num-features']
                     )
+        elif params['hierarchy'] == 'xt-hierarchy':
+            training_sets, test_sets = generate_xt_hierarchy_training_and_test_sets(uni_freq, bi_freq, params['fix-leaf-feature'])
         else:
             raise NotImplementedError
 
@@ -640,6 +642,106 @@ def generate_articulated_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feat
                         l.append(f)
                     elif exceeds_frequency_threshold(f.split('.')[0].replace('_', ' '), uni_freq, bi_freq):
                         l.append(f)
+                rep.append(
+                    experimental_materials.UtteranceScenePair(
+                        utterance='fep',
+                        scene=l,
+                        probabilistic=False
+                    )
+                )
+            reps.append(rep)
+        test_sets[cond] = reps
+
+    with open('sets.txt', 'w') as f:
+        f.write(pprint.pformat(training_sets))
+        f.write(pprint.pformat(test_sets))
+    return training_sets, test_sets
+
+def generate_xt_hierarchy_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feature):
+    """
+
+    """
+    # access the feature mappings
+    with open('feature_map.pkl', 'rb') as f:
+        feature_map = pickle.load(f)
+
+    # organise the sets
+    training_sets = {}
+    training_sets['one example'] = []
+    training_sets['three subordinate examples'] = []
+    training_sets['three basic-level examples'] = []
+    training_sets['three superordinate examples'] = []
+
+    training_sets['one example'].extend([
+        ['16'],
+        ['31'],
+        ['1'],
+    ])
+
+    training_sets['three subordinate examples'].extend([
+        ['16', '17', '18'],
+        ['31', '32', '33'],
+        ['1', '2', '3'],
+    ])
+
+    training_sets['three basic-level examples'].extend([
+        ['16', '21', '22'],
+        ['31', '36', '37'],
+        ['1', '6', '7'],
+    ])
+
+    training_sets['three superordinate examples'].extend([
+        ['16', '25', '26'],
+        ['31', '40', '41'],
+        ['1', '10', '11'],
+    ])
+
+    test_sets = {}
+    test_sets['subordinate matches'] = []
+    test_sets['basic-level matches'] = []
+    test_sets['superordinate matches'] = []
+
+    test_sets['subordinate matches'].extend([
+        ['19', '20'],
+        ['34', '35'],
+        ['4', '5'],
+    ])
+
+    test_sets['basic-level matches'].extend([
+        ['23', '24'],
+        ['38', '39'],
+        ['8', '9'],
+    ])
+
+    test_sets['superordinate matches'].extend([
+        ['27', '28', '29', '30'],
+        ['42', '43', '44', '45'],
+        ['12', '13', '14', '15'],
+    ])
+
+    # convert to scene representation
+    for cond in training_sets:
+        reps = []
+        for i in range(len(training_sets[cond])):
+            rep = []
+            for item in training_sets[cond][i]:
+                l = feature_map[item][:]
+                rep.append(
+                    experimental_materials.UtteranceScenePair(
+                        utterance='fep',
+                        scene=l,
+                        probabilistic=False
+                    )
+                )
+            reps.append(rep)
+        training_sets[cond] = reps
+
+    for cond in test_sets:
+        reps = []
+        for i in range(len(test_sets[cond])):
+            rep = []
+            for item in test_sets[cond][i]:
+                l = feature_map[item][:]
                 rep.append(
                     experimental_materials.UtteranceScenePair(
                         utterance='fep',
