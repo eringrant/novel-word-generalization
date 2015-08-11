@@ -169,6 +169,7 @@ class Meaning:
         gamma_sup, gamma_basic, gamma_sub, gamma_instance,
         k_sup, k_basic, k_sub, k_instance,
         p_sup, p_basic, p_sub, p_instance,
+                 shift,
         modified_gamma=True, flat_hierarchy=False, word=None):
         """
         TODO
@@ -186,6 +187,7 @@ class Meaning:
         self._p_basic = p_basic
         self._p_sub = p_sub
         self._p_instance = p_instance
+        self._shift = shift
         self._modified_gamma = modified_gamma
         self._flat_hierarchy = flat_hierarchy
 
@@ -281,33 +283,96 @@ class Meaning:
                 count += len([f for f in fg._members if f.node_association() > 0])
             count = max(count, 1)
 
-            # find which gamma to use
+            vegetable_features = [
+                'EE',
+                'BB',
+                'Y',
+                'X',
+                'S',
+                'W',
+                'I',
+                'J',
+                'H',
+                'F',
+                'B',
+                'C',
+            ]
+
+            vehicle_features = [
+                'HH',
+                'FF',
+                'CC',
+                'U',
+                'O',
+                'V',
+                'T',
+                'Q',
+                'N',
+                'L',
+                'G',
+                'E',
+            ]
+
+            animal_features = [
+                'JJ',
+                'II',
+                'GG',
+                'DD',
+                'AA',
+                'Z',
+                'R',
+                'P',
+                'K',
+                'M',
+                'A',
+                'D',
+            ]
+
             if feature.startswith("UNIQ"):
-                print("using instance gamma for", feature)
                 gamma = self._gamma_instance
                 p = self._p_instance
-            elif int(re.match('.*?([0-9]+)$', feature).group(1)) <= 10:
-                gamma = self._gamma_sub
-                print("using sub gamma for", feature)
-                p = self._p_sub
-            elif int(re.match('.*?([0-9]+)$', feature).group(1)) <= 20:
-                gamma = self._gamma_basic
-                print("using basic gamma for", feature)
-                p = self._p_basic
-            elif int(re.match('.*?([0-9]+)$', feature).group(1)) <= 50:
-                print("using sup gamma for ", feature)
-                gamma = self._gamma_sup
-                p = self._p_sup
+
+            elif re.match('^([A-Z]+)', feature).group(0) in vegetable_features:
+                if int(re.match('.*?([0-9]+)$', feature).group(1)) in range(27, 35+1):
+                    gamma = self._gamma_sub
+                    p = self._p_sub
+                elif int(re.match('.*?([0-9]+)$', feature).group(1)) in range(21, 26+1):
+                    gamma = self._gamma_basic
+                    p = self._p_basic
+                elif int(re.match('.*?([0-9]+)$', feature).group(1)) in range(1, 20+1):
+                    gamma = self._gamma_sup
+                    p = self._p_sup
+                else:
+                    raise NotImplementedError
+
+            elif re.match('^([A-Z]+)', feature).group(0) in animal_features:
+                if int(re.match('.*?([0-9]+)$', feature).group(1)) in range(36, 40+1):
+                    gamma = self._gamma_sub
+                    p = self._p_sub
+                elif int(re.match('.*?([0-9]+)$', feature).group(1)) in range(21, 35+1):
+                    gamma = self._gamma_basic
+                    p = self._p_basic
+                elif int(re.match('.*?([0-9]+)$', feature).group(1)) in range(1, 20+1):
+                    gamma = self._gamma_sup
+                    p = self._p_sup
+                else:
+                    raise NotImplementedError
+
+            elif re.match('^([A-Z]+)', feature).group(0) in vehicle_features:
+                if int(re.match('.*?([0-9]+)$', feature).group(1)) in range(26, 35+1):
+                    gamma = self._gamma_sub
+                    p = self._p_sub
+                elif int(re.match('.*?([0-9]+)$', feature).group(1)) in range(12, 25+1):
+                    gamma = self._gamma_basic
+                    p = self._p_basic
+                elif int(re.match('.*?([0-9]+)$', feature).group(1)) in range(1, 11+1):
+                    gamma = self._gamma_sup
+                    p = self._p_sup
+                else:
+                    raise NotImplementedError
+
             else:
-                #print(int(re.match('.*?([0-9]+)$', feature).group(1)))
-                #raw_input()
                 raise NotImplementedError
-
-                # TODO: hack
-                #gamma = self._gamma_sup
-
-            print("using p=", p)
-            print("so gamma=", gamma*(count**p))
 
             return gamma * (count**p)
         else:
@@ -397,6 +462,7 @@ class Lexicon:
         gamma_sup, gamma_basic, gamma_sub, gamma_instance,
         k_sup, k_basic, k_sub, k_instance,
         p_sup, p_basic, p_sub, p_instance,
+                 shift,
         modified_gamma, flat_hierarchy):
         """
         TODO
@@ -414,6 +480,7 @@ class Lexicon:
         self._p_basic = p_basic
         self._p_sub = p_sub
         self._p_instance = p_instance
+        self._shift = shift
         self._modified_gamma = modified_gamma
         self._flat_hierarchy = flat_hierarchy
 
@@ -434,6 +501,7 @@ class Lexicon:
                 self._p_basic,
                 self._p_sub,
                 self._p_instance,
+                self._shift,
                 self._modified_gamma, self._flat_hierarchy, word=word)
 
     def add_features_to_hierarchy(self, word, features):
@@ -458,6 +526,7 @@ class Lexicon:
                 self._p_basic,
                 self._p_sub,
                 self._p_instance,
+                self._shift,
                 self._modified_gamma, self._flat_hierarchy, word=word)
         self._word_meanings[word].add_features_to_hierarchy(features)
 
@@ -480,6 +549,7 @@ class Lexicon:
                 self._p_basic,
                 self._p_sub,
                 self._p_instance,
+                self._shift,
             self._modified_gamma, self._flat_hierarchy, word=word)
         self._word_meanings[word].gamma(feature)
 
@@ -501,6 +571,7 @@ class Lexicon:
                 self._p_basic,
                 self._p_sub,
                 self._p_instance,
+                self._shift,
         self._modified_gamma, self._flat_hierarchy, word=word)
 
     def prob(self, word, feature, p=False):
@@ -519,6 +590,7 @@ class Lexicon:
                 self._p_basic,
                 self._p_sub,
                 self._p_instance,
+                self._shift,
                 self._modified_gamma, self._flat_hierarchy, word=word)
         return self._word_meanings[word].prob(feature, p=p)
 
@@ -552,6 +624,7 @@ class Lexicon:
                 self._p_basic,
                 self._p_sub,
                 self._p_instance,
+                self._shift,
             self._modified_gamma, self._flat_hierarchy, word=word)
         self._word_meanings[word].update_association(feature, alignment)
 

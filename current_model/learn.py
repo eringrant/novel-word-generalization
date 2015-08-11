@@ -23,6 +23,7 @@ class Learner:
         gamma_sup, gamma_basic, gamma_sub, gamma_instance,
         k_sup, k_basic, k_sub, k_instance,
         p_sup, p_basic, p_sub, p_instance,
+                 shift,
                  modified_gamma=True, flat_hierarchy=False):
         """
 
@@ -39,6 +40,7 @@ class Learner:
         self._p_basic = p_basic
         self._p_sub = p_sub
         self._p_instance = p_instance
+        self._shift = shift
         self._modified_gamma = modified_gamma
         self._flat_hierarchy = flat_hierarchy
 
@@ -55,6 +57,7 @@ class Learner:
                 self._p_basic,
                 self._p_sub,
                 self._p_instance,
+                self._shift,
             self._modified_gamma, self._flat_hierarchy)
 
     def gamma(self, word, feature):

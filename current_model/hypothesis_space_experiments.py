@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-# python2 articulated_hierarchy_experiments.py -o test_results.csv -c articulated_hierarchy_experiments.cfg -n 1
+# Use the following command to run the code (with one core):
+# python articulated_hierarchy_experiments.py -c exp.cfg -n 1
 
 from __future__ import print_function, division
 
@@ -14,7 +15,6 @@ import pprint
 import pydot
 import re
 
-
 import learn
 
 import experiment
@@ -27,18 +27,23 @@ class GeneralisationExperiment(experiment.Experiment):
 
     def setup(self, params, rep):
         """ Runs in each child process. """
+
         gamma_sup = params['gamma-sup']
         gamma_basic = params['gamma-basic']
         gamma_sub = params['gamma-sub']
         gamma_instance = params['gamma-instance']
+
         k_sup = params['k-sup']
         k_basic = params['k-basic']
         k_sub = params['k-sub']
         k_instance = params['k-instance']
+
         p_sup = params['p-sup']
         p_basic = params['p-basic']
         p_sub = params['p-sub']
         p_instance = params['p-instance']
+
+        shift = params['shift']
 
         uni_freq = params['unigram-frequency']
         bi_freq = params['bigram-frequency']
@@ -61,11 +66,10 @@ class GeneralisationExperiment(experiment.Experiment):
                         params['num-instance-levels'],
                         params['num-features']
                     )
-        elif params['hierarchy'] == 'xt-hierarchy':
-            training_sets, test_sets = generate_xt_hierarchy_training_and_test_sets(uni_freq, bi_freq, params['fix-leaf-feature'])
         else:
             raise NotImplementedError
 
+#       # Feature hierarchy visualization
 #        visualise_training_and_test_sets(training_sets, test_sets,
 #            hierarchy_save_directory, uni_freq, bi_freq, params['name'],
 #            params['hierarchy'])
@@ -95,12 +99,15 @@ class GeneralisationExperiment(experiment.Experiment):
                 for cond in test_sets:
 
                     learner = learn.Learner(
-                    gamma_sup, gamma_basic, gamma_sub, gamma_instance,
-                    k_sup, k_basic, k_sub, k_instance,
-                    p_sup, p_basic, p_sub, p_instance,
-                    modified_gamma=params['modified-gamma'], flat_hierarchy=params['flat-hierarchy'])
+                        gamma_sup, gamma_basic, gamma_sub, gamma_instance,
+                        k_sup, k_basic, k_sub, k_instance,
+                        p_sup, p_basic, p_sub, p_instance,
+                        shift,
+                        modified_gamma=params['modified-gamma'],
+                        flat_hierarchy=params['flat-hierarchy']
+                    )
 
-                    for i,trial in enumerate(training_set):
+                    for i, trial in enumerate(training_set):
 
                         learner.process_pair(trial.utterance(), trial.scene(), './')
 
@@ -118,36 +125,39 @@ class GeneralisationExperiment(experiment.Experiment):
 
                         if params['gen-prob'] == 'cosine':
 
-                            word = ['test']
+                            # NOT CURRENTLY WORKING
+                            raise NotImplementedError
 
-                            # represent the test scene with a Meaning
-                            learner.process_pair(word, scene, './')
+                            #word = ['test']
 
-                            meaning1 = learner._learned_lexicon.meaning('fep')
-                            meaning2 = learner._learned_lexicon.meaning(word[0])
+                            ## represent the test scene with a Meaning
+                            #learner.process_pair(word, scene, './')
 
-                            # hack: add all the training set features to avoid
-                            # hashing errors
-                            for c in conds:
-                                for ts in training_sets[c]:
-                                    for t in ts:
-                                        meaning2.add_features_to_hierarchy(t.scene())
+                            #meaning1 = learner._learned_lexicon.meaning('fep')
+                            #meaning2 = learner._learned_lexicon.meaning(word[0])
 
-                            # hack: similarly, add all the test set features to avoid
-                            # hashing errors
-                            for c in test_sets:
-                                for m in range(len(test_sets[cond][training_set_num])):
-                                    ts = test_sets[cond][training_set_num][m]
-                                    meaning1.add_features_to_hierarchy(ts.scene())
+                            ## hack: add all the training set features to avoid
+                            ## hashing errors
+                            #for c in conds:
+                            #    for ts in training_sets[c]:
+                            #        for t in ts:
+                            #            meaning2.add_features_to_hierarchy(t.scene())
 
-                            import pdb; pdb.set_trace()
+                            ## hack: similarly, add all the test set features to avoid
+                            ## hashing errors
+                            #for c in test_sets:
+                            #    for m in range(len(test_sets[cond][training_set_num])):
+                            #        ts = test_sets[cond][training_set_num][m]
+                            #        meaning1.add_features_to_hierarchy(ts.scene())
 
-                            gen_prob = learn.cosine(k, meaning1, meaning2)
+                            #gen_prob = learn.cosine(k, meaning1, meaning2)
 
                         elif params['gen-prob'] == 'product-fixed-levels':
                             gen_prob = learner.generalisation_prob(word, scene, fixed_levels=True)
+
                         elif params['gen-prob'] == 'product-variable-levels':
                             gen_prob = learner.generalisation_prob(word, scene, fixed_levels=False)
+
                         else:
                             raise NotImplementedError
 
@@ -168,8 +178,7 @@ class GeneralisationExperiment(experiment.Experiment):
 
                     print('--------------------------------------------')
 
-        #pprint.pprint(results)
-
+        # Create a title for the plots PNG image
         title = 'results'
         #title += ',' + replace_with_underscores(params['name'])
         #title += ',' + 'uni_' + str(uni_freq)
@@ -178,6 +187,7 @@ class GeneralisationExperiment(experiment.Experiment):
         title += ',' + 'pbasic_' + str(p_basic)
         title += ',' + 'psub_' + str(p_sub)
         title += ',' + 'pinstance_' + str(p_instance)
+        title += ',' + 'shift' + str(shift)
         title += ',' + 'gammasup_' + str(gamma_sup)
         title += ',' + 'gammabasic_' + str(gamma_basic)
         title += ',' + 'gammasub_' + str(gamma_sub)
@@ -193,6 +203,7 @@ class GeneralisationExperiment(experiment.Experiment):
         title += ',' + 'struct_' + str(params['hierarchy'])
         title = os.path.join(params['results-save-directory'], title)
 
+        # If the parameters are equal (i.e., these are the child parameters)
         #if gamma_sup == gamma_basic and gamma_basic == gamma_sub and gamma_sub == gamma_instance and \
         #k_sup == k_basic and k_basic == k_sub and k_sub == k_instance:
         if True:
@@ -203,13 +214,15 @@ class GeneralisationExperiment(experiment.Experiment):
                     labels=['vegetables', 'vehicles', 'animals'],
                     y_limit=(0.5, 1.0)
                 )
+
             else:
                 bar_chart(
                     results, savename=title + '.png', normalise_over_test_scene=True,
                     labels=['vegetables', 'vehicles', 'animals']
                 )
 
-            overwrite_results(results, title + '.dat')
+            # Write the results to a file used to generate PGF plots in LaTeX
+            #overwrite_results(results, title + '.dat')
 
 def generate_simple_training_and_test_sets(num_sup_levels, num_basic_levels, num_sub_levels,
         num_instance_levels, num_features):
@@ -657,106 +670,6 @@ def generate_articulated_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feat
         f.write(pprint.pformat(test_sets))
     return training_sets, test_sets
 
-def generate_xt_hierarchy_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feature):
-    """
-
-    """
-    # access the feature mappings
-    with open('feature_map.pkl', 'rb') as f:
-        feature_map = pickle.load(f)
-
-    # organise the sets
-    training_sets = {}
-    training_sets['one example'] = []
-    training_sets['three subordinate examples'] = []
-    training_sets['three basic-level examples'] = []
-    training_sets['three superordinate examples'] = []
-
-    training_sets['one example'].extend([
-        ['16'],
-        ['31'],
-        ['1'],
-    ])
-
-    training_sets['three subordinate examples'].extend([
-        ['16', '17', '18'],
-        ['31', '32', '33'],
-        ['1', '2', '3'],
-    ])
-
-    training_sets['three basic-level examples'].extend([
-        ['16', '21', '22'],
-        ['31', '36', '37'],
-        ['1', '6', '7'],
-    ])
-
-    training_sets['three superordinate examples'].extend([
-        ['16', '25', '26'],
-        ['31', '40', '41'],
-        ['1', '10', '11'],
-    ])
-
-    test_sets = {}
-    test_sets['subordinate matches'] = []
-    test_sets['basic-level matches'] = []
-    test_sets['superordinate matches'] = []
-
-    test_sets['subordinate matches'].extend([
-        ['19', '20'],
-        ['34', '35'],
-        ['4', '5'],
-    ])
-
-    test_sets['basic-level matches'].extend([
-        ['23', '24'],
-        ['38', '39'],
-        ['8', '9'],
-    ])
-
-    test_sets['superordinate matches'].extend([
-        ['27', '28', '29', '30'],
-        ['42', '43', '44', '45'],
-        ['12', '13', '14', '15'],
-    ])
-
-    # convert to scene representation
-    for cond in training_sets:
-        reps = []
-        for i in range(len(training_sets[cond])):
-            rep = []
-            for item in training_sets[cond][i]:
-                l = feature_map[item][:]
-                rep.append(
-                    experimental_materials.UtteranceScenePair(
-                        utterance='fep',
-                        scene=l,
-                        probabilistic=False
-                    )
-                )
-            reps.append(rep)
-        training_sets[cond] = reps
-
-    for cond in test_sets:
-        reps = []
-        for i in range(len(test_sets[cond])):
-            rep = []
-            for item in test_sets[cond][i]:
-                l = feature_map[item][:]
-                rep.append(
-                    experimental_materials.UtteranceScenePair(
-                        utterance='fep',
-                        scene=l,
-                        probabilistic=False
-                    )
-                )
-            reps.append(rep)
-        test_sets[cond] = reps
-
-    with open('sets.txt', 'w') as f:
-        f.write(pprint.pformat(training_sets))
-        f.write(pprint.pformat(test_sets))
-    return training_sets, test_sets
-
 def exceeds_frequency_threshold(gram, uni_freq, bi_freq):
     #with open('all_ngrams.pkl') as f:
     with open('google_ngrams_freq.pkl') as f:
@@ -836,12 +749,16 @@ def bar_chart(results, savename=None, annotation=None,
             l1 = list(l1)
             l2 = list(l2)
 
+        error0 = [np.std(results[cond]['subordinate matches']) for cond in conditions]
+        error1 = [np.std(results[cond]['basic-level matches']) for cond in conditions]
+        error2 = [np.std(results[cond]['superordinate matches']) for cond in conditions]
+
         width = 0.5
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        p0 = ax.bar(ind,l0,width,color='r')
-        p1 = ax.bar(ind+width,l1,width,color='g')
-        p2 = ax.bar(ind+2*width,l2,width,color='b')
+        p0 = ax.bar(ind,l0,width,color='r',yerr=error0)
+        p1 = ax.bar(ind+width,l1,width,color='g',yerr=error1)
+        p2 = ax.bar(ind+2*width,l2,width,color='b',yerr=error2)
 
         ax.set_ylabel("generalisation probability")
         ax.set_xlabel("condition")
@@ -976,8 +893,9 @@ def bar_chart(results, savename=None, annotation=None,
         plt.show()
     else:
         # add check for significant results
-        #if l0[0] < 0.69:
-        if True:
+        #if l1[0] > 0.1 and l1[3] / l0[3] > 0.5:
+        if l1[3] / l0[3] > 0.5:
+        #if True:
 
             plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
