@@ -51,15 +51,15 @@ class GeneralisationExperiment(experiment.Experiment):
         hierarchy_save_directory = params['hierarchy-save-directory']
 
         if params['hierarchy'] == 'articulated':
-            training_sets, test_sets =\
+            training_sets, test_sets, unseen_object =\
             generate_articulated_training_and_test_sets(uni_freq, bi_freq,
                 params['fix-leaf-feature'], type=params['leaf-node-type'])
         elif params['hierarchy'] == 'xt_hierarchy':
-            training_sets, test_sets =\
+            training_sets, test_sets, unseen_object =\
             generate_xt_hypothesis_space_training_and_test_sets(uni_freq, bi_freq,
                 params['fix-leaf-feature'], type=params['leaf-node-type'])
         elif params['hierarchy'] == 'simple':
-            training_sets, test_sets = generate_simple_training_and_test_sets(
+            training_sets, test_sets, unseen_object = generate_simple_training_and_test_sets(
                         params['num-sup-levels'],
                         params['num-basic-levels'],
                         params['num-sub-levels'],
@@ -73,7 +73,18 @@ class GeneralisationExperiment(experiment.Experiment):
 #        visualise_training_and_test_sets(training_sets, test_sets,
 #            hierarchy_save_directory, uni_freq, bi_freq, params['name'],
 #            params['hierarchy'])
-#
+
+        # get the prior probability of an object
+        learner = learn.Learner(
+            gamma_sup, gamma_basic, gamma_sub, gamma_instance,
+            k_sup, k_basic, k_sub, k_instance,
+            p_sup, p_basic, p_sub, p_instance,
+            shift,
+            modified_gamma=params['modified-gamma'],
+            flat_hierarchy=params['flat-hierarchy']
+        )
+        unseen_prob = learner.generalisation_prob('fep', unseen_object.scene(), fixed_levels=True)
+
         conds = ['one example',
                 'three subordinate examples',
                 'three basic-level examples',
@@ -153,13 +164,19 @@ class GeneralisationExperiment(experiment.Experiment):
                             #gen_prob = learn.cosine(k, meaning1, meaning2)
 
                         elif params['gen-prob'] == 'product-fixed-levels':
-                            gen_prob = learner.generalisation_prob(word, scene, fixed_levels=True)
+                            gen_prob = learner.generalisation_prob(
+                                word, scene,
+                                fixed_levels=True,
+                            )
 
                         elif params['gen-prob'] == 'product-variable-levels':
                             gen_prob = learner.generalisation_prob(word, scene, fixed_levels=False)
 
                         else:
                             raise NotImplementedError
+
+                        if params['subtract-prior']:
+                            gen_prob -= unseen_prob
 
                         print()
                         print("\tGeneralisation probability:", '\t', gen_prob)
@@ -178,29 +195,35 @@ class GeneralisationExperiment(experiment.Experiment):
 
                     print('--------------------------------------------')
 
+
+        print('--------------------------------------------')
+        print("Unseen probability for", unseen_object.scene(), ":",  unseen_prob)
+        print('--------------------------------------------')
+
         # Create a title for the plots PNG image
         title = 'results'
         #title += ',' + replace_with_underscores(params['name'])
         #title += ',' + 'uni_' + str(uni_freq)
         #title += ',' + 'bi_' + str(bi_freq)
-        title += ',' + 'psup_' + str(p_sup)
-        title += ',' + 'pbasic_' + str(p_basic)
-        title += ',' + 'psub_' + str(p_sub)
-        title += ',' + 'pinstance_' + str(p_instance)
-        title += ',' + 'shift' + str(shift)
+        #title += ',' + 'psup_' + str(p_sup)
+        #title += ',' + 'pbasic_' + str(p_basic)
+        #title += ',' + 'psub_' + str(p_sub)
+        #title += ',' + 'pinstance_' + str(p_instance)
+        #title += ',' + 'shift' + str(shift)
         title += ',' + 'gammasup_' + str(gamma_sup)
         title += ',' + 'gammabasic_' + str(gamma_basic)
         title += ',' + 'gammasub_' + str(gamma_sub)
         title += ',' + 'gammainstance_' + str(gamma_instance)
-        title += ',' + 'ksup_' + str(k_sup)
-        title += ',' + 'kbasic_' + str(k_basic)
-        title += ',' + 'ksub_' + str(k_sub)
-        title += ',' + 'kinstance_' + str(k_instance)
+        #title += ',' + 'ksup_' + str(k_sup)
+        #title += ',' + 'kbasic_' + str(k_basic)
+        #title += ',' + 'ksub_' + str(k_sub)
+        #title += ',' + 'kinstance_' + str(k_instance)
         #title += ',' + 'flf_' + str(params['fix-leaf-feature'])
         #title += ',' + 'mod-gamma_' + str(params['modified-gamma'])
         #title += ',' + 'flat-hier_' + str(params['flat-hierarchy'])
         #title += ',' + 'gen-prob_' + str(params['gen-prob'])
         title += ',' + 'struct_' + str(params['hierarchy'])
+        title += ',' + 'prior_' + str(params['subtract-prior'])
         title = os.path.join(params['results-save-directory'], title)
 
         # If the parameters are equal (i.e., these are the child parameters)
@@ -217,12 +240,13 @@ class GeneralisationExperiment(experiment.Experiment):
 
             else:
                 bar_chart(
-                    results, savename=title + '.png', normalise_over_test_scene=True,
+                    results, savename=title + '.png',
+                    normalise_over_test_scene=True,
                     labels=['vegetables', 'vehicles', 'animals']
                 )
 
             # Write the results to a file used to generate PGF plots in LaTeX
-            #overwrite_results(results, title + '.dat')
+            overwrite_results(results, title + '.dat')
 
 def generate_simple_training_and_test_sets(num_sup_levels, num_basic_levels, num_sub_levels,
         num_instance_levels, num_features):
@@ -402,7 +426,30 @@ def generate_simple_training_and_test_sets(num_sup_levels, num_basic_levels, num
         )
     ])
 
-    return training_sets, test_sets
+    unseen_sup_features = []
+    unseen_bas_features = []
+    unseen_sub_features = []
+    unseen_instance_features = []
+
+    for n in range(1, num_sup_levels+1):
+        unseen_sup_features += ['fsup' + str(n) + str(i) + '0' for i in range(1, num_features+1)]
+    for n in range(1, num_basic_levels+1):
+        unseen_bas_features += ['fbas' + str(n) + str(i) + '0' for i in range(1, num_features+1)]
+    for n in range(1, num_sub_levels+1):
+        unseen_sub_features += ['fsub' + str(n) + str(i) + '0' for i in range(1, num_features+1)]
+    for n in range(1, num_instance_levels+1):
+        unseen_instance_features += ['finstance' + str(n) + str(i) + '0' for i in range(1, num_features+1)]
+
+    unseen_features = unseen_sup_features + unseen_bas_features + unseen_sub_features + unseen_instance_features
+
+    unseen_object = experimental_materials.UtteranceScenePair(
+            details='unseen object',
+            utterance='fep',
+            scene=unseen_features,
+            probabilistic=False
+        )
+
+    return training_sets, test_sets, unseen_object
 
 def generate_xt_hypothesis_space_training_and_test_sets(uni_freq, bi_freq, fix_leaf_feature, type=1):
     """
@@ -714,6 +761,20 @@ def bar_chart(results, savename=None, annotation=None,
         l1 = [np.mean(results[cond]['basic-level matches']) for cond in conditions]
         l2 = [np.mean(results[cond]['superordinate matches']) for cond in conditions]
 
+        if subtract_null_hypothesis is not None:
+
+            l0 = np.array(l0)
+            l1 = np.array(l1)
+            l2 = np.array(l2)
+
+            l0 -= subtract_null_hypothesis
+            l1 -= subtract_null_hypothesis
+            l2 -= subtract_null_hypothesis
+
+            l0 = list(l0)
+            l1 = list(l1)
+            l2 = list(l2)
+
         if normalise_over_test_scene is True:
 
             l0 = np.array(l0)
@@ -730,20 +791,6 @@ def bar_chart(results, savename=None, annotation=None,
                 l2 /= denom
             except ZeroDivisionError:
                 pass
-
-            l0 = list(l0)
-            l1 = list(l1)
-            l2 = list(l2)
-
-        elif subtract_null_hypothesis is not None:
-
-            l0 = np.array(l0)
-            l1 = np.array(l1)
-            l2 = np.array(l2)
-
-            l0 -= subtract_null_hypothesis
-            l1 -= subtract_null_hypothesis
-            l2 -= subtract_null_hypothesis
 
             l0 = list(l0)
             l1 = list(l1)
@@ -784,6 +831,21 @@ def bar_chart(results, savename=None, annotation=None,
                 l1 = [np.mean(results[cond]['basic-level matches']) for cond in conditions]
                 l2 = [np.mean(results[cond]['superordinate matches']) for cond in conditions]
 
+
+                if subtract_null_hypothesis is not None:
+
+                    l0 = np.array(l0)
+                    l1 = np.array(l1)
+                    l2 = np.array(l2)
+
+                    l0 -= subtract_null_hypothesis
+                    l1 -= subtract_null_hypothesis
+                    l2 -= subtract_null_hypothesis
+
+                    l0 = list(l0)
+                    l1 = list(l1)
+                    l2 = list(l2)
+
                 if normalise_over_test_scene is True:
 
                     l0 = np.array(l0)
@@ -805,21 +867,6 @@ def bar_chart(results, savename=None, annotation=None,
                     l1 = list(l1)
                     l2 = list(l2)
 
-
-                elif subtract_null_hypothesis is not None:
-
-                    l0 = np.array(l0)
-                    l1 = np.array(l1)
-                    l2 = np.array(l2)
-
-                    l0 -= subtract_null_hypothesis
-                    l1 -= subtract_null_hypothesis
-                    l2 -= subtract_null_hypothesis
-
-                    l0 = list(l0)
-                    l1 = list(l1)
-                    l2 = list(l2)
-
                 p0 = ax.bar(ind,l0,width,color='r')
                 p1 = ax.bar(ind+width,l1,width,color='g')
                 p2 = ax.bar(ind+2*width,l2,width,color='b')
@@ -833,6 +880,21 @@ def bar_chart(results, savename=None, annotation=None,
                 l0 = [results[cond]['subordinate matches'][i] for cond in conditions]
                 l1 = [results[cond]['basic-level matches'][i] for cond in conditions]
                 l2 = [results[cond]['superordinate matches'][i] for cond in conditions]
+
+
+                if subtract_null_hypothesis is not None:
+
+                    l0 = np.array(l0)
+                    l1 = np.array(l1)
+                    l2 = np.array(l2)
+
+                    l0 -= subtract_null_hypothesis
+                    l1 -= subtract_null_hypothesis
+                    l2 -= subtract_null_hypothesis
+
+                    l0 = list(l0)
+                    l1 = list(l1)
+                    l2 = list(l2)
 
                 if normalise_over_test_scene is True:
 
@@ -855,10 +917,6 @@ def bar_chart(results, savename=None, annotation=None,
                     l1 = list(l1)
                     l2 = list(l2)
 
-                else:
-                    new_m = np.max(l0 + l1 + l2)
-                    if new_m > m:
-                        m = new_m
 
                 p0 = ax.bar(ind,l0,width,color='r')
                 p1 = ax.bar(ind+width,l1,width,color='g')
@@ -893,9 +951,8 @@ def bar_chart(results, savename=None, annotation=None,
         plt.show()
     else:
         # add check for significant results
-        #if l1[0] > 0.1 and l1[3] / l0[3] > 0.5:
-        if l1[3] / l0[3] > 0.5:
-        #if True:
+        #if l0[0] < 0.65 and l1[0] > 0.35 and l1[1] < 0.3 and l1[3] / l0[3] > 0.5:
+        if True:
 
             plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
 

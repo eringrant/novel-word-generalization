@@ -328,7 +328,21 @@ class Meaning:
                 'D',
             ]
 
-            if feature.startswith("UNIQ"):
+
+            if feature.startswith('fsup'):
+                gamma = self._gamma_sup
+                p = self._p_sup
+            elif feature.startswith('fbas'):
+                gamma = self._gamma_basic
+                p = self._p_basic
+            elif feature.startswith('fsub'):
+                gamma = self._gamma_sub
+                p = self._p_sub
+            elif feature.startswith('finstance'):
+                gamma = self._gamma_instance
+                p = self._p_instance
+
+            elif feature.startswith("UNIQ"):
                 gamma = self._gamma_instance
                 p = self._p_instance
 
