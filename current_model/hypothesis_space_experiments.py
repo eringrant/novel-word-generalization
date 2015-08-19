@@ -55,9 +55,10 @@ class GeneralisationExperiment(experiment.Experiment):
             generate_articulated_training_and_test_sets(uni_freq, bi_freq,
                 params['fix-leaf-feature'], type=params['leaf-node-type'])
         elif params['hierarchy'] == 'xt_hierarchy':
-            training_sets, test_sets, unseen_object =\
+            training_sets, test_sets =\
             generate_xt_hypothesis_space_training_and_test_sets(uni_freq, bi_freq,
                 params['fix-leaf-feature'], type=params['leaf-node-type'])
+            unseen_object = None
         elif params['hierarchy'] == 'simple':
             training_sets, test_sets, unseen_object = generate_simple_training_and_test_sets(
                         params['num-sup-levels'],
@@ -83,7 +84,9 @@ class GeneralisationExperiment(experiment.Experiment):
             modified_gamma=params['modified-gamma'],
             flat_hierarchy=params['flat-hierarchy']
         )
-        unseen_prob = learner.generalisation_prob('fep', unseen_object.scene(), fixed_levels=True)
+
+        if unseen_object is not None:
+            unseen_prob = learner.generalisation_prob('fep', unseen_object.scene(), fixed_levels=True)
 
         conds = ['one example',
                 'three subordinate examples',
@@ -195,10 +198,6 @@ class GeneralisationExperiment(experiment.Experiment):
 
                     print('--------------------------------------------')
 
-
-        print('--------------------------------------------')
-        print("Unseen probability for", unseen_object.scene(), ":",  unseen_prob)
-        print('--------------------------------------------')
 
         # Create a title for the plots PNG image
         title = 'results'
