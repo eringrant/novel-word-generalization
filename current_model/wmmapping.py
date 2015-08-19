@@ -347,39 +347,39 @@ class Meaning:
                 p = self._p_instance
 
             elif re.match('^([A-Z]+)', feature).group(0) in vegetable_features:
-                if int(re.match('.*?([0-9]+)$', feature).group(1)) in range(27, 35+1):
+                if int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(27, 35+1):
                     gamma = self._gamma_sub
                     p = self._p_sub
-                elif int(re.match('.*?([0-9]+)$', feature).group(1)) in range(21, 26+1):
+                elif int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(21, 26+1):
                     gamma = self._gamma_basic
                     p = self._p_basic
-                elif int(re.match('.*?([0-9]+)$', feature).group(1)) in range(1, 20+1):
+                elif int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(1, 20+1):
                     gamma = self._gamma_sup
                     p = self._p_sup
                 else:
                     raise NotImplementedError
 
             elif re.match('^([A-Z]+)', feature).group(0) in animal_features:
-                if int(re.match('.*?([0-9]+)$', feature).group(1)) in range(36, 40+1):
+                if int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(36, 40+1):
                     gamma = self._gamma_sub
                     p = self._p_sub
-                elif int(re.match('.*?([0-9]+)$', feature).group(1)) in range(21, 35+1):
+                elif int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(21, 35+1):
                     gamma = self._gamma_basic
                     p = self._p_basic
-                elif int(re.match('.*?([0-9]+)$', feature).group(1)) in range(1, 20+1):
+                elif int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(1, 20+1):
                     gamma = self._gamma_sup
                     p = self._p_sup
                 else:
                     raise NotImplementedError
 
             elif re.match('^([A-Z]+)', feature).group(0) in vehicle_features:
-                if int(re.match('.*?([0-9]+)$', feature).group(1)) in range(26, 35+1):
+                if int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(26, 35+1):
                     gamma = self._gamma_sub
                     p = self._p_sub
-                elif int(re.match('.*?([0-9]+)$', feature).group(1)) in range(12, 25+1):
+                elif int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(12, 25+1):
                     gamma = self._gamma_basic
                     p = self._p_basic
-                elif int(re.match('.*?([0-9]+)$', feature).group(1)) in range(1, 11+1):
+                elif int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(1, 11+1):
                     gamma = self._gamma_sup
                     p = self._p_sup
                 else:
