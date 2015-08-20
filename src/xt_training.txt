@@ -1,0 +1,14 @@
+# 1
+basic1-sub1 basic1 super1
+# 3 sub
+basic1-sub1 basic1 super1
+basic1-sub1 basic1 super1
+basic1-sub1 basic1 super1
+# 3 basic
+basic1-sub1 basic1 super1
+basic1-sub2 basic1 super1
+basic1-sub3 basic1 super1
+# 3 super 
+basic1-sub1 basic1 super1
+basic2-sub4 basic2 super1
+basic3-sub5 basic3 super1

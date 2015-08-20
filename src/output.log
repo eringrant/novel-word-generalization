@@ -1,0 +1,137 @@
+         5251102 function calls (5250831 primitive calls) in 3739.060 seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000 3739.060 3739.060 <string>:1(<module>)
+        1    0.000    0.000 3739.059 3739.059 create_ngram_pickle.py:135(main)
+        1    0.003    0.003 3739.057 3739.057 create_ngram_pickle.py:17(script)
+        1    0.000    0.000 3735.356 3735.356 pool.py:246(map)
+        1    0.000    0.000 3735.356 3735.356 pool.py:543(wait)
+        1    0.000    0.000 3735.356 3735.356 pool.py:551(get)
+        4    0.000    0.000 3735.356  933.839 threading.py:308(wait)
+        1    0.000    0.000    0.000    0.000 threading.py:372(notify)
+        3    0.000    0.000    0.000    0.000 threading.py:541(Event)
+        3    0.000    0.000    0.000    0.000 threading.py:560(__init__)
+        6    0.000    0.000    0.000    0.000 threading.py:569(isSet)
+       17    0.000    0.000    0.000    0.000 threading.py:58(__init__)
+        3    0.000    0.000    0.000    0.000 threading.py:602(wait)
+        3    0.000    0.000    0.000    0.000 threading.py:627(_newname)
+       14    0.000    0.000    0.000    0.000 threading.py:63(_note)
+        3    0.000    0.000    0.000    0.000 threading.py:656(__init__)
+        3    0.000    0.000    0.000    0.000 threading.py:709(_set_daemon)
+        3    0.000    0.000    0.000    0.000 threading.py:726(start)
+        1    0.000    0.000    0.000    0.000 urllib.py:1043(_is_unicode)
+        1    0.000    0.000    0.000    0.000 urllib.py:1210(unquote)
+        1    0.000    0.000    0.000    0.000 urllib.py:53(url2pathname)
+    88335    0.035    0.000    0.129    0.000 utf_8.py:15(decode)
+        1    0.000    0.000    0.000    0.000 utf_8.py:33(getregentry)
+        4    0.000    0.000    0.000    0.000 util.py:161(register_after_fork)
+        1    0.000    0.000    0.000    0.000 util.py:176(__init__)
+       52    0.000    0.000    0.000    0.000 util.py:72(debug)
+        4    0.000    0.000    0.000    0.000 weakref.py:262(__new__)
+        4    0.000    0.000    0.000    0.000 weakref.py:267(__init__)
+        1    0.000    0.000    0.000    0.000 weakref.py:282(__init__)
+        4    0.000    0.000    0.000    0.000 weakref.py:98(__setitem__)
+        1    0.000    0.000    3.308    3.308 wordnet.py:1006(__init__)
+        1    1.252    1.252    3.153    3.153 wordnet.py:1097(_load_lemma_pos_offset_map)
+  1440656    0.284    0.000    0.380    0.000 wordnet.py:1106(<lambda>)
+        1    0.008    0.008    0.090    0.090 wordnet.py:1141(_load_exception_map)
+      809    0.000    0.000    0.055    0.000 wordnet.py:116(hypernyms)
+       33    0.000    0.000    0.157    0.005 wordnet.py:1215(synset)
+      105    0.000    0.000    0.100    0.001 wordnet.py:1248(_data_file)
+      847    0.001    0.000    0.210    0.000 wordnet.py:1260(_synset_from_pos_and_offset)
+      105    0.006    0.000    0.011    0.000 wordnet.py:1273(_synset_from_pos_and_line)
+     5622    0.001    0.000    0.002    0.000 wordnet.py:1294(<lambda>)
+       42    0.000    0.000    0.000    0.000 wordnet.py:188(__lt__)
+      212    0.000    0.000    0.000    0.000 wordnet.py:245(__init__)
+      105    0.000    0.000    0.000    0.000 wordnet.py:364(__init__)
+      421    0.000    0.000    0.000    0.000 wordnet.py:389(name)
+      809    0.001    0.000    0.055    0.000 wordnet.py:966(_related)
+        2    0.000    0.000    0.000    0.000 {__import__}
+       10    0.000    0.000    0.000    0.000 {_codecs.lookup}
+    88335    0.094    0.000    0.094    0.000 {_codecs.utf_8_decode}
+        9    0.000    0.000    0.000    0.000 {_sre.compile}
+        5    0.000    0.000    0.000    0.000 {built-in method __new__ of type object at 0x91f8e0}
+        1    0.000    0.000    0.000    0.000 {divmod}
+        5    0.000    0.000    0.000    0.000 {getattr}
+       37    0.000    0.000    0.000    0.000 {hasattr}
+      415    0.000    0.000    0.000    0.000 {id}
+      243    0.000    0.000    0.000    0.000 {isinstance}
+   155393    0.204    0.000    0.204    0.000 {iter}
+675609/675594    0.052    0.000    0.052    0.000 {len}
+        1    0.012    0.012    0.012    0.012 {map}
+       10    0.000    0.000    0.000    0.000 {max}
+       23 3735.356  162.407 3735.356  162.407 {method 'acquire' of 'thread.lock' objects}
+     1194    0.000    0.000    0.000    0.000 {method 'add' of 'set' objects}
+        1    0.000    0.000    0.000    0.000 {method 'append' of 'collections.deque' objects}
+     1545    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 {method 'clear' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 {method 'copy' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+       74    0.000    0.000    0.000    0.000 {method 'endswith' of 'str' objects}
+    88332    0.028    0.000    0.028    0.000 {method 'endswith' of 'unicode' objects}
+       38    0.000    0.000    0.000    0.000 {method 'extend' of 'list' objects}
+       18    0.000    0.000    0.000    0.000 {method 'find' of 'str' objects}
+       96    0.000    0.000    0.000    0.000 {method 'flush' of 'file' objects}
+      827    0.000    0.000    0.000    0.000 {method 'get' of 'dict' objects}
+        2    0.000    0.000    0.000    0.000 {method 'group' of '_sre.SRE_Match' objects}
+      213    0.000    0.000    0.000    0.000 {method 'groups' of '_sre.SRE_Match' objects}
+      105    0.000    0.000    0.000    0.000 {method 'index' of 'list' objects}
+        3    0.000    0.000    0.000    0.000 {method 'index' of 'str' objects}
+       10    0.000    0.000    0.000    0.000 {method 'items' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 {method 'iteritems' of 'dict' objects}
+       56    0.000    0.000    0.001    0.000 {method 'join' of 'str' objects}
+      116    0.000    0.000    0.000    0.000 {method 'join' of 'unicode' objects}
+       33    0.000    0.000    0.000    0.000 {method 'lower' of 'str' objects}
+      327    0.000    0.000    0.000    0.000 {method 'lower' of 'unicode' objects}
+        5    0.000    0.000    0.000    0.000 {method 'lstrip' of 'str' objects}
+      224    0.000    0.000    0.000    0.000 {method 'match' of '_sre.SRE_Pattern' objects}
+       10    0.000    0.000    0.000    0.000 {method 'pop' of 'dict' objects}
+   161343    0.042    0.000    0.042    0.000 {method 'pop' of 'list' objects}
+    88345    0.358    0.000    0.358    0.000 {method 'read' of 'file' objects}
+       10    0.000    0.000    0.000    0.000 {method 'release' of 'thread.lock' objects}
+        7    0.000    0.000    0.000    0.000 {method 'remove' of 'list' objects}
+       64    0.000    0.000    0.000    0.000 {method 'replace' of 'str' objects}
+      422    0.000    0.000    0.000    0.000 {method 'replace' of 'unicode' objects}
+        6    0.000    0.000    0.000    0.000 {method 'reverse' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 {method 'rfind' of 'str' objects}
+       33    0.000    0.000    0.000    0.000 {method 'rsplit' of 'str' objects}
+       33    0.000    0.000    0.000    0.000 {method 'rstrip' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {method 'search' of '_sre.SRE_Pattern' objects}
+      125    0.095    0.001    0.095    0.001 {method 'seek' of 'file' objects}
+       40    0.000    0.000    0.000    0.000 {method 'setdefault' of 'dict' objects}
+      810    0.000    0.000    0.000    0.000 {method 'sort' of 'list' objects}
+       11    0.000    0.000    0.000    0.000 {method 'split' of 'str' objects}
+   162031    0.089    0.000    0.089    0.000 {method 'split' of 'unicode' objects}
+    89342    0.067    0.000    0.067    0.000 {method 'splitlines' of 'unicode' objects}
+       85    0.000    0.000    0.000    0.000 {method 'startswith' of 'str' objects}
+   155589    0.046    0.000    0.046    0.000 {method 'startswith' of 'unicode' objects}
+      258    0.000    0.000    0.000    0.000 {method 'strip' of 'unicode' objects}
+       11    0.000    0.000    0.000    0.000 {method 'sub' of '_sre.SRE_Pattern' objects}
+    88440    0.028    0.000    0.028    0.000 {method 'tell' of 'file' objects}
+       10    0.000    0.000    0.000    0.000 {method 'translate' of 'str' objects}
+       21    0.000    0.000    0.000    0.000 {method 'update' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 {method 'values' of 'dict' objects}
+      411    0.000    0.000    0.000    0.000 {method 'write' of 'file' objects}
+       71    0.000    0.000    0.000    0.000 {min}
+  1446278    0.097    0.000    0.097    0.000 {next}
+       12    0.020    0.002    0.020    0.002 {open}
+       16    0.000    0.000    0.000    0.000 {ord}
+       48    0.076    0.002    0.076    0.002 {posix.fork}
+       97    0.000    0.000    0.000    0.000 {posix.getpid}
+        2    0.000    0.000    0.000    0.000 {posix.pipe}
+       38    0.077    0.002    0.077    0.002 {posix.stat}
+        3    0.000    0.000    0.000    0.000 {posix.sysconf}
+     1128    0.001    0.000    0.001    0.000 {posix.waitpid}
+       10    0.000    0.000    0.000    0.000 {range}
+      307    0.000    0.000    0.000    0.000 {repr}
+        7    0.000    0.000    0.000    0.000 {setattr}
+        1    0.000    0.000    0.000    0.000 {sys.exit}
+       13    0.000    0.000    0.000    0.000 {thread.allocate_lock}
+       10    0.000    0.000    0.000    0.000 {thread.get_ident}
+        3    0.000    0.000    0.000    0.000 {thread.start_new_thread}
+        1    0.000    0.000    0.000    0.000 {vars}
+        1    0.000    0.000    0.000    0.000 {zip}
+
+
