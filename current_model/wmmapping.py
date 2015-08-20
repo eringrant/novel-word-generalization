@@ -1,5 +1,5 @@
-import math
-import pprint
+import copy
+import re
 
 """
 wmmapping.py
@@ -8,119 +8,458 @@ Data-structures for mapping the words to meanings and word-feature alignments.
 
 """
 
-class Meaning:
+class Feature:
     """
-    A Meaning object contains features and their probabilities of being part
-    of the meaning of a specific word. A Meaning object is associated with a
-    specific word through a Lexicon.
+
+    A feature event, conditional upon a word.
+    The word is implicitly represented here.
 
     Members:
-        meaning_probs -- dictionary to map features to probabilities
-        unseen -- probability associated to all unseen features
+        name -- the name that uniquely identifies the feature
+        association -- the association of the feature and the word
 
     """
 
-    def __init__(self, unseen_sub, unseen_basic, unseen_sup, k_sub, k_basic,
-            k_sup):
+    def __init__(self, name, prob=None):
+        self._name = name
+        self._association = 0.0
+
+    def __eq__(self, other):
+        return self._name == other
+
+    def __ne__(self, other):
+        return self._name != other
+
+    def __repr__(self):
+        return "Feature: " + str(self._name) + "; Association: " + str(self._association)
+
+    def name(self):
+        return self._name
+
+    def association(self):
+        return self._association
+
+    def update_association(self, alignment):
+        """ Add the alignment to association. """
+        self._association += alignment
+
+class FeatureGroup:
+    """
+
+    A feature group, conditional upon a word;
+    takes the form of a node in a tree.
+
+    Members:
+        gamma -- the Dirichlet hyperparametre
+        k -- the expected number of types in the Dirichlet
+        members -- the members of this FeatureGroup
+        feature -- the feature that is directly superordinate to the members of
+            this FeatureGroup
+
+    """
+
+    def __init__(self, feature_name, gamma_sup, gamma_basic, gamma_sub, gamma_instance,
+            k_sup, k_basic, k_sub, k_instance, meaning):
+        self._gamma_sup = gamma_sup
+        self._gamma_basic = gamma_basic
+        self._gamma_sub = gamma_sub
+        self._gamma_instance = gamma_instance
+        self._k_sup = k_sup
+        self._k_basic = k_basic
+        self._k_sub = k_sub
+        self._k_instance = k_instance
+        self._members = []
+        self._feature = Feature(name=feature_name)
+        self._meaning = meaning # the meaning hierarchy
+
+        # for defining an iterator
+        self._index = 0
+
+    def __contains__(self, feature):
+        """ Check if feature is a member of this FeatureGroup. """
+        return any([f == feature for f in self._members])
+
+    def __eq__(self, other):
+        return self._feature == other
+
+    def __ne__(self, other):
+        return self._feature != other
+
+    def __repr__(self):
+        return "Feature group for: " + self._feature.__repr__() + ";\n\tMembers: " +  str(self._members)
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        if self._index >= len(self._members):
+            raise StopIteration
+        else:
+            self._index += 1
+            return self._members[self._index - 1]
+
+    def is_empty(self):
+        return len(self._members) == 0
+
+    def add_feature(self, feature):
+        fg = FeatureGroup(feature,
+        self._gamma_sup,
+        self._gamma_basic,
+        self._gamma_sub,
+        self._gamma_instance,
+        self._k_sup,
+        self._k_basic,
+        self._k_sub,
+        self._k_instance,
+        self._meaning)
+        self._members.append(fg)
+        return fg
+
+    def gamma(self):
+        raise Exception # shouldn't be called
+
+    def node_association(self):
+        return self._feature.association()
+
+    def update_node_association(self, alignment):
+        return self._feature.update_association(alignment)
+
+    def prob(self, feature, gamma, denom, p=False):
+        if feature in self._members:
+
+            numer = find(lambda fg: fg == feature, self._members)
+            num = numer.node_association()
+            num += gamma
+
+            if p:
+                print '\t\tFeature: ', feature
+                print "\t\t\tp(f|w) computation:\t\t", "("+str(numer.node_association()) + " + " +\
+                    str(gamma) + ") / " + str(denom)
+                print "\t\t\tp(f|w):\t\t\t\t\t", str(num / denom)
+
+            return num / denom
+
+        else:
+            return self.unseen_prob()
+
+    # this method is not presently used
+    def unseen_prob(self, feature, gamma, denom, p=False):
         """
-        Create a meaning object with each feature being equally likely to be part
-        of this meaning with probability 1.0/beta
+        Compute the unseen probability of this feature group using the
+        associations stored in the Features .
 
         """
-        self._meaning_probs = {}
-        self._unseen_sub = {}
-        self._unseen_basic = unseen_basic
-        self._unseen_sup = unseen_sup
-        self.k_sub = k_sub
-        self.k_basic = k_basic
-        self.k_sup = k_sup
+        raise NotImplementedError
+
+    def update_association(self, feature, alignment):
+        to_update = find(lambda fg: fg == feature, self._members)
+        to_update.update_node_association(alignment)
+
+
+class Meaning:
+    """
+    Contains the probability of all feature events, conditional upon a word.
+
+    Members:
+        TODO
+
+    """
+
+    def __init__(self,
+        gamma_sup, gamma_basic, gamma_sub, gamma_instance,
+        k_sup, k_basic, k_sub, k_instance,
+        p_sup, p_basic, p_sub, p_instance,
+                 shift,
+        modified_gamma=True, flat_hierarchy=False, word=None):
+        """
+        TODO
+
+        """
+        self._gamma_sup = gamma_sup
+        self._gamma_basic = gamma_basic
+        self._gamma_sub = gamma_sub
+        self._gamma_instance = gamma_instance
+        self._k_sup = k_sup
+        self._k_basic = k_basic
+        self._k_sub = k_sub
+        self._k_instance = k_instance
+        self._p_sup = p_sup
+        self._p_basic = p_basic
+        self._p_sub = p_sub
+        self._p_instance = p_instance
+        self._shift = shift
+        self._modified_gamma = modified_gamma
+        self._flat_hierarchy = flat_hierarchy
+
+        self._word = word
         self._seen_features = []
 
-    #BM getValue
-    def prob(self, feature, basic_feature=None):
+        # the root of the hierarchy
+        self._root = FeatureGroup(None,
+        gamma_sup, gamma_basic, gamma_sub, gamma_instance,
+        k_sup, k_basic, k_sub, k_instance,
+        self)
+
+        # hash maps for computational efficiency
+        self._feature_to_feature_group_map = {}
+        self._level_to_feature_groups_map = {}
+        self._feature_to_level_map = {}
+
+    # TODO
+    def __deepcopy__(self, memo):
+        return Meaning(copy.deepcopy(self.name, memo))
+
+    def __str__(self):
+        """ Format this meaning to print intelligibly."""
+        return str(self._root)
+
+    def retrieve_list_of_traversals(self):
+
+        def traversal(feature_group):
+            if feature_group.is_empty():
+                return [[feature_group._feature.name()]]
+
+            collect = []
+            for f in feature_group._members:
+
+                collect.extend([[f._feature.name()] + tail for tail in traversal(f)])
+
+            return collect
+
+        feature_group = self._root
+
+        feature_lists = []
+        for f in feature_group:
+            feature_lists.extend([[f._feature.name()] + tail for tail in traversal(f)])
+
+        return feature_lists
+
+    def add_features_to_hierarchy(self, features):
         """
-        Return the probability of this word having feature as part of its
-        meaning.
+        Add features to the hierarchy, assuming that the features are ordered
+        from highest superordinate to lowest subordinate feature.
 
         """
-        if feature in self._meaning_probs:
-            return self._meaning_probs[feature]
-        else:
-            if feature.startswith('sub'):
+        fg = self._root
+        level = 0
+
+        # add the features one-by-one to their corresponding level of the
+        # hierarchy
+        for feature in features:
+
+            if not feature in fg:
+                # this feature is novel (at this level of the hierarchy)
+                new_fg = fg.add_feature(feature)
+                self._feature_to_feature_group_map[feature] = fg
+
                 try:
-                    return self._unseen_sub[basic_feature]
+                    if fg not in self._level_to_feature_groups_map[level]:
+                        self._level_to_feature_groups_map[level].append(fg)
                 except KeyError:
-                    return 1./self.k_sub
-            elif feature.startswith('bas'):
-                return self._unseen_basic
-            elif feature.startswith('sup'):
-                return self._unseen_sup
+                    self._level_to_feature_groups_map[level] = []
+                    self._level_to_feature_groups_map[level].append(fg)
+
+                self._feature_to_level_map[feature] = level
+
+            else:
+                new_fg = find(lambda f: f == feature, fg._members)
+
+            fg = new_fg
+
+            # if false, a hack to put everything on the same level
+            if not self._flat_hierarchy:
+                level += 1
+
+    def gamma(self, feature):
+        """
+        Return the updated gamma parameter for feature in this Meaning.
+
+        """
+        if self._modified_gamma:
+            level = self._feature_to_level_map[feature]
+            fgs = self._level_to_feature_groups_map[level]
+            count = 0
+            for fg in fgs:
+                count += len([f for f in fg._members if f.node_association() > 0])
+            count = max(count, 1)
+
+            vegetable_features = [
+                'EE',
+                'BB',
+                'Y',
+                'X',
+                'S',
+                'W',
+                'I',
+                'J',
+                'H',
+                'F',
+                'B',
+                'C',
+            ]
+
+            vehicle_features = [
+                'HH',
+                'FF',
+                'CC',
+                'U',
+                'O',
+                'V',
+                'T',
+                'Q',
+                'N',
+                'L',
+                'G',
+                'E',
+            ]
+
+            animal_features = [
+                'JJ',
+                'II',
+                'GG',
+                'DD',
+                'AA',
+                'Z',
+                'R',
+                'P',
+                'K',
+                'M',
+                'A',
+                'D',
+            ]
+
+
+            if feature.startswith('fsup'):
+                gamma = self._gamma_sup
+                p = self._p_sup
+            elif feature.startswith('fbas'):
+                gamma = self._gamma_basic
+                p = self._p_basic
+            elif feature.startswith('fsub'):
+                gamma = self._gamma_sub
+                p = self._p_sub
+            elif feature.startswith('finstance'):
+                gamma = self._gamma_instance
+                p = self._p_instance
+
+            elif feature.startswith("UNIQ"):
+                gamma = self._gamma_instance
+                p = self._p_instance
+
+            elif re.match('^([A-Z]+)', feature).group(0) in vegetable_features:
+                if int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(27, 35+1):
+                    gamma = self._gamma_sub
+                    p = self._p_sub
+                elif int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(21, 26+1):
+                    gamma = self._gamma_basic
+                    p = self._p_basic
+                elif int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(1, 20+1):
+                    gamma = self._gamma_sup
+                    p = self._p_sup
+                else:
+                    raise NotImplementedError
+
+            elif re.match('^([A-Z]+)', feature).group(0) in animal_features:
+                if int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(36, 40+1):
+                    gamma = self._gamma_sub
+                    p = self._p_sub
+                elif int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(21, 35+1):
+                    gamma = self._gamma_basic
+                    p = self._p_basic
+                elif int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(1, 20+1):
+                    gamma = self._gamma_sup
+                    p = self._p_sup
+                else:
+                    raise NotImplementedError
+
+            elif re.match('^([A-Z]+)', feature).group(0) in vehicle_features:
+                if int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(26, 35+1):
+                    gamma = self._gamma_sub
+                    p = self._p_sub
+                elif int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(12, 25+1):
+                    gamma = self._gamma_basic
+                    p = self._p_basic
+                elif int(re.match('.*?([0-9]?[0-9])$', feature).group(1)) in range(1, 11+1):
+                    gamma = self._gamma_sup
+                    p = self._p_sup
+                else:
+                    raise NotImplementedError
+
             else:
                 raise NotImplementedError
 
-    #BM getSeenPrims
+            return gamma * (count**p)
+        else:
+            raise NotImplementedError
+
+    def denom(self, feature):
+        """
+        Return the denominator for the probability calculation for feature in
+        this Meaning.
+
+        """
+        level = self._feature_to_level_map[feature]
+        fgs = self._level_to_feature_groups_map[level]
+        denom = 0
+        for fg in fgs:
+            if sum([f.node_association() for f in fg._members]) > 0 or len(fgs) == 1:
+                #print('add ' + str([f.node_association() for f in fg._members]))
+                denom += sum([f.node_association() for f in fg._members])
+
+        # find which k to use
+        if feature.startswith('fsup'):
+            k = self._k_sup
+        elif feature.startswith('fbas'):
+            k = self._k_basic
+        elif feature.startswith('fsub'):
+            k = self._k_sub
+        elif feature.startswith('finstance'):
+            k = self._k_instance
+        else:
+            #raise NotImplementedError
+
+            # TODO: hack
+            k = self._k_sup
+
+        denom += k * self.gamma(feature)
+        #print('add ' + str(self._k) + ' * ' +  str(self.gamma(feature)))
+        #print('denom:', denom)
+        return denom
+
+    def prob(self, feature, p=False):
+        """
+        Return the probability of feature given this Meaning's word.
+
+        """
+        return self._feature_to_feature_group_map[feature].prob(feature,
+                self.gamma(feature), self.denom(feature), p=p)
+
     def seen_features(self):
         """
-        Return a set of all features seen so far with this word;
-        do not return unseen features.
-
-        Note: The meaning probability of these features will not sum to one.
+        Return a set of all features from all levels of the hierarchy, observed
+        so far with this Meaning's word.
 
         """
         return set(self._seen_features)
 
-    def all_features(self):
-        """
-        Return a set of all features associated with this word,
-        including unseen features.
-
-        Note: The meaning probability of these features will sum to one.
+    def update_association(self, feature, alignment):
+        """ Update association between this Meaning's word and feature by adding
+        alignment to the current association.
 
         """
-        return set(self._meaning_probs.keys())
+        self._feature_to_feature_group_map[feature].update_association(feature,
+            alignment)
 
-    def sorted_features(self):
-        """
-        Return a list, sorted by probability, of each (prob, feature) seen so
-        far.
+    def get_level(self, feature):
+        return self._feature_to_level_map[feature]
 
-        """
-        items = self._meaning_probs.items()
-        ranked = [ [v[1],v[0]] for v in items ]
-        ranked.sort(reverse=True)
-        return ranked
+    def unseen_prob_by_level(self, level):
+        fgs = self._level_to_feature_groups_map[level]
+        # pick the first one arbitrarily
+        fg = fgs[0]._members[0]
+        feature = fg._feature.name()
 
-    def unseen_prob_sub(self, basic_feature):
-        """ Return the probability of an unseen subordinate feature. """
-        return self._unseen_sub[basic_feature]
-
-    def unseen_prob_basic(self):
-        """ Return the probability of an unseen basic feature. """
-        return self._unseen_basic
-
-    def unseen_prob_sup(self):
-        """ Return the probability of an unseen superordinate feature. """
-        return self._unseen_sup
-
-    def copy(self, meaning):
-        """ Copy the information from Meaning meaning into this meaning. """
-        for feature in meaning._meaning_probs.keys():
-            self._meaning_probs[feature] = meaning._meaning_probs[feature]
-        self._unseen_sub = meaning._unseen_sub.copy()
-        self._unseen_basic = meaning._unseen_basic
-        self._unseen_sup = meaning._unseen_sup
-        self._seen_features = meaning._seen_features[:]
-
-    def __str__(self):
-        """ Format this meaning to print intelligibly."""
-        result = 'Meaning:\n'
-        for v, f in self.sorted_features():
-            result += '\t' + f + ": " + str(v) + '\n'
-        result += "\tUnseen sup: < " + str(self._unseen_sup) + " >\n"
-        result += "\tUnseen basic < " + str(self._unseen_basic) + " >\n"
-        result += "\tUnseen sub < " + pprint.pformat(self._unseen_sub) + " >\n"
-        return result
-
+        return self.gamma(feature) / self.denom(feature)
 
 class Lexicon:
     """
@@ -128,253 +467,187 @@ class Lexicon:
 
     Members:
         word_meanings -- dictionary mapping words to Meaning objects
-        beta -- inverse probability of unseen features being part of the meaning
+        gamma -- the Dirichlet hyperparameter
+        k -- the expected count
 
     """
 
-    def __init__(self, beta, words, k_sub=1, k_basic=1, k_sup=1, gamma_sub=1,
-            gamma_basic=1, gamma_sup=1):
+    def __init__(self, words,
+        gamma_sup, gamma_basic, gamma_sub, gamma_instance,
+        k_sup, k_basic, k_sub, k_instance,
+        p_sup, p_basic, p_sub, p_instance,
+                 shift,
+        modified_gamma, flat_hierarchy):
         """
-        Create an empty Lexicon of words, such that each word in words has a
-        Meaning with unseen probability 1.0/beta. See Meaning docstring.
+        TODO
 
         """
+        self._gamma_sup = gamma_sup
+        self._gamma_basic = gamma_basic
+        self._gamma_sub = gamma_sub
+        self._gamma_instance = gamma_instance
+        self._k_sup = k_sup
+        self._k_basic = k_basic
+        self._k_sub = k_sub
+        self._k_instance = k_instance
+        self._p_sup = p_sup
+        self._p_basic = p_basic
+        self._p_sub = p_sub
+        self._p_instance = p_instance
+        self._shift = shift
+        self._modified_gamma = modified_gamma
+        self._flat_hierarchy = flat_hierarchy
+
+        self._max_depth = 0
+
         self._word_meanings = {}
-        #self._beta = beta
-        self.k_sub = k_sub
-        self.k_basic = k_basic
-        self.k_sup = k_sup
-        self._unseen_sub = 1./k_sub
-        self._unseen_basic = 1./k_basic
-        self._unseen_sup = 1./k_sup
-        for w in words:
-            self._word_meanings[w] = Meaning(unseen_sub=self._unseen_sub,
-                    unseen_basic=self._unseen_basic,
-                    unseen_sup=self._unseen_sup,
-                    k_sub = k_sub, k_basic = k_basic, k_sup = k_sup)
+        for word in words:
+            self._word_meanings[word] = Meaning(
+                self._gamma_sup,
+                self._gamma_basic,
+                self._gamma_sub,
+                self._gamma_instance,
+                self._k_sup,
+                self._k_basic,
+                self._k_sub,
+                self._k_instance,
+                self._p_sup,
+                self._p_basic,
+                self._p_sub,
+                self._p_instance,
+                self._shift,
+                self._modified_gamma, self._flat_hierarchy, word=word)
 
-    #BM getWords
-    def words(self):
-        """ Return a list of all words in this lexicon. """
-        return self._word_meanings.keys()
-
-    #BM getMeaning
-    def meaning(self, word):
-        """ Return a copy of the Meaning object corresponding to word. """
-        meaning = Meaning(unseen_sub=self._unseen_sub,
-                unseen_basic=self._unseen_basic, unseen_sup=self._unseen_sup,
-                    k_sub=self.k_sub,
-                    k_basic=self.k_basic, k_sup=self.k_sup)
-        if self._word_meanings.has_key(word):
-            meaning.copy(self._word_meanings[word])
-        return meaning
-
-    def add_seen_features(self, word, features):
-        """ Add to the list of features encountered - so far - with word. """
-        assert word in self._word_meanings
-        self._word_meanings[word]._seen_features.extend(features[:])
-
-    #BM getSeenPrims
-    def seen_features(self, word):
-        """ Return a list of features encountered - so far - with word. """
-        if word in self._word_meanings:
-            return self._word_meanings[word].seen_features()
-        return []
-
-    #BM setValue
-    def set_prob(self, word, feature, prob):
+    def add_features_to_hierarchy(self, word, features):
         """
-        Set the probability of feature being part of the meaning of word to prob
+        Add features to the hierarchy for this word.
+
+        Assume that the features are in hierarchical order, from highest
+        superordinate level to lowest subordinate level.
 
         """
         if word not in self._word_meanings:
-            self._word_meanings[word] = Meaning(unseen_sub=self._unseen_sub,
-                    unseen_basic=self._unseen_basic,
-                    unseen_sup=self._unseen_sup, k_sub=self.k_sub,
-                    k_basic=self.k_basic, k_sup=self.k_sup)
-        self._word_meanings[word]._meaning_probs[feature] = prob
+            self._word_meanings[word] = Meaning(
+                self._gamma_sup,
+                self._gamma_basic,
+                self._gamma_sub,
+                self._gamma_instance,
+                self._k_sup,
+                self._k_basic,
+                self._k_sub,
+                self._k_instance,
+                self._p_sup,
+                self._p_basic,
+                self._p_sub,
+                self._p_instance,
+                self._shift,
+                self._modified_gamma, self._flat_hierarchy, word=word)
+        self._word_meanings[word].add_features_to_hierarchy(features)
 
-    #BM getValue
-    def prob(self, word, feature, basic_feature=None):
+        if len(features) > self._max_depth:
+            self._max_depth = len(features)
+
+    def gamma(self, word, feature):
         """ Return the probability of feature being part of the meaning of word. """
+        if word not in self._word_meanings:
+            self._word_meanings[word] = Meaning(
+                self._gamma_sup,
+                self._gamma_basic,
+                self._gamma_sub,
+                self._gamma_instance,
+                self._k_sup,
+                self._k_basic,
+                self._k_sub,
+                self._k_instance,
+                self._p_sup,
+                self._p_basic,
+                self._p_sub,
+                self._p_instance,
+                self._shift,
+            self._modified_gamma, self._flat_hierarchy, word=word)
+        self._word_meanings[word].gamma(feature)
+
+    # TODO: not implemented correctly
+    def meaning(self, word):
+        """ Return a copy of the Meaning object corresponding to word. """
         if word in self._word_meanings:
-            if feature in self._word_meanings[word]._meaning_probs:
-                return self._word_meanings[word]._meaning_probs[feature]
-            if feature.startswith('sub'):
-                try:
-                    return self._word_meanings[word]._unseen_sub[basic_feature]
-                except KeyError:
-                    return self._unseen_sub
-            elif feature.startswith('bas'):
-                return self._word_meanings[word]._unseen_basic
-            elif feature.startswith('sup'):
-                return self._word_meanings[word]._unseen_sup
-            else:
-                raise NotImplementedError
-        if feature.startswith('sub'):
-            return self._unseen_sub[basic_feature]
-        elif feature.startswith('bas'):
-            return self._unseen_basic
-        elif feature.startswith('sup'):
-            return self._unseen_sup
-        else:
-            raise NotImplementedError
+            return self._word_meanings[word]
+        return Meaning(
+                self._gamma_sup,
+                self._gamma_basic,
+                self._gamma_sub,
+                self._gamma_instance,
+                self._k_sup,
+                self._k_basic,
+                self._k_sub,
+                self._k_instance,
+                self._p_sup,
+                self._p_basic,
+                self._p_sub,
+                self._p_instance,
+                self._shift,
+        self._modified_gamma, self._flat_hierarchy, word=word)
 
-    #BM getUnseen
-    def unseen(self, word, feature, basic_feature=None):
-        """
-        Return the probability of an unseen feature being part of the meaning of
-         word.
+    def prob(self, word, feature, p=False):
+        """ Return the probability of feature being part of the meaning of word. """
+        if word not in self._word_meanings:
+            self._word_meanings[word] = Meaning(
+                self._gamma_sup,
+                self._gamma_basic,
+                self._gamma_sub,
+                self._gamma_instance,
+                self._k_sup,
+                self._k_basic,
+                self._k_sub,
+                self._k_instance,
+                self._p_sup,
+                self._p_basic,
+                self._p_sub,
+                self._p_instance,
+                self._shift,
+                self._modified_gamma, self._flat_hierarchy, word=word)
+        return self._word_meanings[word].prob(feature, p=p)
 
-        """
+    def add_seen_features(self, word, features):
+        """ Add to the list of features encountered so far with word. """
+        assert word in self._word_meanings
+        self._word_meanings[word]._seen_features.extend(features[:])
+
+    def seen_features(self, word):
+        """ Return a set of features encountered - so far - with word. """
         if word in self._word_meanings:
-            return self._word_meanings[word]._unseen
-        if feature.startswith('sub'):
-            return self._unseen_sub[basic_feature]
-        elif feature.startswith('bas'):
-            return self._unseen_basic
-        elif feature.startswith('sup'):
-            return self._unseen_sup
-        else:
-            raise NotImplementedError
+             self._word_meanings[word].seen_features()
+        return set()
 
-    #BM setUnseen
-    def set_unseen(self, word, sub, basic, sup):
-        """
-        Set the probability of an unseen feature being part of the meaning of
-        word to unseen_value.
+    def update_association(self, word, feature, alignment):
+        """ Update association between word and feature by adding alignment to
+        the current association.
 
         """
-        if word in self._word_meanings:
-            #self._word_meanings[word]._unseen = unseen_value
-            for (basic_feature, prob) in sub:
-                self._word_meanings[word]._unseen_sub[basic_feature] = prob
-            self._word_meanings[word]._unseen_basic = basic
-            self._word_meanings[word]._unseen_sup = sup
-        else:
-            meaning = Meaning(unseen_sub=self._unseen_sub, unseen_basic=self._unseen_basic, unseen_sup=self._unseen_sup)
-            self._word_meanings[word] = meaning
+        if word not in self._word_meanings:
+            self._word_meanings[word] = Meaning(
+                self._gamma_sup,
+                self._gamma_basic,
+                self._gamma_sub,
+                self._gamma_instance,
+                self._k_sup,
+                self._k_basic,
+                self._k_sub,
+                self._k_instance,
+                self._p_sup,
+                self._p_basic,
+                self._p_sub,
+                self._p_instance,
+                self._shift,
+            self._modified_gamma, self._flat_hierarchy, word=word)
+        self._word_meanings[word].update_association(feature, alignment)
 
+    def words(self):
+        """ Return a set of all words in this lexicon. """
+        return set(self._word_meanings.keys())
 
-class Alignments:
-    """
-    Store calculated alignment probabilities for each word-feature pair at each
-    time step.
-
-    Members:
-        probs -- Dictionary where keys are "word feature" and values are lists of
-            the form [sum_aligns, {time:alignment_value, time:alignment_value ...}]
-            where sum_aligns is the sum alignment value for this word-feature
-            pair of all alignment_value's so far.
-
-            sum_aligns is the association score:
-                assoc_t(w,f) = assoc_(t-1)(w,f) + alignment_t(w|f)
-            where t represents the time step.
-
-            alignment_t(w|f) is exactly the entry probs[w + " " + f][1][t]
-
-        unseen -- #BM write
-
-    """
-
-    def __init__(self, alpha):
-        """ Create an empty Alignments object with smoothing value 1.0/alpha """
-        self._probs = {}
-        # Allow no smoothing
-        if alpha == 0:
-            self._unseen = 0.0
-        elif alpha < 0:
-            self._unseen = 0.0
-        else:
-            self._unseen = 1.0 / alpha
-
-    def sum_alignments(self, word, feature):
-        """
-        Return the sum alignment probability for the pair "word feature". If the
-        entry does not exist, create one.
-
-        """
-        wf = word + " " + feature
-        if wf not in self._probs:
-            self.create_entry(word, feature)
-        return self._probs[wf][0]
-
-    def alignments(self, word, feature):
-        """
-        Return a dictionary of time : alignment_value pairs for the pair
-        "word feature". If the entry does not exist, create one.
-
-         """
-        wf = word + " " + feature
-        if wf not in self._probs:
-            self.create_entry(word, feature)
-        return self._probs[wf][1]
-
-    def add_alignment(self, word, feature, time, alignment):
-        """
-        Add (time, alignment) to the probabilities for word-feature pair and
-        update the sum alignment probability with alignment.
-
-        """
-        wf = word + " " + feature
-        if wf not in self._probs:
-            self.create_entry(word, feature)
-        alignments = self._probs[wf]
-        alignments[1][time] = alignment
-        alignments[0] += alignment
-
-    def add_multiplicative_alignment(self, word, feature, time, alignment):
-        """
-        Add (time, alignment) to the probabilities for word-feature pair and
-        update the sum alignment probability with alignment.
-
-        """
-        wf = word + " " + feature
-        if wf not in self._probs:
-            self.create_entry(word, feature)
-        alignments = self._probs[wf]
-        alignments[1][time] = alignment
-        alignments[0] = alignments[0]**2 + alignment
-
-    def add_decay_sum(self, word, feature, time, alignment, decay):
-        """
-        Calculate the association, using an alternative forgetting sum, for the
-        pair word-feature, having alignment alignment at time time. decay is a
-        constant decay factor.
-        This is calculated as:
-
-        assoc_{time}(word,feature) =
-
-            assoc_{time'}(word,feature)
-           ---------------------------------------------------  + alignment
-            (time - time')**(decay/assoc_{time'}(word,feature))
-
-        Where time' is the last time that the association between word and
-        feature was calculated.
-
-        """
-        wf = word + " " + feature
-        if wf not in self._probs:
-            self.create_entry(word, feature)
-        alignments = self._probs[wf]
-
-        # Association at time t'
-        time_pr_assoc = alignments[0]
-        # Last time word-feature association was calculated
-        last_time = max(alignments.keys())
-
-        assoc_decay = decay / time_pr_assoc
-        alignments[0] = time_pr_assoc / math.pow(time - last_time + 1, assoc_decay)
-        alignments[0] += alignment
-        alignments[1][time] = alignment # To keep track of time t'
-
-    def create_entry(self, word, feature):
-        """
-        Create an empty alignment entry in this data structure for
-        "word feature".
-
-        """
-        wf = word + " " + feature
-        self._probs[wf] = []
-        self._probs[wf].append(0.0)
-        self._probs[wf].append({})
+def find(f, seq):
+    """ Return first item in sequence where f(item) == True. """
+    for item in seq:
+        if f(item):
+            return item

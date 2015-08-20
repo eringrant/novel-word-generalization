@@ -2,7 +2,7 @@ from collections import defaultdict
 import pprint
 import copy
 
-import input
+#import input
 
 
 class UtteranceScenePair(object):
@@ -94,7 +94,13 @@ class UtteranceScenePair(object):
             sorted(self._utterance()) == sorted(other._utterance())
 
     def __str__(self):
-        return str(self._details) + '; Utterance: ' + str(sorted(self._utterance)) + '; Scene: ' + str(sorted(self._scene))
+        s = str(self._details) + '; Utterance: ' + str(self._utterance) + '; Scene: '
+        for f in self._scene:
+            s += '\t\t' + str(f)
+        return s
+
+    def __repr__(self):
+        return self.__str__()
 
     def scene(self):
         return self._scene[:]

@@ -62,7 +62,7 @@ class Experiment(object):
             action='store', dest='ncores', type='int', default=cpu_count(),
             help="Number of processes used; default is %i"%cpu_count())
         optparser.add_option('-o', '--outputfile',
-            action='store', dest='outputfile', type='string', default='results.csv',
+            action='store', dest='outputfile', type='string', default=None,
             help="The output csv file.")
 
         options, args = optparser.parse_args()
@@ -196,14 +196,16 @@ class Experiment(object):
         try:
             if self.csv_header is None:
                 self.csv_header = list(results[0].keys())
+                if outputfile is not None:
+                    with open(self.options.outputfile, 'a') as csvfile:
+                        writer = csv.DictWriter(csvfile, fieldnames=self.csv_header)
+                        writer.writeheader()
+
+            if outputfile is not None:
                 with open(self.options.outputfile, 'a') as csvfile:
                     writer = csv.DictWriter(csvfile, fieldnames=self.csv_header)
-                    writer.writeheader()
-
-            with open(self.options.outputfile, 'a') as csvfile:
-                writer = csv.DictWriter(csvfile, fieldnames=self.csv_header)
-                for row in results:
-                    writer.writerow(row)
+                    for row in results:
+                        writer.writerow(row)
         except IndexError: # there are no results to record
             print "No results to record."
             pass
