@@ -1,4 +1,18 @@
 {
+    "unseen object features": [
+        "instance_feature_A00",
+        "instance_feature_B00",
+        "instance_feature_C00",
+        "subord_feature_A00",
+        "subord_feature_B00",
+        "subord_feature_C00",
+        "basic_feature_A00",
+        "basic_feature_B00",
+        "basic_feature_C00",
+        "super_feature_A00",
+        "super_feature_B00",
+        "super_feature_C00"
+    ],
     "training set": {
         "three basic-level examples": {
             "basic_01": [

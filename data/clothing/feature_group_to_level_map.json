@@ -1,0 +1,10 @@
+{
+    "superordinate_B": "superordinate",
+    "superordinate_A": "superordinate",
+    "instance_A": "instance",
+    "basic-level_B": "basic-level",
+    "basic-level_A": "basic-level",
+    "subordinate_B": "subordinate",
+    "subordinate_A": "subordinate",
+    "instance_B": "instance"
+}
