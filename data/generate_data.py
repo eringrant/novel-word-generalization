@@ -460,7 +460,7 @@ def generate_xt_data(data_path):
     xt_vegetables_sets['test set'] = xt_vegetables_test_sets
     xt_vegetables_sets['test set'] = xt_vegetables_test_sets
 
-    xt_vegetables_sets['unseen object features'] = ['UNSEEN{num:02d}'.format(num=i) for i in range(1, 35)]
+    xt_vegetables_sets['unseen object features'] = ['UNSEEN1{num:02d}'.format(num=i) for i in range(1, 35)]
     xt_vegetables_sets['unseen object features'] += ['UNIQ00']
 
     json.dump(xt_vegetables_sets, open(os.path.join(save_dir, 'stimuli.json'), 'w'),
@@ -472,14 +472,14 @@ def generate_xt_data(data_path):
     for obj in xt_vegetables:
         for feature in xt_vegetables[obj]:
             if not feature.startswith('UNIQ'):
-                level = int(re.match('[A-Z]*[0-9]([0-9]?[0-9])', feature).group(1))
+                level = re.match('[A-Z]*[0-9]([0-9]?[0-9])', feature).group(1)
                 xt_vegetable_features[feature] = level
             else:
                 xt_vegetable_features[feature] = 'UNIQ'
 
     for feature in xt_vegetables_sets['unseen object features']:
         if not feature.startswith('UNIQ'):
-            level = int(re.match('[A-Z]*[0-9]([0-9]?[0-9])', feature).group(1))
+            level = re.match('[A-Z]*[0-9]([0-9]?[0-9])', feature).group(1)
             xt_vegetable_features[feature] = level
         else:
             xt_vegetable_features[feature] = 'UNIQ'
@@ -580,7 +580,7 @@ def generate_xt_data(data_path):
     xt_vehicles_sets['training set'] = xt_vehicles_training_sets
     xt_vehicles_sets['test set'] = xt_vehicles_test_sets
 
-    xt_vehicles_sets['unseen object features'] = ['UNSEEN{num:02d}'.format(num=i) for i in range(1, 36)]
+    xt_vehicles_sets['unseen object features'] = ['UNSEEN1{num:02d}'.format(num=i) for i in range(1, 36)]
     xt_vehicles_sets['unseen object features'] += ['UNIQ00']
 
     json.dump(xt_vehicles_sets, open(os.path.join(save_dir, 'stimuli.json'), 'w'),
@@ -596,14 +596,14 @@ def generate_xt_data(data_path):
     for obj in xt_vegetables:
         for feature in xt_vegetables[obj]:
             if not feature.startswith('UNIQ'):
-                level = int(re.match('[A-Z]*[0-9]([0-9]?[0-9])', feature).group(1))
+                level = re.match('[A-Z]*[0-9]([0-9]?[0-9])', feature).group(1)
                 xt_vegetable_features[feature] = level
             else:
                 xt_vegetable_features[feature] = 'UNIQ'
 
     for feature in xt_vegetables_sets['unseen object features']:
         if not feature.startswith('UNIQ'):
-            level = int(re.match('[A-Z]*[0-9]([0-9]?[0-9])', feature).group(1))
+            level = re.match('[A-Z]*[0-9]([0-9]?[0-9])', feature).group(1)
             xt_vegetable_features[feature] = level
         else:
             xt_vegetable_features[feature] = 'UNIQ'
@@ -704,7 +704,7 @@ def generate_xt_data(data_path):
     xt_animals_sets['training set'] = xt_animals_training_sets
     xt_animals_sets['test set'] = xt_animals_test_sets
 
-    xt_animals_sets['unseen object features'] = ['UNSEEN{num:02d}'.format(num=i) for i in range(1, 41)]
+    xt_animals_sets['unseen object features'] = ['UNSEEN1{num:02d}'.format(num=i) for i in range(1, 41)]
     xt_animals_sets['unseen object features'] += ['UNIQ00']
 
     json.dump(xt_animals_sets, open(os.path.join(save_dir, 'stimuli.json'), 'w'),
@@ -716,14 +716,14 @@ def generate_xt_data(data_path):
     for obj in xt_animals:
         for feature in xt_animals[obj]:
             if not feature.startswith('UNIQ'):
-                level = int(re.match('[A-Z]*[0-9]([0-9]?[0-9])', feature).group(1))
+                level = re.match('[A-Z]*[0-9]([0-9]?[0-9])', feature).group(1)
                 xt_animal_features[feature] = level
             else:
                 xt_animal_features[feature] = 'UNIQ'
 
     for feature in xt_animals_sets['unseen object features']:
         if not feature.startswith('UNIQ'):
-            level = int(re.match('[A-Z]*[0-9]([0-9]?[0-9])', feature).group(1))
+            level = re.match('[A-Z]*[0-9]([0-9]?[0-9])', feature).group(1)
             xt_animal_features[feature] = level
         else:
             xt_animal_features[feature] = 'UNIQ'
