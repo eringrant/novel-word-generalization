@@ -2,7 +2,7 @@ import json
 import numpy as np
 import os
 
-import learn
+from novel_word_generalization.core import learn
 
 
 """
@@ -15,24 +15,35 @@ generalization experiment.
 
 # Mapping from the feature space to the stimuli file path
 stimuli_files = {
-    'simple' : os.path.join('stimuli', 'simple_stimuli.json'),
-    'clothing' : os.path.join('stimuli', 'clothing_stimuli.json'),
-    'containers' : os.path.join('stimuli', 'container_stimuli.json'),
-    'seats' : os.path.join('stimuli', 'seat_stimuli.json'),
-    'xt-animals' : os.path.join('stimuli', 'xt_animal_stimuli.json'),
-    'xt-vegetables' : os.path.join('stimuli', 'xt_vegetable_stimuli.json'),
-    'xt-vehicles' : os.path.join('stimuli', 'xt_vehicle_stimuli.json'),
+    'simple' : os.path.join('simple', 'stimuli.json'),
+    'clothing' : os.path.join('clothing', 'stimuli.json'),
+    'containers' : os.path.join('containers', 'stimuli.json'),
+    'seats' : os.path.join('seats', 'stimuli.json'),
+    'xt-animals' : os.path.join('xt_animals', 'stimuli.json'),
+    'xt-vegetables' : os.path.join('xt_vegetables', 'stimuli.json'),
+    'xt-vehicles' : os.path.join('xt_vehicles', 'stimuli.json'),
 }
 
 # Mapping from the feature space to the feature-level specification file path
-feature_files = {
-    'simple' : os.path.join('features', 'simple_features.json'),
-    'clothing' : os.path.join('features', 'clothing_features.json'),
-    'containers' : os.path.join('features', 'container_features.json'),
-    'seats' : os.path.join('features', 'seats_feature.json'),
-    'xt-animals' : os.path.join('features', 'xt_animal_features.json'),
-    'xt-vegetables' : os.path.join('features', 'xt_vegetable_features.json'),
-    'xt-vehicles' : os.path.join('features', 'xt_vehicle_features.json'),
+feature_group_to_level_maps = {
+    'simple' : os.path.join('simple', 'feature_group_to_level_map.json'),
+    'clothing' : os.path.join('clothing', 'feature_group_to_level_map.json'),
+    'containers' : os.path.join('containers', 'feature_group_to_level_map.json'),
+    'seats' : os.path.join('seats', 'feature_group_to_level_map.json'),
+    'xt-animals' : os.path.join('xt_animals', 'feature_group_to_level_map.json'),
+    'xt-vegetables' : os.path.join('xt_vegetables', 'feature_group_to_level_map.json'),
+    'xt-vehicles' : os.path.join('xt_vehicles', 'feature_group_to_level_map.json'),
+}
+
+# Mapping from the feature space to the feature-level specification file path
+feature_to_feature_group_maps = {
+    'simple' : os.path.join('simple', 'feature_to_feature_group_map.json'),
+    'clothing' : os.path.join('clothing', 'feature_to_feature_group_map.json'),
+    'containers' : os.path.join('containers', 'feature_to_feature_group_map.json'),
+    'seats' : os.path.join('seats', 'feature_to_feature_group_map.json'),
+    'xt-animals' : os.path.join('xt_animals', 'feature_to_feature_group_map.json'),
+    'xt-vegetables' : os.path.join('xt_vegetables', 'feature_to_feature_group_map.json'),
+    'xt-vehicles' : os.path.join('xt_vehicles', 'feature_to_feature_group_map.json'),
 }
 
 
@@ -75,7 +86,7 @@ class Experiment(object):
         """
         self.params = params
 
-        if not self.params['feature_space'] in ['simple', 'clothing',
+        if not self.params['feature-space'] in ['simple', 'clothing',
                                                 'containers', 'seats',
                                                 'xt-animals', 'xt-vegetables',
                                                 'xt-vehicles']:
@@ -83,19 +94,24 @@ class Experiment(object):
 
         # Access the data files (stimuli and feature-level specifications)
         with open(os.path.join(self.params['data-path'],
-                               stimuli_files[self.params['feature_space']]),
-                               'rb') as stimuli_file:
+                               stimuli_files[self.params['feature-space']]),
+                               'r') as stimuli_file:
             self.stimuli = json.load(stimuli_file)
+
+        # Access the information about the data that is assumed to belong to the
+        # learner
         with open(os.path.join(self.params['data-path'],
-                               feature_files[self.params['feature_space']]),
-                               'rb') as feature_file:
-            self.feature_map = json.load(feature_file)
+                               feature_group_to_level_maps[self.params['feature-space']]),
+                  'r') as feature_group_to_level_map:
+            feature_group_to_level_map = json.load(feature_group_to_level_map)
+        with open(os.path.join(self.params['data-path'],
+                               feature_to_feature_group_maps[self.params['feature-space']]),
+                  'r') as feature_to_feature_group_map:
+            feature_to_feature_group_map = json.load(feature_to_feature_group_map)
 
         # Load the training and test sets
-        self.training_sets =\
-            self.stimuli[self.params['feature-space']]['training sets']
-        self.test_sets =\
-            self.stimuli[self.params['feature-space']]['test sets']
+        self.training_sets = self.stimuli['training set']
+        self.test_sets = self.stimuli['test set']
 
         # Initialize the learner (unseen probability computation
         self.learner = learn.Learner(
@@ -111,7 +127,8 @@ class Experiment(object):
             p_basic=self.params['p-basic'],
             p_sub=self.params['p-sub'],
             p_instance=self.params['p-instance'],
-            feature_map=self.feature_map
+            feature_group_to_level_map=feature_group_to_level_map,
+            feature_to_feature_group_map=feature_to_feature_group_map,
         )
 
         # Compute the prior probability of an object
