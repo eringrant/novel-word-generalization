@@ -1,5 +1,4 @@
 import copy
-import re
 
 """
 wmmapping.py
@@ -134,24 +133,40 @@ class Meaning:
         gamma_sup, gamma_basic, gamma_sub, gamma_instance,
         k_sup, k_basic, k_sub, k_instance,
         p_sup, p_basic, p_sub, p_instance,
-        feature_map, word=None):
+        feature_group_to_level_map,
+        feature_to_feature_group_map,
+        word=None):
         """
         TODO
-lms
-
         """
 
         # The mapping of features to group (str -> str)
-        self._feature_map = feature_map
+        self._feature_to_feature_group_map
 
         self._word = word
         self._seen_features = []
 
+        # Transform the mapping of features to group (str -> str) to be (str ->
+        # FeatureGroup)
         # The feature groups (one for each level of the taxonomic hierarchy)
-        self._sup_feature_group = FeatureGroup(gamma_sup, k_sup, p_sup)
-        self._basic_feature_group = FeatureGroup(gamma_basic, k_basic, p_basic)
-        self._sub_feature_group = FeatureGroup(gamma_sub, k_sub, p_sub)
-        self._instance_feature_group = FeatureGroup(gamma_instance, k_instance, p_instance)
+        for feature_group, level in self._feature_group_to_level_map.items():
+
+            if level == 'superordinate':
+                gamma = gamma_sup
+                k = k_sup
+            elif level == 'basic-level':
+                gamma = gamma_basic
+                k = k_basic
+            elif level == 'subordinate':
+                gamma = gamma_sub
+                k = k_sub
+            elif level == 'instance':
+                gamma = gamma_instance
+                k = k_instance
+            else:
+                raise NotImplementedError
+
+            self._feature_to_feature_group_map[feature_group] = FeatureGroup(gamma, k, p)
 
     # TODO
     def __deepcopy__(self, memo):
@@ -174,7 +189,7 @@ lms
         Return the k parameter for feature in this Meaning.
 
         """
-        feature_group = self._feature_to_feature_groups_map[feature]
+        feature_group = self._feature_to_feature_group_map[feature]
         return feature_group.k()
 
     def gamma(self, feature):
@@ -241,7 +256,9 @@ class Lexicon:
         gamma_sup, gamma_basic, gamma_sub, gamma_instance,
         k_sup, k_basic, k_sub, k_instance,
         p_sup, p_basic, p_sub, p_instance,
-        feature_map):
+        feature_group_to_level_map,
+        feature_to_feature_group_map,
+    ):
         """
         TODO
 
@@ -261,7 +278,8 @@ class Lexicon:
         self._p_sub = p_sub
         self._p_instance = p_instance
 
-        self._feature_map = feature_map
+        self.feature_group_to_level_map = feature_group_to_level_map
+        self.feature_to_feature_group_map = feature_to_feature_group_map
 
         self._word_meanings = {}
         for word in words:
@@ -283,6 +301,8 @@ class Lexicon:
             self._p_sub,
             self._p_instance,
             self._feature_map,
+            self.feature_group_to_level_map,
+            self.feature_to_feature_group_map,
             word=word
         )
         return self._word_meanings[word]

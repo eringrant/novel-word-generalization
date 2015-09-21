@@ -20,7 +20,8 @@ class Learner:
         gamma_sup, gamma_basic, gamma_sub, gamma_instance,
         k_sup, k_basic, k_sub, k_instance,
         p_sup, p_basic, p_sub, p_instance,
-        feature_map
+        feature_group_to_level_map,
+        feature_to_feature_group_map,
         ):
         """
 
@@ -38,7 +39,8 @@ class Learner:
             p_basic,
             p_sub,
             p_instance,
-            feature_map
+            feature_group_to_level_map,
+            feature_to_feature_group_map,
         )
 
     def gamma(self, word, feature):
@@ -101,6 +103,7 @@ class Learner:
         # calculate the alignment probabilities and update the associations for
         # all word-feature pairs
         self.calculate_alignments(words, features)
+
 
     def generalization_prob(self, word, scene):
         """ Return the probability of this learner to generalize word to scene. """
