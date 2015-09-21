@@ -103,18 +103,18 @@ class Experiment(object):
         with open(os.path.join(self.params['data-path'],
                                feature_group_to_level_maps[self.params['feature-space']]),
                   'r') as feature_group_to_level_map:
-            feature_group_to_level_map = json.load(feature_group_to_level_map)
+            self.feature_group_to_level_map = json.load(feature_group_to_level_map)
         with open(os.path.join(self.params['data-path'],
                                feature_to_feature_group_maps[self.params['feature-space']]),
                   'r') as feature_to_feature_group_map:
-            feature_to_feature_group_map = json.load(feature_to_feature_group_map)
+            self.feature_to_feature_group_map = json.load(feature_to_feature_group_map)
 
         # Load the training and test sets
         self.training_sets = self.stimuli['training set']
         self.test_sets = self.stimuli['test set']
 
-        # Initialize the learner (unseen probability computation
-        self.learner = learn.Learner(
+        # Initialize the learner (for the unseen probability computation)
+        learner = learn.Learner(
             gamma_sup=self.params['gamma-sup'],
             gamma_basic=self.params['gamma-basic'],
             gamma_sub=self.params['gamma-sub'],
@@ -127,14 +127,14 @@ class Experiment(object):
             p_basic=self.params['p-basic'],
             p_sub=self.params['p-sub'],
             p_instance=self.params['p-instance'],
-            feature_group_to_level_map=feature_group_to_level_map,
-            feature_to_feature_group_map=feature_to_feature_group_map,
+            feature_group_to_level_map=self.feature_group_to_level_map,
+            feature_to_feature_group_map=self.feature_to_feature_group_map,
         )
 
         # Compute the prior probability of an object
         self.unseen_prob =\
-            self.learner.generalization_prob(self.params['word'],
-                                             self.stimuli['unseen object features'])
+            learner.generalization_prob(self.params['word'],
+                                        self.stimuli['unseen object features'])
 
 
     def run(self):
@@ -162,6 +162,8 @@ class Experiment(object):
                     p_basic=self.params['p-basic'],
                     p_sub=self.params['p-sub'],
                     p_instance=self.params['p-instance'],
+                    feature_group_to_level_map=self.feature_group_to_level_map,
+                    feature_to_feature_group_map=self.feature_to_feature_group_map,
                 )
 
                 for trial in self.training_sets[training_condition]:
