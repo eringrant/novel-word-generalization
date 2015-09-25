@@ -58,7 +58,6 @@ class Feature:
     def update_association(self, alignment):
         """ Add the alignment to association. """
         self._association += alignment
-        print("adding %f to %f" % (alignment, self._association))
 
 class FeatureGroup:
     """
@@ -106,7 +105,6 @@ class FeatureGroup:
         return self._features[feature].association()
 
     def update_association(self, feature, alignment):
-        print(self._features)
         return self._features[feature].update_association(alignment)
 
     def denom(self):

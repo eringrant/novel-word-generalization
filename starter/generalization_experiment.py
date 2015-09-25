@@ -2,8 +2,7 @@ import json
 import numpy as np
 import os
 
-#from novel_word_generalization.core import learn
-import learn
+from novel_word_generalization.core import learn
 
 
 """
@@ -169,9 +168,10 @@ class Experiment(object):
 
                 for trial in self.training_sets[training_condition]:
 
-                    learner.process_pair(self.params['word'],
-                                         self.training_sets[training_condition][trial],
-                                         './')
+                    words = [self.params['word']]
+                    scene = self.training_sets[training_condition][trial]
+
+                    learner.process_pair(words, scene, './')
 
                 gen_probs = []
 
@@ -187,10 +187,6 @@ class Experiment(object):
                         gen_prob -= self.unseen_prob
 
                     gen_probs.append(gen_prob)
-
-                    print(scene)
-                    print(gen_prob)
-                    raw_input()
 
                 gen_probs = np.array(gen_probs,  dtype=np.float128)
                 results[training_condition][test_condition] = gen_probs

@@ -73,14 +73,13 @@ class Learner:
 
                 # alignment(w|f) = p(f|w) / normalization
                 alignment = self._learned_lexicon.prob(word, feature) / denom
-                print(alignment)
-                raw_input()
 
                 # assoc_t(f,w) = assoc_{t-1}(f,w) + P(a|u,f)
                 self._learned_lexicon.update_association(word, feature,
                         alignment)
 
             # End alignment calculation for each word
+
 
         # End alignment calculation for each feature
 
