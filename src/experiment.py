@@ -30,12 +30,6 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-from multiprocessing import Process, Pool, cpu_count
-from optparse import OptionParser
-from ConfigParser import ConfigParser
-import numpy as np
-import itertools
-import types
 
 import datetime
 import csv
@@ -70,103 +64,12 @@ class Experiment(object):
         return options, args
 
     def parse_config(self):
-        self.config_parser = ConfigParser()
-        if not self.config_parser.read(self.options.config):
-            raise SystemExit('config file %s not found.'%self.options.config)
 
     def mkdir(self, path): # TODO automatically create directory
-        if not os.path.exists(path):
-            os.makedirs(path)
 
-    def items_to_params(self, items):
-        params = {}
-        for t,v in items:
-            try: # evaluating the parameter
-                params[t] = eval(v)
-                if isinstance(params[t], np.ndarray):
-                    params[t] = params[t].tolist()
-            except (NameError, SyntaxError):
-                params[t] = v
-        return params
-
-    def generate_conditions(self, paramlist):
-        if type(paramlist) == types.DictType:
-            paramlist = [paramlist]
-
-        iparamlist = []
-        for params in paramlist:
-            if ('experiment' in params and params['experiment'] == 'single'):
-                iparamlist.append(params) # only do one repetition of this experiment
-            else:
-                iterparams = [p for p in params if hasattr(params[p], '__iter__')]
-                if len(iterparams) > 0:
-                    iterfunc = itertools.product
-                    for il in iterfunc(*[params[p] for p in iterparams]):
-                        par = params.copy() # keep the params which have only one value
-                        for i, ip in enumerate(iterparams):
-                            par[ip] = il[i]
-                        iparamlist.append(par)
-                else:
-                    iparamlist.append(params)
-
-        return iparamlist
 
     def start(self):
-        paramlist = []
-        for exp in self.config_parser.sections():
-            params = self.items_to_params(self.config_parser.items(exp))
-            params['name'] = exp
-            paramlist.append(params)
 
-        np.random.shuffle(paramlist) # randomise the order of experiment conditions
-
-        self.outputs = self.run_experiment(paramlist)
-
-        self.finalize(params)
-
-    def run_experiment(self, params):
-        paramlist = self.generate_conditions(params)
-        for pl in paramlist:
-            if ('iterations' in pl) and ('repetitions' in pl):
-                pass
-            else:
-                raise SystemExit('parameter set does not contain all required keys: iterations, repetitions')
-
-        explist = []
-
-        for p in paramlist:
-            explist.extend(zip( [self]*p['repetitions'], [p]*p['repetitions'], xrange(p['repetitions']) ))
-
-        setup_params = {}
-        params = params[0]
-        for key in params:
-            if not isinstance(params[key], list):
-                setup_params[key] = params[key]
-            else:
-                try:
-                    if len(params[key]) == 1:
-                        setup_params[key] = params[key][0]
-                except TypeError:
-                    pass
-        self.success = self.pre_setup(setup_params)
-
-        if self.success is True:
-
-            if self.options.ncores == 1:
-                outputs = []
-                for e in explist:
-                    output = mp_runrep(e)
-                    outputs.append(output)
-
-            else:
-                pool = Pool(processes=self.options.ncores, maxtasksperchild=2)
-                outputs = pool.map(mp_runrep, explist)
-                pool.close()
-
-            return outputs
-
-        else:
-            raise Exception
 
     def run_rep(self, params, rep):
         self.success = self.setup(params, rep)
