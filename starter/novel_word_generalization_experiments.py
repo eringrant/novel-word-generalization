@@ -13,7 +13,6 @@ import matplotlib.pyplot as plt
 from multiprocessing import Pool
 import numpy as np
 import os
-import pydot
 import re
 import sys
 import types
@@ -82,19 +81,19 @@ def run_trial(params):
 
     # Create a title for the plots PNG image
     title = 'results'
-    title += ',' + 'featurespace_' + params['feature_space']
-    title += ',' + 'gammasup_' + str(params['gamma_sup'])
-    title += ',' + 'gammabasic_' + str(params['gamma_basic'])
-    title += ',' + 'gammasub_' + str(params['gamma_sub'])
-    title += ',' + 'gammainstance_' + str(params['gamma_instance'])
-    title += ',' + 'ksup_' + str(params['k_sup'])
-    title += ',' + 'kbasic_' + str(params['k_basic'])
-    title += ',' + 'ksub_' + str(params['k_sub'])
-    title += ',' + 'kinstance_' + str(params['k_instance'])
-    title += ',' + 'psup_' + str(params['p_sup'])
-    title += ',' + 'pbasic_' + str(params['p_basic'])
-    title += ',' + 'psub_' + str(params['p_sub'])
-    title += ',' + 'pinstance_' + str(params['p_instance'])
+    title += ',' + 'featurespace_' + params['feature-space']
+    title += ',' + 'gammasup_' + str(params['gamma-sup'])
+    title += ',' + 'gammabasic_' + str(params['gamma-basic'])
+    title += ',' + 'gammasub_' + str(params['gamma-sub'])
+    title += ',' + 'gammainstance_' + str(params['gamma-instance'])
+    title += ',' + 'ksup_' + str(params['k-sup'])
+    title += ',' + 'kbasic_' + str(params['k-basic'])
+    title += ',' + 'ksub_' + str(params['k-sub'])
+    title += ',' + 'kinstance_' + str(params['k-instance'])
+    title += ',' + 'psup_' + str(params['p-sup'])
+    title += ',' + 'pbasic_' + str(params['p-basic'])
+    title += ',' + 'psub_' + str(params['p-sub'])
+    title += ',' + 'pinstance_' + str(params['p-instance'])
     title += ',' + 'subtractprior_' + str(params['subtract-prior'])
     title = os.path.join(params['output-path'], 'plots', title)
 
@@ -102,12 +101,6 @@ def run_trial(params):
         os.makedirs(params['output-path'])
     if not os.path.exists(os.path.join(params['output-path'], 'plots')):
         os.makedirs(os.path.join(params['output-path'], 'plots'))
-
-    visualise_training_and_test_sets(
-        experiment.training_sets,
-        experiment.test_sets,
-        savename=title
-    )
 
     bar_chart(
         results, savename=title + '.png',
@@ -369,85 +362,6 @@ def overwrite_results(results, savename):
 
     print('Wrote results out to', savename)
 
-def draw(graph, parent_name, child_name):
-    edge = pydot.Edge(parent_name, child_name)
-    edge.set_len(0.1)
-    graph.add_edge(edge)
-    return graph
-
-def visit(graph, node, parent=None):
-    for k,v in node.iteritems():
-        if isinstance(v, dict):
-            # We start with the root node whose parent is None
-            # we don't want to graph the None node
-            if parent:
-                graph = draw(graph, parent, k)
-            graph = visit(graph, v, k)
-        else:
-            graph = draw(graph, parent, k)
-            # drawing the label using a distinct name
-            graph = draw(graph, k, k+'_'+v)
-    return graph
-
-def visualise_training_and_test_sets(training_sets, test_sets,
-                                     savename='training_and_test_sets'):
-
-    conds = ['one example',
-            'three subordinate examples',
-            'three basic-level examples',
-            'three superordinate examples'
-    ]
-
-    num_sets = len(training_sets[conds[0]])
-    assert num_sets == len(test_sets['subordinate matches'])
-
-    for training_set_num in range(num_sets):
-
-        for condition in conds:
-
-            graph = pydot.Dot(graph_type='graph', ranksep=0.2, resolution=96)
-            graph = set_graph_defaults(graph)
-            training_set = training_sets[condition][training_set_num]
-
-            for trial in training_set:
-
-                d = todict(trial.scene())
-                graph = visit(graph, d)
-
-            title = 'hierarchy'
-            title += ',' + replace_with_underscores(freq_corpus)
-            title += ',' + 'uni_' + str(uni)
-            title += ',' + 'bi_' + str(bi)
-            title += ',' + 'struct_' + str(struct)
-            title += ',' 'train_set_num_' + str(training_set_num)
-            title += ',' + replace_with_underscores(str(condition))
-            title += ',' + 'training_set.png'
-            title = os.path.join(save_directory, title)
-            graph.write_png(title)
-
-        for cond in test_sets:
-
-            graph = pydot.Dot(graph_type='graph', ranksep=0.2, resolution=96)
-            graph = set_graph_defaults(graph)
-
-            try:
-                for match_num in range(len(test_sets[cond][training_set_num])):
-                    test_item = test_sets[cond][training_set_num][match_num]
-                    d = todict(test_item.scene())
-                    graph = visit(graph, d)
-            except Exception:
-                import pdb; pdb.set_trace()
-
-            title = 'hierarchy'
-            title += ',' + replace_with_underscores(freq_corpus)
-            title += ',' + 'uni_' + str(uni)
-            title += ',' + 'bi_' + str(bi)
-            title += ',' + 'struct_' + str(struct)
-            title += ',' 'train_set_num_' + str(training_set_num)
-            title += ',' + replace_with_underscores(str(cond))
-            title += ',' + 'test_set.png'
-            title = os.path.join(save_directory, title)
-            graph.write_png(title)
 
 
 

@@ -20,7 +20,8 @@ class Learner:
         gamma_sup, gamma_basic, gamma_sub, gamma_instance,
         k_sup, k_basic, k_sub, k_instance,
         p_sup, p_basic, p_sub, p_instance,
-        feature_map
+        feature_group_to_level_map,
+        feature_to_feature_group_map,
         ):
         """
 
@@ -38,7 +39,8 @@ class Learner:
             p_basic,
             p_sub,
             p_instance,
-            feature_map
+            feature_group_to_level_map,
+            feature_to_feature_group_map,
         )
 
     def gamma(self, word, feature):
@@ -71,6 +73,8 @@ class Learner:
 
                 # alignment(w|f) = p(f|w) / normalization
                 alignment = self._learned_lexicon.prob(word, feature) / denom
+                print(alignment)
+                raw_input()
 
                 # assoc_t(f,w) = assoc_{t-1}(f,w) + P(a|u,f)
                 self._learned_lexicon.update_association(word, feature,
@@ -89,18 +93,14 @@ class Learner:
         """
         Process the pair words-features, two lists of words and features,
         respectively, to be learned from.
-
-        Assume that features is in hierarchical order, from highest superordinate
-        level to lowest subordinate level.
-
         """
-        # add the features to the hierarchy in the correct order
-        for word in words:
-            self._learned_lexicon.add_features_to_hierarchy(word, features)
-
         # calculate the alignment probabilities and update the associations for
         # all word-feature pairs
         self.calculate_alignments(words, features)
+
+        # TODO: unnecessary wrapper
+        # TODO: outdir unused
+
 
     def generalization_prob(self, word, scene):
         """ Return the probability of this learner to generalize word to scene. """
