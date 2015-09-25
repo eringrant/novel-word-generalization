@@ -7,6 +7,23 @@ Data structures for mapping the words to meanings and word-feature alignments.
 
 """
 
+class UndefinedFeatureError(Exception):
+    """
+    Defines an exception that occurs when a feature whose feature group is not
+    known is presented to the model.
+
+    Members:
+        value -- a description of the invalid parameter causing the error
+    """
+
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
+
 class Feature:
     """
 
@@ -41,6 +58,7 @@ class Feature:
     def update_association(self, alignment):
         """ Add the alignment to association. """
         self._association += alignment
+        print("adding %f to %f" % (alignment, self._association))
 
 class FeatureGroup:
     """
@@ -57,14 +75,17 @@ class FeatureGroup:
 
     """
 
-    def __init__(self, gamma, k):
+    def __init__(self, gamma, k, name=None):
+
+        self._name = name
 
         self._gamma = gamma
         self._k = k
-        self._p = p
 
         self._features = {}
 
+    # TODO: create magic method for hashing
+    # TODO: create magic method for equality
 
     def __contains__(self, feature):
         """ Check if feature is a member of this FeatureGroup. """
@@ -72,11 +93,12 @@ class FeatureGroup:
 
     #TODO
     def __repr__(self):
-        return "Feature group for: " + self._feature.__repr__() + ";\n\tMembers: " +  str(self._members)
-
+        prefix = "Feature group %s" % self._name if self._name is not None else "Unnamed feature group"
+        return prefix + " (gamma=%f, k=%f)" % (self._gamma, self._k)
 
     def add_feature(self, feature):
-        assert isinstance(feature, str)
+        #TODO
+        #assert isinstance(feature, str)
         assert feature not in self._features
         self._features[feature] = Feature(feature)
 
@@ -84,6 +106,7 @@ class FeatureGroup:
         return self._features[feature].association()
 
     def update_association(self, feature, alignment):
+        print(self._features)
         return self._features[feature].update_association(alignment)
 
     def denom(self):
@@ -97,27 +120,29 @@ class FeatureGroup:
     def gamma(self):
         """ Return the gamma parameter for this FeatureGroup. """
         num_types = len([f for f in self._features.values() if f.association() > 0])
-        return self._gamma * (num_types ** self._p)
+        num_types = max(num_types, 1)
+        #return self._gamma * (num_types ** self._p)
+        # TODO: implement variable p
+        return self._gamma * (num_types ** 2)
 
     def prob(self, feature):
+        """
+        TODO
+        Mention that this gives the unseen prob when assoc=0
+        """
 
-        if feature in self._features:
-
+        try:
             numer = self._features[feature].association()
             numer += self.gamma()
 
             return numer / self.denom()
 
-        else:
-            return self.unseen_prob()
+        except KeyError:
+            raise UndefinedFeatureError
 
     def summed_association(self):
         """ Return the summed association in this FeatureGroup. """
         return sum([feature.association() for feature in self._features.values()])
-
-    def unseen_prob(self, gamma, denom):
-        """ Return the unseen probability of this FeatureGroup. """
-        return self.gamma() / self.denom()
 
 
 class Meaning:
@@ -141,32 +166,46 @@ class Meaning:
         """
 
         # The mapping of features to group (str -> str)
-        self._feature_to_feature_group_map
+        self._feature_to_feature_group_map = feature_to_feature_group_map.copy()
+        self._feature_group_to_level_map = feature_group_to_level_map.copy()
 
         self._word = word
         self._seen_features = []
 
         # Transform the mapping of features to group (str -> str) to be (str ->
         # FeatureGroup)
-        # The feature groups (one for each level of the taxonomic hierarchy)
-        for feature_group, level in self._feature_group_to_level_map.items():
+        created_feature_groups = {}
+        for feature, feature_group in self._feature_to_feature_group_map.items():
 
-            if level == 'superordinate':
-                gamma = gamma_sup
-                k = k_sup
-            elif level == 'basic-level':
-                gamma = gamma_basic
-                k = k_basic
-            elif level == 'subordinate':
-                gamma = gamma_sub
-                k = k_sub
-            elif level == 'instance':
-                gamma = gamma_instance
-                k = k_instance
-            else:
-                raise NotImplementedError
+            try:
+                # hash to check if the FeatureGroup has already been created
+                feature_group_object = created_feature_groups[feature_group]
 
-            self._feature_to_feature_group_map[feature_group] = FeatureGroup(gamma, k, p)
+            except KeyError:
+                # create the FeatureGroup object
+                level = self._feature_group_to_level_map[feature_group]
+
+                if level == 'superordinate':
+                    gamma = gamma_sup
+                    k = k_sup
+                elif level == 'basic-level':
+                    gamma = gamma_basic
+                    k = k_basic
+                elif level == 'subordinate':
+                    gamma = gamma_sub
+                    k = k_sub
+                elif level == 'instance':
+                    gamma = gamma_instance
+                    k = k_instance
+                else:
+                    raise NotImplementedError
+
+                feature_group_object = FeatureGroup(gamma, k, name=feature_group)
+
+                created_feature_groups[feature_group] = feature_group_object
+
+            feature_group_object.add_feature(feature)
+            self._feature_to_feature_group_map[feature] = feature_group_object
 
     # TODO
     def __deepcopy__(self, memo):
@@ -197,12 +236,12 @@ class Meaning:
         Return the gamma parameter for feature in this Meaning.
 
         """
-        feature_group = self._feature_to_feature_groups_map[feature]
+        feature_group = self._feature_to_feature_group_map[feature]
         return feature_group.gamma()
 
     def summed_association(self, feature):
 
-        feature_group = self._feature_to_feature_groups_map[feature]
+        feature_group = self._feature_to_feature_group_map[feature]
         return feature_group.summed_association()
 
 
@@ -210,19 +249,16 @@ class Meaning:
         """
         Return the denominator for the probability calculation for feature in
         this Meaning.
-
         """
-        return self.summed_association + (self.k(feature) * self.gamma(feature))
+        return self.summed_association(feature) + (self.k(feature) * self.gamma(feature))
 
 
     def prob(self, feature):
         """
         Return the probability of feature given this Meaning's word.
-
         """
-        feature_group = self._feature_map[feature]
-        return feature_group.prob(feature, self.gamma(feature),
-                                  self.denom(feature))
+        feature_group = self._feature_to_feature_group_map[feature]
+        return feature_group.prob(feature)
 
     def seen_features(self):
         """
@@ -233,11 +269,11 @@ class Meaning:
         return set(self._seen_features)
 
     def update_association(self, feature, alignment):
-        """ Update association between this Meaning's word and feature by adding
-        alignment to the current association.
-
         """
-        self._feature_map[feature].update_association(feature,
+        Update association between this Meaning's word and feature by adding
+        alignment to the current association.
+        """
+        self._feature_to_feature_group_map[feature].update_association(feature,
                                                                        alignment)
 
 
@@ -300,7 +336,6 @@ class Lexicon:
             self._p_basic,
             self._p_sub,
             self._p_instance,
-            self._feature_map,
             self.feature_group_to_level_map,
             self.feature_to_feature_group_map,
             word=word
