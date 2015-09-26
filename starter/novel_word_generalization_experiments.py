@@ -80,7 +80,7 @@ def run_trial(params):
     results = experiment.run()
 
     # Create a title for the plots PNG image
-    title = 'results'
+    title = 'plot'
     title += ',' + 'featurespace_' + params['feature-space']
     title += ',' + 'gammasup_' + str(params['gamma-sup'])
     title += ',' + 'gammabasic_' + str(params['gamma-basic'])
@@ -90,10 +90,10 @@ def run_trial(params):
     title += ',' + 'kbasic_' + str(params['k-basic'])
     title += ',' + 'ksub_' + str(params['k-sub'])
     title += ',' + 'kinstance_' + str(params['k-instance'])
-    title += ',' + 'psup_' + str(params['p-sup'])
-    title += ',' + 'pbasic_' + str(params['p-basic'])
-    title += ',' + 'psub_' + str(params['p-sub'])
-    title += ',' + 'pinstance_' + str(params['p-instance'])
+    #title += ',' + 'psup_' + str(params['p-sup'])
+    #title += ',' + 'pbasic_' + str(params['p-basic'])
+    #title += ',' + 'psub_' + str(params['p-sub'])
+    #title += ',' + 'pinstance_' + str(params['p-instance'])
     title += ',' + 'subtractprior_' + str(params['subtract-prior'])
     title = os.path.join(params['output-path'], 'plots', title)
 
@@ -102,19 +102,11 @@ def run_trial(params):
     if not os.path.exists(os.path.join(params['output-path'], 'plots')):
         os.makedirs(os.path.join(params['output-path'], 'plots'))
 
-    bar_chart(
-        results, savename=title + '.png',
-        normalise_over_test_scene=True,
-        labels=['vegetables', 'vehicles', 'animals']
-    )
-
-    # Write the results to a file used to generate PGF plots in LaTeX
-    overwrite_results(results, title + '.dat')
+    plot_results_as_bar_chart(results, savename=title + '.png', normalise_over_test_scene=True)
+    write_results_as_csv_file(results, savename=title + '.dat')
 
 
-def bar_chart(results, savename=None, annotation=None,
-        normalise_over_test_scene=True, subtract_null_hypothesis=None,
-        labels=None, y_limit=None):
+def plot_results_as_bar_chart(results, savename=None, normalise_over_test_scene=True, annotation=None, y_limit=None):
 
     conditions = ['one example',
         'three subordinate examples',
@@ -125,184 +117,82 @@ def bar_chart(results, savename=None, annotation=None,
     ind = np.array([2*n for n in range(len(results))])
     width = 0.25
 
-    nrows = int(np.ceil(len(results[conditions[0]]['subordinate matches']) / 2.0))
+    l0 = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
+    l1 = [np.mean(results[cond]['basic-level matches']) for cond in conditions]
+    l2 = [np.mean(results[cond]['superordinate matches']) for cond in conditions]
 
-    if len(results[conditions[0]]['subordinate matches']) == 1:
+    error0 = [np.std(results[cond]['subordinate matches']) for cond in conditions]
+    error1 = [np.std(results[cond]['basic-level matches']) for cond in conditions]
+    error2 = [np.std(results[cond]['superordinate matches']) for cond in conditions]
 
-        l0 = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
-        l1 = [np.mean(results[cond]['basic-level matches']) for cond in conditions]
-        l2 = [np.mean(results[cond]['superordinate matches']) for cond in conditions]
+    if normalise_over_test_scene is True:
 
-        if subtract_null_hypothesis is not None:
+        denom = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
+        denom = np.add(denom, [np.mean(results[cond]['basic-level matches']) for cond in conditions])
+        denom = np.add(denom, [np.mean(results[cond]['superordinate matches']) for cond in conditions])
 
-            l0 = np.array(l0)
-            l1 = np.array(l1)
-            l2 = np.array(l2)
+        l0 = np.array(l0)
+        l1 = np.array(l1)
+        l2 = np.array(l2)
 
-            l0 -= subtract_null_hypothesis
-            l1 -= subtract_null_hypothesis
-            l2 -= subtract_null_hypothesis
+        try:
+            l0 /= denom
+        except ZeroDivisionError:
+            pass
+        try:
+            l1 /= denom
+        except ZeroDivisionError:
+            pass
+        try:
+            l2 /= denom
+        except ZeroDivisionError:
+            pass
 
-            l0 = list(l0)
-            l1 = list(l1)
-            l2 = list(l2)
+        l0 = list(l0)
+        l1 = list(l1)
+        l2 = list(l2)
 
-        if normalise_over_test_scene is True:
+        error0 = np.array(error0)
+        error1 = np.array(error1)
+        error2 = np.array(error2)
 
-            l0 = np.array(l0)
-            l1 = np.array(l1)
-            l2 = np.array(l2)
+        try:
+            error0 /= denom
+        except ZeroDivisionError:
+            pass
+        try:
+            error1 /= denom
+        except ZeroDivisionError:
+            pass
+        try:
+            error2 /= denom
+        except ZeroDivisionError:
+            pass
 
-            denom = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
-            denom = np.add(denom, [np.mean(results[cond]['basic-level matches']) for cond in conditions])
-            denom = np.add(denom, [np.mean(results[cond]['superordinate matches']) for cond in conditions])
+        error0 = list(error0)
+        error1 = list(error1)
+        error2 = list(error2)
 
-            try:
-                l0 /= denom
-                l1 /= denom
-                l2 /= denom
-            except ZeroDivisionError:
-                pass
+    width = 0.5
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    p0 = ax.bar(ind + width, l0, width, color='r', yerr=error0)
+    p1 = ax.bar(ind + 2*width, l1, width, color='g', yerr=error1)
+    p2 = ax.bar(ind + 3*width, l2, width, color='b', yerr=error2)
 
-            l0 = list(l0)
-            l1 = list(l1)
-            l2 = list(l2)
+    ax.set_ylabel("generalization probability")
+    ax.set_xlabel("training condition")
 
-        error0 = [np.std(results[cond]['subordinate matches']) for cond in conditions]
-        error1 = [np.std(results[cond]['basic-level matches']) for cond in conditions]
-        error2 = [np.std(results[cond]['superordinate matches']) for cond in conditions]
+    short_form_conditions = [
+        '1 ex.',
+        '3 subord.',
+        '3 basic',
+        '3 super.'
+    ]
+    ax.set_xticklabels([short_form_conditions[i//2] if (i+1)%2 == 0 else '' for i in range(2*len(short_form_conditions))])
 
-        width = 0.5
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        p0 = ax.bar(ind,l0,width,color='r',yerr=error0)
-        p1 = ax.bar(ind+width,l1,width,color='g',yerr=error1)
-        p2 = ax.bar(ind+2*width,l2,width,color='b',yerr=error2)
+    m = np.max(l0 + l1 + l2)
 
-        ax.set_ylabel("generalisation probability")
-        ax.set_xlabel("condition")
-
-        if y_limit:
-            ax.set_ylim(y_limit)
-
-        m = np.max(l0 + l1 + l2)
-
-    else:
-        assert labels is not None
-        fig, axes = plt.subplots(nrows=nrows, ncols=2, sharex=True, sharey=True)
-
-        m = 0
-
-        for i, ax in enumerate(axes.flat):
-
-            if i == len(results[conditions[0]]['subordinate matches']):
-
-                ax.set_title('Average over all training-test sets', fontsize='small')
-
-                l0 = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
-                l1 = [np.mean(results[cond]['basic-level matches']) for cond in conditions]
-                l2 = [np.mean(results[cond]['superordinate matches']) for cond in conditions]
-
-
-                if subtract_null_hypothesis is not None:
-
-                    l0 = np.array(l0)
-                    l1 = np.array(l1)
-                    l2 = np.array(l2)
-
-                    l0 -= subtract_null_hypothesis
-                    l1 -= subtract_null_hypothesis
-                    l2 -= subtract_null_hypothesis
-
-                    l0 = list(l0)
-                    l1 = list(l1)
-                    l2 = list(l2)
-
-                if normalise_over_test_scene is True:
-
-                    l0 = np.array(l0)
-                    l1 = np.array(l1)
-                    l2 = np.array(l2)
-
-                    denom = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
-                    denom = np.add(denom, [np.mean(results[cond]['basic-level matches']) for cond in conditions])
-                    denom = np.add(denom, [np.mean(results[cond]['superordinate matches']) for cond in conditions])
-
-                    try:
-                        l0 /= denom
-                        l1 /= denom
-                        l2 /= denom
-                    except ZeroDivisionError:
-                        pass
-
-                    l0 = list(l0)
-                    l1 = list(l1)
-                    l2 = list(l2)
-
-                p0 = ax.bar(ind,l0,width,color='r')
-                p1 = ax.bar(ind+width,l1,width,color='g')
-                p2 = ax.bar(ind+2*width,l2,width,color='b')
-
-            elif i > len(results[conditions[0]]['subordinate matches']):
-                pass
-
-            else:
-                ax.set_title(str(labels[i]), fontsize='small')
-
-                l0 = [results[cond]['subordinate matches'][i] for cond in conditions]
-                l1 = [results[cond]['basic-level matches'][i] for cond in conditions]
-                l2 = [results[cond]['superordinate matches'][i] for cond in conditions]
-
-
-                if subtract_null_hypothesis is not None:
-
-                    l0 = np.array(l0)
-                    l1 = np.array(l1)
-                    l2 = np.array(l2)
-
-                    l0 -= subtract_null_hypothesis
-                    l1 -= subtract_null_hypothesis
-                    l2 -= subtract_null_hypothesis
-
-                    l0 = list(l0)
-                    l1 = list(l1)
-                    l2 = list(l2)
-
-                if normalise_over_test_scene is True:
-
-                    l0 = np.array(l0)
-                    l1 = np.array(l1)
-                    l2 = np.array(l2)
-
-                    denom = [results[cond]['subordinate matches'][i] for cond in conditions]
-                    denom = np.add(denom, [results[cond]['basic-level matches'][i] for cond in conditions])
-                    denom = np.add(denom, [results[cond]['superordinate matches'][i] for cond in conditions])
-
-                    try:
-                        l0 /= denom
-                        l1 /= denom
-                        l2 /= denom
-                    except ZeroDivisionError:
-                        pass
-
-                    l0 = list(l0)
-                    l1 = list(l1)
-                    l2 = list(l2)
-
-
-                p0 = ax.bar(ind,l0,width,color='r')
-                p1 = ax.bar(ind+width,l1,width,color='g')
-                p2 = ax.bar(ind+2*width,l2,width,color='b')
-
-            xlabels = ('1', '3 sub.', '3 basic', '3 super.')
-            ax.set_xticks(ind + 2 * width)
-            ax.set_xticklabels(xlabels)
-
-            if y_limit:
-                ax.set_ylim(y_limit)
-
-    #ax.set_ylabel("gen. prob.")
-    #ax.set_xlabel("condition")
     if y_limit:
         plt.ylim(y_limit)
     elif normalise_over_test_scene is True:
@@ -310,7 +200,7 @@ def bar_chart(results, savename=None, annotation=None,
     else:
         plt.ylim((0,float(m)))
 
-    lgd = plt.legend( (p0, p1, p2), ('sub.', 'basic', 'super.'), loc='lower center', bbox_to_anchor=(0, -0.1, 1, 1), bbox_transform=plt.gcf().transFigure )
+    lgd = plt.legend( (p0, p1, p2), ('subord.', 'basic', 'super.'), loc='upper right')
 
     title = "Generalization scores"
 
@@ -328,7 +218,7 @@ def bar_chart(results, savename=None, annotation=None,
 
             plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
-def overwrite_results(results, savename):
+def write_results_as_csv_file(results, savename):
 
     conditions = [
         'one example',
@@ -403,10 +293,15 @@ def parse_args(args):
                         help='Logging level')
 
     parser.add_argument('--config_file', '-c', metavar='config_file', type=str,
-                        required=True, help='The experiment config file')
+                        default='exp.cfg', help='The experiment config file')
 
     parser.add_argument('--num_cores', '-n', metavar='num__cores',
                         type=int, default=1, help='Number of processes used; default is 1')
+
+    parser.add_argument('--results_path', '-r', metavar='results_path',
+                        type=str,
+                        default=os.path.dirname(os.path.realpath(__file__)),
+                        help='The path to which to write the results')
 
     return parser.parse_args(args)
 

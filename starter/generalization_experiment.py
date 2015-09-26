@@ -1,3 +1,4 @@
+from __future__ import print_function
 import json
 import numpy as np
 import os
@@ -140,13 +141,33 @@ class Experiment(object):
     def run(self):
         """ Conduct this Experiment. """
 
+        print("Conducting an experimental trial, with parameters:")
+        print("\t", "feature space  = ", self.params['feature-space'])
+        print("\t", "gamma_sup  = ", self.params['gamma-sup'])
+        print("\t", "gamma_basic  = ", self.params['gamma-basic'])
+        print("\t", "gamma_sub  = ", self.params['gamma-sub'])
+        print("\t", "gamma_instance  = ", self.params['gamma-instance'])
+        print("\t", "k_sup  = ", self.params['k-sup'])
+        print("\t", "k_basic  = ", self.params['k-basic'])
+        print("\t", "k_sub  = ", self.params['k-sub'])
+        print("\t", "k_instance  = ", self.params['k-instance'])
+        print("\t", "p_sup  = ", self.params['p-sup'])
+        print("\t", "p_basic  = ", self.params['p-basic'])
+        print("\t", "p_sub  = ", self.params['p-sub'])
+        print("\t", "p_instance  = ", self.params['p-instance'])
+
         results = {}
 
         for training_condition in self.training_sets:
 
+            print("\t\t", "Executing training condition:", training_condition,
+                  "...")
+
             results[training_condition] = {}
 
             for test_condition in self.test_sets:
+
+                print("\t\t\t", "Tested", test_condition)
 
                 # Initialize the learner
                 learner = learn.Learner(
@@ -188,7 +209,7 @@ class Experiment(object):
 
                     gen_probs.append(gen_prob)
 
-                gen_probs = np.array(gen_probs,  dtype=np.float128)
+                gen_probs = np.array(gen_probs, dtype=np.float128)
                 results[training_condition][test_condition] = gen_probs
 
         return results

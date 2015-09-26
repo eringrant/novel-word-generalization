@@ -255,7 +255,10 @@ class Meaning:
         """
         Return the probability of feature given this Meaning's word.
         """
-        feature_group = self._feature_to_feature_group_map[feature]
+        try:
+            feature_group = self._feature_to_feature_group_map[feature]
+        except KeyError:
+            import pdb; pdb.set_trace()
         return feature_group.prob(feature)
 
     def seen_features(self):
