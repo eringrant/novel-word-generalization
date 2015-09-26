@@ -1,9 +1,9 @@
 {
     "unseen object features": [
-        "instance_feature_A00",
-        "subord_feature_A00",
-        "basic_feature_A00",
-        "super_feature_A00"
+        "instance_feature_00",
+        "subord_feature_00",
+        "basic_feature_00",
+        "super_feature_00"
     ],
     "training set": {
         "three basic-level examples": {

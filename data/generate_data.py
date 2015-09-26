@@ -345,7 +345,7 @@ def generate_category_data(data_path):
     seats['training set'] = seats_training_set
     seats['test set'] = seats_test_set
 
-    seats['unseen object features'] = ['instance_feature_A00', 'subord_feature_A00', 'basic_feature_A00', 'super_feature_A00']
+    seats['unseen object features'] = ['instance_feature_00', 'subord_feature_00', 'basic_feature_00', 'super_feature_00']
 
     json.dump(seats, open(os.path.join(save_dir, 'stimuli.json'), 'w'),
               indent=4, separators=(',', ': '))
@@ -460,7 +460,7 @@ def generate_xt_data(data_path):
     xt_vegetables_sets['test set'] = xt_vegetables_test_sets
     xt_vegetables_sets['test set'] = xt_vegetables_test_sets
 
-    xt_vegetables_sets['unseen object features'] = ['UNSEEN1{num:02d}'.format(num=i) for i in range(1, 35)]
+    xt_vegetables_sets['unseen object features'] = ['UNSEEN1{num:01d}'.format(num=i) for i in range(1, 35)]
     xt_vegetables_sets['unseen object features'] += ['UNIQ00']
 
     json.dump(xt_vegetables_sets, open(os.path.join(save_dir, 'stimuli.json'), 'w'),
@@ -580,7 +580,7 @@ def generate_xt_data(data_path):
     xt_vehicles_sets['training set'] = xt_vehicles_training_sets
     xt_vehicles_sets['test set'] = xt_vehicles_test_sets
 
-    xt_vehicles_sets['unseen object features'] = ['UNSEEN1{num:02d}'.format(num=i) for i in range(1, 36)]
+    xt_vehicles_sets['unseen object features'] = ['UNSEEN1{num:01d}'.format(num=i) for i in range(1, 36)]
     xt_vehicles_sets['unseen object features'] += ['UNIQ00']
 
     json.dump(xt_vehicles_sets, open(os.path.join(save_dir, 'stimuli.json'), 'w'),
@@ -593,22 +593,22 @@ def generate_xt_data(data_path):
         xt_vehicle_features[feature] = 'instance'
     xt_vehicle_features['UNIQ00'] = 'instance'
 
-    for obj in xt_vegetables:
-        for feature in xt_vegetables[obj]:
+    for obj in xt_vehicles:
+        for feature in xt_vehicles[obj]:
             if not feature.startswith('UNIQ'):
                 level = re.match('[A-Z]*[0-9]([0-9]?[0-9])', feature).group(1)
-                xt_vegetable_features[feature] = level
+                xt_vehicle_features[feature] = level
             else:
-                xt_vegetable_features[feature] = 'UNIQ'
+                xt_vehicle_features[feature] = 'UNIQ'
 
-    for feature in xt_vegetables_sets['unseen object features']:
+    for feature in xt_vehicles_sets['unseen object features']:
         if not feature.startswith('UNIQ'):
             level = re.match('[A-Z]*[0-9]([0-9]?[0-9])', feature).group(1)
-            xt_vegetable_features[feature] = level
+            xt_vehicle_features[feature] = level
         else:
-            xt_vegetable_features[feature] = 'UNIQ'
+            xt_vehicle_features[feature] = 'UNIQ'
 
-    json.dump(xt_vegetable_features,
+    json.dump(xt_vehicle_features,
               open(os.path.join(save_dir, 'feature_to_feature_group_map.json'),
                    'w'), indent=4, separators=(',', ': '), sort_keys=True)
 
@@ -651,8 +651,8 @@ def generate_xt_data(data_path):
     5;JJ11,JJ12,II13,II14,II15,II16,DD17,DD18,DD19,AA110,Z111,Z112,Z113,Z114,Z115,Z116,Z117,Z118,Z119,Z120,R121,R122,P123,K124,K125,K126,K127,K128,K129,K130,K131,K132,K133,K134,K135,D236,D237,D238,D239,D240,UNIQ5
     6;JJ11,JJ12,II13,II14,II15,II16,DD17,DD18,DD19,AA110,Z111,Z112,Z113,Z114,Z115,Z116,Z117,Z118,Z119,Z120,R121,R122,P123,K224,K225,K226,K227,K228,K229,K230,K231,K232,K233,K234,K235,K236,K237,K238,K239,K240,UNIQ6
     8;JJ11,JJ12,II13,II14,II15,II16,DD17,DD18,DD19,AA110,Z111,Z112,Z113,Z114,Z115,Z116,Z117,Z118,Z119,Z120,R121,R122,P223,P224,P225,P226,P227,P228,P229,P230,P231,P232,P233,P234,P235,P236,P237,P238,P239,P240,UNIQ8
-    7;JJ11,JJ12,II13,II14,II15,II16,DD17,DD18,DD19,AA110,Z111,Z112,Z113,Z114,Z115,Z116,Z117,Z118,Z119,Z120,R221,R222,R223,M24,M25,M26,M27,M28,M29,M30,M31,M32,M33,M34,M35,M36,M37,M38,M39,M40,UNIQ7
-    9;JJ11,JJ12,II13,II14,II15,II16,DD17,DD18,DD19,AA110,Z111,Z112,Z113,Z114,Z115,Z116,Z117,Z118,Z119,Z120,R221,R222,R223,M24,M25,M26,M27,M28,M29,M30,M31,M32,M33,M34,M35,M36,M37,M38,M39,M40,UNIQ9
+    7;JJ11,JJ12,II13,II14,II15,II16,DD17,DD18,DD19,AA110,Z111,Z112,Z113,Z114,Z115,Z116,Z117,Z118,Z119,Z120,R221,R222,R223,M124,M125,M126,M127,M128,M129,M130,M131,M132,M133,M134,M135,M136,M137,M138,M139,M140,UNIQ7
+    9;JJ11,JJ12,II13,II14,II15,II16,DD17,DD18,DD19,AA110,Z111,Z112,Z113,Z114,Z115,Z116,Z117,Z118,Z119,Z120,R221,R222,R223,M224,M225,M226,M227,M228,M229,M230,M231,M232,M233,M234,M235,M236,M237,M238,M239,M240,UNIQ9
     12;JJ11,JJ12,II13,II14,II15,II16,DD17,DD18,DD19,AA110,Z211,Z212,Z213,Z214,Z215,Z216,Z217,Z218,Z219,Z220,Z221,Z222,Z223,Z224,Z225,Z226,Z227,Z228,Z229,Z230,Z231,Z232,Z233,Z234,Z235,Z236,Z237,Z238,Z239,Z240,UNIQ12
     15;JJ11,JJ12,II13,II14,II15,II16,DD17,DD18,DD19,AA210,AA211,AA212,AA213,AA214,AA215,AA216,AA217,AA218,AA219,AA220,AA221,AA222,AA223,AA224,AA225,AA226,AA227,AA228,AA229,AA230,AA231,AA232,AA233,AA234,AA234,AA236,AA237,AA238,AA239,AA240,UNIQ15
     14;JJ11,JJ12,II13,II14,II15,II16,DD27,DD28,DD29,DD210,DD211,DD212,DD213,DD214,DD215,DD216,DD217,DD218,DD219,DD220,DD221,DD222,DD223,DD224,DD225,DD226,DD227,DD228,DD229,DD230,DD231,DD232,DD233,DD234,DD234,DD236,DD237,DD238,DD239,DD240,UNIQ14
@@ -704,7 +704,7 @@ def generate_xt_data(data_path):
     xt_animals_sets['training set'] = xt_animals_training_sets
     xt_animals_sets['test set'] = xt_animals_test_sets
 
-    xt_animals_sets['unseen object features'] = ['UNSEEN1{num:02d}'.format(num=i) for i in range(1, 41)]
+    xt_animals_sets['unseen object features'] = ['UNSEEN1{num:01d}'.format(num=i) for i in range(1, 41)]
     xt_animals_sets['unseen object features'] += ['UNIQ00']
 
     json.dump(xt_animals_sets, open(os.path.join(save_dir, 'stimuli.json'), 'w'),
@@ -742,7 +742,8 @@ def parse_args(args):
                         help='Logging level')
 
     parser.add_argument('--data_path', '-d', metavar='data_path',
-                        type=str, default='.',
+                        type=str,
+                        default=os.path.dirname(os.path.realpath(__file__)),
                         help='The path to which to write the data')
 
     return parser.parse_args(args)
