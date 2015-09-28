@@ -262,7 +262,7 @@ def condition(results, params):
     return one_ex and three_subord and three_basic and three_super
 
 
-def is_close(x, y, atol=0, rtol=0.1):
+def is_close(x, y, atol=0.2, rtol=0):
     return np.less_equal(abs(x-y), atol + rtol * y)
 
 
