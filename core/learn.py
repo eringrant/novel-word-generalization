@@ -4,29 +4,22 @@ import os
 import sys
 
 import wmmapping
-"""
-learn.py
 
-
-"""
 
 class Learner:
-    """
-    Encapsulate all learning and model updating functionality.
+    """Encapsulate all learning and model updating functionality."""
 
-    """
-
-    def __init__(self,
+    def __init__(
+        self,
         gamma_sup, gamma_basic, gamma_sub, gamma_instance,
         k_sup, k_basic, k_sub, k_instance,
         p_sup, p_basic, p_sub, p_instance,
         feature_group_to_level_map,
         feature_to_feature_group_map,
-        ):
-        """
+    ):
 
-        """
-        self._learned_lexicon = wmmapping.Lexicon([],
+        self._learned_lexicon = wmmapping.Lexicon(
+            [],
             gamma_sup,
             gamma_basic,
             gamma_sub,
@@ -50,17 +43,17 @@ class Learner:
         return self._learned_lexicon.k(word, feature)
 
     def learned_lexicon(self):
-        """ Return a copy of the learned Lexicon. """
+        """Return a copy of the learned Lexicon."""
         return copy.deepcopy(self._learned_lexicon)
 
     def calculate_alignments(self, words, features):
-        """ Update the alignments between words and features.
+        """Update the alignments between words and features.
 
         Update the alignments for each combination of word-feature pairs from
-        the list words and set features.
-        """
-        # Alignment: P(a|u,f) = p(f|w) / sum(w' in words)p(f|w')
+        the list words and the set features:
 
+            alignment: P(a|u,f) = p(f|w) / sum(w' in words) p(f|w')
+        """
         for feature in features:
 
             # Normalization term: sum(w' in words) p(f|w')
@@ -76,10 +69,9 @@ class Learner:
 
                 # assoc_t(f,w) = assoc_{t-1}(f,w) + P(a|u,f)
                 self._learned_lexicon.update_association(word, feature,
-                        alignment)
+                                                         alignment)
 
             # End alignment calculation for each word
-
 
         # End alignment calculation for each feature
 
@@ -89,29 +81,10 @@ class Learner:
             self._learned_lexicon.add_seen_features(word, features)
 
     def process_pair(self, words, features, outdir):
-        """
-        Process the pair words-features, two lists of words and features,
-        respectively, to be learned from.
-        """
+        """Process the pair words-features."""
         # calculate the alignment probabilities and update the associations for
         # all word-feature pairs
         self.calculate_alignments(words, features)
-
-        # TODO: unnecessary wrapper
-        # TODO: outdir unused
-
-
-    def generalization_prob(self, word, scene):
-        """ Return the probability of this learner to generalize word to scene. """
-
-        gen_prob = 1.
-
-        for feature in scene:
-
-            prob = self._learned_lexicon.prob(word, feature)
-            gen_prob *= prob
-
-        return gen_prob
 
     def process_corpus(self, corpus_path, outdir, corpus=None):
         """
@@ -124,10 +97,10 @@ class Learner:
         close_corpus = False
         if corpus is None:
             if not os.path.exists(corpus_path):
-                logging.error("Error -- Corpus does not exist : " + corpus_path)
+                logging.error("Error -- Corpus does not exist: " + corpus_path)
                 sys.exit(2)
             corpus = input.Corpus(corpus_path)
-            close_corpus = True;
+            close_corpus = True
 
         (words, features) = corpus.next_pair()
 
@@ -142,3 +115,14 @@ class Learner:
         if close_corpus:
             corpus.close()
 
+    def generalization_prob(self, word, scene):
+        """Return the probability of Learner to generalize word to scene."""
+
+        gen_prob = 1.
+
+        for feature in scene:
+
+            prob = self._learned_lexicon.prob(word, feature)
+            gen_prob *= prob
+
+        return gen_prob
