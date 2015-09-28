@@ -22,27 +22,33 @@ import generalization_experiment
 
 
 """
-Use the following command to run the code (using one CPU core):
-python novel_word_generalization_experiments.py -c exp.cfg -n 1
+conduct_generalization_experiments.py
 
+Run the generalization experiments with the parameter setting(s) defined in the
+config file (identified by the optional command line argument CONFIG); use
+the number of CPU cores specified by the optional command line argument CORES:
+
+python novel_word_generalization_experiments.py -c CONFIG -n CORES
+
+The default values are CONFIG=exp.cfg and CORES=1.
 """
 
 
 def generate_conditions(paramlist):
 
-    if type(paramlist) == types.DictType:
+    if isinstance(type(paramlist), types.DictType):
         paramlist = [paramlist]
 
     iparamlist = []
     for params in paramlist:
         if ('experiment' in params and params['experiment'] == 'single'):
-            iparamlist.append(params) # only do one repetition of experiment
+            iparamlist.append(params)  # only do one repetition of experiment
         else:
             iterparams = [p for p in params if hasattr(params[p], '__iter__')]
             if len(iterparams) > 0:
                 iterfunc = itertools.product
                 for il in iterfunc(*[params[p] for p in iterparams]):
-                    par = params.copy() # keep the params having only one value
+                    par = params.copy()  # keep the params having only one value
                     for i, ip in enumerate(iterparams):
                         par[ip] = il[i]
                     iparamlist.append(par)
@@ -54,8 +60,8 @@ def generate_conditions(paramlist):
 
 def items_to_params(items):
     params = {}
-    for t,v in items:
-        try: # evaluating the parameter
+    for t, v in items:
+        try:  # evaluating the parameter
             params[t] = eval(v)
             if isinstance(params[t], np.ndarray):
                 params[t] = params[t].tolist()
@@ -68,7 +74,8 @@ def plot_results_as_bar_chart(results, savename=None,
                               normalise_over_test_scene=True, annotation=None,
                               y_limit=None):
 
-    conditions = ['one example',
+    conditions = [
+        'one example',
         'three subordinate examples',
         'three basic-level examples',
         'three superordinate examples'
@@ -149,35 +156,30 @@ def plot_results_as_bar_chart(results, savename=None,
         '3 basic',
         '3 super.'
     ]
-    ax.set_xticklabels([short_form_conditions[i//2] if (i+1)%2 == 0 else '' for i in range(2*len(short_form_conditions))])
+    ax.set_xticklabels([short_form_conditions[i//2] if (i+1) % 2 == 0 else '' \
+                        for i in range(2*len(short_form_conditions))])
 
     m = np.max(l0 + l1 + l2)
 
     if y_limit:
         plt.ylim(y_limit)
     elif normalise_over_test_scene is True:
-        plt.ylim((0,1))
+        plt.ylim((0, 1))
     else:
-        plt.ylim((0,float(m)))
+        plt.ylim((0, float(m)))
 
-    lgd = plt.legend( (p0, p1, p2), ('subord.', 'basic', 'super.'), loc='upper right')
+    lgd = plt.legend((p0, p1, p2), ('subord.', 'basic', 'super.'),
+                     loc='upper right')
 
     title = "Generalization scores"
 
     if annotation is not None:
-        title += '\n'+annotation
-
-    #fig.suptitle(title)
+        title += '\n' + annotation
 
     if savename is None:
         plt.show()
     else:
-        # add check for significant results
-        #if l0[0] < 0.65 and l1[0] > 0.35 and l1[1] < 0.3 and l1[3] / l0[3] > 0.5:
-        if True:
-
-            plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
-
+        plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
 
 def replace_with_underscores(s):
@@ -210,50 +212,58 @@ def run_trial(params):
     #title += ',' + 'psub_' + str(params['p-sub'])
     #title += ',' + 'pinstance_' + str(params['p-instance'])
     title += ',' + 'subtractprior_' + str(params['subtract-prior'])
-    title = os.path.join(params['output-path'], 'plots', title)
 
     if not os.path.exists(params['output-path']):
         os.makedirs(params['output-path'])
     if not os.path.exists(os.path.join(params['output-path'], 'plots')):
         os.makedirs(os.path.join(params['output-path'], 'plots'))
 
-    if (not params['check-condition']) or (params['check-condition'] and condition(results)):
-        plot_results_as_bar_chart(results, savename=title + '.png', normalise_over_test_scene=True)
-        #write_results_as_csv_file(results, savename=title + '.dat')
+    if (not params['check-condition']) or (params['check-condition'] and condition(results, params)):
+        plot_results_as_bar_chart(results,
+                                  savename=os.path.join(params['output-path'],
+                                                        'plots', title)+ '.png',
+                                  normalise_over_test_scene=True)
+        write_results_as_csv_file(results,
+                                  savename=os.path.join(params['output-path'],
+                                                        'csv', title)+ '.dat')
 
 
-def condition(results):
-    """Define lower bounds on acceptable results."""
+def condition(results, params):
+    """Define bounds on acceptable results."""
 
     # 1 ex.
     sub = np.mean(results['one example']['subordinate matches'])
     basic = np.mean(results['one example']['basic-level matches'])
     sup = np.mean(results['one example']['superordinate matches'])
 
-    one_ex = (basic / sub) > 0.3 and (sup / sub) < 0.1
+    one_ex = is_close(basic/sub, params['one-ex-basic-sub-ratio']) and is_close(sup/sub, params['one-ex-sup-sub-ratio'])
 
     # 3 subord.
     sub = np.mean(results['three subordinate examples']['subordinate matches'])
     basic = np.mean(results['three subordinate examples']['basic-level matches'])
     sup = np.mean(results['three subordinate examples']['superordinate matches'])
 
-    three_sub = (basic / sub) < 0.3 and (sup / sub) < 0.1
+    three_subord = is_close(basic/sub, params['three-subord-basic-sub-ratio']) and is_close(sup/sub, params['three-subord-sup-sub-ratio'])
 
     # 3 basic
     sub = np.mean(results['three basic-level examples']['subordinate matches'])
     basic = np.mean(results['three basic-level examples']['basic-level matches'])
     sup = np.mean(results['three basic-level examples']['superordinate matches'])
 
-    three_basic = (basic / sub) > 0.6 and (sup / sub) > 0.1
+    three_basic = is_close(basic/sub, params['three-basic-basic-sub-ratio']) and is_close(sup/sub, params['three-basic-sup-sub-ratio'])
 
     # 3 super.
     sub = np.mean(results['three superordinate examples']['subordinate matches'])
     basic = np.mean(results['three superordinate examples']['basic-level matches'])
     sup = np.mean(results['three superordinate examples']['superordinate matches'])
 
-    three_sup = (basic / sub) > 0.5 and (sup / sub) > 0.4
+    three_super = is_close(basic/sub, params['three-super-basic-sub-ratio']) and is_close(sup/sub, params['three-super-sup-sub-ratio'])
 
-    return one_ex and three_sub and three_basic and three_sup
+    return one_ex and three_subord and three_basic and three_super
+
+
+def is_close(x, y, atol=0, rtol=0.1):
+    return np.less_equal(abs(x-y), atol + rtol * y)
 
 
 def write_results_as_csv_file(results, savename):
@@ -266,10 +276,10 @@ def write_results_as_csv_file(results, savename):
     ]
 
     abbrev_condition_names = {
-        'one example' : '1 ex.',
-        'three subordinate examples' : '3 sub.',
-        'three basic-level examples' : '3 basic',
-        'three superordinate examples' : '3 super.'
+        'one example': '1 ex.',
+        'three subordinate examples': '3 sub.',
+        'three basic-level examples': '3 basic',
+        'three superordinate examples': '3 super.'
     }
 
     with open(savename, 'w') as f:
@@ -288,9 +298,6 @@ def write_results_as_csv_file(results, savename):
             f.write(str(np.mean(results[condition]['superordinate matches'])/normalisation))
             f.write("\n")
 
-    print('Wrote results out to', savename)
-
-
 
 def script(config_file, num_cores, **kwargs):
 
@@ -306,7 +313,8 @@ def script(config_file, num_cores, **kwargs):
         params['name'] = exp
         paramlist.append(params)
 
-    np.random.shuffle(paramlist) # randomise the order of experiment conditions
+    # Randomise the order of experiment conditions
+    np.random.shuffle(paramlist)
 
     exp_list = generate_conditions(paramlist)
 
@@ -333,7 +341,8 @@ def parse_args(args):
                         default='exp.cfg', help='The experiment config file')
 
     parser.add_argument('--num_cores', '-n', metavar='num__cores',
-                        type=int, default=1, help='Number of processes used; default is 1')
+                        type=int, default=1,
+                        help='Number of processes used; default is 1')
 
     parser.add_argument('--results_path', '-r', metavar='results_path',
                         type=str,
