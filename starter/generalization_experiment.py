@@ -16,35 +16,43 @@ generalization experiment.
 
 # Mapping from the feature space to the stimuli file path
 stimuli_files = {
-    'simple' : os.path.join('simple', 'stimuli.json'),
-    'clothing' : os.path.join('clothing', 'stimuli.json'),
-    'containers' : os.path.join('containers', 'stimuli.json'),
-    'seats' : os.path.join('seats', 'stimuli.json'),
-    'xt-animals' : os.path.join('xt_animals', 'stimuli.json'),
-    'xt-vegetables' : os.path.join('xt_vegetables', 'stimuli.json'),
-    'xt-vehicles' : os.path.join('xt_vehicles', 'stimuli.json'),
+    'simple': os.path.join('simple', 'stimuli.json'),
+    'clothing': os.path.join('clothing', 'stimuli.json'),
+    'containers': os.path.join('containers', 'stimuli.json'),
+    'seats': os.path.join('seats', 'stimuli.json'),
+    'xt-animals': os.path.join('xt_animals', 'stimuli.json'),
+    'xt-vegetables': os.path.join('xt_vegetables', 'stimuli.json'),
+    'xt-vehicles': os.path.join('xt_vehicles', 'stimuli.json'),
 }
 
 # Mapping from the feature space to the feature-level specification file path
 feature_group_to_level_maps = {
-    'simple' : os.path.join('simple', 'feature_group_to_level_map.json'),
-    'clothing' : os.path.join('clothing', 'feature_group_to_level_map.json'),
-    'containers' : os.path.join('containers', 'feature_group_to_level_map.json'),
-    'seats' : os.path.join('seats', 'feature_group_to_level_map.json'),
-    'xt-animals' : os.path.join('xt_animals', 'feature_group_to_level_map.json'),
-    'xt-vegetables' : os.path.join('xt_vegetables', 'feature_group_to_level_map.json'),
-    'xt-vehicles' : os.path.join('xt_vehicles', 'feature_group_to_level_map.json'),
+    'simple': os.path.join('simple', 'feature_group_to_level_map.json'),
+    'clothing': os.path.join('clothing', 'feature_group_to_level_map.json'),
+    'containers': os.path.join('containers',
+                               'feature_group_to_level_map.json'),
+    'seats': os.path.join('seats', 'feature_group_to_level_map.json'),
+    'xt-animals': os.path.join('xt_animals',
+                               'feature_group_to_level_map.json'),
+    'xt-vegetables': os.path.join('xt_vegetables',
+                                  'feature_group_to_level_map.json'),
+    'xt-vehicles': os.path.join('xt_vehicles',
+                                'feature_group_to_level_map.json'),
 }
 
 # Mapping from the feature space to the feature-level specification file path
 feature_to_feature_group_maps = {
-    'simple' : os.path.join('simple', 'feature_to_feature_group_map.json'),
-    'clothing' : os.path.join('clothing', 'feature_to_feature_group_map.json'),
-    'containers' : os.path.join('containers', 'feature_to_feature_group_map.json'),
-    'seats' : os.path.join('seats', 'feature_to_feature_group_map.json'),
-    'xt-animals' : os.path.join('xt_animals', 'feature_to_feature_group_map.json'),
-    'xt-vegetables' : os.path.join('xt_vegetables', 'feature_to_feature_group_map.json'),
-    'xt-vehicles' : os.path.join('xt_vehicles', 'feature_to_feature_group_map.json'),
+    'simple': os.path.join('simple', 'feature_to_feature_group_map.json'),
+    'clothing': os.path.join('clothing', 'feature_to_feature_group_map.json'),
+    'containers': os.path.join('containers',
+                               'feature_to_feature_group_map.json'),
+    'seats': os.path.join('seats', 'feature_to_feature_group_map.json'),
+    'xt-animals': os.path.join('xt_animals',
+                               'feature_to_feature_group_map.json'),
+    'xt-vegetables': os.path.join('xt_vegetables',
+                                  'feature_to_feature_group_map.json'),
+    'xt-vehicles': os.path.join('xt_vehicles',
+                                'feature_to_feature_group_map.json'),
 }
 
 
@@ -65,25 +73,25 @@ class InvalidParameterError(Exception):
 
 
 class Experiment(object):
-    """ Execute a trial of the novel word generalization experiment.
+    """An object that conducts a novel word generalization experiment trial.
 
     Members:
-        params -- the  parameter settings for Experiment
-        stimuli -- a dict of (feature space -> stimuli)
-        feature_map -- a dict of (feature space -> (feature -> feature_group))
+        params -- the  parameter settings for this Experiment
+        feature_group_to_level_map -- a dict of (feature group -> hieararchy
+        level)
+        feature_to_feature_group_map -- a dict of (feature -> feature group)
         training_sets -- a dict of (training condition -> training set)
         test_sets -- a dict of (test condition -> test set)
-        learner -- the Learner upon which to perform the experiment,
-            initialized with the parameter settings specified in params
         unseen_prob -- the prior probability of the learner to generalize a
             novel word to an object, before seeing any evidence, under the
-            parameter settting specified in params
+            parameter setting specified in params
     """
 
     def __init__(self, params):
-        """
-        Initiliaze this Experiment according to the parameter settings specified
-        in params.
+        """Initialize this Experiment.
+
+        Initialize this Experiment according to the parameter settings
+        specified in params.
         """
         self.params = params
 
@@ -93,26 +101,26 @@ class Experiment(object):
                                                 'xt-vehicles']:
             raise InvalidParameterError("undefined feature space")
 
-        # Access the data files (stimuli and feature-level specifications)
+        # Access the data files (stimuli)
         with open(os.path.join(self.params['data-path'],
                                stimuli_files[self.params['feature-space']]),
-                               'r') as stimuli_file:
-            self.stimuli = json.load(stimuli_file)
+                  'r') as stimuli_file:
+            stimuli = json.load(stimuli_file)
+        self.training_sets = stimuli['training set']
+        self.test_sets = stimuli['test set']
 
-        # Access the information about the data that is assumed to belong to the
-        # learner
+        # Access the information about the data that is assumed to belong to
+        # the learner
         with open(os.path.join(self.params['data-path'],
                                feature_group_to_level_maps[self.params['feature-space']]),
                   'r') as feature_group_to_level_map:
-            self.feature_group_to_level_map = json.load(feature_group_to_level_map)
+            self.feature_group_to_level_map =\
+                json.load(feature_group_to_level_map)
         with open(os.path.join(self.params['data-path'],
                                feature_to_feature_group_maps[self.params['feature-space']]),
                   'r') as feature_to_feature_group_map:
-            self.feature_to_feature_group_map = json.load(feature_to_feature_group_map)
-
-        # Load the training and test sets
-        self.training_sets = self.stimuli['training set']
-        self.test_sets = self.stimuli['test set']
+            self.feature_to_feature_group_map =\
+                json.load(feature_to_feature_group_map)
 
         # Initialize the learner (for the unseen probability computation)
         learner = learn.Learner(
@@ -129,17 +137,16 @@ class Experiment(object):
             p_sub=self.params['p-sub'],
             p_instance=self.params['p-instance'],
             feature_group_to_level_map=self.feature_group_to_level_map,
-            feature_to_feature_group_map=self.feature_to_feature_group_map,
+            feature_to_feature_group_map=self.feature_to_feature_group_map
         )
 
-        # Compute the prior probability of an object
+        # Compute the prior (unseen) probability of an object
         self.unseen_prob =\
             learner.generalization_prob(self.params['word'],
-                                        self.stimuli['unseen object features'])
-
+                                        stimuli['unseen object features'])
 
     def run(self):
-        """ Conduct this Experiment. """
+        """Conduct this Experiment and return the results."""
 
         print("Conducting an experimental trial, with parameters:")
         print("\t", "feature space  = ", self.params['feature-space'])
@@ -184,7 +191,7 @@ class Experiment(object):
                     p_sub=self.params['p-sub'],
                     p_instance=self.params['p-instance'],
                     feature_group_to_level_map=self.feature_group_to_level_map,
-                    feature_to_feature_group_map=self.feature_to_feature_group_map,
+                    feature_to_feature_group_map=self.feature_to_feature_group_map
                 )
 
                 for trial in self.training_sets[training_condition]:
