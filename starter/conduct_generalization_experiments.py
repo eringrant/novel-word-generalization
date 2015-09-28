@@ -28,19 +28,6 @@ python novel_word_generalization_experiments.py -c exp.cfg -n 1
 """
 
 
-
-def items_to_params(items):
-    params = {}
-    for t,v in items:
-        try: # evaluating the parameter
-            params[t] = eval(v)
-            if isinstance(params[t], np.ndarray):
-                params[t] = params[t].tolist()
-        except (NameError, SyntaxError):
-            params[t] = v
-    return params
-
-
 def generate_conditions(paramlist):
 
     if type(paramlist) == types.DictType:
@@ -65,48 +52,21 @@ def generate_conditions(paramlist):
     return iparamlist
 
 
-def replace_with_underscores(s):
-    s = re.sub(r"[^\w\s-]", '', s)
-    s = re.sub(r"\s+", '_', s)
-    return s
+def items_to_params(items):
+    params = {}
+    for t,v in items:
+        try: # evaluating the parameter
+            params[t] = eval(v)
+            if isinstance(params[t], np.ndarray):
+                params[t] = params[t].tolist()
+        except (NameError, SyntaxError):
+            params[t] = v
+    return params
 
 
-def run_trial(params):
-    """
-    Conduct a trial of the novel word generalization experiment, under the
-    parameter settings specified in params.
-    """
-    experiment = generalization_experiment.Experiment(params)
-    results = experiment.run()
-
-    # Create a title for the plots PNG image
-    title = 'plot'
-    title += ',' + 'featurespace_' + params['feature-space']
-    title += ',' + 'gammasup_' + str(params['gamma-sup'])
-    title += ',' + 'gammabasic_' + str(params['gamma-basic'])
-    title += ',' + 'gammasub_' + str(params['gamma-sub'])
-    title += ',' + 'gammainstance_' + str(params['gamma-instance'])
-    title += ',' + 'ksup_' + str(params['k-sup'])
-    title += ',' + 'kbasic_' + str(params['k-basic'])
-    title += ',' + 'ksub_' + str(params['k-sub'])
-    title += ',' + 'kinstance_' + str(params['k-instance'])
-    #title += ',' + 'psup_' + str(params['p-sup'])
-    #title += ',' + 'pbasic_' + str(params['p-basic'])
-    #title += ',' + 'psub_' + str(params['p-sub'])
-    #title += ',' + 'pinstance_' + str(params['p-instance'])
-    title += ',' + 'subtractprior_' + str(params['subtract-prior'])
-    title = os.path.join(params['output-path'], 'plots', title)
-
-    if not os.path.exists(params['output-path']):
-        os.makedirs(params['output-path'])
-    if not os.path.exists(os.path.join(params['output-path'], 'plots')):
-        os.makedirs(os.path.join(params['output-path'], 'plots'))
-
-    plot_results_as_bar_chart(results, savename=title + '.png', normalise_over_test_scene=True)
-    write_results_as_csv_file(results, savename=title + '.dat')
-
-
-def plot_results_as_bar_chart(results, savename=None, normalise_over_test_scene=True, annotation=None, y_limit=None):
+def plot_results_as_bar_chart(results, savename=None,
+                              normalise_over_test_scene=True, annotation=None,
+                              y_limit=None):
 
     conditions = ['one example',
         'three subordinate examples',
@@ -218,6 +178,84 @@ def plot_results_as_bar_chart(results, savename=None, normalise_over_test_scene=
 
             plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
 
+
+
+def replace_with_underscores(s):
+    s = re.sub(r"[^\w\s-]", '', s)
+    s = re.sub(r"\s+", '_', s)
+    return s
+
+
+def run_trial(params):
+    """
+    Conduct a trial of the novel word generalization experiment, under the
+    parameter settings specified in params.
+    """
+    experiment = generalization_experiment.Experiment(params)
+    results = experiment.run()
+
+    # Create a title for the plots PNG image
+    title = 'plot'
+    title += ',' + 'featurespace_' + params['feature-space']
+    title += ',' + 'gammasup_' + str(params['gamma-sup'])
+    title += ',' + 'gammabasic_' + str(params['gamma-basic'])
+    title += ',' + 'gammasub_' + str(params['gamma-sub'])
+    title += ',' + 'gammainstance_' + str(params['gamma-instance'])
+    title += ',' + 'ksup_' + str(params['k-sup'])
+    title += ',' + 'kbasic_' + str(params['k-basic'])
+    title += ',' + 'ksub_' + str(params['k-sub'])
+    title += ',' + 'kinstance_' + str(params['k-instance'])
+    #title += ',' + 'psup_' + str(params['p-sup'])
+    #title += ',' + 'pbasic_' + str(params['p-basic'])
+    #title += ',' + 'psub_' + str(params['p-sub'])
+    #title += ',' + 'pinstance_' + str(params['p-instance'])
+    title += ',' + 'subtractprior_' + str(params['subtract-prior'])
+    title = os.path.join(params['output-path'], 'plots', title)
+
+    if not os.path.exists(params['output-path']):
+        os.makedirs(params['output-path'])
+    if not os.path.exists(os.path.join(params['output-path'], 'plots')):
+        os.makedirs(os.path.join(params['output-path'], 'plots'))
+
+    if (not params['check-condition']) or (params['check-condition'] and condition(results)):
+        plot_results_as_bar_chart(results, savename=title + '.png', normalise_over_test_scene=True)
+        #write_results_as_csv_file(results, savename=title + '.dat')
+
+
+def condition(results):
+    """Define lower bounds on acceptable results."""
+
+    # 1 ex.
+    sub = np.mean(results['one example']['subordinate matches'])
+    basic = np.mean(results['one example']['basic-level matches'])
+    sup = np.mean(results['one example']['superordinate matches'])
+
+    one_ex = (basic / sub) > 0.3 and (sup / sub) < 0.1
+
+    # 3 subord.
+    sub = np.mean(results['three subordinate examples']['subordinate matches'])
+    basic = np.mean(results['three subordinate examples']['basic-level matches'])
+    sup = np.mean(results['three subordinate examples']['superordinate matches'])
+
+    three_sub = (basic / sub) < 0.3 and (sup / sub) < 0.1
+
+    # 3 basic
+    sub = np.mean(results['three basic-level examples']['subordinate matches'])
+    basic = np.mean(results['three basic-level examples']['basic-level matches'])
+    sup = np.mean(results['three basic-level examples']['superordinate matches'])
+
+    three_basic = (basic / sub) > 0.6 and (sup / sub) > 0.1
+
+    # 3 super.
+    sub = np.mean(results['three superordinate examples']['subordinate matches'])
+    basic = np.mean(results['three superordinate examples']['basic-level matches'])
+    sup = np.mean(results['three superordinate examples']['superordinate matches'])
+
+    three_sup = (basic / sub) > 0.5 and (sup / sub) > 0.4
+
+    return one_ex and three_sub and three_basic and three_sup
+
+
 def write_results_as_csv_file(results, savename):
 
     conditions = [
@@ -251,7 +289,6 @@ def write_results_as_csv_file(results, savename):
             f.write("\n")
 
     print('Wrote results out to', savename)
-
 
 
 
