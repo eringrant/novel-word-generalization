@@ -194,43 +194,52 @@ def run_trial(params):
     Conduct a trial of the novel word generalization experiment, under the
     parameter settings specified in params.
     """
-    experiment = generalization_experiment.Experiment(params)
-    results = experiment.run()
+    if (not params['learner-type'] == 'child') or (params['learner-type'] ==
+                                                   'child' and
+                                                   check_for_child_params(params)):
+        experiment = generalization_experiment.Experiment(params)
+        results = experiment.run()
 
-    # Create a title for the plots PNG image
-    title = 'plot'
-    title += ',' + 'featurespace_' + params['feature-space']
-    title += ',' + 'gammasup_' + str(params['gamma-sup'])
-    title += ',' + 'gammabasic_' + str(params['gamma-basic'])
-    title += ',' + 'gammasub_' + str(params['gamma-sub'])
-    title += ',' + 'gammainstance_' + str(params['gamma-instance'])
-    title += ',' + 'ksup_' + str(params['k-sup'])
-    title += ',' + 'kbasic_' + str(params['k-basic'])
-    title += ',' + 'ksub_' + str(params['k-sub'])
-    title += ',' + 'kinstance_' + str(params['k-instance'])
-    #title += ',' + 'psup_' + str(params['p-sup'])
-    #title += ',' + 'pbasic_' + str(params['p-basic'])
-    #title += ',' + 'psub_' + str(params['p-sub'])
-    #title += ',' + 'pinstance_' + str(params['p-instance'])
-    #title += ',' + 'subtractprior_' + str(params['subtract-prior'])
-    #title += ',' + 'metric_' + str(params['metric'])
+        # Create a title for the plots PNG image
+        title = 'plot'
+        title += ',' + 'featurespace_' + params['feature-space']
+        title += ',' + 'gammasup_' + str(params['gamma-sup'])
+        title += ',' + 'gammabasic_' + str(params['gamma-basic'])
+        title += ',' + 'gammasub_' + str(params['gamma-sub'])
+        title += ',' + 'gammainstance_' + str(params['gamma-instance'])
+        title += ',' + 'ksup_' + str(params['k-sup'])
+        title += ',' + 'kbasic_' + str(params['k-basic'])
+        title += ',' + 'ksub_' + str(params['k-sub'])
+        title += ',' + 'kinstance_' + str(params['k-instance'])
+        #title += ',' + 'psup_' + str(params['p-sup'])
+        #title += ',' + 'pbasic_' + str(params['p-basic'])
+        #title += ',' + 'psub_' + str(params['p-sub'])
+        #title += ',' + 'pinstance_' + str(params['p-instance'])
+        #title += ',' + 'subtractprior_' + str(params['subtract-prior'])
+        #title += ',' + 'metric_' + str(params['metric'])
 
-    if not os.path.exists(params['output-path']):
-        os.makedirs(params['output-path'])
-    if not os.path.exists(os.path.join(params['output-path'], 'plots')):
-        os.makedirs(os.path.join(params['output-path'], 'plots'))
-    if not os.path.exists(os.path.join(params['output-path'], 'csv')):
-        os.makedirs(os.path.join(params['output-path'], 'csv'))
+        if not os.path.exists(params['output-path']):
+            os.makedirs(params['output-path'])
+        if not os.path.exists(os.path.join(params['output-path'], 'plots')):
+            os.makedirs(os.path.join(params['output-path'], 'plots'))
+        if not os.path.exists(os.path.join(params['output-path'], 'csv')):
+            os.makedirs(os.path.join(params['output-path'], 'csv'))
 
-    if (not params['check-condition']) or (params['check-condition'] and condition(results, params)):
-        plot_results_as_bar_chart(results,
-                                  savename=os.path.join(params['output-path'],
-                                                        'plots', title)+ '.png',
-                                  normalise_over_test_scene=True if params['metric'] == 'intersection' else False)
-        write_results_as_csv_file(results,
-                                  savename=os.path.join(params['output-path'],
-                                                        'csv', title)+ '.dat')
+        if (not params['check-condition']) or (params['check-condition'] and condition(results, params)):
+            plot_results_as_bar_chart(results,
+                                    savename=os.path.join(params['output-path'],
+                                                            'plots', title)+ '.png',
+                                    normalise_over_test_scene=True if params['metric'] == 'intersection' else False)
+            write_results_as_csv_file(results,
+                                    savename=os.path.join(params['output-path'],
+                                                            'csv', title)+ '.dat')
 
+
+def check_for_child_params(params):
+    check_gamma = params['gamma-instance'] == params['gamma-sub'] and params['gamma-sub'] == params['gamma-basic'] and params['gamma-basic'] == params['gamma-sup']
+    check_k = params['k-instance'] == params['k-sub'] and params['k-sub'] == params['k-basic'] and params['k-basic'] == params['k-sup']
+    check_p = params['p-instance'] == params['p-sub'] and params['p-sub'] == params['p-basic'] and params['p-basic'] == params['p-sup']
+    return check_gamma and check_k and check_p
 
 def condition(results, params):
     """Define bounds on acceptable results."""
