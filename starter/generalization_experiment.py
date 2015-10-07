@@ -208,7 +208,8 @@ class Experiment(object):
 
                     gen_prob = learner.generalization_prob(
                         self.params['word'],
-                        scene
+                        scene,
+                        metric=self.params['metric']
                     )
 
                     if self.params['subtract-prior']:

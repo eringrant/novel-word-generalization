@@ -1,4 +1,5 @@
 import copy
+import pprint
 
 """
 wmmapping.py
@@ -11,9 +12,19 @@ class UndefinedFeatureError(Exception):
     """
     Defines an exception that occurs when a feature whose feature group is not
     known is presented to the model.
+    """
 
-    Members:
-        value -- a description of the invalid parameter causing the error
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
+class UndefinedParameterError(Exception):
+    """
+    Defines an exception that occurs when an invalid parameter setting is
+    applied.
     """
 
     def __init__(self, value):
@@ -35,22 +46,26 @@ class Feature:
         self._association = 0.0
 
     def __eq__(self, other):
-        return self._name == other
+        return isinstance(other, self.__class__) and self._name == other._name
+
+    def __hash__(self):
+        return hash(self._name)
 
     def __ne__(self, other):
-        return self._name != other
+        return not isinstance(other, self.__class__) or self._name != other
 
     def __repr__(self):
-        return "Feature: " + str(self._name) + "; Association: " + str(self._association)
-
-    def name(self):
-        return self._name
+        return "Feature: " + str(self._name) + "; Association: " +\
+            str(self._association)
 
     def association(self):
         return self._association
 
+    def name(self):
+        return self._name
+
     def update_association(self, alignment):
-        """Add alignment to association."""
+        """Add alignment to this Feature's association."""
         self._association += alignment
 
 
@@ -58,9 +73,7 @@ class FeatureGroup:
     """A feature group, conditional upon a word.
 
     Members:
-        gamma -- the Dirichlet hyperparametre
-        k -- the expected number of types in the Dirichlet distribution
-        features -- the member features of this FeatureGroup
+        TODO
     """
 
     def __init__(self, gamma, k, p, name=None):
@@ -73,21 +86,29 @@ class FeatureGroup:
 
         self._features = {}
 
-    # TODO: create magic method for hashing
-    # TODO: create magic method for equality
-
     def __contains__(self, feature):
         """Check if feature is a member of this FeatureGroup."""
         return any([f == feature for f in self._features])
 
+    def __eq__(self, other):
+        if self._name is None or other._name is None:
+            raise UndefinedParameterError("Comparison of feature groups with no\
+                                          label.")
+        return self._name == other._name
+
+    def __len__(self):
+        return len(self._features)
+
     # TODO
     def __repr__(self):
-        prefix = "Feature group %s" % self._name if self._name is not None else "Unnamed feature group"
-        return prefix + " (gamma=%f, k=%f)" % (self._gamma, self._k)
+        prefix = "Feature group %s" % self._name if self._name is not None \
+            else "Unnamed feature group"
+        postfix = pprint.pformat(self._features.values())
+        return prefix + " (gamma=%f, k=%f)" % (self._gamma, self._k) +\
+            '\n' + postfix
 
     def add_feature(self, feature):
-        # TODO
-        #assert isinstance(feature, str)
+        assert isinstance(feature, str)
         assert feature not in self._features
         self._features[feature] = Feature(feature)
 
@@ -130,9 +151,19 @@ class FeatureGroup:
         except KeyError:
             raise UndefinedFeatureError
 
+    def seen_features(self):
+        """Return a set of all features seen in this FeatureGroup."""
+        return set(self._features.keys())
+
     def summed_association(self):
         """Return the summed association in this FeatureGroup."""
         return sum([feature.association() for feature in self._features.values()])
+
+    def unseen_prob(self):
+        """
+        TODO
+        """
+        return self.gamma() / self.denom()
 
 
 class Meaning:
@@ -151,7 +182,6 @@ class Meaning:
         feature_to_feature_group_map,
         word=None
     ):
-
         # The mapping of features to group (str -> str)
         self._feature_to_feature_group_map = feature_to_feature_group_map.copy()
         self._feature_group_to_level_map = feature_group_to_level_map.copy()
@@ -161,12 +191,12 @@ class Meaning:
 
         # Transform the mapping of features to group (str -> str) to be (str ->
         # FeatureGroup)
-        created_feature_groups = {}
+        self._feature_groups = {}
         for feature, feature_group in self._feature_to_feature_group_map.items():
 
             try:
                 # Hash to check if the FeatureGroup has already been created
-                feature_group_object = created_feature_groups[feature_group]
+                feature_group_object = self._feature_groups[feature_group]
 
             except KeyError:
                 # Create the FeatureGroup object
@@ -193,7 +223,7 @@ class Meaning:
 
                 feature_group_object = FeatureGroup(gamma, k, p, name=feature_group)
 
-                created_feature_groups[feature_group] = feature_group_object
+                self._feature_groups[feature_group] = feature_group_object
 
             feature_group_object.add_feature(feature)
             self._feature_to_feature_group_map[feature] = feature_group_object
@@ -205,7 +235,7 @@ class Meaning:
     # TODO
     def __str__(self):
         """ Format this meaning to print intelligibly."""
-        return str(self._word)
+        return str(self._word) + '\n' + pprint.pformat(self._feature_groups.values())
 
     def add_seen_features(self, features):
         """
@@ -213,6 +243,7 @@ class Meaning:
         with this Meaning.
         """
         self._seen_features.extend(features[:])
+        self._seen_features = list(set(self._seen_features))  # remove duplicates
 
     def k(self, feature):
         """Return the k parameter for feature in this Meaning."""
@@ -243,6 +274,19 @@ class Meaning:
         """Return the probability of feature given this Meaning's word."""
         feature_group = self._feature_to_feature_group_map[feature]
         return feature_group.prob(feature)
+
+    def feature_groups(self):
+        """
+        Return a list of the FeatureGroups that are contained within this
+        Meaning.
+        """
+        return list(self._feature_groups.values())
+
+    def feature_group(self, feature_group_name):
+        """
+        TODO
+        """
+        return self._feature_groups[feature_group_name]
 
     def seen_features(self):
         """
@@ -345,7 +389,6 @@ class Lexicon:
     def add_seen_features(self, word, features):
         """Add features to the list of features encountered so far with word."""
         assert word in self._word_meanings
-        self._word_meanings[word]._seen_features.extend(features[:])
         self._word_meanings[word].add_seen_features(features)
 
     def seen_features(self, word):

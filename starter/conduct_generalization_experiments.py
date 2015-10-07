@@ -143,9 +143,9 @@ def plot_results_as_bar_chart(results, savename=None,
     width = 0.5
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    p0 = ax.bar(ind + width, l0, width, color='r', yerr=error0)
-    p1 = ax.bar(ind + 2*width, l1, width, color='g', yerr=error1)
-    p2 = ax.bar(ind + 3*width, l2, width, color='b', yerr=error2)
+    ax.bar(ind + width, l0, width, color='r', yerr=error0)
+    ax.bar(ind + 2*width, l1, width, color='g', yerr=error1)
+    ax.bar(ind + 3*width, l2, width, color='b', yerr=error2)
 
     ax.set_ylabel("generalization probability")
     ax.set_xlabel("training condition")
@@ -168,8 +168,8 @@ def plot_results_as_bar_chart(results, savename=None,
     else:
         plt.ylim((0, float(m)))
 
-    lgd = plt.legend((p0, p1, p2), ('subord.', 'basic', 'super.'),
-                     loc='upper right')
+    #lgd = plt.legend((p0, p1, p2), ('subord.', 'basic', 'super.'),
+                     #loc='upper right')
 
     title = "Generalization scores"
 
@@ -179,7 +179,8 @@ def plot_results_as_bar_chart(results, savename=None,
     if savename is None:
         plt.show()
     else:
-        plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
+        #plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
+        plt.savefig(savename, bbox_inches='tight')
 
 
 def replace_with_underscores(s):
@@ -211,18 +212,21 @@ def run_trial(params):
     #title += ',' + 'pbasic_' + str(params['p-basic'])
     #title += ',' + 'psub_' + str(params['p-sub'])
     #title += ',' + 'pinstance_' + str(params['p-instance'])
-    title += ',' + 'subtractprior_' + str(params['subtract-prior'])
+    #title += ',' + 'subtractprior_' + str(params['subtract-prior'])
+    #title += ',' + 'metric_' + str(params['metric'])
 
     if not os.path.exists(params['output-path']):
         os.makedirs(params['output-path'])
     if not os.path.exists(os.path.join(params['output-path'], 'plots')):
         os.makedirs(os.path.join(params['output-path'], 'plots'))
+    if not os.path.exists(os.path.join(params['output-path'], 'csv')):
+        os.makedirs(os.path.join(params['output-path'], 'csv'))
 
     if (not params['check-condition']) or (params['check-condition'] and condition(results, params)):
         plot_results_as_bar_chart(results,
                                   savename=os.path.join(params['output-path'],
                                                         'plots', title)+ '.png',
-                                  normalise_over_test_scene=True)
+                                  normalise_over_test_scene=True if params['metric'] == 'intersection' else False)
         write_results_as_csv_file(results,
                                   savename=os.path.join(params['output-path'],
                                                         'csv', title)+ '.dat')
