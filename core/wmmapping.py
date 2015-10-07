@@ -38,12 +38,12 @@ class Feature:
     """A feature event, conditional upon a word.
 
     Members:
-        name -- the name that uniquely identifies the feature
         association -- the association of the feature and the word
+        name -- the name that uniquely identifies the feature
     """
     def __init__(self, name):
-        self._name = name
         self._association = 0.0
+        self._name = name
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self._name == other._name
@@ -99,7 +99,6 @@ class FeatureGroup:
     def __len__(self):
         return len(self._features)
 
-    # TODO
     def __repr__(self):
         prefix = "Feature group %s" % self._name if self._name is not None \
             else "Unnamed feature group"
@@ -108,15 +107,18 @@ class FeatureGroup:
             '\n' + postfix
 
     def add_feature(self, feature):
-        assert isinstance(feature, str)
+        """
+        TODO
+        """
+        assert isinstance(feature, basestring)
         assert feature not in self._features
         self._features[feature] = Feature(feature)
 
     def association(self, feature):
+        """
+        TODO
+        """
         return self._features[feature].association()
-
-    def update_association(self, feature, alignment):
-        return self._features[feature].update_association(alignment)
 
     def denom(self):
         """Return the denominator for this FeatureGroup."""
@@ -124,7 +126,8 @@ class FeatureGroup:
 
     def gamma(self):
         """Return the gamma parameter for this FeatureGroup."""
-        num_types = len([f for f in self._features.values() if f.association() > 0])
+        num_types = len([f for f in self._features.values()
+                         if f.association() > 0])
         num_types = max(num_types, 1)
         return self._gamma * (num_types ** self.p())
 
@@ -157,13 +160,20 @@ class FeatureGroup:
 
     def summed_association(self):
         """Return the summed association in this FeatureGroup."""
-        return sum([feature.association() for feature in self._features.values()])
+        return sum([feature.association() for feature in
+                    self._features.values()])
 
     def unseen_prob(self):
         """
         TODO
         """
         return self.gamma() / self.denom()
+
+    def update_association(self, feature, alignment):
+        """
+        TODO
+        """
+        return self._features[feature].update_association(alignment)
 
 
 class Meaning:
@@ -182,17 +192,19 @@ class Meaning:
         feature_to_feature_group_map,
         word=None
     ):
-        # The mapping of features to group (str -> str)
-        self._feature_to_feature_group_map = feature_to_feature_group_map.copy()
-        self._feature_group_to_level_map = feature_group_to_level_map.copy()
-
         self._word = word
         self._seen_features = []
+
+        # (str) -> (str) maps
+        self._feature_group_to_level_map = feature_group_to_level_map.copy()
+        self._feature_to_feature_group_map = \
+            feature_to_feature_group_map.copy()
 
         # Transform the mapping of features to group (str -> str) to be (str ->
         # FeatureGroup)
         self._feature_groups = {}
-        for feature, feature_group in self._feature_to_feature_group_map.items():
+        for feature, feature_group in \
+                self._feature_to_feature_group_map.items():
 
             try:
                 # Hash to check if the FeatureGroup has already been created
@@ -221,7 +233,8 @@ class Meaning:
                 else:
                     raise NotImplementedError
 
-                feature_group_object = FeatureGroup(gamma, k, p, name=feature_group)
+                feature_group_object = FeatureGroup(gamma, k, p,
+                                                    name=feature_group)
 
                 self._feature_groups[feature_group] = feature_group_object
 
@@ -230,12 +243,16 @@ class Meaning:
 
     # TODO
     def __deepcopy__(self, memo):
+        """
+        TODO
+        """
         return Meaning(copy.deepcopy(self.name, memo))
 
     # TODO
     def __str__(self):
-        """ Format this meaning to print intelligibly."""
-        return str(self._word) + '\n' + pprint.pformat(self._feature_groups.values())
+        """Format this meaning to print intelligibly."""
+        return str(self._word) + '\n' +\
+            pprint.pformat(self._feature_groups.values())
 
     def add_seen_features(self, features):
         """
@@ -243,17 +260,50 @@ class Meaning:
         with this Meaning.
         """
         self._seen_features.extend(features[:])
-        self._seen_features = list(set(self._seen_features))  # remove duplicates
+        self._seen_features = list(set(self._seen_features))  # no duplicates
+
+    def denom(self, feature):
+        """
+        Return the denominator for the meaning probability calculation for
+        feature in this Meaning.
+        """
+        return self.summed_association(feature) +\
+            (self.k(feature) * self.gamma(feature))
+
+    def feature_group(self, feature_group_name):
+        """
+        TODO
+        """
+        return self._feature_groups[feature_group_name]
+
+    def feature_groups(self):
+        """
+        Return a list of the FeatureGroups that are contained within this
+        Meaning.
+        """
+        return list(self._feature_groups.values())
+
+    def gamma(self, feature):
+        """Return the gamma parameter for feature in this Meaning."""
+        feature_group = self._feature_to_feature_group_map[feature]
+        return feature_group.gamma()
 
     def k(self, feature):
         """Return the k parameter for feature in this Meaning."""
         feature_group = self._feature_to_feature_group_map[feature]
         return feature_group.k()
 
-    def gamma(self, feature):
-        """Return the gamma parameter for feature in this Meaning."""
+    def prob(self, feature):
+        """Return the probability of feature given this Meaning's word."""
         feature_group = self._feature_to_feature_group_map[feature]
-        return feature_group.gamma()
+        return feature_group.prob(feature)
+
+    def seen_features(self):
+        """
+        Return a set of all features from all levels of the hierarchy, observed
+        so far with this Meaning's word.
+        """
+        return set(self._seen_features)
 
     def summed_association(self, feature):
         """
@@ -263,45 +313,13 @@ class Meaning:
         feature_group = self._feature_to_feature_group_map[feature]
         return feature_group.summed_association()
 
-    def denom(self, feature):
-        """
-        Return the denominator for the meaning probability calculation for
-        feature in this Meaning.
-        """
-        return self.summed_association(feature) + (self.k(feature) * self.gamma(feature))
-
-    def prob(self, feature):
-        """Return the probability of feature given this Meaning's word."""
-        feature_group = self._feature_to_feature_group_map[feature]
-        return feature_group.prob(feature)
-
-    def feature_groups(self):
-        """
-        Return a list of the FeatureGroups that are contained within this
-        Meaning.
-        """
-        return list(self._feature_groups.values())
-
-    def feature_group(self, feature_group_name):
-        """
-        TODO
-        """
-        return self._feature_groups[feature_group_name]
-
-    def seen_features(self):
-        """
-        Return a set of all features from all levels of the hierarchy, observed
-        so far with this Meaning's word.
-        """
-        return set(self._seen_features)
-
-    def update_association(self, feature, alignment):
+    def update_association(self, feature, algn):
         """
         Update the association between this Meaning's word and feature by
-        adding alignment to the current association.
+        adding alignment algn to the current association.
         """
         self._feature_to_feature_group_map[feature].update_association(feature,
-                                                                       alignment)
+                                                                       algn)
 
 
 class Lexicon:
@@ -320,7 +338,9 @@ class Lexicon:
         feature_group_to_level_map,
         feature_to_feature_group_map,
     ):
-
+        """
+        TODO
+        """
         self._gamma_sup = gamma_sup
         self._gamma_basic = gamma_basic
         self._gamma_sub = gamma_sub
@@ -344,6 +364,9 @@ class Lexicon:
             self.initialize_new_meaning(word)
 
     def initialize_new_meaning(self, word):
+        """
+        TODO
+        """
         assert word not in self._word_meanings
         self._word_meanings[word] = Meaning(
             self._gamma_sup,
@@ -364,12 +387,25 @@ class Lexicon:
         )
         return self._word_meanings[word]
 
+    def add_seen_features(self, word, features):
+        """
+        Add features to the list of features encountered so far with word.
+        """
+        assert word in self._word_meanings
+        self._word_meanings[word].add_seen_features(features)
+
     def gamma(self, word, feature):
+        """
+        TODO
+        """
         if word not in self._word_meanings:
             self.initialize_new_meaning(word)
         self._word_meanings[word].gamma(feature)
 
     def k(self, word, feature):
+        """
+        TODO
+        """
         if word not in self._word_meanings:
             self.initialize_new_meaning(word)
         self._word_meanings[word].k(feature)
@@ -381,15 +417,12 @@ class Lexicon:
         return self.initialize_new_meaning(word)
 
     def prob(self, word, feature):
-        """Return the probability of feature being part of the meaning of word."""
+        """
+        Return the probability of feature being part of the meaning of word.
+        """
         if word not in self._word_meanings:
             self.initialize_new_meaning(word)
         return self._word_meanings[word].prob(feature)
-
-    def add_seen_features(self, word, features):
-        """Add features to the list of features encountered so far with word."""
-        assert word in self._word_meanings
-        self._word_meanings[word].add_seen_features(features)
 
     def seen_features(self, word):
         """Return the set of features encountered so far with word."""
