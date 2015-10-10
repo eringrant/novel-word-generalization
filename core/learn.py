@@ -130,7 +130,7 @@ class Learner:
                 prob = self._learned_lexicon.prob(word, feature)
                 gen_prob *= prob
 
-        elif metric == 'cosine':
+        elif metric in ['truncated-cosine', 'cosine-full-distribution']:
 
             learned_meaning = self._learned_lexicon.meaning(word)
 
@@ -139,7 +139,9 @@ class Learner:
             self.process_pair([dummy_word], scene, './')
             scene_meaning = self._learned_lexicon.meaning(dummy_word)
 
-            gen_prob = cosine(learned_meaning, scene_meaning)
+            gen_prob = cosine(learned_meaning, scene_meaning,
+                              full_distribution=True if
+                              metric=='cosine-full-distribution' else False)
 
         else:
             raise NotImplementedError
@@ -147,7 +149,7 @@ class Learner:
         return gen_prob
 
 
-def cosine(meaning1, meaning2):
+def cosine(meaning1, meaning2, full_distribution=True):
     """Return the cosine similarity of meaning1 and meaning2."""
 
     cos = 0
@@ -174,18 +176,23 @@ def cosine(meaning1, meaning2):
             meaning2_vec[i] = meaning2.prob(feature)
 
         cos += np.dot(meaning1_vec, meaning2_vec)
+        squared_norm_x += np.dot(meaning1_vec, meaning1_vec)
+        squared_norm_y += np.dot(meaning2_vec, meaning2_vec)
 
-        # Ensure the feature groups are compatible
-        assert feature_group_1.k() == feature_group_2.k()
+        # If we are using the full distribution, add features to the vectors
+        if full_distribution:
+            # Ensure the feature groups are compatible
+            assert feature_group_1.k() == feature_group_2.k()
+            k = feature_group_1.k()
+            seen_count = len(features)
 
-        k = feature_group_1.k()
-        seen_count = len(features)
-        cos += (k - seen_count) * feature_group_1.unseen_prob() *\
-            feature_group_2.unseen_prob()
+            cos += (k - seen_count) * feature_group_1.unseen_prob() *\
+                feature_group_2.unseen_prob()
 
-        squared_norm_x += np.dot(meaning1_vec, meaning1_vec) +\
-            (pow(feature_group_1.unseen_prob(), 2) * (k - seen_count))
-        squared_norm_y += np.dot(meaning2_vec, meaning2_vec) +\
-            (pow(feature_group_2.unseen_prob(), 2) * (k - seen_count))
+            squared_norm_x += pow(feature_group_1.unseen_prob(), 2) *\
+                (k - seen_count)
+
+            squared_norm_y += pow(feature_group_2.unseen_prob(), 2) *\
+                (k - seen_count)
 
     return cos / (math.sqrt(squared_norm_x) * math.sqrt(squared_norm_y))
