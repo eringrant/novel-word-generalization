@@ -18,6 +18,7 @@ class Learner:
         p_sup, p_basic, p_sub, p_instance,
         feature_group_to_level_map,
         feature_to_feature_group_map,
+        novelty=False, decay=None
     ):
 
         self._learned_lexicon = wmmapping.Lexicon(
@@ -37,6 +38,14 @@ class Learner:
             feature_group_to_level_map,
             feature_to_feature_group_map,
         )
+
+        # Time wrt the word-feature pairings processed
+        self._time = 0
+
+        # Novelty and decay
+        self._decay = decay
+        self._novelty = novelty
+
 
     def gamma(self, word, feature):
         return self._learned_lexicon.gamma(word, feature)
@@ -69,9 +78,15 @@ class Learner:
                 # alignment(w|f) = P(f|w) / normalization
                 alignment = self._learned_lexicon.prob(word, feature) / denom
 
+                # Novelty
+                alignment *=\
+                    self._learned_lexicon.novelty(word) if self._novelty else 1
+
                 # assoc_t(f,w) = assoc_{t-1}(f,w) + P(a|u,f)
                 self._learned_lexicon.update_association(word, feature,
-                                                         alignment)
+                                                         alignment,
+                                                         self._decay,
+                                                         self._time)
 
             # End alignment calculation for each word
 
@@ -87,7 +102,9 @@ class Learner:
         assert isinstance(words, list)
         assert isinstance(features, list)
         assert isinstance(outdir, str)
-        self.calculate_alignments(words, features)
+
+        self._time += 1
+        self.calculate_alignments(words, features, decay=self._decay)
 
     def process_corpus(self, corpus_path, outdir, corpus=None):
         """

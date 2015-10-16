@@ -1,5 +1,10 @@
+from __future__ import division
+
+
 import copy
+import numpy as np
 import pprint
+
 
 """
 wmmapping.py
@@ -34,6 +39,23 @@ class UndefinedParameterError(Exception):
         return repr(self.value)
 
 
+class Alignments:
+    """
+    TODO
+    """
+    def __init__(self):
+        self._alignments = {}
+
+    def __contains(self, item):
+        return item in self._alignments
+
+    def add_alignment(self, time, alignment):
+        self._alignments[time] = alignment
+
+    def alignment(self, time):
+        return self._alignments[time] if time in self._alignments else 0
+
+
 class Feature:
     """A feature event, conditional upon a word.
 
@@ -44,6 +66,7 @@ class Feature:
     def __init__(self, name):
         self._association = 0.0
         self._name = name
+        self._alignments = Alignments()
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self._name == other._name
@@ -64,9 +87,27 @@ class Feature:
     def name(self):
         return self._name
 
-    def update_association(self, alignment):
-        """Add alignment to this Feature's association."""
-        self._association += alignment
+    def update_association(self, alignment, decay, time):
+        """Add alignment to this Feature's association.
+
+        If decay is True, then apply the decay transformation to the association
+        score.
+
+        If decay is False, add the bare alignment to this Feature's association
+        score.
+        """
+        assert isinstance(time, int)
+        assert time not in self._alignments
+        self.add_alignment(time, alignment)
+
+        if decay:
+            self._association =\
+                np.ln(np.sum([self.alignment(time) / np.power(time - t,
+                                                              (decay/self.alignment(time)))
+                              for t in range(1, time)]))
+
+        else:
+            self._association += alignment
 
 
 class FeatureGroup:
@@ -169,11 +210,11 @@ class FeatureGroup:
         """
         return self.gamma() / self.denom()
 
-    def update_association(self, feature, alignment):
+    def update_association(self, feature, alignment, decay, time):
         """
         TODO
         """
-        return self._features[feature].update_association(alignment)
+        return self._features[feature].update_association(alignment, decay, time)
 
 
 class Meaning:
@@ -313,13 +354,15 @@ class Meaning:
         feature_group = self._feature_to_feature_group_map[feature]
         return feature_group.summed_association()
 
-    def update_association(self, feature, algn):
+    def update_association(self, feature, algn, decay, time):
         """
         Update the association between this Meaning's word and feature by
         adding alignment algn to the current association.
         """
         self._feature_to_feature_group_map[feature].update_association(feature,
-                                                                       algn)
+                                                                       algn,
+                                                                       decay,
+                                                                       time)
 
 
 class Lexicon:
@@ -416,6 +459,12 @@ class Lexicon:
             return self._word_meanings[word]
         return self.initialize_new_meaning(word)
 
+    def novelty(self, word):
+        """
+        TODO
+        """
+        raise NotImplementedError
+
     def prob(self, word, feature):
         """
         Return the probability of feature being part of the meaning of word.
@@ -430,14 +479,15 @@ class Lexicon:
             return self._word_meanings[word].seen_features()
         return set()
 
-    def update_association(self, word, feature, alignment):
+    def update_association(self, word, feature, alignment, decay, time):
         """
         Update association between word and feature by adding alignment to
         the current association.
         """
         if word not in self._word_meanings:
             self.initialize_new_meaning(word)
-        self._word_meanings[word].update_association(feature, alignment)
+        self._word_meanings[word].update_association(feature, alignment, decay,
+                                                     time)
 
     def words(self):
         """Return a set of all words in this Lexicon."""
