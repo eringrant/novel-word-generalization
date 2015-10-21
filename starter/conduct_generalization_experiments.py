@@ -72,7 +72,7 @@ def items_to_params(items):
 
 def plot_results_as_bar_chart(results, savename=None,
                               normalise_over_test_scene=True, annotation=None,
-                              y_limit=None):
+                              y_limit=1.0):
 
     conditions = [
         'one example',
@@ -162,7 +162,7 @@ def plot_results_as_bar_chart(results, savename=None,
     m = np.max(l0 + l1 + l2)
 
     if y_limit:
-        plt.ylim(y_limit)
+        plt.ylim((0, y_limit))
     elif normalise_over_test_scene is True:
         plt.ylim((0, 1))
     else:
@@ -203,20 +203,20 @@ def run_trial(params):
         # Create a title for the plots PNG image
         title = 'plot'
         title += ',' + 'featurespace_' + params['feature-space']
-        title += ',' + 'gammasup_' + str(params['gamma-sup'])
-        title += ',' + 'gammabasic_' + str(params['gamma-basic'])
-        title += ',' + 'gammasub_' + str(params['gamma-sub'])
-        title += ',' + 'gammainstance_' + str(params['gamma-instance'])
-        title += ',' + 'ksup_' + str(params['k-sup'])
-        title += ',' + 'kbasic_' + str(params['k-basic'])
-        title += ',' + 'ksub_' + str(params['k-sub'])
-        title += ',' + 'kinstance_' + str(params['k-instance'])
+        title += ',' + 'gamma_' + str(params['gamma-sup'])
+        #title += ',' + 'gammabasic_' + str(params['gamma-basic'])
+        #title += ',' + 'gammasub_' + str(params['gamma-sub'])
+        #title += ',' + 'gammainstance_' + str(params['gamma-instance'])
+        title += ',' + 'k_' + str(params['k-sup'])
+        #title += ',' + 'kbasic_' + str(params['k-basic'])
+        #title += ',' + 'ksub_' + str(params['k-sub'])
+        #title += ',' + 'kinstance_' + str(params['k-instance'])
         #title += ',' + 'psup_' + str(params['p-sup'])
         #title += ',' + 'pbasic_' + str(params['p-basic'])
         #title += ',' + 'psub_' + str(params['p-sub'])
         #title += ',' + 'pinstance_' + str(params['p-instance'])
-        #title += ',' + 'subtractprior_' + str(params['subtract-prior'])
-        #title += ',' + 'metric_' + str(params['metric'])
+        title += ',' + 'subtractprior_' + str(params['subtract-prior'])
+        title += ',' + 'metric_' + str(params['metric'])
 
         if not os.path.exists(params['output-path']):
             os.makedirs(params['output-path'])

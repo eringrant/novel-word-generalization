@@ -122,34 +122,15 @@ class Experiment(object):
             self.feature_to_feature_group_map =\
                 json.load(feature_to_feature_group_map)
 
-        # Initialize the learner (for the unseen probability computation)
-        learner = learn.Learner(
-            gamma_sup=self.params['gamma-sup'],
-            gamma_basic=self.params['gamma-basic'],
-            gamma_sub=self.params['gamma-sub'],
-            gamma_instance=self.params['gamma-instance'],
-            k_sup=self.params['k-sup'],
-            k_basic=self.params['k-basic'],
-            k_sub=self.params['k-sub'],
-            k_instance=self.params['k-instance'],
-            p_sup=self.params['p-sup'],
-            p_basic=self.params['p-basic'],
-            p_sub=self.params['p-sub'],
-            p_instance=self.params['p-instance'],
-            feature_group_to_level_map=self.feature_group_to_level_map,
-            feature_to_feature_group_map=self.feature_to_feature_group_map
-        )
-
-        # Compute the prior (unseen) probability of an object
-        self.unseen_prob =\
-            learner.generalization_prob(self.params['word'],
-                                        stimuli['unseen object features'])
+        # Get the "unseen object" for computation of prior probability
+        self.unseen_object = stimuli['unseen object features']
 
     def run(self):
         """Conduct this Experiment and return the results."""
 
         print("Conducting an experimental trial, with parameters:")
         print("\t", "feature space  = ", self.params['feature-space'])
+        print("\t", "metric  = ", self.params['metric'])
         print("\t", "gamma_sup  = ", self.params['gamma-sup'])
         print("\t", "gamma_basic  = ", self.params['gamma-basic'])
         print("\t", "gamma_sub  = ", self.params['gamma-sub'])
@@ -203,6 +184,14 @@ class Experiment(object):
 
                 gen_probs = []
 
+                if self.params['subtract-prior']:
+                    # Compute the prior (unseen) probability of an object
+                    # (before learning)
+                    unseen_prob =\
+                        learner.generalization_prob(self.params['word'],
+                                                    self.unseen_object,
+                                                    metric=self.params['metric'])
+
                 for test_object in self.test_sets[test_condition]:
                     scene = self.test_sets[test_condition][test_object]
 
@@ -213,7 +202,7 @@ class Experiment(object):
                     )
 
                     if self.params['subtract-prior']:
-                        gen_prob -= self.unseen_prob
+                        gen_prob -= unseen_prob
 
                     gen_probs.append(gen_prob)
 
