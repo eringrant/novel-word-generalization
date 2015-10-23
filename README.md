@@ -8,7 +8,7 @@ The extension of the Fazly et al. (2010) model to novel word generalization is d
 
 
 The original model of Fazly et al. is implemented
-[here](https://github.com/aidanematzadeh/word_learning).)
+[here](https://github.com/aidanematzadeh/word_learning).
 
 
 References:
