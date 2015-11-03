@@ -124,6 +124,7 @@ class Experiment(object):
 
         # Initialize the learner (for the unseen probability computation)
         learner = learn.Learner(
+            decay=self.params['decay'],
             gamma_sup=self.params['gamma-sup'],
             gamma_basic=self.params['gamma-basic'],
             gamma_sub=self.params['gamma-sub'],
@@ -150,6 +151,7 @@ class Experiment(object):
 
         print("Conducting an experimental trial, with parameters:")
         print("\t", "feature space  = ", self.params['feature-space'])
+        print("\t", "metric  = ", self.params['metric'])
         print("\t", "gamma_sup  = ", self.params['gamma-sup'])
         print("\t", "gamma_basic  = ", self.params['gamma-basic'])
         print("\t", "gamma_sub  = ", self.params['gamma-sub'])
@@ -178,6 +180,8 @@ class Experiment(object):
 
                 # Initialize the learner
                 learner = learn.Learner(
+                    novelty=self.params['novelty'],
+                    decay=self.params['decay'],
                     gamma_sup=self.params['gamma-sup'],
                     gamma_basic=self.params['gamma-basic'],
                     gamma_sub=self.params['gamma-sub'],
@@ -191,26 +195,40 @@ class Experiment(object):
                     p_sub=self.params['p-sub'],
                     p_instance=self.params['p-instance'],
                     feature_group_to_level_map=self.feature_group_to_level_map,
-                    feature_to_feature_group_map=self.feature_to_feature_group_map
+                    feature_to_feature_group_map=self.feature_to_feature_group_map,
                 )
 
+                # Perform the training trials
                 for trial in self.training_sets[training_condition]:
 
                     words = [self.params['word']]
                     scene = self.training_sets[training_condition][trial]
 
-                    learner.process_pair(words, scene, './')
+                    learner.process_pair(words, scene, './',
+                                         time_increment=self.params['decay-between-training-trials'])
 
                 gen_probs = []
 
+                # Manually increment so that the time difference between
+                # training and test is the same across decay conditions
+                if not self.params['decay-between-training-trials']:
+                    learner._time += 3
+                    if training_condition == 'one example':
+                        learner._time -= 2
+
+                # Perform the test trials
                 for test_object in self.test_sets[test_condition]:
+
                     scene = self.test_sets[test_condition][test_object]
 
                     gen_prob = learner.generalization_prob(
                         self.params['word'],
                         scene,
-                        metric=self.params['metric']
+                        metric=self.params['metric'],
                     )
+
+                    # Sanity check: we've seen either 1 or 3 training object
+                    assert learner._time == 2 or learner._time == 4
 
                     if self.params['subtract-prior']:
                         gen_prob -= self.unseen_prob
