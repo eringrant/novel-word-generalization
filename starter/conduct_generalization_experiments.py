@@ -182,6 +182,8 @@ def plot_results_as_bar_chart(results, savename=None,
         #plt.savefig(savename, bbox_extra_artists=(lgd,), bbox_inches='tight')
         plt.savefig(savename, bbox_inches='tight')
 
+    plt.close()
+
 
 def replace_with_underscores(s):
     s = re.sub(r"[^\w\s-]", '', s)
@@ -203,11 +205,13 @@ def run_trial(params):
         # Create a title for the plots PNG image
         title = 'plot'
         title += ',' + 'featurespace_' + params['feature-space']
-        title += ',' + 'gamma_' + str(params['gamma-sup'])
+        title += ',' + 'decay_' + str(params['decay'])
+        title += ',' + 'decay_bw_training_' + str(params['decay-between-training-trials'])
+        title += ',' + 'gammasup_' + str(params['gamma-sup'])
         #title += ',' + 'gammabasic_' + str(params['gamma-basic'])
         #title += ',' + 'gammasub_' + str(params['gamma-sub'])
         #title += ',' + 'gammainstance_' + str(params['gamma-instance'])
-        title += ',' + 'k_' + str(params['k-sup'])
+        title += ',' + 'ksup_' + str(params['k-sup'])
         #title += ',' + 'kbasic_' + str(params['k-basic'])
         #title += ',' + 'ksub_' + str(params['k-sub'])
         #title += ',' + 'kinstance_' + str(params['k-instance'])

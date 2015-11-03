@@ -40,7 +40,7 @@ class Learner:
         )
 
         # Time wrt the word-feature pairings processed
-        self._time = 0
+        self._time = 1
 
         # Novelty and decay
         self._decay = decay
@@ -85,6 +85,7 @@ class Learner:
                 # assoc_t(f,w) = assoc_{t-1}(f,w) + P(a|u,f)
                 self._learned_lexicon.update_association(word, feature,
                                                          alignment,
+                                                         self._novelty,
                                                          self._decay,
                                                          self._time)
 
@@ -97,14 +98,15 @@ class Learner:
             # Add features to the list of seen features for each word
             self._learned_lexicon.add_seen_features(word, features)
 
-    def process_pair(self, words, features, outdir):
+    def process_pair(self, words, features, outdir, time_increment=True):
         """Process the pair words-features."""
         assert isinstance(words, list)
         assert isinstance(features, list)
         assert isinstance(outdir, str)
 
-        self._time += 1
-        self.calculate_alignments(words, features, decay=self._decay)
+        self.calculate_alignments(words, features)
+        if time_increment:
+            self._time += 1
 
     def process_corpus(self, corpus_path, outdir, corpus=None):
         """
@@ -143,22 +145,49 @@ class Learner:
             gen_prob = 1.
 
             for feature in scene:
-
                 prob = self._learned_lexicon.prob(word, feature)
                 gen_prob *= prob
 
-        elif metric in ['truncated-cosine', 'cosine-full-distribution']:
+        elif metric in ['truncated-cosine-same-word',
+                        'cosine-full-distribution-same-word',
+                        'truncated-cosine-novel-word',
+                        'cosine-full-distribution-novel-word']:
 
             learned_meaning = self._learned_lexicon.meaning(word)
 
-            # Represent the meaning of the scene by a 'dummy meaning'
             dummy_word = 'DUMMY_WORD_' + str(scene)
-            self.process_pair([dummy_word], scene, './')
+
+            if metric.endswith('same-word'):
+
+                # Initialise the scene meaning to be the same as the learned
+                # meaning of the target word
+                scene_meaning = copy.deepcopy(learned_meaning)
+                scene_meaning._word = dummy_word
+                self._learned_lexicon._word_meanings[dummy_word] = scene_meaning
+
+            # Learn the meaning of the scene as a 'dummy meaning'
+            self.process_pair([dummy_word], scene, './', time_increment=False)
             scene_meaning = self._learned_lexicon.meaning(dummy_word)
 
             gen_prob = cosine(learned_meaning, scene_meaning,
                               full_distribution=True if
-                              metric=='cosine-full-distribution' else False)
+                              metric.startswith('cosine-full-distribution') else
+                              False)
+
+        elif metric in ['cosine-without-test-distribution']:
+
+            scene_meaning_vec = np.zeros(len(scene))
+            learned_meaning_vec = np.zeros(len(scene))
+
+            for i, feature in enumerate(scene):
+                scene_meaning_vec[i] = 1.
+                learned_meaning_vec[i] = self._learned_lexicon.prob(word, feature)
+
+            cos = np.dot(scene_meaning_vec, learned_meaning_vec)
+            squared_norm_x = np.dot(scene_meaning_vec, scene_meaning_vec)
+            squared_norm_y = np.dot(learned_meaning_vec, learned_meaning_vec)
+
+            gen_prob = cos / (math.sqrt(squared_norm_x) * math.sqrt(squared_norm_y))
 
         else:
             raise NotImplementedError

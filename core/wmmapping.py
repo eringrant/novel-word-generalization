@@ -9,7 +9,7 @@ import pprint
 """
 wmmapping.py
 
-Data structures for mapping the words to meanings and word-feature alignments.
+Data structures for mapping words to meanings.
 """
 
 
@@ -39,34 +39,58 @@ class UndefinedParameterError(Exception):
         return repr(self.value)
 
 
-class Alignments:
+class Alignments(object):
     """
     TODO
     """
     def __init__(self):
-        self._alignments = {}
+        self._alignments = []
 
-    def __contains(self, item):
-        return item in self._alignments
+    def __contains__(self, time):
+        """Return True if there is an alignment at time."""
+        return int(time) in [t for (t, align) in self._alignments]
+
+    def __deepcopy__(self, memo):
+        c = self.__class__
+        result = c.__new__(c)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            setattr(result, k, copy.deepcopy(v, memo))
+
+        return result
+
+    def __repr__(self):
+        return "Alignments: " + str(self._alignments)
 
     def add_alignment(self, time, alignment):
-        self._alignments[time] = alignment
+        self._alignments.append((int(time), alignment))
 
-    def alignment(self, time):
-        return self._alignments[time] if time in self._alignments else 0
+    def alignments(self):
+        return self._alignments
 
 
-class Feature:
+class Feature(object):
     """A feature event, conditional upon a word.
 
     Members:
         association -- the association of the feature and the word
         name -- the name that uniquely identifies the feature
+        alignments -- an Alignment object containing the alignments of feature
+            to the word
     """
     def __init__(self, name):
         self._association = 0.0
         self._name = name
         self._alignments = Alignments()
+
+    def __deepcopy__(self, memo):
+        c = self.__class__
+        result = c.__new__(c)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            setattr(result, k, copy.deepcopy(v, memo))
+
+        return result
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self._name == other._name
@@ -87,30 +111,29 @@ class Feature:
     def name(self):
         return self._name
 
-    def update_association(self, alignment, decay, time):
+    def update_association(self, alignment, novelty, decay, time):
         """Add alignment to this Feature's association.
 
-        If decay is True, then apply the decay transformation to the association
-        score.
+        If decay is True, then update this Feature's association score to be a
+        sum over decayed Alignments.
 
         If decay is False, add the bare alignment to this Feature's association
         score.
         """
-        assert isinstance(time, int)
-        assert time not in self._alignments
-        self.add_alignment(time, alignment)
+        self._alignments.add_alignment(time, alignment)
 
         if decay:
             self._association =\
-                np.ln(np.sum([self.alignment(time) / np.power(time - t,
-                                                              (decay/self.alignment(time)))
-                              for t in range(1, time)]))
-
+                np.sum([align / np.power(time - t + 1, (decay/align)) for
+                        (t, align) in self._alignments.alignments()])
         else:
             self._association += alignment
 
+        if novelty:
+            raise NotImplementedError
 
-class FeatureGroup:
+
+class FeatureGroup(object):
     """A feature group, conditional upon a word.
 
     Members:
@@ -131,10 +154,24 @@ class FeatureGroup:
         """Check if feature is a member of this FeatureGroup."""
         return any([f == feature for f in self._features])
 
+    def __deepcopy__(self, memo):
+        c = self.__class__
+        result = c.__new__(c)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            setattr(result, k, copy.deepcopy(v, memo))
+
+        # Manually copy over the Feature dictionary, since the
+        # Features are mutable objects that themselves need to be copied
+        for feature, feature_object in result._features.items():
+            result._features[feature] = copy.deepcopy(feature_object)
+
+        return result
+
     def __eq__(self, other):
         if self._name is None or other._name is None:
-            raise UndefinedParameterError("Comparison of feature groups with no\
-                                          label.")
+            raise UndefinedParameterError("Comparison of feature groups with\
+                                          no label.")
         return self._name == other._name
 
     def __len__(self):
@@ -181,10 +218,7 @@ class FeatureGroup:
         return self._p
 
     def prob(self, feature):
-        """
-        TODO
-        Mention that this gives the unseen prob when assoc=0
-        """
+        """Return the meaning probability of feature."""
 
         try:
             numer = self._features[feature].association()
@@ -196,11 +230,14 @@ class FeatureGroup:
             raise UndefinedFeatureError
 
     def seen_features(self):
-        """Return a set of all features seen in this FeatureGroup."""
+        """Return the set of all the features seen in this FeatureGroup."""
         return set(self._features.keys())
 
     def summed_association(self):
-        """Return the summed association in this FeatureGroup."""
+        """
+        Return the association score summed across all features in this
+        FeatureGroup.
+        """
         return sum([feature.association() for feature in
                     self._features.values()])
 
@@ -210,14 +247,15 @@ class FeatureGroup:
         """
         return self.gamma() / self.denom()
 
-    def update_association(self, feature, alignment, decay, time):
+    def update_association(self, feature, alignment, novelty, decay, time):
         """
         TODO
         """
-        return self._features[feature].update_association(alignment, decay, time)
+        self._features[feature].update_association(alignment, novelty,
+                                                   decay, time)
 
 
-class Meaning:
+class Meaning(object):
     """Contains the probability of all feature events, conditional upon a word.
 
     Members:
@@ -282,15 +320,24 @@ class Meaning:
             feature_group_object.add_feature(feature)
             self._feature_to_feature_group_map[feature] = feature_group_object
 
-    # TODO
     def __deepcopy__(self, memo):
-        """
-        TODO
-        """
-        return Meaning(copy.deepcopy(self.name, memo))
+        c = self.__class__
+        result = c.__new__(c)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            setattr(result, k, copy.deepcopy(v, memo))
 
-    # TODO
-    def __str__(self):
+        # Manually copy over the FeatureGroup dictionaries, since the
+        # FeatureGroups are mutable object that themselves need to be copied
+        for feature_group, feature_group_object in result._feature_groups.items():
+            result._feature_groups[feature_group] = copy.deepcopy(feature_group_object)
+        for feature, old_feature_group_object in result._feature_to_feature_group_map.items():
+            result._feature_to_feature_group_map[feature] =\
+                result._feature_groups[old_feature_group_object._name]
+
+        return result
+
+    def __repr__(self):
         """Format this meaning to print intelligibly."""
         return str(self._word) + '\n' +\
             pprint.pformat(self._feature_groups.values())
@@ -354,18 +401,16 @@ class Meaning:
         feature_group = self._feature_to_feature_group_map[feature]
         return feature_group.summed_association()
 
-    def update_association(self, feature, algn, decay, time):
+    def update_association(self, feature, alignment, novelty, decay, time):
         """
         Update the association between this Meaning's word and feature by
-        adding alignment algn to the current association.
+        adding alignment to the current association.
         """
-        self._feature_to_feature_group_map[feature].update_association(feature,
-                                                                       algn,
-                                                                       decay,
-                                                                       time)
+        self._feature_to_feature_group_map[feature].\
+            update_association(feature, alignment, novelty, decay, time)
 
 
-class Lexicon:
+class Lexicon(object):
     """
     A Lexicon object maps words to Meaning objects.
 
@@ -454,7 +499,7 @@ class Lexicon:
         self._word_meanings[word].k(feature)
 
     def meaning(self, word):
-        """Return a copy of the Meaning object corresponding to word."""
+        """Return the Meaning object corresponding to word."""
         if word in self._word_meanings:
             return self._word_meanings[word]
         return self.initialize_new_meaning(word)
@@ -479,15 +524,16 @@ class Lexicon:
             return self._word_meanings[word].seen_features()
         return set()
 
-    def update_association(self, word, feature, alignment, decay, time):
+    def update_association(self, word, feature, alignment, novelty, decay,
+                           time):
         """
         Update association between word and feature by adding alignment to
         the current association.
         """
         if word not in self._word_meanings:
             self.initialize_new_meaning(word)
-        self._word_meanings[word].update_association(feature, alignment, decay,
-                                                     time)
+        self._word_meanings[word].update_association(feature, alignment,
+                                                     novelty, decay, time)
 
     def words(self):
         """Return a set of all words in this Lexicon."""
