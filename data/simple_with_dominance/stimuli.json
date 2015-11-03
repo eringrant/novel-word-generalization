@@ -1,0 +1,104 @@
+{
+    "unseen object features": [
+        "instance_feature_00",
+        "subord_feature_00",
+        "basic_feature_00",
+        "super_feature_00"
+    ],
+    "training set": {
+        "one example": {
+            "dalmatian_01": [
+                "instance_feature_01",
+                "dalmatian",
+                "dog",
+                "animal"
+            ]
+        },
+        "three subordinate examples": {
+            "dalmatian_01": [
+                "instance_feature_01",
+                "dalmatian",
+                "dog",
+                "animal"
+            ],
+            "dalmatian_02": [
+                "instance_feature_02",
+                "dalmatian",
+                "dog",
+                "animal"
+            ],
+            "dalmatian_03": [
+                "instance_feature_03",
+                "dalmatian",
+                "dog",
+                "animal"
+            ]
+        },
+        "three basic-level examples": {
+            "dalmatian_01": [
+                "instance_feature_01",
+                "dalmatian",
+                "dog",
+                "animal"
+            ],
+            "poodle": [
+                "instance_feature_04",
+                "poodle",
+                "dog",
+                "animal"
+            ],
+            "terrier": [
+                "instance_feature_05",
+                "terrier",
+                "dog",
+                "animal"
+            ]
+        },
+        "three superordinate examples": {
+            "dalmatian_01": [
+                "instance_feature_01",
+                "dalmatian",
+                "dog",
+                "animal"
+            ],
+            "Birman": [
+                "instance_feature_06",
+                "Birman",
+                "cat",
+                "animal"
+            ],
+            "parrot": [
+                "instance_feature_07",
+                "parrot",
+                "bird",
+                "animal"
+            ]
+        }
+    },
+    "test set": {
+        "subordinate matches": {
+            "subord_match": [
+                "instance_feature_08",
+                "dalmatian",
+                "dog",
+                "animal"
+            ]
+        },
+        "basic-level matches": {
+            "basic_match": [
+                "instance_feature_09",
+                "bulldog",
+                "dog",
+                "animal"
+            ]
+        },
+        "superordinate matches": {
+            "super_match": [
+                "instance_feature_10",
+                "Frisian",
+                "horse",
+                "animal"
+            ]
+        }
+    }
+}

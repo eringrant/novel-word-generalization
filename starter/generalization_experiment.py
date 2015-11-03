@@ -17,6 +17,7 @@ generalization experiment.
 # Mapping from the feature space to the stimuli file path
 stimuli_files = {
     'simple': os.path.join('simple', 'stimuli.json'),
+    'simple_with_dominance': os.path.join('simple_with_dominance', 'stimuli.json'),
     'clothing': os.path.join('clothing', 'stimuli.json'),
     'containers': os.path.join('containers', 'stimuli.json'),
     'seats': os.path.join('seats', 'stimuli.json'),
@@ -28,6 +29,7 @@ stimuli_files = {
 # Mapping from the feature space to the feature-level specification file path
 feature_group_to_level_maps = {
     'simple': os.path.join('simple', 'feature_group_to_level_map.json'),
+    'simple_with_dominance': os.path.join('simple_with_dominance', 'feature_group_to_level_map.json'),
     'clothing': os.path.join('clothing', 'feature_group_to_level_map.json'),
     'containers': os.path.join('containers',
                                'feature_group_to_level_map.json'),
@@ -43,6 +45,7 @@ feature_group_to_level_maps = {
 # Mapping from the feature space to the feature-level specification file path
 feature_to_feature_group_maps = {
     'simple': os.path.join('simple', 'feature_to_feature_group_map.json'),
+    'simple_with_dominance': os.path.join('simple_with_dominance', 'feature_to_feature_group_map.json'),
     'clothing': os.path.join('clothing', 'feature_to_feature_group_map.json'),
     'containers': os.path.join('containers',
                                'feature_to_feature_group_map.json'),
@@ -95,7 +98,9 @@ class Experiment(object):
         """
         self.params = params
 
-        if not self.params['feature-space'] in ['simple', 'clothing',
+        if not self.params['feature-space'] in ['simple',
+                                                'simple_with_dominance',
+                                                'clothing',
                                                 'containers', 'seats',
                                                 'xt-animals', 'xt-vegetables',
                                                 'xt-vehicles']:
@@ -122,10 +127,6 @@ class Experiment(object):
             self.feature_to_feature_group_map =\
                 json.load(feature_to_feature_group_map)
 
-<<<<<<< HEAD
-        # Get the "unseen object" for computation of prior probability
-        self.unseen_object = stimuli['unseen object features']
-=======
         # Initialize the learner (for the unseen probability computation)
         learner = learn.Learner(
             decay=self.params['decay'],
@@ -149,7 +150,6 @@ class Experiment(object):
         self.unseen_prob =\
             learner.generalization_prob(self.params['word'],
                                         stimuli['unseen object features'])
->>>>>>> Implemented two different ways of representing scene meaning for cosine computation
 
     def run(self):
         """Conduct this Experiment and return the results."""
@@ -236,7 +236,7 @@ class Experiment(object):
                     assert learner._time == 2 or learner._time == 4
 
                     if self.params['subtract-prior']:
-                        gen_prob -= unseen_prob
+                        gen_prob -= self.unseen_prob
 
                     gen_probs.append(gen_prob)
 

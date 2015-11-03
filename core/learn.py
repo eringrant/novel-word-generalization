@@ -205,14 +205,14 @@ def cosine(meaning1, meaning2, full_distribution=True):
     feature_group_names = set([fg._name for fg in meaning1.feature_groups()]) \
         | set([fg._name for fg in meaning2.feature_groups()])
 
-    # Loop over the feature groups and find feature seen between the two
+    # Loop over the feature groups and find features seen between the two
     # Meanings
     for fgn in feature_group_names:
 
         feature_group_1 = meaning1.feature_group(fgn)
         feature_group_2 = meaning2.feature_group(fgn)
 
-        features = meaning1.seen_features() | meaning2.seen_features()
+        features = feature_group_1.seen_features() | feature_group_2.seen_features()
 
         meaning1_vec = np.zeros(len(features))
         meaning2_vec = np.zeros(len(features))

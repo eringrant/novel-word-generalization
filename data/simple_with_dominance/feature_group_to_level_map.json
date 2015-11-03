@@ -1,0 +1,19 @@
+{
+    "subord_feature_00": "instance",
+    "basic_feature_00": "subordinate",
+    "super_feature_00": "basic-level",
+    "dalmatian": "instance",
+    "poodle": "instance",
+    "terrier": "instance",
+    "dalmatian": "instance",
+    "bulldog": "instance",
+    "Birman": "instance",
+    "parrot": "instance",
+    "Frisian": "instance",
+    "dog": "subordinate",
+    "cat": "subordinate",
+    "bird": "subordinate",
+    "horse": "subordinate",
+    "animal": "basic-level",
+    "superordinate": "superordinate"
+}
