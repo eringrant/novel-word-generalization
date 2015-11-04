@@ -207,11 +207,13 @@ def run_trial(params):
         title += ',' + 'featurespace_' + params['feature-space']
         title += ',' + 'decay_' + str(params['decay'])
         title += ',' + 'decay_bw_training_' + str(params['decay-between-training-trials'])
-        title += ',' + 'gammasup_' + str(params['gamma-sup'])
+        title += ',' + 'alpha_' + str(params['alpha'])
+        title += ',' + 'beta_' + str(params['beta'])
+        title += ',' + 'gamma_' + str(params['gamma-sup'])
         #title += ',' + 'gammabasic_' + str(params['gamma-basic'])
         #title += ',' + 'gammasub_' + str(params['gamma-sub'])
         #title += ',' + 'gammainstance_' + str(params['gamma-instance'])
-        title += ',' + 'ksup_' + str(params['k-sup'])
+        title += ',' + 'k_' + str(params['k-sup'])
         #title += ',' + 'kbasic_' + str(params['k-basic'])
         #title += ',' + 'ksub_' + str(params['k-sub'])
         #title += ',' + 'kinstance_' + str(params['k-instance'])
@@ -219,7 +221,7 @@ def run_trial(params):
         #title += ',' + 'pbasic_' + str(params['p-basic'])
         #title += ',' + 'psub_' + str(params['p-sub'])
         #title += ',' + 'pinstance_' + str(params['p-instance'])
-        title += ',' + 'subtractprior_' + str(params['subtract-prior'])
+        #title += ',' + 'subtractprior_' + str(params['subtract-prior'])
         title += ',' + 'metric_' + str(params['metric'])
 
         if not os.path.exists(params['output-path']):

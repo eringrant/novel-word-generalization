@@ -130,6 +130,8 @@ class Experiment(object):
         # Initialize the learner (for the unseen probability computation)
         learner = learn.Learner(
             decay=self.params['decay'],
+            alpha=self.params['alpha'],
+            beta=self.params['beta'],
             gamma_sup=self.params['gamma-sup'],
             gamma_basic=self.params['gamma-basic'],
             gamma_sub=self.params['gamma-sub'],
@@ -187,6 +189,8 @@ class Experiment(object):
                 learner = learn.Learner(
                     novelty=self.params['novelty'],
                     decay=self.params['decay'],
+                    alpha=self.params['alpha'],
+                    beta=self.params['beta'],
                     gamma_sup=self.params['gamma-sup'],
                     gamma_basic=self.params['gamma-basic'],
                     gamma_sub=self.params['gamma-sub'],

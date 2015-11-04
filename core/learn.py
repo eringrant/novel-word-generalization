@@ -13,6 +13,7 @@ class Learner:
 
     def __init__(
         self,
+        alpha, beta,
         gamma_sup, gamma_basic, gamma_sub, gamma_instance,
         k_sup, k_basic, k_sub, k_instance,
         p_sup, p_basic, p_sub, p_instance,
@@ -20,6 +21,8 @@ class Learner:
         feature_to_feature_group_map,
         novelty=False, decay=None
     ):
+        self._alpha = alpha
+        self._beta = beta
 
         self._learned_lexicon = wmmapping.Lexicon(
             [],
@@ -67,16 +70,21 @@ class Learner:
         """
         for feature in features:
 
-            # Normalization term: sum(w' in words) p(f|w')
+            # Normalization term: sum(w' in words) p(f|w') + smoothing
             denom = 0.0
             for word in words:
                 denom += self._learned_lexicon.prob(word, feature)
 
+            # Smoothing
+            denom += self._beta * self._alpha
+
             # Calculate alignment of each word
             for word in words:
 
-                # alignment(w|f) = P(f|w) / normalization
-                alignment = self._learned_lexicon.prob(word, feature) / denom
+                # alignment(w|f) = (P(f|w) + smoothing) / normalization
+                alignment = self._learned_lexicon.prob(word, feature)
+                alignment += self._alpha
+                alignment /= denom
 
                 # Novelty
                 alignment *=\
