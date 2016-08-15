@@ -95,6 +95,9 @@ def plot_results_as_bar_chart(results, savename=None,
     if normalise_over_test_scene is True:
 
         denom = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
+
+        # If the following two lines are uncommented, then the results are normalized over the test scene
+        # If not, the results are scaled to the probability of the subordinate match
         #denom = np.add(denom, [np.mean(results[cond]['basic-level matches']) for cond in conditions])
         #denom = np.add(denom, [np.mean(results[cond]['superordinate matches']) for cond in conditions])
 

@@ -169,7 +169,7 @@ class Learner:
                 prob = self._learned_lexicon.prob(word, feature, self._decay,
                                                   self._time)
                 gen_prob *= prob
-                print('\t\t\t\t',feature, prob)
+                #print('\t\t\t\t',feature, prob)
                 #raw_input()
 
         elif metric in ['truncated-cosine-same-word',

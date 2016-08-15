@@ -229,9 +229,9 @@ class Experiment(object):
                     feature_to_feature_group_map=self.feature_to_feature_group_map,
                 )
 
-                print("Initial meaning:")
-                pprint.pprint(learner._learned_lexicon.meaning(self.params['word']))
-                ##raw_input()
+                #print("Initial meaning:")
+                #pprint.pprint(learner._learned_lexicon.meaning(self.params['word']))
+                #raw_input()
 
                 # Perform the training trials
                 for i, trial in enumerate(self.training_sets[training_condition]):
@@ -242,11 +242,10 @@ class Experiment(object):
                     learner.process_pair(words, scene, './',
                                          time_increment=(self.params['spacing-condition'] != 'simultaneous'))
 
-                    print("Meaning after training trial %d:" % (i + 1))
-                    pprint.pprint(learner._learned_lexicon.meaning(self.params['word']))
+                    #print("Meaning after training trial %d:" % (i + 1))
+                    #pprint.pprint(learner._learned_lexicon.meaning(self.params['word']))
                     #raw_input()
-
-                    print("")
+                    #print("")
 
                     if self.params['spacing-condition'].startswith('sequential'):
                         learner._time += int(self.params['spacing-condition'].split('-')[-1])
@@ -305,8 +304,8 @@ class Experiment(object):
                 gen_probs = np.array(gen_probs, dtype=np.float128)
                 results[training_condition][test_condition] = gen_probs
 
-                print("Meaning before test trials:")
-                print(learner._time)
-                pprint.pprint(learner._learned_lexicon.meaning(self.params['word']))
+                #print("Meaning before test trials:")
+                #print(learner._time)
+                #pprint.pprint(learner._learned_lexicon.meaning(self.params['word']))
 
         return results
