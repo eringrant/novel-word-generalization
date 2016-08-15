@@ -1,3 +1,4 @@
+from __future__ import print_function
 import copy
 import logging
 import math
@@ -17,9 +18,11 @@ class Learner:
         gamma_sup, gamma_basic, gamma_sub, gamma_instance,
         k_sup, k_basic, k_sub, k_instance,
         p_sup, p_basic, p_sub, p_instance,
+        decay_sup, decay_basic, decay_sub, decay_instance,
+        feature_weight_sup, feature_weight_basic, feature_weight_sub, feature_weight_instance,
         feature_group_to_level_map,
         feature_to_feature_group_map,
-        novelty=False, decay=None
+        novelty=False, decay=False
     ):
         self._alpha = alpha
         self._beta = beta
@@ -38,6 +41,14 @@ class Learner:
             p_basic,
             p_sub,
             p_instance,
+            decay_sup,
+            decay_basic,
+            decay_sub,
+            decay_instance,
+            feature_weight_sup,
+            feature_weight_basic,
+            feature_weight_sub,
+            feature_weight_instance,
             feature_group_to_level_map,
             feature_to_feature_group_map,
         )
@@ -73,7 +84,8 @@ class Learner:
             # Normalization term: sum(w' in words) p(f|w') + smoothing
             denom = 0.0
             for word in words:
-                denom += self._learned_lexicon.prob(word, feature)
+                denom += self._learned_lexicon.prob(word, feature, self._decay,
+                                                    self._time)
 
             # Smoothing
             denom += self._beta * self._alpha
@@ -82,7 +94,8 @@ class Learner:
             for word in words:
 
                 # alignment(w|f) = (P(f|w) + smoothing) / normalization
-                alignment = self._learned_lexicon.prob(word, feature)
+                alignment = self._learned_lexicon.prob(word, feature,
+                                                       self._decay, self._time)
                 alignment += self._alpha
                 alignment /= denom
 
@@ -93,7 +106,6 @@ class Learner:
                 # assoc_t(f,w) = assoc_{t-1}(f,w) + P(a|u,f)
                 self._learned_lexicon.update_association(word, feature,
                                                          alignment,
-                                                         self._novelty,
                                                          self._decay,
                                                          self._time)
 
@@ -145,16 +157,20 @@ class Learner:
         if close_corpus:
             corpus.close()
 
-    def generalization_prob(self, word, scene, metric='intersection'):
+    def generalization_prob(self, word, scene, metric='intersection',
+                            test_condition=None):
         """Return the probability of Learner to generalize word to scene."""
 
-        if metric == 'intersection':
+        if metric.startswith('intersection'):
 
             gen_prob = 1.
 
             for feature in scene:
-                prob = self._learned_lexicon.prob(word, feature)
+                prob = self._learned_lexicon.prob(word, feature, self._decay,
+                                                  self._time)
                 gen_prob *= prob
+                print('\t\t\t\t',feature, prob)
+                #raw_input()
 
         elif metric in ['truncated-cosine-same-word',
                         'cosine-full-distribution-same-word',
@@ -196,6 +212,62 @@ class Learner:
             squared_norm_y = np.dot(learned_meaning_vec, learned_meaning_vec)
 
             gen_prob = cos / (math.sqrt(squared_norm_x) * math.sqrt(squared_norm_y))
+
+        elif metric == 'hypothesis-space':
+
+            assert test_condition is not None
+
+
+            gens = {}
+
+            gen_prob = 1.
+
+            subset_scene = [feature for feature in scene if feature.startswith('inst')]
+
+            for feature in subset_scene:
+                prob = self._learned_lexicon.prob(word, feature, self._decay,
+                                                self._time)
+                gen_prob *= prob
+
+            gens['inst'] = gen_prob
+
+            subset_scene = [feature for feature in scene if feature.startswith('sup')]
+
+            for feature in subset_scene:
+                prob = self._learned_lexicon.prob(word, feature, self._decay,
+                                                self._time)
+                gen_prob *= prob
+
+            gens['sup'] = gen_prob
+
+            gen_prob = gens['inst']
+
+            subset_scene = [feature for feature in scene if feature.startswith('basic')]
+
+            for feature in subset_scene:
+                prob = self._learned_lexicon.prob(word, feature, self._decay,
+                                                self._time)
+                gen_prob *= prob
+
+            gens['basic'] = gen_prob
+
+            gen_prob = gens['inst']
+
+            subset_scene = [feature for feature in scene if feature.startswith('sub')]
+
+            for feature in subset_scene:
+                prob = self._learned_lexicon.prob(word, feature, self._decay,
+                                                self._time)
+                gen_prob *= prob
+
+            gens['sub'] = gen_prob
+
+            if test_condition.startswith('sup'):
+                gen_prob = gens['sup']
+            if test_condition.startswith('basic'):
+                gen_prob = gens['sup'] + gens['basic']
+            if test_condition.startswith('sub'):
+                gen_prob = gens['sup'] + gens['basic'] + gens['sub']
 
         else:
             raise NotImplementedError

@@ -72,7 +72,7 @@ def items_to_params(items):
 
 def plot_results_as_bar_chart(results, savename=None,
                               normalise_over_test_scene=True, annotation=None,
-                              y_limit=1.0):
+                              y_limit=None):
 
     conditions = [
         'one example',
@@ -95,8 +95,8 @@ def plot_results_as_bar_chart(results, savename=None,
     if normalise_over_test_scene is True:
 
         denom = [np.mean(results[cond]['subordinate matches']) for cond in conditions]
-        denom = np.add(denom, [np.mean(results[cond]['basic-level matches']) for cond in conditions])
-        denom = np.add(denom, [np.mean(results[cond]['superordinate matches']) for cond in conditions])
+        #denom = np.add(denom, [np.mean(results[cond]['basic-level matches']) for cond in conditions])
+        #denom = np.add(denom, [np.mean(results[cond]['superordinate matches']) for cond in conditions])
 
         l0 = np.array(l0)
         l1 = np.array(l1)
@@ -203,26 +203,36 @@ def run_trial(params):
         results = experiment.run()
 
         # Create a title for the plots PNG image
-        title = 'plot'
-        title += ',' + 'featurespace_' + params['feature-space']
-        title += ',' + 'decay_' + str(params['decay'])
-        title += ',' + 'decay_bw_training_' + str(params['decay-between-training-trials'])
-        title += ',' + 'alpha_' + str(params['alpha'])
-        title += ',' + 'beta_' + str(params['beta'])
-        title += ',' + 'gamma_' + str(params['gamma-sup'])
-        #title += ',' + 'gammabasic_' + str(params['gamma-basic'])
+        title = ''
+        #title += ',' + 'featurespace_' + params['feature-space']
+        #title += ',' + 'alpha_' + str(params['alpha'])
+        #title += ',' + 'beta_' + str(params['beta'])
+        #title += ',' + 'gammasup_' + str(params['gamma-sup'])
+        #title += ',' + 'gammabas_' + str(params['gamma-basic'])
         #title += ',' + 'gammasub_' + str(params['gamma-sub'])
-        #title += ',' + 'gammainstance_' + str(params['gamma-instance'])
-        title += ',' + 'k_' + str(params['k-sup'])
-        #title += ',' + 'kbasic_' + str(params['k-basic'])
+        #title += ',' + 'gammainst_' + str(params['gamma-instance'])
+        #title += ',' + 'k_' + str(params['k-sup'])
+        #title += ',' + 'kbas_' + str(params['k-basic'])
         #title += ',' + 'ksub_' + str(params['k-sub'])
-        #title += ',' + 'kinstance_' + str(params['k-instance'])
+        #title += ',' + 'kinst_' + str(params['k-instance'])
         #title += ',' + 'psup_' + str(params['p-sup'])
         #title += ',' + 'pbasic_' + str(params['p-basic'])
         #title += ',' + 'psub_' + str(params['p-sub'])
         #title += ',' + 'pinstance_' + str(params['p-instance'])
+        title += ',' + 'decaysup_' + str(params['decay-sup'])
+        title += ',' + 'decaybas_' + str(params['decay-basic'])
+        title += ',' + 'decaysub_' + str(params['decay-sub'])
+        title += ',' + 'decayinst_' + str(params['decay-instance'])
+        #title += ',' + 'fwsup_' + str(params['feature-weight-sup'])
+        #title += ',' + 'fwbasic_' + str(params['feature-weight-basic'])
+        #title += ',' + 'fwsub_' + str(params['feature-weight-sub'])
+        #title += ',' + 'fwinstance_' + str(params['feature-weight-instance'])
         #title += ',' + 'subtractprior_' + str(params['subtract-prior'])
-        title += ',' + 'metric_' + str(params['metric'])
+        #title += ',' + 'metric_' + str(params['metric'])
+        title += ',' + 'spacing_' + params['spacing-condition']
+        title += ',' + 'test_' + "%03d" % params['test-delay']
+
+        title = title.lstrip(',')
 
         if not os.path.exists(params['output-path']):
             os.makedirs(params['output-path'])
@@ -230,12 +240,23 @@ def run_trial(params):
             os.makedirs(os.path.join(params['output-path'], 'plots'))
         if not os.path.exists(os.path.join(params['output-path'], 'csv')):
             os.makedirs(os.path.join(params['output-path'], 'csv'))
+        if not os.path.exists(os.path.join(params['output-path'], 'sc')):
+            os.makedirs(os.path.join(params['output-path'], 'sc'))
 
-        if (not params['check-condition']) or (params['check-condition'] and condition(results, params)):
+        if (not params['check-xt-condition'] and not\
+            params['check-spencer-condition'])\
+            or (params['check-xt-condition'] and xt_condition(results, params))\
+            or (params['check-spencer-condition'] and\
+                spencer_condition(results, params)):
             plot_results_as_bar_chart(results,
                                     savename=os.path.join(params['output-path'],
                                                             'plots', title)+ '.png',
-                                    normalise_over_test_scene=True if params['metric'] == 'intersection' else False)
+                                    normalise_over_test_scene=True if
+                                      params['metric'] == 'intersection' else
+                                      True)
+            write_suspicious_coincidence(results,
+                                    savename=os.path.join(params['output-path'],
+                                                            'sc', title)+ '.dat')
             write_results_as_csv_file(results,
                                     savename=os.path.join(params['output-path'],
                                                             'csv', title)+ '.dat')
@@ -245,9 +266,30 @@ def check_for_child_params(params):
     check_gamma = params['gamma-instance'] == params['gamma-sub'] and params['gamma-sub'] == params['gamma-basic'] and params['gamma-basic'] == params['gamma-sup']
     check_k = params['k-instance'] == params['k-sub'] and params['k-sub'] == params['k-basic'] and params['k-basic'] == params['k-sup']
     check_p = params['p-instance'] == params['p-sub'] and params['p-sub'] == params['p-basic'] and params['p-basic'] == params['p-sup']
-    return check_gamma and check_k and check_p
+    check_decay = params['decay-instance'] == params['decay-sub'] and params['decay-sub'] == params['decay-basic'] and params['decay-basic'] == params['decay-sup']
+    check_feature_weight = params['feature-weight-instance'] == params['feature-weight-sub'] and params['feature-weight-sub'] == params['feature-weight-basic'] and params['feature-weight-basic'] == params['feature-weight-sup']
+    return check_gamma and check_k and check_p and check_decay and check_feature_weight
 
-def condition(results, params):
+def spencer_condition(results, params):
+    """Define the condition of having a reversal of the suspicious coincidence
+    effect, as in the Spencer et al. paper."""
+    normalisation = np.mean(results['one example']['subordinate matches']) + \
+        np.mean(results['one example']['basic-level matches']) + \
+        np.mean(results['one example']['superordinate matches'])
+    one_ex = np.mean(results['one example']['basic-level matches']) / normalisation
+
+    normalisation = np.mean(results['three subordinate examples']['subordinate matches']) + \
+        np.mean(results['three subordinate examples']['basic-level matches']) + \
+        np.mean(results['three subordinate examples']['superordinate matches'])
+    three_sub = np.mean(results['three subordinate examples']['basic-level matches']) / normalisation
+
+    one_ex_sub_basic_ratio =\
+        np.mean(results['one example']['subordinate matches']) /\
+        np.mean(results['one example']['basic-level matches'])
+
+    return is_close(three_sub / one_ex, 1.3) and one_ex_sub_basic_ratio > 2
+
+def xt_condition(results, params):
     """Define bounds on acceptable results."""
 
     # 1 ex.
@@ -285,18 +327,28 @@ def is_close(x, y, atol=0.2, rtol=0):
     return np.less_equal(abs(x-y), atol + rtol * y)
 
 
+def write_suspicious_coincidence(results, savename):
+    with open(savename, 'w') as f:
+        f.write(
+            str(
+            (np.mean(results['one example']['basic-level matches']) /\
+            np.mean(results['one example']['subordinate matches'])) /\
+            (np.mean(results['three subordinate examples']['basic-level matches']) /\
+            np.mean(results['three subordinate examples']['subordinate matches']))
+        ))
+
 def write_results_as_csv_file(results, savename):
 
     conditions = [
         'one example',
         'three subordinate examples',
-        'three basic-level examples',
-        'three superordinate examples'
+        #'three basic-level examples',
+        #'three superordinate examples'
     ]
 
     abbrev_condition_names = {
         'one example': '1 ex.',
-        'three subordinate examples': '3 sub.',
+        'three subordinate examples': '3 subord.',
         'three basic-level examples': '3 basic',
         'three superordinate examples': '3 super.'
     }
@@ -304,10 +356,14 @@ def write_results_as_csv_file(results, savename):
     with open(savename, 'w') as f:
         f.write("condition,sub. match,basic match,super. match\n")
         for condition in conditions:
+
+            # TODO: choose appropriate normalisation
             normalisation = \
-                np.mean(results[condition]['subordinate matches']) + \
-                np.mean(results[condition]['basic-level matches']) + \
-                np.mean(results[condition]['superordinate matches'])
+                np.mean(results[condition]['subordinate matches'])
+            #    np.mean(results[condition]['subordinate matches']) + \
+            #    np.mean(results[condition]['basic-level matches']) + \
+            #    np.mean(results[condition]['superordinate matches'])
+
             f.write(abbrev_condition_names[condition])
             f.write(',')
             f.write(str(np.mean(results[condition]['subordinate matches'])/normalisation))

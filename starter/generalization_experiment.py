@@ -2,6 +2,7 @@ from __future__ import print_function
 import json
 import numpy as np
 import os
+import pprint
 
 from novel_word_generalization.core import learn
 
@@ -129,6 +130,7 @@ class Experiment(object):
 
         # Initialize the learner (for the unseen probability computation)
         learner = learn.Learner(
+            novelty=self.params['novelty'],
             decay=self.params['decay'],
             alpha=self.params['alpha'],
             beta=self.params['beta'],
@@ -144,6 +146,14 @@ class Experiment(object):
             p_basic=self.params['p-basic'],
             p_sub=self.params['p-sub'],
             p_instance=self.params['p-instance'],
+            decay_sup=self.params['decay-sup'],
+            decay_basic=self.params['decay-basic'],
+            decay_sub=self.params['decay-sub'],
+            decay_instance=self.params['decay-instance'],
+            feature_weight_sup=self.params['feature-weight-sup'],
+            feature_weight_basic=self.params['feature-weight-basic'],
+            feature_weight_sub=self.params['feature-weight-sub'],
+            feature_weight_instance=self.params['feature-weight-instance'],
             feature_group_to_level_map=self.feature_group_to_level_map,
             feature_to_feature_group_map=self.feature_to_feature_group_map
         )
@@ -171,6 +181,10 @@ class Experiment(object):
         print("\t", "p_basic  = ", self.params['p-basic'])
         print("\t", "p_sub  = ", self.params['p-sub'])
         print("\t", "p_instance  = ", self.params['p-instance'])
+        print("\t", "decay_sup  = ", self.params['decay-sup'])
+        print("\t", "decay_basic  = ", self.params['decay-basic'])
+        print("\t", "decay_sub  = ", self.params['decay-sub'])
+        print("\t", "decay_instance  = ", self.params['decay-instance'])
 
         results = {}
 
@@ -183,7 +197,7 @@ class Experiment(object):
 
             for test_condition in self.test_sets:
 
-                print("\t\t\t", "Tested", test_condition)
+                print("\t\t\t", "Testing", test_condition, "...")
 
                 # Initialize the learner
                 learner = learn.Learner(
@@ -203,27 +217,47 @@ class Experiment(object):
                     p_basic=self.params['p-basic'],
                     p_sub=self.params['p-sub'],
                     p_instance=self.params['p-instance'],
+                    decay_sup=self.params['decay-sup'],
+                    decay_basic=self.params['decay-basic'],
+                    decay_sub=self.params['decay-sub'],
+                    decay_instance=self.params['decay-instance'],
+                    feature_weight_sup=self.params['feature-weight-sup'],
+                    feature_weight_basic=self.params['feature-weight-basic'],
+                    feature_weight_sub=self.params['feature-weight-sub'],
+                    feature_weight_instance=self.params['feature-weight-instance'],
                     feature_group_to_level_map=self.feature_group_to_level_map,
                     feature_to_feature_group_map=self.feature_to_feature_group_map,
                 )
 
+                print("Initial meaning:")
+                pprint.pprint(learner._learned_lexicon.meaning(self.params['word']))
+                ##raw_input()
+
                 # Perform the training trials
-                for trial in self.training_sets[training_condition]:
+                for i, trial in enumerate(self.training_sets[training_condition]):
 
                     words = [self.params['word']]
                     scene = self.training_sets[training_condition][trial]
 
                     learner.process_pair(words, scene, './',
-                                         time_increment=self.params['decay-between-training-trials'])
+                                         time_increment=(self.params['spacing-condition'] != 'simultaneous'))
+
+                    print("Meaning after training trial %d:" % (i + 1))
+                    pprint.pprint(learner._learned_lexicon.meaning(self.params['word']))
+                    #raw_input()
+
+                    print("")
+
+                    if self.params['spacing-condition'].startswith('sequential'):
+                        learner._time += int(self.params['spacing-condition'].split('-')[-1])
 
                 gen_probs = []
 
-                # Manually increment so that the time difference between
-                # training and test is the same across decay conditions
-                if not self.params['decay-between-training-trials']:
-                    learner._time += 3
-                    if training_condition == 'one example':
-                        learner._time -= 2
+                # Manually increment the time for the simultaneous condition
+                learner._time += 1 if self.params['spacing-condition'] == 'simultaneous' else 0
+
+                # Manually increment time for test delay
+                learner._time += self.params['test-delay']
 
                 # Perform the test trials
                 for test_object in self.test_sets[test_condition]:
@@ -234,17 +268,45 @@ class Experiment(object):
                         self.params['word'],
                         scene,
                         metric=self.params['metric'],
+                        test_condition=test_condition
                     )
 
-                    # Sanity check: we've seen either 1 or 3 training object
-                    assert learner._time == 2 or learner._time == 4
-
-                    if self.params['subtract-prior']:
+                    if self.params['compare-to-prior'] == 'difference':
                         gen_prob -= self.unseen_prob
+
+                    elif self.params['compare-to-prior'] == 'ratio':
+                        gen_prob = 1 - self.unseen_prob / gen_prob
+
+                    elif self.params['compare-to-prior'] == None:
+                        pass
+
+                    else:
+                        raise NotImplementedError
+
+                    if self.params['metric'] == 'intersection-over-prototype':
+                        normaliser = 0
+                        count = 0
+                        for trial in self.training_sets[training_condition]:
+                            scene = self.training_sets[training_condition][trial]
+                            normaliser += learner.generalization_prob(
+                                    self.params['word'],
+                                    scene,
+                                    metric=self.params['metric'],
+                                )
+                            count += 1
+                        normaliser /= count
+                        gen_prob /= normaliser
+
+
+
 
                     gen_probs.append(gen_prob)
 
                 gen_probs = np.array(gen_probs, dtype=np.float128)
                 results[training_condition][test_condition] = gen_probs
+
+                print("Meaning before test trials:")
+                print(learner._time)
+                pprint.pprint(learner._learned_lexicon.meaning(self.params['word']))
 
         return results
