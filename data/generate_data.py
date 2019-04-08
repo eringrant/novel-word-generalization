@@ -98,6 +98,125 @@ def generate_simple_data(data_path):
                    'w'), indent=4, separators=(',', ': '), sort_keys=True)
 
 
+def generate_grid_simple_data(data_path):
+
+    save_dir = os.path.join(data_path, 'grid_simple')
+
+    # Create the necessary directory
+    if not os.path.exists(save_dir):
+        os.mkdir(save_dir)
+
+    # Categorize the feature groups as {super., basic, subord., instance} level
+    feature_group_to_level_map = {}
+    feature_group_to_level_map['instance'] = 'instance'
+    feature_group_to_level_map['subordinate'] = 'subordinate'
+    feature_group_to_level_map['basic-level'] = 'basic-level'
+    feature_group_to_level_map['superordinate'] = 'superordinate'
+
+    json.dump(feature_group_to_level_map,
+              open(os.path.join(save_dir, 'feature_group_to_level_map.json'),
+                   'w'), indent=4, separators=(',', ': '))
+
+    # Create the objects in the training set
+    training_set = {}
+
+    training_set['one example'] = {}
+
+    training_set['two subordinate examples'] = {}
+    training_set['two basic-level examples'] = {}
+    training_set['two superordinate examples'] = {}
+
+    training_set['three subordinate examples'] = {}
+    training_set['three basic-level examples'] = {}
+    training_set['three superordinate examples'] = {}
+
+    training_set['four subordinate examples'] = {}
+    training_set['four basic-level examples'] = {}
+    training_set['four superordinate examples'] = {}
+
+    training_set['one example']['subord_01'] = ['instance_feature_01', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+
+    training_set['two subordinate examples']['subord_01'] = ['instance_feature_01', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+    training_set['two subordinate examples']['subord_02'] = ['instance_feature_02', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+
+    training_set['three subordinate examples']['subord_01'] = ['instance_feature_01', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+    training_set['three subordinate examples']['subord_02'] = ['instance_feature_02', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+    training_set['three subordinate examples']['subord_03'] = ['instance_feature_03', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+
+    training_set['four subordinate examples']['subord_01'] = ['instance_feature_01', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+    training_set['four subordinate examples']['subord_02'] = ['instance_feature_02', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+    training_set['four subordinate examples']['subord_03'] = ['instance_feature_03', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+    training_set['four subordinate examples']['subord_04'] = ['instance_feature_04', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+
+    training_set['two basic-level examples']['basic_01'] = ['instance_feature_01', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+    training_set['two basic-level examples']['basic_02'] = ['instance_feature_05', 'subord_feature_02', 'basic_feature_01', 'super_feature_01']
+
+    training_set['three basic-level examples']['basic_01'] = ['instance_feature_01', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+    training_set['three basic-level examples']['basic_02'] = ['instance_feature_05', 'subord_feature_02', 'basic_feature_01', 'super_feature_01']
+    training_set['three basic-level examples']['basic_03'] = ['instance_feature_06', 'subord_feature_03', 'basic_feature_01', 'super_feature_01']
+
+    training_set['four basic-level examples']['basic_01'] = ['instance_feature_01', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+    training_set['four basic-level examples']['basic_02'] = ['instance_feature_05', 'subord_feature_02', 'basic_feature_01', 'super_feature_01']
+    training_set['four basic-level examples']['basic_03'] = ['instance_feature_06', 'subord_feature_03', 'basic_feature_01', 'super_feature_01']
+    training_set['four basic-level examples']['basic_04'] = ['instance_feature_07', 'subord_feature_04', 'basic_feature_01', 'super_feature_01']
+
+    training_set['two superordinate examples']['super_01'] = ['instance_feature_01', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+    training_set['two superordinate examples']['super_02'] = ['instance_feature_08', 'subord_feature_05', 'basic_feature_02', 'super_feature_01']
+
+    training_set['three superordinate examples']['super_01'] = ['instance_feature_01', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+    training_set['three superordinate examples']['super_02'] = ['instance_feature_08', 'subord_feature_05', 'basic_feature_02', 'super_feature_01']
+    training_set['three superordinate examples']['super_03'] = ['instance_feature_09', 'subord_feature_06', 'basic_feature_03', 'super_feature_01']
+
+    training_set['four superordinate examples']['super_01'] = ['instance_feature_01', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+    training_set['four superordinate examples']['super_02'] = ['instance_feature_08', 'subord_feature_05', 'basic_feature_02', 'super_feature_01']
+    training_set['four superordinate examples']['super_03'] = ['instance_feature_09', 'subord_feature_06', 'basic_feature_03', 'super_feature_01']
+    training_set['four superordinate examples']['super_04'] = ['instance_feature_10', 'subord_feature_07', 'basic_feature_04', 'super_feature_01']
+
+    # Create the objects in the test set
+    test_set = {}
+
+    test_set['subordinate matches'] = {}
+    test_set['basic-level matches'] = {}
+    test_set['superordinate matches'] = {}
+
+    test_set['subordinate matches']['subord_01'] = ['instance_feature_11', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+    test_set['subordinate matches']['subord_02'] = ['instance_feature_12', 'subord_feature_01', 'basic_feature_01', 'super_feature_01']
+
+    test_set['basic-level matches']['basic_01'] = ['instance_feature_13', 'subord_feature_08', 'basic_feature_01', 'super_feature_01']
+    test_set['basic-level matches']['basic_02'] = ['instance_feature_14', 'subord_feature_09', 'basic_feature_01', 'super_feature_01']
+
+    test_set['superordinate matches']['super_01'] = ['instance_feature_15', 'subord_feature_10', 'basic_feature_05', 'super_feature_01']
+    test_set['superordinate matches']['super_02'] = ['instance_feature_16', 'subord_feature_11', 'basic_feature_06', 'super_feature_01']
+    test_set['superordinate matches']['super_03'] = ['instance_feature_17', 'subord_feature_12', 'basic_feature_07', 'super_feature_01']
+    test_set['superordinate matches']['super_04'] = ['instance_feature_18', 'subord_feature_13', 'basic_feature_08', 'super_feature_01']
+
+    simple = {}
+    simple['training set'] = training_set
+    simple['test set'] = test_set
+
+    # Create the "unseen" object
+    simple['unseen object features'] = ['instance_feature_00', 'subord_feature_00', 'basic_feature_00', 'super_feature_00']
+
+    json.dump(simple, open(os.path.join(save_dir, 'stimuli.json'), 'w'),
+              indent=4, separators=(',', ': '))
+
+    # Create the mapping of feature -> feature group
+    feature_to_feature_group_map = {}
+
+    for feature in ['instance_feature_{num:02d}'.format(num=i) for i in range(0, 19)]:
+        feature_to_feature_group_map[feature] = 'instance'
+    for feature in ['subord_feature_{num:02d}'.format(num=i) for i in range(0, 14)]:
+        feature_to_feature_group_map[feature] = 'subordinate'
+    for feature in ['basic_feature_{num:02d}'.format(num=i) for i in range(0, 9)]:
+        feature_to_feature_group_map[feature] = 'basic-level'
+    for feature in ['super_feature_{num:02d}'.format(num=i) for i in range(0, 2)]:
+        feature_to_feature_group_map[feature] = 'superordinate'
+
+    json.dump(feature_to_feature_group_map,
+              open(os.path.join(save_dir, 'feature_to_feature_group_map.json'),
+                   'w'), indent=4, separators=(',', ': '), sort_keys=True)
+
+
 def generate_category_data(data_path):
 
     ###############################################################################
@@ -759,6 +878,7 @@ def main(args=sys.argv[1:]):
         os.mkdir(args.data_path)
 
     generate_simple_data(args.data_path)
+    generate_grid_simple_data(args.data_path)
     generate_category_data(args.data_path)
     generate_xt_data(args.data_path)
 

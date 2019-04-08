@@ -1,18 +1,6 @@
 {
-    "unseen object features": [
-        "instance_feature_00",
-        "subord_feature_00",
-        "basic_feature_00",
-        "super_feature_00"
-    ],
     "training set": {
         "three basic-level examples": {
-            "basic_01": [
-                "instance_feature_01",
-                "subord_feature_01",
-                "basic_feature_01",
-                "super_feature_01"
-            ],
             "basic_03": [
                 "instance_feature_05",
                 "subord_feature_03",
@@ -24,11 +12,29 @@
                 "subord_feature_02",
                 "basic_feature_01",
                 "super_feature_01"
+            ],
+            "basic_01": [
+                "instance_feature_01",
+                "subord_feature_01",
+                "basic_feature_01",
+                "super_feature_01"
             ]
         },
-        "one example": {
+        "three subordinate examples": {
+            "subord_03": [
+                "instance_feature_03",
+                "subord_feature_01",
+                "basic_feature_01",
+                "super_feature_01"
+            ],
             "subord_01": [
                 "instance_feature_01",
+                "subord_feature_01",
+                "basic_feature_01",
+                "super_feature_01"
+            ],
+            "subord_02": [
+                "instance_feature_02",
                 "subord_feature_01",
                 "basic_feature_01",
                 "super_feature_01"
@@ -41,32 +47,20 @@
                 "basic_feature_01",
                 "super_feature_01"
             ],
-            "super_02": [
-                "instance_feature_06",
-                "subord_feature_04",
-                "basic_feature_02",
-                "super_feature_01"
-            ],
             "super_03": [
                 "instance_feature_07",
                 "subord_feature_05",
                 "basic_feature_03",
                 "super_feature_01"
+            ],
+            "super_02": [
+                "instance_feature_06",
+                "subord_feature_04",
+                "basic_feature_02",
+                "super_feature_01"
             ]
         },
-        "three subordinate examples": {
-            "subord_03": [
-                "instance_feature_03",
-                "subord_feature_01",
-                "basic_feature_01",
-                "super_feature_01"
-            ],
-            "subord_02": [
-                "instance_feature_02",
-                "subord_feature_01",
-                "basic_feature_01",
-                "super_feature_01"
-            ],
+        "one example": {
             "subord_01": [
                 "instance_feature_01",
                 "subord_feature_01",
@@ -77,44 +71,44 @@
     },
     "test set": {
         "subordinate matches": {
-            "subord_02": [
-                "instance_feature_09",
+            "subord_01": [
+                "instance_feature_08",
                 "subord_feature_01",
                 "basic_feature_01",
                 "super_feature_01"
             ],
-            "subord_01": [
-                "instance_feature_08",
+            "subord_02": [
+                "instance_feature_09",
                 "subord_feature_01",
                 "basic_feature_01",
                 "super_feature_01"
             ]
         },
         "basic-level matches": {
-            "basic_01": [
-                "instance_feature_10",
-                "subord_feature_06",
-                "basic_feature_01",
-                "super_feature_01"
-            ],
             "basic_02": [
                 "instance_feature_11",
                 "subord_feature_07",
                 "basic_feature_01",
                 "super_feature_01"
+            ],
+            "basic_01": [
+                "instance_feature_10",
+                "subord_feature_06",
+                "basic_feature_01",
+                "super_feature_01"
             ]
         },
         "superordinate matches": {
-            "super_04": [
-                "instance_feature_15",
-                "subord_feature_11",
-                "basic_feature_07",
-                "super_feature_01"
-            ],
             "super_01": [
                 "instance_feature_12",
                 "subord_feature_08",
                 "basic_feature_04",
+                "super_feature_01"
+            ],
+            "super_03": [
+                "instance_feature_14",
+                "subord_feature_10",
+                "basic_feature_06",
                 "super_feature_01"
             ],
             "super_02": [
@@ -123,12 +117,18 @@
                 "basic_feature_05",
                 "super_feature_01"
             ],
-            "super_03": [
-                "instance_feature_14",
-                "subord_feature_10",
-                "basic_feature_06",
+            "super_04": [
+                "instance_feature_15",
+                "subord_feature_11",
+                "basic_feature_07",
                 "super_feature_01"
             ]
         }
-    }
+    },
+    "unseen object features": [
+        "instance_feature_00",
+        "subord_feature_00",
+        "basic_feature_00",
+        "super_feature_00"
+    ]
 }

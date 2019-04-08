@@ -21,7 +21,7 @@
     "20": "basic-level",
     "21": "subordinate",
     "22": "subordinate",
-    "23": "subordinate",
+    "UNIQ": "instance",
     "24": "subordinate",
     "25": "subordinate",
     "26": "subordinate",
@@ -39,5 +39,5 @@
     "38": "instance",
     "39": "instance",
     "40": "instance",
-    "UNIQ": "instance"
+    "23": "subordinate"
 }

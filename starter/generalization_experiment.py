@@ -18,6 +18,7 @@ generalization experiment.
 # Mapping from the feature space to the stimuli file path
 stimuli_files = {
     'simple': os.path.join('simple', 'stimuli.json'),
+    'grid_simple': os.path.join('grid_simple', 'stimuli.json'),
     'simple_with_dominance': os.path.join('simple_with_dominance', 'stimuli.json'),
     'clothing': os.path.join('clothing', 'stimuli.json'),
     'containers': os.path.join('containers', 'stimuli.json'),
@@ -30,6 +31,7 @@ stimuli_files = {
 # Mapping from the feature space to the feature-level specification file path
 feature_group_to_level_maps = {
     'simple': os.path.join('simple', 'feature_group_to_level_map.json'),
+    'grid_simple': os.path.join('grid_simple', 'feature_group_to_level_map.json'),
     'simple_with_dominance': os.path.join('simple_with_dominance', 'feature_group_to_level_map.json'),
     'clothing': os.path.join('clothing', 'feature_group_to_level_map.json'),
     'containers': os.path.join('containers',
@@ -46,6 +48,7 @@ feature_group_to_level_maps = {
 # Mapping from the feature space to the feature-level specification file path
 feature_to_feature_group_maps = {
     'simple': os.path.join('simple', 'feature_to_feature_group_map.json'),
+    'grid_simple': os.path.join('grid_simple', 'feature_to_feature_group_map.json'),
     'simple_with_dominance': os.path.join('simple_with_dominance', 'feature_to_feature_group_map.json'),
     'clothing': os.path.join('clothing', 'feature_to_feature_group_map.json'),
     'containers': os.path.join('containers',
@@ -101,6 +104,7 @@ class Experiment(object):
 
         if not self.params['feature-space'] in ['simple',
                                                 'simple_with_dominance',
+                                                'grid_simple',
                                                 'clothing',
                                                 'containers', 'seats',
                                                 'xt-animals', 'xt-vegetables',

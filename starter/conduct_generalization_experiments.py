@@ -74,11 +74,23 @@ def plot_results_as_bar_chart(results, savename=None,
                               normalise_over_test_scene=True, annotation=None,
                               y_limit=None):
 
+    #conditions = [
+    #    'one example',
+    #    'three subordinate examples',
+    #    'three basic-level examples',
+    #    'three superordinate examples'
+    #]
     conditions = [
-        'one example',
-        'three subordinate examples',
-        'three basic-level examples',
-        'three superordinate examples'
+        u'one example',
+        u'two subordinate examples',
+        u'two basic-level examples',
+        u'two superordinate examples',
+        u'three subordinate examples',
+        u'three basic-level examples',
+        u'three superordinate examples',
+        u'four subordinate examples',
+        u'four basic-level examples',
+        u'four superordinate examples',
     ]
 
     ind = np.array([2*n for n in range(len(results))])
@@ -153,12 +165,17 @@ def plot_results_as_bar_chart(results, savename=None,
     ax.set_ylabel("generalization probability")
     ax.set_xlabel("training condition")
 
-    short_form_conditions = [
-        '1 ex.',
-        '3 subord.',
-        '3 basic',
-        '3 super.'
-    ]
+    #short_form_conditions = [
+    #    '1 ex.',
+    #    '3 subord.',
+    #    '3 basic',
+    #    '3 super.'
+    #]
+    short_form_conditions = conditions[:]
+    short_form_conditions = [s.replace('example', 'ex') for s in short_form_conditions]
+    short_form_conditions = [s.replace('subordinate', 'subord') for s in short_form_conditions]
+    short_form_conditions = [s.replace('basic-level', 'basic') for s in short_form_conditions]
+    short_form_conditions = [s.replace('superordinate', 'super') for s in short_form_conditions]
     ax.set_xticklabels([short_form_conditions[i//2] if (i+1) % 2 == 0 else '' \
                         for i in range(2*len(short_form_conditions))])
 
@@ -349,11 +366,30 @@ def write_results_as_csv_file(results, savename):
         #'three superordinate examples'
     ]
 
+    conditions = [
+        'one example',
+        'two subordinate examples',
+        'two basic-level examples',
+        'two superordinate examples',
+        'three subordinate examples',
+        'three basic-level examples',
+        'three superordinate examples',
+        'four subordinate examples',
+        'four basic-level examples',
+        'four superordinate examples',
+    ]
+
     abbrev_condition_names = {
         'one example': '1 ex.',
+        'two subordinate examples': '2 subord.',
+        'two basic-level examples': '2 basic',
+        'two superordinate examples': '2 super.',
         'three subordinate examples': '3 subord.',
         'three basic-level examples': '3 basic',
-        'three superordinate examples': '3 super.'
+        'three superordinate examples': '3 super.',
+        'four subordinate examples': '4 subord.',
+        'four basic-level examples': '4 basic',
+        'four superordinate examples': '4 super.',
     }
 
     with open(savename, 'w') as f:

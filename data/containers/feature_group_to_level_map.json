@@ -1,14 +1,14 @@
 {
-    "superordinate_C": "superordinate",
-    "superordinate_B": "superordinate",
-    "superordinate_A": "superordinate",
-    "instance_A": "instance",
-    "basic-level_C": "basic-level",
-    "basic-level_B": "basic-level",
-    "basic-level_A": "basic-level",
-    "subordinate_B": "subordinate",
-    "subordinate_C": "subordinate",
     "subordinate_A": "subordinate",
+    "superordinate_B": "superordinate",
+    "subordinate_C": "subordinate",
+    "basic-level_A": "basic-level",
+    "superordinate_C": "superordinate",
+    "basic-level_B": "basic-level",
+    "subordinate_B": "subordinate",
+    "superordinate_A": "superordinate",
     "instance_B": "instance",
-    "instance_C": "instance"
+    "basic-level_C": "basic-level",
+    "instance_C": "instance",
+    "instance_A": "instance"
 }
